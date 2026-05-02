@@ -6,12 +6,9 @@
 name: CI • GAP9
 
 "on":
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*.*.*"
-  pull_request:
+  # Auto-trigger disabled in TrainDeeploy fork: GAP9 has no training
+  # pytest jobs yet (only kernels / models). Re-enable by restoring
+  # the push: / pull_request: blocks once a training marker is wired in.
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
