@@ -50,6 +50,7 @@ def create_test_config(
     randomized_mem_scheduler: bool = False,
     profile_untiled: bool = False,
     training: bool = False,
+    training_num_data_inputs: Optional[int] = None,
     gen_args: Optional[List[str]] = None,
 ) -> DeeployTestConfig:
 
@@ -111,6 +112,7 @@ def create_test_config(
         cmake_args = cmake_args_list,
         gen_args = gen_args_list,
         training = training,
+        training_num_data_inputs = training_num_data_inputs,
     )
 
     return config

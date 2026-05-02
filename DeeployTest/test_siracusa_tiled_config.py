@@ -159,4 +159,22 @@ L3_DOUBLEBUFFER_MODELS = {
 # L2 size is fixed by the runner at 2_000_000 to match the validated local run.
 L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    "Models/Training/DSCNN/dscnn_train": [128000],
+}
+
+# Training-enabled tiled models that need L3 spill (weights/activations don't
+# fit in L2). Same shape: test path -> list of L1 sizes (bytes).
+L3_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/CCT/cct_train": [128000],
+}
+
+# Per-model overrides for training tests. Currently used for models whose
+# inputs.npz contains only one mini-batch (no `mb1_arr_*` entries) and
+# therefore can't be auto-detected by the runner.
+TRAINING_MODEL_OVERRIDES = {
+    "Models/Training/CCT/cct_train": {
+        "num_data_inputs": 1,
+    },
 }
