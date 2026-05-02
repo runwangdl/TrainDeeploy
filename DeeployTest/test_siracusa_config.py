@@ -95,8 +95,11 @@ TRAIN_KERNEL_TESTS = [
     "Kernels/FP32/ConvGradX_PW",
     "Kernels/FP32/AveragePoolGrad",
     "Kernels/FP32/GlobalAveragePoolGrad",
+    "Kernels/FP32/LayerNormGrad",
+    "Kernels/FP32/MaxPoolGrad",
     "Kernels/FP32/MSELoss",
     "Kernels/FP32/MSELossGrad",
+    "Kernels/FP32/ReluGrad",
     "Kernels/FP32/Softmax/CrossEntropyGrad",
 ]
 
