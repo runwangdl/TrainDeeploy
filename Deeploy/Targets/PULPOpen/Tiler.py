@@ -16,11 +16,11 @@ from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import Tran
 from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTileConstraint
 from Deeploy.Targets.PULPOpen.Bindings import PULPAddBindings, PULPAveragePool2DBindings, \
     PULPAveragePoolGrad2DBindings, PULPBatchNormalizationGradBindings, PULPBatchNormInternalBindings, \
-    PULPBNGradNormalizeBindings, PULPBNGradReduceBindings, PULPChannelNormalizeBindings, PULPConcatBindings, \
-    PULPFloatConv2DBindings, PULPFloatConvGradBBindings, PULPFloatConvGradW2DBindings, PULPFloatConvGradX2DBindings, \
-    PULPFloatDWConv2DBindings, PULPFloatDWConvGradW2DBindings, PULPFloatDWConvGradX2DBindings, PULPFloatGELUBinding, \
-    PULPFloatGELUGradBinding, PULPFloatGEMMBindings, PULPFloatPWConvGradW2DBindings, PULPFloatPWConvGradX2DBindings, \
-    PULPGatherBindings, PULPGlobalAveragePool2DBindings, PULPGlobalAveragePoolGrad2DBindings, PULPiHardswishBindings, \
+    PULPConcatBindings, PULPFloatConv2DBindings, PULPFloatConvGradBBindings, PULPFloatConvGradW2DBindings, \
+    PULPFloatConvGradX2DBindings, PULPFloatDWConv2DBindings, PULPFloatDWConvGradW2DBindings, \
+    PULPFloatDWConvGradX2DBindings, PULPFloatGELUBinding, PULPFloatGELUGradBinding, PULPFloatGEMMBindings, \
+    PULPFloatPWConvGradW2DBindings, PULPFloatPWConvGradX2DBindings, PULPGatherBindings, \
+    PULPGlobalAveragePool2DBindings, PULPGlobalAveragePoolGrad2DBindings, PULPiHardswishBindings, \
     PULPInPlaceAccumulatorV2Bindings, PULPiRMSNormBindings, PULPiRQSGELUBindings, PULPLayernormBinding, \
     PULPLayernormGradBinding, PULPMatMulBindings, PULPMaxPool1DBindings, PULPMaxPool2DBindings, \
     PULPMaxPoolGrad2DBindings, PULPMSELossBindings, PULPMSELossGradBindings, PULPMulBindings, PULPReduceMeanBindings, \
@@ -28,11 +28,10 @@ from Deeploy.Targets.PULPOpen.Bindings import PULPAddBindings, PULPAveragePool2D
     PULPRQSBindings, PULPRQSConv1DBindings, PULPRQSConv2DBindings, PULPRQSDWConv2DBindings, PULPRQSGEMMBindings, \
     PULPRQSiHardswishBindings, PULPRQSMatrixVecBindings, PULPRQSTallGEMMBindings, PULPSGDBindings, PULPSliceBindings, \
     PULPSoftmaxBindings, PULPSoftmaxCrossEntropyLossBindings, PULPSoftmaxCrossEntropyLossGradBindings, \
-    PULPSoftmaxGradBindings, PULPTransposeBindings, PULPUniformRQSBindings, PULPWelfordReduceBindings
+    PULPSoftmaxGradBindings, PULPTransposeBindings, PULPUniformRQSBindings
 from Deeploy.Targets.PULPOpen.TileConstraints.AveragePoolTileConstraint import AveragePoolCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import BatchNormalizationGradTileConstraint, \
-    BatchNormInternalTileConstraint, BNGradNormalizeTileConstraint, BNGradReduceTileConstraint, \
-    ChannelNormalizeTileConstraint, WelfordReduceTileConstraint
+    BatchNormInternalTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import ConvGradBTileConstraint, \
     ConvGradW2DTileConstraint, ConvGradX2DIm2ColHWTileConstraint, DWConvGradW2DTileConstraint, \
     DWConvGradX2DTileConstraint, PWConvGradWTileConstraint, PWConvGradXTileConstraint
@@ -135,18 +134,6 @@ PULPBatchNormInternalTilingReadyBindings = TilingReadyNodeBindings(nodeBindings 
 
 PULPBatchNormalizationGradTilingReadyBindings = TilingReadyNodeBindings(
     nodeBindings = PULPBatchNormalizationGradBindings, tileConstraint = BatchNormalizationGradTileConstraint())
-
-PULPWelfordReduceTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPWelfordReduceBindings,
-                                                               tileConstraint = WelfordReduceTileConstraint())
-
-PULPChannelNormalizeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPChannelNormalizeBindings,
-                                                                  tileConstraint = ChannelNormalizeTileConstraint())
-
-PULPBNGradReduceTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPBNGradReduceBindings,
-                                                              tileConstraint = BNGradReduceTileConstraint())
-
-PULPBNGradNormalizeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPBNGradNormalizeBindings,
-                                                                 tileConstraint = BNGradNormalizeTileConstraint())
 
 PULPMSELossTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMSELossBindings,
                                                          tileConstraint = MSELossTileConstraint())
