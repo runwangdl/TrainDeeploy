@@ -826,6 +826,98 @@ class BatchNormalizationLayer(ONNXLayer):
         return B * C * W * 5
 
 
+class BatchNormInternalLayer(ONNXLayer):
+    """Layer for ORT BatchNormInternal (training-mode BN forward pass)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        # 2 passes over N*C*H*W plus per-channel reductions
+        return N * C * H_in * W_in * 7
+
+
+class BatchNormalizationGradLayer(ONNXLayer):
+    """Layer for ORT BatchNormalizationGrad (BN backward pass)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        # 2 passes for reductions + 1 pass for dX
+        return N * C * H_in * W_in * 10
+
+
+class WelfordReduceLayer(ONNXLayer):
+    """Layer for WelfordReduce (split BN forward reduction)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        return N * C * H_in * W_in * 3
+
+
+class ChannelNormalizeLayer(ONNXLayer):
+    """Layer for ChannelNormalize (split BN forward elementwise)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        return N * C * H_in * W_in * 4
+
+
+class BNGradReduceLayer(ONNXLayer):
+    """Layer for BNGradReduce (split BN backward reduction)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        return N * C * H_in * W_in * 5
+
+
+class BNGradNormalizeLayer(ONNXLayer):
+    """Layer for BNGradNormalize (split BN backward elementwise)."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeOps(self):
+        opRep = self.mapper.parser.operatorRepresentation
+        N = opRep['N']
+        C = opRep['C']
+        H_in = opRep['H_in']
+        W_in = opRep['W_in']
+        return N * C * H_in * W_in * 5
+
+
 class ConvTransposeLayer(ONNXLayer):
 
     def __init__(self, maps: List[NodeMapper]):
