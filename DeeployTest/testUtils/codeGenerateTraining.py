@@ -161,7 +161,11 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
             list_str = ", ".join([f'{float(x)}f' for x in values])
             buf_name = f"testInitWeight_{wi}"
             weight_entries.append(buf_name)
-            retStr += f"{typeName} {buf_name}[] = {{{list_str}}};\n"
+            # Keep large constant weight arrays out of L2 by placing them in
+            # the on-chip WEIGHTMEM_SRAM region (defined in the Siracusa
+            # linker script). Without this, MobileNetV1 / DSCNN initial
+            # weights overflow .l2_data at link time.
+            retStr += f'{typeName} {buf_name}[] __attribute__((section(".weightmem_sram"))) = {{{list_str}}};\n'
         retStr += f"void* testInitWeights[{len(weight_entries)}] = {{{', '.join(f'(void*){e}' for e in weight_entries)}}};\n"
 
     return retStr
