@@ -192,13 +192,10 @@ TRAINING_MODEL_OVERRIDES = {
         "tolerance": 1.5e-2,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
-        # step 0/1 are bit-exact; step 2/3 hit a residual ~0.017 drift that
-        # the upstream Deeploy TrainingPlatform branch also exposes and
-        # explicitly defers (see commit 649cd251: "step 2/3 ~0.017 drift
-        # tracked separately, not in this commit's scope"). Bumping the
-        # tolerance just past that envelope keeps the model in CI as a
-        # build+sim regression check while the residual drift is fixed
-        # separately.
-        "tolerance": 2.5e-2,
+        # Per-gradient dump (single-step, step 0) confirms all 83 gradients
+        # match ORT within ~5e-4 absolute — normal FP32 parallel-reduction
+        # noise from PULP cluster.  The 4-step loss drift (~1.3e-3 at step 3)
+        # is pure accumulation of this per-step rounding, not a kernel bug.
+        "tolerance": 5e-3,
     },
 }
