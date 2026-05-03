@@ -374,6 +374,7 @@ def test_siracusa_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, 
         double_buffer = False,
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
@@ -407,6 +408,7 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         double_buffer = False,
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
