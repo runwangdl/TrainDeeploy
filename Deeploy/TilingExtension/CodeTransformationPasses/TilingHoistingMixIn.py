@@ -87,7 +87,14 @@ class TilingHoistingMixIn:
         # OOB. Per-tile layout `{0,1,2,...,total}` keeps
         # outer_iters == inner_calls == total_tiles. Outer memory levels keep
         # cumulative layout to iterate per L2 tile.
-        if self.memory == "L1":
+        # When L1 is the innermost AND there's an outer (L3) driver, each outer
+        # iter invokes the L1 closure once → use per-tile {0,1,2,...,total} so
+        # one inner-call processes one tile. When L1 is the OUTERMOST tiling
+        # level (defaultMemLevel=L2, no L3 driver), the L1 closure is called
+        # exactly once from RunNetwork and must walk all tiles itself → use
+        # cumulative {0, total}. Detect "has outer driver" via tilingSchedules
+        # length: an outer driver produces one TilingSchedule per outer iter.
+        if self.memory == "L1" and len(tilingSchedules) > 1:
             total = sum(stepsNumTiles)
             cumulativeNumTiles = list(range(total + 1))
         else:
