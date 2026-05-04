@@ -193,10 +193,7 @@ TRAINING_MODEL_OVERRIDES = {
         # step 27; 4 steps is sufficient coverage at default 1e-3 tolerance.
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
-        # Per-gradient dump (single-step, step 0) confirms all 83 gradients
-        # match ORT within ~5e-4 absolute — normal FP32 parallel-reduction
-        # noise from PULP cluster.  The 4-step loss drift peaks at ~7e-3
-        # (steps 2-3); pure FP32 accumulation, not a kernel bug.
-        "tolerance": 1e-2,
+        # Pretrained MLPerf Tiny VWW checkpoint (vww_96.h5): max diff 3.1e-5
+        # across all 4 steps — default 1e-3 tolerance is fine.
     },
 }
