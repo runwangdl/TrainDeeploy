@@ -51,14 +51,22 @@ All memory transfers between L2 and L3 (HyperRAM) are handled transparently by t
 [DeeployNetwork_num_inputs-1]                lazy_reset_grad  (uint8, set by harness)
 ```
 
-### OptimizerNetwork inputs (interleaved weight + grad pairs)
+### OptimizerNetwork inputs and outputs
+
+Inputs (interleaved weight + grad pairs, one pair per trainable parameter):
 
 ```
-[2*i]    weight_i        ← copied from TrainingNetwork weight buffer i
-[2*i+1]  grad_acc_i      ← copied from TrainingNetwork grad buffer i
+DeeployOptNetwork_inputs[2*i]     weight_i      ← TrainingNetwork weight buffer i
+DeeployOptNetwork_inputs[2*i+1]   grad_acc_i    ← TrainingNetwork grad buffer i
 ```
 
-The optimizer outputs (`weight_i_updated`) are copied back into the training network's weight buffers after `RunOptimizerNetwork()` returns.
+Outputs (one updated weight per parameter):
+
+```
+DeeployOptNetwork_outputs[i]      weight_i_updated  → copied back to TrainingNetwork weight buffer i
+```
+
+If the codegen detects that the optimizer's output buffer already aliases the training network's weight buffer (same pointer), the copy is skipped and the update is in-place.
 
 ---
 
@@ -104,15 +112,23 @@ Key CLI flags:
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--cores` | 8 | Number of PULP cluster cores |
-| `--l1` | varies | L1 scratchpad size in bytes |
-| `--l2` | 1 000 000 | L2 budget in bytes |
-| `--defaultMemLevel` | `L2` | `L2` keeps weights in L2; `L3` spills to HyperRAM |
-| `--memAllocStrategy` | `MiniMalloc` | Memory allocation strategy |
-| `--num-data-inputs` | auto | Required for single-mini-batch tests where auto-detection fails |
-| `--skipgen` | off | Skip code generation and reuse existing `TEST_SIRACUSA/` artifacts |
+| `-t` | — | Path to the training test directory (required) |
+| `--cores` | `8` | Number of PULP cluster cores |
+| `--l1` | `64000` | L1 scratchpad size in bytes |
+| `--l2` | `1024000` | L2 budget in bytes |
+| `--defaultMemLevel` | `L2` | `L2` keeps all buffers in L2; `L3` spills weights/activations to HyperRAM |
+| `--n-steps` | auto | `N_TRAIN_STEPS`: optimizer steps (auto-detected from `inputs.npz`) |
+| `--n-accum` | auto | `N_ACCUM_STEPS`: mini-batches per update step (auto-detected) |
+| `--num-data-inputs` | auto | Number of data inputs that change per mini-batch; required when there is only one mini-batch in `inputs.npz` |
+| `--optimizer-dir` | auto | Directory containing the optimizer `network.onnx`; default derived by replacing `_train` with `_optimizer` |
+| `--tolerance` | `1e-3` | Absolute loss tolerance for pass/fail; overrides the value in `TRAINING_MODEL_OVERRIDES` |
+| `--memAllocStrategy` | `MiniMalloc` | Memory allocation strategy (`MiniMalloc`, `TetrisRandom`, `TetrisCo-Opt`) |
+| `--searchStrategy` | `random-max` | CP solver search strategy (`random-max`, `max`, `min`) |
+| `--doublebuffer` | off | Enable double-buffering for DMA transfers |
+| `--skipgen` | off | Skip code generation and reuse existing `TEST_SIRACUSA/` build |
+| `--skipsim` | off | Skip GVSoC simulation (code-gen and build only) |
 
-The runner generates code in `DeeployTest/TEST_SIRACUSA/Tests/Models/Training/<model>/` and calls CMake + GVSoC automatically. Pass `--skipgen` to reuse a previously generated build.
+The runner generates code in `DeeployTest/TEST_SIRACUSA/Tests/Models/Training/<model>/` and calls CMake + GVSoC automatically.
 
 ---
 
@@ -182,10 +198,6 @@ Both L2 and L3 training tests use the standard Deeploy tiling pipeline (`TilerDe
 ### Gradient accumulation
 
 `InPlaceAccumulatorV2` accumulates gradients in-place across mini-batches. The harness passes `lazy_reset_grad = 1` on the first mini-batch of each optimizer step (zeroes the accumulator before writing) and `0` on subsequent mini-batches (adds to existing values).
-
-### L3-aware weight transfer
-
-Weight tensors too large for L2 are stored in HyperRAM. `l3_aware_copy` handles all four combinations of L2/L3 source and destination, staging L3↔L3 transfers through a small L2 bounce buffer.
 
 ### FP32 precision on the PULP cluster
 
