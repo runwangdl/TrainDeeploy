@@ -50,19 +50,35 @@ referenceTemplate = _PULPInPlaceAccumulatorV2Template("""
 // destination may overlap with live buffers in the tiled path.
 // Reset (lazy_reset_grad=1): accum_buffer  = gradient
 // Accum (lazy_reset_grad=0): accum_buffer += gradient
-int8_t ${nodeName}_core_id = pi_core_id();
-int8_t ${nodeName}_log2Core = log2(NUM_CORES);
-int32_t ${nodeName}_chunk = (${size} >> ${nodeName}_log2Core) + ((${size} & (NUM_CORES-1))!=0);
-int32_t ${nodeName}_start = MIN(${nodeName}_chunk * ${nodeName}_core_id, (int32_t)${size});
-int32_t ${nodeName}_stop  = MIN(${nodeName}_start + ${nodeName}_chunk,   (int32_t)${size});
-
-if (${lazy_reset_grad}[0]) {
-    for (int32_t i = ${nodeName}_start; i < ${nodeName}_stop; i++) {
-        ${accum_buffer}[i] = ${gradient}[i];
-    }
-} else {
-    for (int32_t i = ${nodeName}_start; i < ${nodeName}_stop; i++) {
-        ${accum_buffer}[i] += ${gradient}[i];
+{
+    int8_t  ${nodeName}_core_id  = pi_core_id();
+    int8_t  ${nodeName}_log2Core = LOG2(NUM_CORES);
+    int32_t ${nodeName}_chunk    = ((int32_t)${size} >> ${nodeName}_log2Core) + (((int32_t)${size} & (NUM_CORES - 1)) != 0);
+    int32_t ${nodeName}_start    = MIN(${nodeName}_chunk * ${nodeName}_core_id, (int32_t)${size});
+    int32_t ${nodeName}_stop     = MIN(${nodeName}_start + ${nodeName}_chunk,   (int32_t)${size});
+    // Round down to nearest multiple of 4 for the unrolled section.
+    int32_t ${nodeName}_stop4    = ${nodeName}_start + (((${nodeName}_stop - ${nodeName}_start) >> 2) << 2);
+    int32_t i;
+    if (${lazy_reset_grad}[0]) {
+        for (i = ${nodeName}_start; i < ${nodeName}_stop4; i += 4) {
+            ${accum_buffer}[i]   = ${gradient}[i];
+            ${accum_buffer}[i+1] = ${gradient}[i+1];
+            ${accum_buffer}[i+2] = ${gradient}[i+2];
+            ${accum_buffer}[i+3] = ${gradient}[i+3];
+        }
+        for (; i < ${nodeName}_stop; i++) {
+            ${accum_buffer}[i] = ${gradient}[i];
+        }
+    } else {
+        for (i = ${nodeName}_start; i < ${nodeName}_stop4; i += 4) {
+            ${accum_buffer}[i]   += ${gradient}[i];
+            ${accum_buffer}[i+1] += ${gradient}[i+1];
+            ${accum_buffer}[i+2] += ${gradient}[i+2];
+            ${accum_buffer}[i+3] += ${gradient}[i+3];
+        }
+        for (; i < ${nodeName}_stop; i++) {
+            ${accum_buffer}[i] += ${gradient}[i];
+        }
     }
 }
 """)
