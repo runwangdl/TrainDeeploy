@@ -467,7 +467,8 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
         for (uint32_t co = 0; co < Cout; ++co) {
           const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
           const float *w_co_ci =
-              pWeight + ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
+              pWeight +
+              ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
 
           for (int32_t ky = ky0_h; ky < (int32_t)P; ky += sh) {
             const int32_t num_h = base_h - ky;
@@ -876,7 +877,8 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
   if (ci_start >= ci_stop)
     return;
 
-  // Gather loop: each dX[ci,ih,iw] accumulated into a register and written once.
+  // Gather loop: each dX[ci,ih,iw] accumulated into a register and written
+  // once.
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
 
@@ -895,7 +897,8 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
         for (uint32_t co = 0; co < Cout; ++co) {
           const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
           const float *w_co_ci =
-              pWeight + ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
+              pWeight +
+              ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
 
           for (int32_t ky = ky0_h; ky < (int32_t)P; ky += sh) {
             const int32_t num_h = base_h - ky;
