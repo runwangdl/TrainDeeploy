@@ -422,6 +422,7 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
   const uint32_t P = dim_kernel_x;
   const uint32_t Q = dim_kernel_y;
 
+  // Note: this function uses swapped x/y naming; map to intuitive H/W names
   const int32_t pad_top = (int32_t)padding_x_left;
   const int32_t pad_left = (int32_t)padding_y_top;
 
@@ -430,75 +431,75 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
 
   const int32_t hx0 = (int32_t)offset_grad_in_h;
   const int32_t wx0 = (int32_t)offset_grad_in_w;
-  const int32_t hx1 = hx0 + (int32_t)Hin_t - 1;
-  const int32_t wx1 = wx0 + (int32_t)Win_t - 1;
+  const int32_t gy0 = (int32_t)offset_grad_out_h;
+  const int32_t gx0 = (int32_t)offset_grad_out_w;
 
-  // -------- core partition over Cin --------
+  // Core partition over Cin
   const int core_id = pi_core_id();
   const int ncores = NUM_CORES;
-
   const uint32_t ci_chunk = (Cin + (uint32_t)ncores - 1u) / (uint32_t)ncores;
   const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
   uint32_t ci_stop = ci_start + ci_chunk;
   if (ci_stop > Cin)
     ci_stop = Cin;
-
-  if (ci_start >= ci_stop) {
+  if (ci_start >= ci_stop)
     return;
-  }
 
+  // Gather loop: each dX[ci,ih,iw] is computed atomically into a register
+  // accumulator, then written once — no read-modify-write hazard, no zero-init.
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
+
     for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t ih_g = hx0 + (int32_t)ih;
+      const int32_t base_h = ih_g + pad_top;
+      // First ky in [0,P) where (base_h - ky) is divisible by sh.
+      // base_h >= 0 always (hx0,ih,pad_top are all non-negative).
+      const int32_t ky0_h = base_h % sh;
+
       for (uint32_t iw = 0; iw < Win_t; ++iw) {
-        dx_ci[ih * Win_t + iw] = 0.0f;
-      }
-    }
-  }
+        const int32_t iw_g = wx0 + (int32_t)iw;
+        const int32_t base_w = iw_g + pad_left;
+        const int32_t kx0_w = base_w % sw;
 
-  for (uint32_t co = 0; co < Cout; ++co) {
-    const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
+        float accum = 0.0f;
 
-    for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-      const int32_t oy = (int32_t)offset_grad_out_h + (int32_t)ly;
-      const int32_t base_h = oy * sh - pad_top;
-
-      for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-        const int32_t ox = (int32_t)offset_grad_out_w + (int32_t)lx;
-        const int32_t base_w = ox * sw - pad_left;
-
-        const float dy_val = dy_co[ly * Wout_t + lx];
-
-        // prune ky/kx once per (co,ly,lx) (independent of ci)
-        int32_t ky_min = max_i32(0, hx0 - base_h);
-        int32_t ky_max = min_i32((int32_t)P - 1, hx1 - base_h);
-        if (ky_min > ky_max)
-          continue;
-
-        int32_t kx_min = max_i32(0, wx0 - base_w);
-        int32_t kx_max = min_i32((int32_t)Q - 1, wx1 - base_w);
-        if (kx_min > kx_max)
-          continue;
-
-        for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
-          float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-
-          // W[co,ci,:,:] base (assumes layout [Cout][Cin][P][Q])
+        for (uint32_t co = 0; co < Cout; ++co) {
+          const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
           const float *w_co_ci =
-              pWeight +
-              (((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q);
+              pWeight + ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
 
-          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
-            const int32_t ih = (base_h + ky) - hx0; // local in tile
+          for (int32_t ky = ky0_h; ky < (int32_t)P; ky += sh) {
+            const int32_t num_h = base_h - ky;
+            if (num_h < 0)
+              break; // ky > base_h: oy < 0 for all further ky
+            const int32_t oy_g = num_h / sh;
+            const int32_t ly = oy_g - gy0;
+            if (ly < 0)
+              break; // oy before dY tile start: further ky only decrease ly
+            if ((uint32_t)ly >= Hout_t)
+              continue; // oy after dY tile end: try next ky
 
-            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
-              const int32_t iw = (base_w + kx) - wx0;
+            const float *w_ky = w_co_ci + (uint32_t)ky * (uint32_t)Q;
 
-              dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] +=
-                  dy_val * w_co_ci[(size_t)ky * (size_t)Q + (size_t)kx];
+            for (int32_t kx = kx0_w; kx < (int32_t)Q; kx += sw) {
+              const int32_t num_w = base_w - kx;
+              if (num_w < 0)
+                break;
+              const int32_t ox_g = num_w / sw;
+              const int32_t lx = ox_g - gx0;
+              if (lx < 0)
+                break;
+              if ((uint32_t)lx >= Wout_t)
+                continue;
+
+              accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
+                       w_ky[(uint32_t)kx];
             }
           }
         }
+
+        dx_ci[ih * Win_t + iw] = accum;
       }
     }
   }
@@ -818,7 +819,9 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
   pi_cl_team_fork(NUM_CORES, mm, &mm_args);
 }
 
-// Tile-aware Im2Col-based ConvGradX kernel with offset support
+// Tile-aware gather ConvGradX kernel with offset support.
+// The legacy Im2Col scratchpad parameters have been removed — the gather
+// loop computes dX directly without any intermediate buffer.
 void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     const float *__restrict__ pGradOut, // dY tile (L1)
     uint32_t dim_im_out_x,              // dY tile H
@@ -840,101 +843,91 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     uint16_t offset_grad_in_h,          // dX tile offset H (global)
     uint16_t offset_grad_in_w,          // dX tile offset W (global)
     uint16_t offset_grad_out_h,         // dY tile offset H (global)
-    uint16_t offset_grad_out_w,         // dY tile offset W (global)
-    float *__restrict__ ctxtBuffer, uint32_t ctxtBufferSize,
-    float *__restrict__ btBuffer, uint32_t btBufferSize) {
+    uint16_t offset_grad_out_w) {       // dY tile offset W (global)
+  (void)padding_y_bottom;
+  (void)padding_x_right;
+
   const uint32_t Hout_t = dim_im_out_x;
   const uint32_t Wout_t = dim_im_out_y;
   const uint32_t Hin_t = dim_im_in_x;
   const uint32_t Win_t = dim_im_in_y;
-
   const uint32_t Cout = ch_im_out;
   const uint32_t Cin = ch_im_in;
-
   const uint32_t P = dim_kernel_x;
   const uint32_t Q = dim_kernel_y;
 
   const int32_t pad_top = (int32_t)padding_y_top;
   const int32_t pad_left = (int32_t)padding_x_left;
-
   const int32_t sh = (int32_t)stride_h;
   const int32_t sw = (int32_t)stride_w;
-
   const int32_t hx0 = (int32_t)offset_grad_in_h;
   const int32_t wx0 = (int32_t)offset_grad_in_w;
-  const int32_t hx1 = hx0 + (int32_t)Hin_t - 1;
-  const int32_t wx1 = wx0 + (int32_t)Win_t - 1;
+  const int32_t gy0 = (int32_t)offset_grad_out_h;
+  const int32_t gx0 = (int32_t)offset_grad_out_w;
 
   // Core partition over Cin
   const int core_id = pi_core_id();
   const int ncores = NUM_CORES;
-
   const uint32_t ci_chunk = (Cin + (uint32_t)ncores - 1u) / (uint32_t)ncores;
   const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
   uint32_t ci_stop = ci_start + ci_chunk;
   if (ci_stop > Cin)
     ci_stop = Cin;
-
-  if (ci_start >= ci_stop) {
+  if (ci_start >= ci_stop)
     return;
-  }
 
-  // Initialize output tile to zero
+  // Gather loop: each dX[ci,ih,iw] accumulated into a register and written once.
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
+
     for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t ih_g = hx0 + (int32_t)ih;
+      const int32_t base_h = ih_g + pad_top;
+      const int32_t ky0_h = base_h % sh; // first valid ky (base_h >= 0 always)
+
       for (uint32_t iw = 0; iw < Win_t; ++iw) {
-        dx_ci[ih * Win_t + iw] = 0.0f;
-      }
-    }
-  }
+        const int32_t iw_g = wx0 + (int32_t)iw;
+        const int32_t base_w = iw_g + pad_left;
+        const int32_t kx0_w = base_w % sw;
 
-  // Compute gradient using tile-aware mapping
-  for (uint32_t co = 0; co < Cout; ++co) {
-    const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
+        float accum = 0.0f;
 
-    for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-      const int32_t oy = (int32_t)offset_grad_out_h + (int32_t)ly;
-      const int32_t base_h = oy * sh - pad_top;
-
-      for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-        const int32_t ox = (int32_t)offset_grad_out_w + (int32_t)lx;
-        const int32_t base_w = ox * sw - pad_left;
-
-        const float dy_val = dy_co[ly * Wout_t + lx];
-
-        // Prune kernel positions
-        int32_t ky_min = (hx0 > base_h) ? (hx0 - base_h) : 0;
-        int32_t ky_max =
-            (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h) : ((int32_t)P - 1);
-        if (ky_min > ky_max)
-          continue;
-
-        int32_t kx_min = (wx0 > base_w) ? (wx0 - base_w) : 0;
-        int32_t kx_max =
-            (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w) : ((int32_t)Q - 1);
-        if (kx_min > kx_max)
-          continue;
-
-        for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
-          float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-
-          // W[co,ci,:,:] base (layout [Cout][Cin][P][Q])
+        for (uint32_t co = 0; co < Cout; ++co) {
+          const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
           const float *w_co_ci =
-              pWeight +
-              (((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q);
+              pWeight + ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
 
-          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
-            const int32_t ih = (base_h + ky) - hx0; // local tile coordinate
+          for (int32_t ky = ky0_h; ky < (int32_t)P; ky += sh) {
+            const int32_t num_h = base_h - ky;
+            if (num_h < 0)
+              break;
+            const int32_t oy_g = num_h / sh;
+            const int32_t ly = oy_g - gy0;
+            if (ly < 0)
+              break;
+            if ((uint32_t)ly >= Hout_t)
+              continue;
 
-            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
-              const int32_t iw = (base_w + kx) - wx0; // local tile coordinate
+            const float *w_ky = w_co_ci + (uint32_t)ky * (uint32_t)Q;
 
-              dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] +=
-                  dy_val * w_co_ci[(size_t)ky * (size_t)Q + (size_t)kx];
+            for (int32_t kx = kx0_w; kx < (int32_t)Q; kx += sw) {
+              const int32_t num_w = base_w - kx;
+              if (num_w < 0)
+                break;
+              const int32_t ox_g = num_w / sw;
+              const int32_t lx = ox_g - gx0;
+              if (lx < 0)
+                break;
+              if ((uint32_t)lx >= Wout_t)
+                continue;
+
+              accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
+                       w_ky[(uint32_t)kx];
             }
           }
         }
+
+        dx_ci[ih * Win_t + iw] = accum;
       }
     }
   }

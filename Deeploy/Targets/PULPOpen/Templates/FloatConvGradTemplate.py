@@ -101,6 +101,14 @@ class PULP2DFloatConvGradWIm2ColTemplate(_ConvGradWTemplate):
 
 
 class PULP2DFloatConvGradXIm2ColTemplate(NodeTemplate):
+    """NodeTemplate for the gather-loop ConvGradX kernel.
+
+    The gather loop computes each dX element directly into a register
+    accumulator, so no intermediate scratchpad (im2col / block-transpose)
+    is needed.  Both computeTransientBuffersSize and hoistTransientBuffers
+    are no-ops so that the tiler does not reserve L1 space for buffers
+    that are never used.
+    """
 
     def __init__(self, templateStr):
         super().__init__(templateStr)
@@ -109,37 +117,12 @@ class PULP2DFloatConvGradXIm2ColTemplate(NodeTemplate):
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        im2col_dim = (operatorRepresentation["grad_in_type"].typeWidth // 8) * \
-                     operatorRepresentation['dim_im_out_x'] * operatorRepresentation['dim_im_out_y'] * \
-                     operatorRepresentation['ch_im_out'] * \
-                     operatorRepresentation['dim_kernel_x'] * operatorRepresentation['dim_kernel_y']
-
-        im2col_name = operatorRepresentation['nodeName'] + "_im2col_buffer"
-
-        bt_dim = (operatorRepresentation["weight_type"].typeWidth // 8) * \
-                 operatorRepresentation['ch_im_in'] * operatorRepresentation['ch_im_out'] * \
-                 operatorRepresentation['dim_kernel_x'] * operatorRepresentation['dim_kernel_y']
-
-        bt_name = operatorRepresentation['nodeName'] + "_bt_buffer"
-
-        return [(im2col_name, im2col_dim), (bt_name, bt_dim)]
+        # Gather loop uses no scratch buffers.
+        return []
 
     def hoistTransientBuffers(self, ctxt: NetworkContext,
                               operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
-        buffers = PULP2DFloatConvGradXIm2ColTemplate.computeTransientBuffersSize(ctxt, operatorRepresentation)
-
-        im2col_name, im2col_dim = buffers[0]
-        bt_name, bt_dim = buffers[1]
-
-        ctxt.hoistTransientBuffer(im2col_name, im2col_dim)
-        ctxt.hoistTransientBuffer(bt_name, bt_dim)
-
-        operatorRepresentation['ctxtBuffer'] = im2col_name
-        operatorRepresentation['ctxtBufferSize'] = im2col_dim
-        operatorRepresentation['btBuffer'] = bt_name
-        operatorRepresentation['btBufferSize'] = bt_dim
-
-        return ctxt, operatorRepresentation, [im2col_name, bt_name]
+        return ctxt, operatorRepresentation, []
 
 
 # Templates for ConvGradX operations
@@ -171,7 +154,7 @@ for (uint32_t n=0; n<${batch}; ++n) {
 """)
 
 referenceConvGradX2DIm2ColTiledTemplate = PULP2DFloatConvGradXIm2ColTemplate("""
-// 2D FP ConvGradX (dX) NCHW/CHW using tile-aware Im2Col (Name: ${nodeName}, Op: ${nodeOp})
+// 2D FP ConvGradX (dX) NCHW/CHW gather loop (Name: ${nodeName}, Op: ${nodeOp})
 ${grad_out_type.typeName}  ref_${grad_out} = ${grad_out};   // dY
 ${weight_type.typeName}   ref_${weight}  = ${weight};    // W
 ${grad_in_type.typeName} ref_${grad_in}       = ${grad_in};  // dX
@@ -187,9 +170,7 @@ for (uint32_t n=0; n<${batch}; ++n) {
         ${dim_im_in_x}, ${dim_im_in_y},              // dX tile dims
         ${padding_y_top}, ${padding_y_bottom}, ${padding_x_left}, ${padding_x_right},
         ${offset_grad_in_h}, ${offset_grad_in_w},
-        ${offset_grad_out_h}, ${offset_grad_out_w},
-        ${ctxtBuffer}, ${ctxtBufferSize},
-        ${btBuffer}, ${btBufferSize}
+        ${offset_grad_out_h}, ${offset_grad_out_w}
     );
 
     ref_${grad_out} += ${ch_im_out} * ${dim_im_out_y} * ${dim_im_out_x};
@@ -439,12 +420,19 @@ referenceConvGradB2DTemplate = NodeTemplate("""
 // 2D FP ConvGradB: bias gradient = sum dY over N,H,W (Name: ${nodeName}, Op: ${nodeOp})
 ${grad_out_type.typeName} ref_dB_dy = ${grad_out};
 ${grad_bias_type.typeName} ref_dB_db = ${grad_bias};
-for (uint32_t c = 0; c < ${ch_im_out}; ++c) {
-    ref_dB_db[c] = 0.0f;
-    for (uint32_t n = 0; n < ${batch}; ++n) {
-        for (uint32_t h = 0; h < ${dim_im_out_y}; ++h) {
-            for (uint32_t w = 0; w < ${dim_im_out_x}; ++w) {
-                ref_dB_db[c] += ref_dB_dy[n * ${ch_im_out} * ${dim_im_out_y} * ${dim_im_out_x} + c * ${dim_im_out_y} * ${dim_im_out_x} + h * ${dim_im_out_x} + w];
+{
+    int _dB_core_id = pi_core_id();
+    int _dB_ncores  = NUM_CORES;
+    uint32_t _dB_chunk = ((uint32_t)${ch_im_out} + (uint32_t)_dB_ncores - 1u) / (uint32_t)_dB_ncores;
+    uint32_t _dB_start = (uint32_t)_dB_core_id * _dB_chunk;
+    uint32_t _dB_stop  = _dB_start + _dB_chunk < (uint32_t)${ch_im_out} ? _dB_start + _dB_chunk : (uint32_t)${ch_im_out};
+    for (uint32_t c = _dB_start; c < _dB_stop; ++c) {
+        ref_dB_db[c] = 0.0f;
+        for (uint32_t n = 0; n < ${batch}; ++n) {
+            for (uint32_t h = 0; h < ${dim_im_out_y}; ++h) {
+                for (uint32_t w = 0; w < ${dim_im_out_x}; ++w) {
+                    ref_dB_db[c] += ref_dB_dy[n * ${ch_im_out} * ${dim_im_out_y} * ${dim_im_out_x} + c * ${dim_im_out_y} * ${dim_im_out_x} + h * ${dim_im_out_x} + w];
+                }
             }
         }
     }

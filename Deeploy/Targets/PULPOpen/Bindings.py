@@ -285,7 +285,7 @@ PULPFloatPWConvGradX2DBindings = [
 
 PULPFloatConvGradBBindings = [
     NodeBinding(PULPConvGradBChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
-                FloatConvGradTemplate.referenceConvGradB2DTemplate, ClusterTransformer)
+                FloatConvGradTemplate.referenceConvGradB2DTemplate, ForkTransformer)
 ]
 
 PULPRQSMatrixVecBindings = [

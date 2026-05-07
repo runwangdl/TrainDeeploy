@@ -62,9 +62,7 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     uint32_t padding_y_top, uint32_t padding_y_bottom, uint32_t padding_x_left,
     uint32_t padding_x_right, uint16_t offset_grad_in_h,
     uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
-    uint16_t offset_grad_out_w, float *__restrict__ ctxtBuffer,
-    uint32_t ctxtBufferSize, float *__restrict__ btBuffer,
-    uint32_t btBufferSize);
+    uint16_t offset_grad_out_w);
 
 void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
