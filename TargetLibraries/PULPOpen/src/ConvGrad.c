@@ -109,6 +109,9 @@ struct matMul_args {
 
 void transpose_matrix(void *void_args);
 void mm(void *void_args);
+void mm_add(void *void_args);
+void mm_unroll_4x2(void *void_args);
+void mm_unroll_1x2(void *void_args);
 
 void PULP_ConvGradW2d_fp32_fp32_fp32_CHW(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
@@ -466,13 +469,13 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
         const int32_t base_w = ox * sw - pad_left;
         const float dy_val = dy_co[ly * Wout_t + lx];
         int32_t ky_min = (hx0 > base_h) ? (hx0 - base_h) : 0;
-        int32_t ky_max = (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h)
-                                                           : ((int32_t)P - 1);
+        int32_t ky_max =
+            (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h) : ((int32_t)P - 1);
         if (ky_min > ky_max)
           continue;
         int32_t kx_min = (wx0 > base_w) ? (wx0 - base_w) : 0;
-        int32_t kx_max = (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w)
-                                                           : ((int32_t)Q - 1);
+        int32_t kx_max =
+            (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w) : ((int32_t)Q - 1);
         if (kx_min > kx_max)
           continue;
         for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
@@ -723,51 +726,18 @@ void PULP_PWConvGradW2d_fp32_fp32_fp32_CHW(
     uint32_t C_out, const float *__restrict__ pInput, uint32_t H_in,
     uint32_t W_in, uint32_t C_in, float *__restrict__ pGradWeight) {
 
-  struct blob input_blob = {0};
-  struct blob output_blob = {0};
-  struct blob coeff_blob = {0};
-
-  // Input blob (forward activation)
-  input_blob.data = (float *)pInput;
-  input_blob.diff = NULL;
-  input_blob.W = (int)W_in;
-  input_blob.H = (int)H_in;
-  input_blob.C = (int)C_in;
-  input_blob.dim = (int)(C_in * H_in * W_in);
-
-  // Output blob (gradient w.r.t. output)
-  output_blob.data = NULL;
-  output_blob.diff = (float *)pGradOut;
-  output_blob.W = (int)W_out;
-  output_blob.H = (int)H_out;
-  output_blob.C = (int)C_out;
-  output_blob.dim = (int)(C_out * H_out * W_out);
-
-  // Weight blob (gradient w.r.t. weights - output)
-  // For PW conv: kernel is 1x1, so dim = C_out * C_in
-  coeff_blob.data = NULL;
-  coeff_blob.diff = (float *)pGradWeight;
-  coeff_blob.W = 1;
-  coeff_blob.H = 1;
-  coeff_blob.C = (int)C_in;
-  coeff_blob.dim = (int)(C_out * C_in);
-
-  struct PointWise_Conv_args pw_args;
-  memset(&pw_args, 0, sizeof(pw_args));
-
-  pw_args.input = &input_blob;
-  pw_args.output = &output_blob;
-  pw_args.coeff = &coeff_blob;
-  pw_args.transpose_buffer = NULL;
-
-  pw_args.skip_wg_grad = 0; // Compute weight gradient
-  pw_args.skip_in_grad = 1; // Skip input gradient
-  pw_args.HWC = 0;          // CHW layout
-  pw_args.opt_matmul_type_fw = 0;
-  pw_args.opt_matmul_type_wg = 0;
-  pw_args.opt_matmul_type_ig = 0;
-
-  pulp_conv_pw_fp32_bw_param_grads_cl(&pw_args);
+  // dW[C_out, C_in] += dY[C_out, H*W] x X[C_in, H*W]^T
+  // Use mm_add directly so tiled callers accumulate correctly across tiles,
+  // matching the mm_add semantics in pulp_conv_pw_fp32_bw_param_grads_cl.
+  struct matMul_args mm_args;
+  mm_args.A = (float *)pGradOut;
+  mm_args.B = (float *)pInput;
+  mm_args.C = pGradWeight;
+  mm_args.N = (int)C_out;
+  mm_args.M = (int)C_in;
+  mm_args.K = (int)(H_out * W_out);
+  mm_args.trans_B = 1;
+  pi_cl_team_fork(NUM_CORES, mm_add, &mm_args);
 }
 
 void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
@@ -805,7 +775,7 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
   mm_args.M = (int)(H_out * W_out);
   mm_args.K = (int)C_out;
   mm_args.trans_B = 0;
-  pi_cl_team_fork(NUM_CORES, mm, &mm_args);
+  pi_cl_team_fork(NUM_CORES, mm_unroll_1x2, &mm_args);
 }
 
 // Tile-aware scatter ConvGradX kernel with offset support.
@@ -886,13 +856,13 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
         const int32_t base_w = ox * sw - pad_left;
         const float dy_val = dy_co[ly * Wout_t + lx];
         int32_t ky_min = (hx0 > base_h) ? (hx0 - base_h) : 0;
-        int32_t ky_max = (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h)
-                                                           : ((int32_t)P - 1);
+        int32_t ky_max =
+            (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h) : ((int32_t)P - 1);
         if (ky_min > ky_max)
           continue;
         int32_t kx_min = (wx0 > base_w) ? (wx0 - base_w) : 0;
-        int32_t kx_max = (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w)
-                                                           : ((int32_t)Q - 1);
+        int32_t kx_max =
+            (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w) : ((int32_t)Q - 1);
         if (kx_min > kx_max)
           continue;
         for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {

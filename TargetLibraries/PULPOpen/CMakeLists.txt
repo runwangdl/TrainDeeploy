@@ -34,6 +34,7 @@ target_compile_options(deeploypulp PRIVATE
   -Wno-unused-function
   -Wno-unused-variable
   -Wno-uninitialized
+  -DOPTIMIZE
 )
 
 target_include_directories(deeploypulp PUBLIC ${PULP_SDK_INCLUDES})
