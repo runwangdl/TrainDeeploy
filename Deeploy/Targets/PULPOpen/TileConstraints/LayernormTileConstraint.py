@@ -9,7 +9,7 @@ import numpy as np
 
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import uint16_t
-from Deeploy.DeeployTypes import NetworkContext, OperatorRepresentation
+from Deeploy.DeeployTypes import NetworkContext, OperatorRepresentation, VariableBuffer
 from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint
 from Deeploy.TilingExtension.TileConstraint import TileConstraint
 from Deeploy.TilingExtension.TilerModel import TilerModel
@@ -47,11 +47,11 @@ class LayernormTileConstraint(TileConstraint):
                 tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = idx) == tilerModel.getTensorDimVar(
                     tensorName = outputBufferName, dimIdx = idx))
 
-        # Register mean/inv_std_dev (secondary outputs, shape = inputShape[:-1])
-        # They tile along all dims except features, so constrain them to match data_in.
+        # Register mean/inv_std_dev only if they are real VariableBuffers (training outputs).
+        # For inference, these are GlobalDefinition scratch arrays — skip tiler registration.
         for secondary in ['mean', 'inv_std_dev']:
             secondary_name = parseDict.get(secondary, '')
-            if secondary_name:
+            if secondary_name and isinstance(ctxt.lookup(secondary_name), VariableBuffer):
                 tilerModel.addTensorDimToModel(ctxt, secondary_name)
                 for idx in range(len(inputShape) - 1):
                     tilerModel.addConstraint(

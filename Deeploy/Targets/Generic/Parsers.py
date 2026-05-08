@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import math
+import re
 from typing import Tuple
 
 import numpy as np
@@ -1999,6 +2000,20 @@ class LayerNormParser(iLayerNormParser):
 
         self.operatorRepresentation['size'] = np.prod(ctxt.lookup(node.inputs[0].name).shape)
         self.operatorRepresentation['lastDimLength'] = ctxt.lookup(node.inputs[0].name).shape[-1]
+
+        # PULP_Layernorm_fp32 always writes mean/inv_std_dev stashes (needed by grad pass).
+        # For inference ONNX graphs with only 1 output, allocate static scratch via
+        # GlobalDefinition so the tiler never sees these buffers.
+        in_shape = ctxt.lookup(node.inputs[0].name).shape
+        stash_shape = list(in_shape[:-1]) if not isinstance(in_shape, int) else [1]
+        seq_length = int(np.prod(stash_shape))
+        node_base = re.sub(r'[.:/]', '_', node.name)
+        mangled_base = ctxt._mangle(node_base)
+        for stash_key, suffix in [('mean', '_mean_stash'), ('inv_std_dev', '_inv_std_dev_stash')]:
+            if stash_key not in self.operatorRepresentation:
+                stash_name = mangled_base + suffix
+                ctxt.hoistGlobalDefinition(stash_name, f"static float32_t {stash_name}[{seq_length}];")
+                self.operatorRepresentation[stash_key] = stash_name
 
         return ctxt, True
 
