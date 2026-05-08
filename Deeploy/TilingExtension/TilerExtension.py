@@ -558,10 +558,20 @@ class Tiler():
                         self.memoryHierarchy.memoryLevels[memoryLevel].size - constantTensorOffset, memoryLevel)
                 else:
                     for idx, memMap in enumerate(memoryMap[memoryLevel]):
-                        if len(memoryMap[memoryLevel][idx]) != 0:
+                        # Filter out home-base non-TransientBuffers (standalone allocation; not arena-managed)
+                        arenaMemMap = [
+                            block for block in memMap
+                            if not (ctxt.lookup(block.name)._memoryLevel == memoryLevel
+                                    and not isinstance(ctxt.lookup(block.name), TransientBuffer))
+                        ]
+                        if len(arenaMemMap) != 0:
+                            nodeMemConstraint = (tilingSolution[idx].nodeConstraints[0] if idx < len(tilingSolution)
+                                                 and len(tilingSolution[idx].nodeConstraints) > 0 else None)
                             memoryMap[memoryLevel][idx] = self.minimalloc(
-                                memMap, ctxt, tilingSolution[idx].nodeConstraints[0],
+                                arenaMemMap, ctxt, nodeMemConstraint,
                                 self.memoryHierarchy.memoryLevels[memoryLevel].size - constantTensorOffset, memoryLevel)
+                        else:
+                            memoryMap[memoryLevel][idx] = arenaMemMap
             log.info(f" {SUCCESS_MARK} Memory allocation successful!")
 
         return memoryMap
@@ -1675,6 +1685,8 @@ class Tiler():
         memory allocation strategy.
         """
         for buffer in ctxt.localObjects.values():
+            if not isinstance(buffer, TransientBuffer):
+                continue  # promoted VariableBuffers have standalone allocation; not arena-managed
             if buffer._memoryLevel != defaultMemoryLevel:
                 return False
         return True
@@ -1713,8 +1725,11 @@ class Tiler():
                                           memoryConstraint.addrSpace[0]) // memoryConstraint.multiBufferCoefficient
                             assert bufferSize % byteAlignment == 0, f"Buffer in {memoryConstraint} is not {byteAlignment} byte aligned"
 
-    def testMemoryMapCorrectness(self, memoryMap: Dict[str, List[List[MemoryBlock]]], graph: gs.Graph,
-                                 schedule: Schedule) -> None:
+    def testMemoryMapCorrectness(self,
+                                 memoryMap: Dict[str, List[List[MemoryBlock]]],
+                                 graph: gs.Graph,
+                                 schedule: Schedule,
+                                 ctxt: Optional[NetworkContext] = None) -> None:
         """Test the correctness of a computed memory map.
 
         Validates that the memory map correctly represents buffer lifetimes
@@ -1746,13 +1761,28 @@ class Tiler():
             memoryBlock.name: memoryBlock for levelMemoryMap in memoryMap.values() for memoryBlock in levelMemoryMap[-1]
         }
 
+        def _isStandalonePromoted(name: str) -> bool:
+            """Return True for non-TransientBuffers at a non-default memory level (standalone allocation)."""
+            if ctxt is None:
+                return False
+            try:
+                buf = ctxt.lookup(name)
+            except Exception:
+                return False
+            defaultLevel = next(iter(memoryMap.keys()))
+            return (not isinstance(buf, TransientBuffer) and buf._memoryLevel != defaultLevel)
+
         # JUNGVI: Assert output buffers are alive until the end
         for tensor in graph.outputs:
+            if tensor.name not in memoryBlockMap and _isStandalonePromoted(tensor.name):
+                continue
             assert memoryBlockMap[tensor.name]._lifetime[-1] == len(
                 schedule), "Invalid memory map! Output buffer is not alive at the last step!"
 
         # JUNGVI: Assert input buffers are alive at the beginning
         for inputBuffer in graph.inputs:
+            if inputBuffer.name not in memoryBlockMap and _isStandalonePromoted(inputBuffer.name):
+                continue
             assert memoryBlockMap[
                 inputBuffer.name]._lifetime[0] == 0, "Invalid memory map! Input buffer is not alive at step 0!"
 
@@ -1761,6 +1791,8 @@ class Tiler():
             node = pattern[0]
             nodeIO = [node for node in node.inputs + node.outputs if not isinstance(node, gs.Constant)]
             for tensor in nodeIO:
+                if tensor.name not in memoryBlockMap and _isStandalonePromoted(tensor.name):
+                    continue  # standalone-promoted tensor is always alive
                 lifetime = memoryBlockMap[tensor.name]._lifetime
                 assert stepIdx in range(lifetime[0], lifetime[-1] +
                                         1), f"Invalid memory map! Buffer {tensor.name} is not alive at step {stepIdx}!"
@@ -1907,7 +1939,7 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
             self.tiler.plotMemoryAlloc(memoryMap, self.ctxt, self.deeployStateDir, self.Platform.memoryHierarchy)
 
         log.debug(" - Test Memory Map Correctness")
-        self.tiler.testMemoryMapCorrectness(memoryMap, self.graph, schedule)
+        self.tiler.testMemoryMapCorrectness(memoryMap, self.graph, schedule, self.ctxt)
 
         # SCHEREMO: Annotate execution block with solution
         for layer, pattern in zip(self.layerBinding.values(), tilingSolution):

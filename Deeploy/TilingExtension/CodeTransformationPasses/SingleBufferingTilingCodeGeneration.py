@@ -39,15 +39,80 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
             externalBufferShape = tensorMemoryConstraint.memoryConstraints[self.externalMemory].shape
             assert externalBufferShape is not None
 
+            original_rectangles = list(rectangles)
             rectangles, externalBufferShape = self._legalizeTransfers(rectangles, tuple(externalBufferShape),
                                                                       localBuffer._type.referencedType.typeWidth,
                                                                       self.isFinalMemoryLevel(tensorMemoryConstraint))
 
-            externalBufferRef = self._hoistReference(ctxt,
-                                                     externalBuffer.name + "_ref",
-                                                     externalBuffer,
-                                                     shape = externalBufferShape,
-                                                     override_type = VoidType)
+            if externalBuffer._memoryLevel == self.externalMemory:
+                typeWidth = localBuffer._type.referencedType.typeWidth
+                buf_shape = externalBuffer.shape
+                buf_rank = len(buf_shape)
+                _strides = [1] * buf_rank
+                for _i, _d in enumerate(reversed(buf_shape[1:])):
+                    _strides[_i + 1] = _strides[_i] * _d
+                strides = tuple(reversed(_strides))
+                all_zero = all(all(x == 0 for x in r.offset[-buf_rank:]) for r in original_rectangles)
+                if all_zero and not isinstance(externalBuffer, _ReferenceBuffer):
+                    # Standalone promoted buffer: no outer-loop pointer advance.
+                    # Detect whether the inner tiles span the full tensor (Scenario A:
+                    # same full tensor every outer iteration) or are slices of it
+                    # (Scenario B: tensor tiled across outer iterations).
+                    # Use the first tile's dims to distinguish: if tile == full tensor,
+                    # all cumulative offsets are 0; otherwise enumerate outer windows
+                    # in column-major order (matching computeTileHyperRectangles).
+                    tile_dims = original_rectangles[0].dims[-buf_rank:]
+                    if tuple(tile_dims) == tuple(buf_shape):
+                        # Full tensor used every outer iteration — all offsets zero.
+                        cum_byte_offsets = [0] * len(original_rectangles)
+                    else:
+                        import math as _math
+                        tile_ends = [_math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
+
+                        def _colmaj(ends):
+                            idx = [0] * len(ends)
+                            total = 1
+                            for e in ends:
+                                total *= e
+                            for _ in range(total):
+                                yield list(idx)
+                                for d in range(len(ends)):
+                                    if idx[d] + 1 < ends[d]:
+                                        idx[d] += 1
+                                        break
+                                    else:
+                                        idx[d] = 0
+
+                        cum_byte_offsets = [
+                            sum(ti * tile_dims[d] * strides[d]
+                                for d, ti in enumerate(tidx)) * typeWidth // 8
+                            for tidx in _colmaj(tile_ends)
+                        ]
+                elif all_zero:
+                    # _ReferenceBuffer: outer UPDATE VARIABLE already advances
+                    # this pointer; inner tiles use relative (0,...) offsets.
+                    cum_byte_offsets = [0] * len(original_rectangles)
+                else:
+                    cum_byte_offsets = [
+                        sum(o * s
+                            for o, s in zip(r.offset[-buf_rank:], strides)) * typeWidth // 8
+                        for r in original_rectangles
+                    ]
+                cum_buf = self._hoistValues(ctxt, f'{tensorName}_cumByteOffset', cum_byte_offsets)
+                offset_expr = (f"{ctxt._mangle(cum_buf.name)}"
+                               f"[*{ctxt._mangle(operatorRepresentation['tileIdxPtr'])}]")
+                externalBufferRef = self._hoistReference(ctxt,
+                                                         externalBuffer.name + "_ref",
+                                                         externalBuffer,
+                                                         shape = externalBufferShape,
+                                                         offset = offset_expr,
+                                                         override_type = VoidType)
+            else:
+                externalBufferRef = self._hoistReference(ctxt,
+                                                         externalBuffer.name + "_ref",
+                                                         externalBuffer,
+                                                         shape = externalBufferShape,
+                                                         override_type = VoidType)
 
             future = self.dma.getFuture(tensorName, direction)
 
