@@ -29,37 +29,6 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
         callStack: List[CodeSnippet] = []
         futures: Set[Future] = set()
 
-        # Pre-scan: compute combined outer-loop tile counts across all tensors so
-        # each Scenario-B tensor can determine its period_before (how many outer
-        # iterations elapse before its own tiling dimension advances) without
-        # relying on the sqrt heuristic, which fails when M_fast == M_slow.
-        import math as _math
-        _combined_ends: list = []
-        for _tName, _rects_list in dictOfArrays(transferSchedule).items():
-            try:
-                _lBuf = ctxt.lookup(operatorRepresentation[_tName])
-            except Exception:
-                continue
-            if not isinstance(_lBuf, _ReferenceBuffer):
-                continue
-            _eBuf = ctxt.lookup(_lBuf._referenceName)
-            if isinstance(_eBuf, _ReferenceBuffer):
-                continue
-            _bshape = _eBuf.shape
-            _br = len(_bshape)
-            _rects0 = list(_rects_list)
-            if not _rects0:
-                continue
-            _td = _rects0[0].dims[-_br:]
-            if len(_td) < _br:
-                continue
-            _te = [_math.ceil(_bshape[d] / _td[d]) for d in range(_br)]
-            if not _combined_ends:
-                _combined_ends = list(_te)
-            else:
-                for d in range(min(_br, len(_combined_ends))):
-                    _combined_ends[d] = max(_combined_ends[d], _te[d])
-
         for tensorName, rectangles in dictOfArrays(transferSchedule).items():
             localBuffer = ctxt.lookup(operatorRepresentation[tensorName])
             assert localBuffer._memoryLevel == self.localMemory
@@ -93,7 +62,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                     # all cumulative offsets are 0; otherwise enumerate outer windows
                     # in column-major order (matching computeTileHyperRectangles).
                     tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
+                    if tuple(tile_dims) == tuple(buf_shape):
                         # Full tensor used every outer iteration — all offsets zero.
                         cum_byte_offsets = [0] * len(original_rectangles)
                     else:
@@ -114,28 +83,11 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                                     else:
                                         idx[d] = 0
 
-                        base_offsets = [
+                        cum_byte_offsets = [
                             sum(ti * tile_dims[d] * strides[d]
                                 for d, ti in enumerate(tidx)) * typeWidth // 8
                             for tidx in _colmaj(tile_ends)
                         ]
-                        num_rects = len(original_rectangles)
-                        M = len(base_offsets)
-                        N = num_rects
-                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
-                        if len(nontrivial) == 1 and _combined_ends:
-                            d_tile = nontrivial[0]
-                            period_before = 1
-                            for _d in range(d_tile):
-                                period_before *= _combined_ends[_d]
-                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
-                        elif N <= M:
-                            # Fewer outer tiles than unique buffer windows: take one-to-one.
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
-                        elif M * M > N:
-                            cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
-                        else:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
                 elif all_zero:
                     # _ReferenceBuffer: outer UPDATE VARIABLE already advances
                     # this pointer; inner tiles use relative (0,...) offsets.
@@ -155,81 +107,6 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                                                          shape = externalBufferShape,
                                                          offset = offset_expr,
                                                          override_type = VoidType)
-            elif externalBuffer._memoryLevel == self.localMemory:
-                # Buffer already resides at the local memory level (e.g. promoted to L2
-                # while this is the L3→L2 pass). No DMA is needed at this level, but we
-                # still need correct cumByteOffsets so the inner tiling pass advances
-                # through the promoted buffer on each outer iteration.
-                typeWidth = localBuffer._type.referencedType.typeWidth
-                buf_shape = externalBuffer.shape
-                buf_rank = len(buf_shape)
-                _strides = [1] * buf_rank
-                for _i, _d in enumerate(reversed(buf_shape[1:])):
-                    _strides[_i + 1] = _strides[_i] * _d
-                strides = tuple(reversed(_strides))
-                all_zero = all(all(x == 0 for x in r.offset[-buf_rank:]) for r in original_rectangles)
-                if all_zero and not isinstance(externalBuffer, _ReferenceBuffer):
-                    tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
-                        cum_byte_offsets = [0] * len(original_rectangles)
-                    else:
-                        import math as _math
-                        tile_ends = [_math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
-
-                        def _colmaj(ends):
-                            idx = [0] * len(ends)
-                            total = 1
-                            for e in ends:
-                                total *= e
-                            for _ in range(total):
-                                yield list(idx)
-                                for d in range(len(ends)):
-                                    if idx[d] + 1 < ends[d]:
-                                        idx[d] += 1
-                                        break
-                                    else:
-                                        idx[d] = 0
-
-                        base_offsets = [
-                            sum(ti * tile_dims[d] * strides[d]
-                                for d, ti in enumerate(tidx)) * typeWidth // 8
-                            for tidx in _colmaj(tile_ends)
-                        ]
-                        num_rects = len(original_rectangles)
-                        M = len(base_offsets)
-                        N = num_rects
-                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
-                        if len(nontrivial) == 1 and _combined_ends:
-                            d_tile = nontrivial[0]
-                            period_before = 1
-                            for _d in range(d_tile):
-                                period_before *= _combined_ends[_d]
-                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
-                        elif N <= M:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
-                        elif M * M > N:
-                            cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
-                        else:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
-                elif all_zero:
-                    cum_byte_offsets = [0] * len(original_rectangles)
-                else:
-                    cum_byte_offsets = [
-                        sum(o * s
-                            for o, s in zip(r.offset[-buf_rank:], strides)) * typeWidth // 8
-                        for r in original_rectangles
-                    ]
-                cum_buf = self._hoistValues(ctxt, f'{tensorName}_cumByteOffset', cum_byte_offsets)
-                offset_expr = (f"{ctxt._mangle(cum_buf.name)}"
-                               f"[*{ctxt._mangle(operatorRepresentation['tileIdxPtr'])}]")
-                externalBufferRef = self._hoistReference(ctxt,
-                                                         externalBuffer.name + "_ref",
-                                                         externalBuffer,
-                                                         shape = externalBufferShape,
-                                                         offset = offset_expr,
-                                                         override_type = VoidType)
-                # Skip DMA generation; the inner level will handle L2→L1 transfers.
-                continue
             else:
                 externalBufferRef = self._hoistReference(ctxt,
                                                          externalBuffer.name + "_ref",
