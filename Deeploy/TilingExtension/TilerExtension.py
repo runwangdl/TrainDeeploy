@@ -299,6 +299,11 @@ class Tiler():
                     if hasattr(_buffer, "_alias") and (ctxt.is_global(_buffer._alias) or _buffer._alias in blockNames):
                         continue
 
+                    # Global non-transient buffers at their home level (e.g. weights promoted to L2)
+                    # are allocated via pi_l2_malloc outside the arena; their addrSpace is None.
+                    if node._addrSpace is None:
+                        continue
+
                     currentMax = max(currentMax, node._addrSpace[1])
 
             maxAddr[memoryLevel] = currentMax
@@ -352,6 +357,12 @@ class Tiler():
                             f"((char*){str(staticBuf._instance)} + {aliasNode.addrSpace[0]});")
                         _buffer.deallocTemplate = _deallocTemplate
 
+                        continue
+
+                    # No arena address assigned: buffer is allocated outside the arena
+                    # (e.g. a global weight promoted to L2, allocated via pi_l2_malloc).
+                    # Leave its default allocTemplate in place.
+                    if node.addrSpace is None:
                         continue
 
                     offset = node.addrSpace[0]
@@ -559,6 +570,11 @@ class Tiler():
                 else:
                     for idx, memMap in enumerate(memoryMap[memoryLevel]):
                         if len(memoryMap[memoryLevel][idx]) != 0:
+                            if idx >= len(tilingSolution):
+                                # Outer-scheduler entry: global buffers at this non-default level
+                                # (e.g. weights promoted to L2).  They are statically allocated via
+                                # pi_l2_malloc and do not belong to the tiler's arena — skip.
+                                continue
                             memoryMap[memoryLevel][idx] = self.minimalloc(
                                 memMap, ctxt, tilingSolution[idx].nodeConstraints[0],
                                 self.memoryHierarchy.memoryLevels[memoryLevel].size - constantTensorOffset, memoryLevel)
@@ -1089,9 +1105,12 @@ class Tiler():
         for level, memLevel in self.memoryHierarchy.memoryLevels.items():
             newMemLevel = copy.copy(memLevel)
 
-            if not self.memoryAllocStrategy == "MiniMalloc":
-                outerConstraint = tilerModel.getVariable(self.outerMemoryScheduler.getSymbolicCostName(0, level), 0)
+            costVarName = self.outerMemoryScheduler.getSymbolicCostName(0, level)
+            try:
+                outerConstraint = tilerModel.getVariable(costVarName, 0)
                 newMemLevel.size = newMemLevel.size - outerConstraint
+            except KeyError:
+                pass  # No outer tiles at this memory level; inner budget unchanged
 
             innerMemoryHierarchy._add(newMemLevel)
 
@@ -1673,10 +1692,20 @@ class Tiler():
         -----
         Uniform memory level allocation is required when using the MiniMalloc
         memory allocation strategy.
+
+        Non-transient VariableBuffers (promoted intermediate activations) are
+        exempt: they receive standalone pi_l2_malloc via the outer scheduler
+        and do not enter the per-tile arena.
         """
         for buffer in ctxt.localObjects.values():
             if buffer._memoryLevel != defaultMemoryLevel:
-                return False
+                # TransientBuffers are tile-level staging buffers and must stay
+                # at the default level for MiniMalloc to be correct.
+                if isinstance(buffer, TransientBuffer):
+                    return False
+                # Plain VariableBuffers may be promoted activations; they are
+                # handled by the outer memory scheduler (addrSpace = None) and
+                # get a standalone allocation, so they do not affect the arena.
         return True
 
     def testTilingSolutionCorrectness(self, tilingSolution: TilingSolution) -> None:

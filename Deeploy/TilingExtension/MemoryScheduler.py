@@ -488,8 +488,16 @@ class MemoryScheduler():
                 permAdj, permCost, permutationMatrix = self._stablePermutation(adjacencyMatrix, costVector,
                                                                                permutationList)
             elif memoryAllocStrategy == "MiniMalloc":
-                #JUNVI: When using MiniMalloc we don't perform memory allocation with Tiling, hence we don't add the permutation constraints
-                continue
+                # Use identity permutation (no Tetris reuse optimisation) so that
+                # _generateCost creates the named cost variable.  The inner memory
+                # hierarchy will subtract this variable from the available budget,
+                # matching TetrisRandom's behaviour and preventing the solver from
+                # choosing tile shapes that exceed the DMA engine's rank.
+                if numVars == 0:
+                    continue
+                permutationList = list(range(numVars))
+                permAdj, permCost, permutationMatrix = self._stablePermutation(adjacencyMatrix, costVector,
+                                                                               permutationList)
             else:
                 raise ("Unrecognized memory allocation strategy!")
 

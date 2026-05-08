@@ -47,3 +47,38 @@ class AnnotateIOMemoryLevel(SequentialPass):
             _buffer._memoryLevel = self.ioLevel
 
         return ctxt, graph
+
+
+class AnnotateTrainingWeightPromotionToL2(SequentialPass):
+    """Override _memoryLevel to L2 for weight graph-inputs in a training graph.
+
+    Training graph inputs are ordered:
+        [0 .. num_data_inputs)   — data inputs  (keep at current level, e.g. L3)
+        [num_data_inputs .. end) — weights + grad-acc buffers
+
+    Among the latter, any input whose name contains ``_grad.accumulation.buffer``
+    is a gradient-accumulation buffer (already assigned to L2 by the harness);
+    the remainder are trainable weights and are promoted here to L2 so that they
+    are allocated in on-chip SRAM (pi_l2_malloc) rather than HyperRAM
+    (cl_ram_malloc), eliminating per-step L3 DMA for those tensors.
+
+    Must be inserted into the pass list *after* AnnotateIOMemoryLevel so that
+    the initial L3 annotation is already in place when this pass runs.
+    """
+
+    _GRAD_ACC = "_grad.accumulation.buffer"
+
+    def __init__(self, num_data_inputs: int):
+        super().__init__()
+        self.num_data_inputs = num_data_inputs
+
+    def apply(self, ctxt: NetworkContext, graph: gs.Graph) -> Tuple[NetworkContext, gs.Graph]:
+        for i, tensor in enumerate(graph.inputs):
+            if i < self.num_data_inputs:
+                continue
+            if self._GRAD_ACC in tensor.name:
+                continue
+            buf = ctxt.globalObjects.get(tensor.name)
+            if buf is not None and isinstance(buf, ctxt.VariableBuffer):
+                buf._memoryLevel = "L2"
+        return ctxt, graph
