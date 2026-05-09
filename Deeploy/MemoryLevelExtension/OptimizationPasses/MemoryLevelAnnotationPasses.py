@@ -129,6 +129,13 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 if name in skip_tensors:
                     continue
+                # Skip buffers whose tiling code was already generated with L3 semantics.
+                # _convertCtxtToStaticSchedule sets an instance-level allocTemplate that
+                # points to MEMORYARENA_L3 + offset.  Promoting such a buffer to L2 after
+                # tile() has run leaves the tiling closures writing to the L2 arena scratch
+                # buffer instead of the actual named L2 buffer, producing corrupt output.
+                if 'allocTemplate' in buf.__dict__:
+                    continue
                 size = self._bufferSize(buf)
                 if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                     continue
