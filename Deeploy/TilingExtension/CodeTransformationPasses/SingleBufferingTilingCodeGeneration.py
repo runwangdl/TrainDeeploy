@@ -51,6 +51,8 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
             if not _rects0:
                 continue
             _td = _rects0[0].dims[-_br:]
+            if len(_td) < _br:
+                continue
             _te = [_math.ceil(_bshape[d] / _td[d]) for d in range(_br)]
             if not _combined_ends:
                 _combined_ends = list(_te)
