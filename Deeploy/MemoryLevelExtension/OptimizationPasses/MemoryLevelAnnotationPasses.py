@@ -9,7 +9,7 @@ from typing import List, Tuple
 import onnx_graphsurgeon as gs
 
 from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import SequentialPass
-from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, VariableBuffer, _ReferenceBuffer
+from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, TransientBuffer, VariableBuffer, _ReferenceBuffer
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy
 
 
@@ -122,6 +122,8 @@ class PromoteTensorsToL2(SequentialPass):
         if self.includeActivations:
             for name, buf in ctxt.localObjects.items():
                 if isinstance(buf, _ReferenceBuffer) or isinstance(buf, ConstantBuffer):
+                    continue
+                if isinstance(buf, TransientBuffer):
                     continue
                 if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
                     continue
