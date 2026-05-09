@@ -197,3 +197,16 @@ TRAINING_MODEL_OVERRIDES = {
         # across all 4 steps — default 1e-3 tolerance is fine.
     },
 }
+
+# Tensor-promotion regression set: L3 inference models exercised with the
+# PromoteTensorsToL2 pass enabled. Each entry maps test path -> list of
+# (l1_bytes, strategy, includeActivations) tuples. Strategies kept small to
+# stay within CI budget; the `random` entry catches non-deterministic
+# regressions in the column-major offset enumeration.
+L3_SINGLEBUFFER_PROMOTE_MODELS = {
+    "Models/CCT/FP32/CCT_2_32_32_128": [
+        (128000, "cycle-aware", False),
+        (128000, "cycle-aware", True),
+        (128000, "random", False),
+    ],
+}

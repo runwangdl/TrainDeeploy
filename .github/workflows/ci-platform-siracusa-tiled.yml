@@ -46,3 +46,13 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and singlebuffer"
+
+  # Inference tests - L3 singlebuffer with PromoteTensorsToL2 enabled.
+  # Exercises the L2-promoted DMA byte-offset codegen across strategies.
+  siracusa-tiled-l3-singlebuffer-promote:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and l3 and singlebuffer"

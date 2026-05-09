@@ -78,6 +78,7 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "l2: mark test as L2 default memory level")
     config.addinivalue_line("markers", "l3: mark test as L3 default memory level")
     config.addinivalue_line("markers", "wmem: mark test as using Neureka weight memory")
+    config.addinivalue_line("markers", "promote: mark test as exercising the L3->L2 tensor promotion pass")
     config.addinivalue_line("markers", "dma: mark test as DMA test")
     config.addinivalue_line(
         "markers",

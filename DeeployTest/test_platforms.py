@@ -39,6 +39,7 @@ from test_siracusa_tiled_config import L2_DOUBLEBUFFER_KERNELS, L2_DOUBLEBUFFER_
     L2_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L2_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
+from test_siracusa_tiled_config import L3_SINGLEBUFFER_PROMOTE_MODELS as SIRACUSA_L3_SINGLEBUFFER_PROMOTE_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import TRAINING_MODEL_OVERRIDES as SIRACUSA_TRAINING_MODEL_OVERRIDES
 from test_snitch_config import DEFAULT_NUM_CORES as SNITCH_DEFAULT_NUM_CORES
@@ -148,6 +149,7 @@ PLATFORM_CONFIGS = {
 #   l2: L2 default memory level
 #   l3: L3 default memory level
 #   wmem: with Neureka weight memory enabled
+#   promote: with the PromoteTensorsToL2 pass enabled
 
 
 @pytest.mark.generic
@@ -409,6 +411,56 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+def _generate_promote_test_params(test_dict):
+    """Flatten {test_name: [(l1, strategy, includeActivations), ...]} into one row per case."""
+    params = []
+    for test_name, configs in test_dict.items():
+        for l1, strategy, include_acts in configs:
+            params.append((test_name, l1, strategy, include_acts))
+    return params
+
+
+def _promote_param_id(param):
+    test_name, l1, strategy, include_acts = param
+    acts = "act" if include_acts else "noact"
+    return f"{test_name}-{l1}-{strategy}-{acts}"
+
+
+@pytest.mark.siracusa_tiled
+@pytest.mark.models
+@pytest.mark.singlebuffer
+@pytest.mark.l3
+@pytest.mark.promote
+@pytest.mark.parametrize(
+    "test_params",
+    _generate_promote_test_params(SIRACUSA_L3_SINGLEBUFFER_PROMOTE_MODELS),
+    ids = _promote_param_id,
+)
+def test_siracusa_tiled_promote_l3_singlebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
+                                                skipgen, skipsim) -> None:
+    """L3 inference + PromoteTensorsToL2 regression. Verifies the L2-promoted
+    DMA byte-offset codegen produces correct results across strategies."""
+    test_name, l1, strategy, include_acts = test_params
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = cmake_args,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = l1,
+        default_mem_level = "L3",
+        double_buffer = False,
+        promote_to_l2 = True,
+        promote_to_l2_strategy = strategy,
+        promote_to_l2_include_activations = include_acts,
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
