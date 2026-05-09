@@ -22,7 +22,7 @@ import Deeploy.CommonExtensions.DataTypes as BasicDataTypes
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.NetworkDeployers.NetworkDeployerWrapper import NetworkDeployerWrapper
 from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, NodeBinding, NodeTemplate, ONNXLayer, Schedule, \
-    SubGraph, TransientBuffer
+    SubGraph, TransientBuffer, VariableBuffer, _ReferenceBuffer
 from Deeploy.Logging import DEFAULT_LOGGER as log
 from Deeploy.Logging import SUCCESS_MARK
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
@@ -183,29 +183,64 @@ class Tiler():
         def plotSingleMemoryLevel(memoryLevel: MemoryLevel):
             """ Generates a single Plotly subplot for a memory level. """
             fig = go.Figure()
-            constantBuffersOffset = 0
 
-            infiniteLifetimeBuffers = [
-                buffer for buffer in ctxt.globalObjects.values()
-                if not self.arenaName in buffer.name and isinstance(buffer, ConstantBuffer)
-            ]
+            # Standalone-promoted buffers live at this memoryLevel but are not arena-managed
+            # (TilerExtension excludes them from minimalloc input; see _tileNetwork).
+            # Without explicit handling, promoted activations (local VariableBuffer) wouldn't
+            # be drawn at all, and the L2 panel would look near-empty even at 99% utilization.
+            arenaNames = {blk.name for step in memoryMap[memoryLevel.name] for blk in step}
 
-            constantBuffersOffset = 0
-            for ioBuffer in infiniteLifetimeBuffers:
-                if not ioBuffer._memoryLevel == memoryLevel.name:
+            def _bufBytes(b):
+                try:
+                    return int(np.prod(b.shape)) * b._type.referencedType.typeWidth // 8
+                except Exception:
+                    return 0
+
+            def _eligible(b):
+                if getattr(b, '_memoryLevel', None) != memoryLevel.name:
+                    return False
+                if b.name in arenaNames:
+                    return False  # arena loop draws it as a windowed box
+                if self.arenaName in b.name:
+                    return False  # internal allocator scratch
+                return True
+
+            promotedConsts = []  # (name, size)
+            promotedVars = []
+            for buf in ctxt.globalObjects.values():
+                if not isinstance(buf, ConstantBuffer) or isinstance(buf, _ReferenceBuffer):
                     continue
-                _ioSize = np.prod(ioBuffer.shape) * ioBuffer._type.referencedType.typeWidth // 8
-                _maxLifetime = len(memoryMap[memoryLevel.name])
-                fig.add_trace(
-                    go.Scatter(x = [-0.5, -0.5, _maxLifetime + 0.5, _maxLifetime + 0.5],
-                               y = [
-                                   constantBuffersOffset, constantBuffersOffset + _ioSize,
-                                   constantBuffersOffset + _ioSize, constantBuffersOffset
-                               ],
-                               name = ioBuffer.name,
-                               text = ioBuffer.name,
-                               **addTraceConfig))
-                constantBuffersOffset += _ioSize
+                if not _eligible(buf):
+                    continue
+                sz = _bufBytes(buf)
+                if sz > 0:
+                    promotedConsts.append((buf.name, sz))
+            for buf in ctxt.localObjects.values():
+                if not isinstance(buf, VariableBuffer):
+                    continue
+                if isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                if not _eligible(buf):
+                    continue
+                sz = _bufBytes(buf)
+                if sz > 0:
+                    promotedVars.append((buf.name, sz))
+
+            constantBuffersOffset = 0
+            _maxLifetime = len(memoryMap[memoryLevel.name])
+            for color, items in (('lightblue', promotedConsts), ('orange', promotedVars)):
+                for name, sz in items:
+                    fig.add_trace(
+                        go.Scatter(x = [-0.5, -0.5, _maxLifetime + 0.5, _maxLifetime + 0.5],
+                                   y = [
+                                       constantBuffersOffset, constantBuffersOffset + sz,
+                                       constantBuffersOffset + sz, constantBuffersOffset
+                                   ],
+                                   name = name,
+                                   text = name,
+                                   fillcolor = color,
+                                   **addTraceConfig))
+                    constantBuffersOffset += sz
 
             for memoryMapStep in memoryMap[memoryLevel.name]:
                 for buffer in memoryMapStep:
@@ -230,9 +265,19 @@ class Tiler():
                                    text = buffer.name,
                                    **addTraceConfig))
 
+            sumConst = sum(s for _, s in promotedConsts)
+            sumVar = sum(s for _, s in promotedVars)
+            sumTotal = sumConst + sumVar
+            pct = (sumTotal / memoryLevel.size * 100) if memoryLevel.size else 0.0
+            title = (f"Memory Allocation - {memoryLevel.name}"
+                     f"<br><sub>standalone (lightblue=const, orange=var): "
+                     f"{sumTotal:,} B / {memoryLevel.size:,} B = {pct:.1f}%  "
+                     f"&middot;  const={len(promotedConsts)} ({sumConst:,} B), "
+                     f"var={len(promotedVars)} ({sumVar:,} B)</sub>")
+
             fig.update_xaxes(title_text = "Lifetime")
             fig.update_yaxes(title_text = "Address Space (Bytes)")
-            fig.update_layout(title = f"Memory Allocation - {memoryLevel.name}", showlegend = False)
+            fig.update_layout(title = title, showlegend = False)
 
             fig.add_trace(
                 go.Scatter(
