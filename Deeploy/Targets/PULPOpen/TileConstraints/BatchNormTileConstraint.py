@@ -714,6 +714,8 @@ class BatchNormalizationGradTileConstraint(TileConstraint):
             for schedule in tilingSchedules:
                 schedule.outputBaseOffsets[secondary] = addr
                 for step in schedule.outputLoadSchedule:
+                    if 'dX' not in step:
+                        continue
                     dX_rect = step['dX']
                     c_start = dX_rect.offset[1]
                     c_tile = dX_rect.dims[1]

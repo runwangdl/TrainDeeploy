@@ -156,7 +156,15 @@ class PromoteTensorsToL2(SequentialPass):
         else:
             raise ValueError(f"Unknown promotion strategy: {self.strategy!r}")
 
-        l2_used = 0
+        # Account for tensors already promoted to L2 by a previous call to this pass.
+        # MemoryDeployerWrapper calls apply() up to 3 times; each call must not exceed
+        # the shared L2 budget, so we subtract what is already committed.
+        already_l2 = sum(
+            self._bufferSize(buf)
+            for buf in {**ctxt.globalObjects, **ctxt.localObjects}.values()
+            if getattr(buf, '_memoryLevel', None) == 'L2'
+        )
+        l2_used = already_l2
         promoted = []
         for name, buf, size, _ in candidates:
             if l2_used + size <= self.l2Budget:
@@ -165,6 +173,7 @@ class PromoteTensorsToL2(SequentialPass):
                 promoted.append((name, size))
 
         print(f"  [PromoteTensorsToL2] promoted {len(promoted)} tensors, "
-              f"{l2_used} / {self.l2Budget} bytes (strategy={self.strategy!r})")
+              f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, new={l2_used - already_l2}, "
+              f"strategy={self.strategy!r})")
 
         return ctxt, graph
