@@ -26,7 +26,7 @@ from Deeploy.Logging import DEFAULT_LOGGER as log
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
 from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import MemoryDeployerWrapper
 from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateDefaultMemoryLevel, \
-    AnnotateIOMemoryLevel
+    AnnotateIOMemoryLevel, PromoteTensorsToL2
 from Deeploy.Targets.Neureka.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateNeurekaWeightMemoryLevel
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
@@ -112,6 +112,17 @@ def setupDeployer(graph: gs.Graph, memoryHierarchy: MemoryHierarchy, defaultTarg
         memoryLevelAnnotationPasses.append(
             AnnotateNeurekaWeightMemoryLevel(neurekaEngineName = deployer.Platform.engines[0].name,
                                              weightMemoryLevel = weightMemoryLevel))
+
+    if args.promoteToL2:
+        assert args.defaultMemLevel == "L3", "--promoteToL2 only makes sense when --defaultMemLevel L3"
+        memoryLevelAnnotationPasses.append(
+            PromoteTensorsToL2(
+                l2Size = memoryHierarchy.memoryLevels["L2"].size,
+                headroom = args.promoteToL2Headroom,
+                strategy = args.promoteToL2Strategy,
+                includeActivations = args.promoteToL2IncludeActivations,
+                maxBufferBytes = args.promoteToL2MaxBufferBytes,
+            ))
 
     # Make the deployer memory-level aware
     deployer = MemoryDeployerWrapper(deployer, memoryLevelAnnotationPasses)
@@ -216,6 +227,27 @@ if __name__ == '__main__':
         help =
         "Number of cores on which the network is run. Currently, required for im2col buffer sizing on Siracusa. Default: 1."
     )
+    parser.add_argument('--promoteToL2',
+                        action = 'store_true',
+                        help = 'Promote selected L3 tensors to L2 (requires --defaultMemLevel L3).')
+    parser.add_argument('--promoteToL2Strategy',
+                        type = str,
+                        default = 'cycle-aware',
+                        choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio',
+                                   'smallest', 'largest', 'random'],
+                        help = 'Selection strategy for PromoteTensorsToL2. Default: cycle-aware.')
+    parser.add_argument('--promoteToL2IncludeActivations',
+                        action = 'store_true',
+                        help = 'Also consider VariableBuffer activations as promotion candidates '
+                               '(default: only ConstantBuffer weights from globalObjects).')
+    parser.add_argument('--promoteToL2MaxBufferBytes',
+                        type = int,
+                        default = 2048,
+                        help = 'Skip candidates larger than this many bytes; 0 = no cap. Default: 2048.')
+    parser.add_argument('--promoteToL2Headroom',
+                        type = int,
+                        default = 64000,
+                        help = 'Bytes reserved in L2 for tile staging (not available for promotion). Default: 64000.')
 
     parser.set_defaults(shouldFail = False)
     args = parser.parse_args()
