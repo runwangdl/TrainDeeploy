@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import math
+import random as _random
 from typing import List, Tuple
 
 import onnx_graphsurgeon as gs
 
 from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import SequentialPass
-from Deeploy.DeeployTypes import NetworkContext, VariableBuffer
+from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, VariableBuffer, _ReferenceBuffer
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy
 
 
@@ -45,5 +47,115 @@ class AnnotateIOMemoryLevel(SequentialPass):
 
         for _buffer in buffers:
             _buffer._memoryLevel = self.ioLevel
+
+        return ctxt, graph
+
+
+class PromoteTensorsToL2(SequentialPass):
+    """Greedy L3→L2 tensor promotion with configurable selection strategies.
+
+    Args:
+        l2Size:                 L2 capacity in bytes (from MemoryHierarchy).
+        headroom:               Bytes reserved for tile staging; not available for promotion.
+        strategy:               One of 'cycle-aware' (default), 'greedy-score',
+                                'knapsack-ratio', 'smallest', 'largest', 'random'.
+        includeActivations:     If True, also promote VariableBuffers (activations) from
+                                localObjects, not just ConstantBuffers from globalObjects.
+        maxBufferBytes:         Skip buffers larger than this; 0 means no cap.
+        setupCycles:            Per-DMA-transaction fixed overhead in cycles (default 200).
+        bandwidthBytesPerCycle: Effective L3↔L2 bandwidth (default 4.0 B/cycle).
+        seed:                   Random seed for the 'random' strategy (default 42).
+
+    Excludes tensors that are inputs or outputs of SkipTransformer ops (Reshape, Squeeze,
+    Unsqueeze, Flatten, Identity). Promoting one side of such a pointer-alias pair without
+    the other causes a cross-level alias that crashes at runtime.
+    """
+
+    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity'}
+
+    def __init__(self,
+                 l2Size: int,
+                 headroom: int = 64000,
+                 strategy: str = 'cycle-aware',
+                 includeActivations: bool = False,
+                 maxBufferBytes: int = 2048,
+                 setupCycles: int = 200,
+                 bandwidthBytesPerCycle: float = 4.0,
+                 seed: int = 42):
+        super().__init__()
+        self.l2Budget = l2Size - headroom
+        self.strategy = strategy
+        self.includeActivations = includeActivations
+        self.maxBufferBytes = maxBufferBytes
+        self.setupCycles = setupCycles
+        self.bw = bandwidthBytesPerCycle
+        self.seed = seed
+
+    def _bufferSize(self, buf: VariableBuffer) -> int:
+        try:
+            return buf.size_bytes()
+        except Exception:
+            return math.prod(buf.shape) * 4
+
+    def apply(self, ctxt: NetworkContext, graph: gs.Graph) -> Tuple[NetworkContext, gs.Graph]:
+        skip_tensors: set = set()
+        for node in graph.nodes:
+            if node.op in self._SKIP_OPS:
+                for t in list(node.inputs) + list(node.outputs):
+                    if t is not None:
+                        skip_tensors.add(t.name)
+
+        candidates: List[Tuple[str, VariableBuffer, int, int]] = []
+
+        for name, buf in ctxt.globalObjects.items():
+            if not isinstance(buf, ConstantBuffer) or isinstance(buf, _ReferenceBuffer):
+                continue
+            if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
+                continue
+            if name in skip_tensors:
+                continue
+            size = self._bufferSize(buf)
+            if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
+                continue
+            candidates.append((name, buf, size, len(buf._users)))
+
+        if self.includeActivations:
+            for name, buf in ctxt.localObjects.items():
+                if isinstance(buf, _ReferenceBuffer) or isinstance(buf, ConstantBuffer):
+                    continue
+                if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
+                    continue
+                if name in skip_tensors:
+                    continue
+                size = self._bufferSize(buf)
+                if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
+                    continue
+                candidates.append((name, buf, size, len(buf._users)))
+
+        if self.strategy == 'cycle-aware':
+            candidates.sort(key = lambda x: x[3] * (self.setupCycles + x[2] / self.bw) / max(x[2], 1), reverse = True)
+        elif self.strategy == 'greedy-score':
+            candidates.sort(key = lambda x: x[3] * x[2], reverse = True)
+        elif self.strategy == 'knapsack-ratio':
+            candidates.sort(key = lambda x: x[3], reverse = True)
+        elif self.strategy == 'smallest':
+            candidates.sort(key = lambda x: x[2])
+        elif self.strategy == 'largest':
+            candidates.sort(key = lambda x: x[2], reverse = True)
+        elif self.strategy == 'random':
+            _random.Random(self.seed).shuffle(candidates)
+        else:
+            raise ValueError(f"Unknown promotion strategy: {self.strategy!r}")
+
+        l2_used = 0
+        promoted = []
+        for name, buf, size, _ in candidates:
+            if l2_used + size <= self.l2Budget:
+                buf._memoryLevel = 'L2'
+                l2_used += size
+                promoted.append((name, size))
+
+        print(f"  [PromoteTensorsToL2] promoted {len(promoted)} tensors, "
+              f"{l2_used} / {self.l2Budget} bytes (strategy={self.strategy!r})")
 
         return ctxt, graph
