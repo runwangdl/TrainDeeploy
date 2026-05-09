@@ -129,6 +129,9 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                             for _d in range(d_tile):
                                 period_before *= _combined_ends[_d]
                             cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
+                        elif N <= M:
+                            # Fewer outer tiles than unique buffer windows: take one-to-one.
+                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
                         elif M * M > N:
                             cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
                         else:
@@ -202,6 +205,8 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                             for _d in range(d_tile):
                                 period_before *= _combined_ends[_d]
                             cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
+                        elif N <= M:
+                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
                         elif M * M > N:
                             cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
                         else:
