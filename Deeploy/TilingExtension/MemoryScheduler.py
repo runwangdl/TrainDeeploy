@@ -419,6 +419,11 @@ class MemoryScheduler():
                     tensorLifetimeMap[key] = tensorLifetime
                     continue
 
+                if alias not in tensorLifetimeMap:
+                    # alias lives at a different memory level (e.g. promoted to L2)
+                    # and is managed by that level's scheduler; skip lifetime extension here.
+                    continue
+
                 aliasLifetime = tensorLifetimeMap[alias]
                 tensorLifetime = (aliasLifetime[0], max(aliasLifetime[1], lifetime[1]))
                 tensorLifetimeMap[alias] = tensorLifetime
