@@ -450,48 +450,36 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
   if (ci_start >= ci_stop)
     return;
 
-  // Zero-initialise the dX tile for this core's Cin slice.
+  (void)hx1;
+  (void)wx1;
+  // Gather: ci -> ih -> iw -> (co, ky, kx)
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-    for (uint32_t ih = 0; ih < Hin_t; ++ih)
-      for (uint32_t iw = 0; iw < Win_t; ++iw)
-        dx_ci[ih * Win_t + iw] = 0.0f;
-  }
-
-  // Scatter: dX[ci,ih,iw] += W[co,ci,ky,kx] * dY[co,ly,lx]
-  for (uint32_t co = 0; co < Cout; ++co) {
-    const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
-    for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-      const int32_t oy = gy0 + (int32_t)ly;
-      const int32_t base_h = oy * sh - pad_top;
-      for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-        const int32_t ox = gx0 + (int32_t)lx;
-        const int32_t base_w = ox * sw - pad_left;
-        const float dy_val = dy_co[ly * Wout_t + lx];
-        int32_t ky_min = (hx0 > base_h) ? (hx0 - base_h) : 0;
-        int32_t ky_max =
-            (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h) : ((int32_t)P - 1);
-        if (ky_min > ky_max)
-          continue;
-        int32_t kx_min = (wx0 > base_w) ? (wx0 - base_w) : 0;
-        int32_t kx_max =
-            (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w) : ((int32_t)Q - 1);
-        if (kx_min > kx_max)
-          continue;
-        for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
-          float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-          const float *w_co_ci =
-              pWeight +
+    for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t h_abs = (int32_t)ih + hx0;
+      for (uint32_t iw = 0; iw < Win_t; ++iw) {
+        const int32_t w_abs = (int32_t)iw + wx0;
+        float accum = 0.0f;
+        for (uint32_t co = 0; co < Cout; ++co) {
+          const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
+          const float *w_co_ci = pWeight +
               ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
-          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
-            const int32_t ih = (base_h + ky) - hx0;
-            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
-              const int32_t iw = (base_w + kx) - wx0;
-              dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] +=
-                  dy_val * w_co_ci[(size_t)ky * (size_t)Q + (size_t)kx];
+          for (uint32_t ky = 0; ky < P; ++ky) {
+            const int32_t num_h = h_abs + pad_top - (int32_t)ky;
+            if (num_h < 0 || num_h % sh != 0) continue;
+            const int32_t ly = num_h / sh - gy0;
+            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            for (uint32_t kx = 0; kx < Q; ++kx) {
+              const int32_t num_w = w_abs + pad_left - (int32_t)kx;
+              if (num_w < 0 || num_w % sw != 0) continue;
+              const int32_t lx = num_w / sw - gx0;
+              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
+                       w_co_ci[(size_t)ky * Q + kx];
             }
           }
         }
+        dx_ci[ih * Win_t + iw] = accum;
       }
     }
   }
@@ -802,9 +790,13 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     uint16_t offset_grad_in_h,          // dX tile offset H (global)
     uint16_t offset_grad_in_w,          // dX tile offset W (global)
     uint16_t offset_grad_out_h,         // dY tile offset H (global)
-    uint16_t offset_grad_out_w) {       // dY tile offset W (global)
+    uint16_t offset_grad_out_w,         // dY tile offset W (global)
+    float *__restrict__ ctxtBuffer, uint32_t ctxtBufferSize,
+    float *__restrict__ btBuffer, uint32_t btBufferSize) {
   (void)padding_y_bottom;
   (void)padding_x_right;
+  (void)ctxtBuffer; (void)ctxtBufferSize;
+  (void)btBuffer; (void)btBufferSize;
 
   const uint32_t Hout_t = dim_im_out_x;
   const uint32_t Wout_t = dim_im_out_y;
@@ -837,48 +829,36 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
   if (ci_start >= ci_stop)
     return;
 
-  // Zero-initialise the dX tile for this core's Cin slice.
+  (void)hx1;
+  (void)wx1;
+  // Gather: ci -> ih -> iw -> (co, ky, kx)
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-    for (uint32_t ih = 0; ih < Hin_t; ++ih)
-      for (uint32_t iw = 0; iw < Win_t; ++iw)
-        dx_ci[ih * Win_t + iw] = 0.0f;
-  }
-
-  // Scatter: dX[ci,ih,iw] += W[co,ci,ky,kx] * dY[co,ly,lx]
-  for (uint32_t co = 0; co < Cout; ++co) {
-    const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
-    for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-      const int32_t oy = gy0 + (int32_t)ly;
-      const int32_t base_h = oy * sh - pad_top;
-      for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-        const int32_t ox = gx0 + (int32_t)lx;
-        const int32_t base_w = ox * sw - pad_left;
-        const float dy_val = dy_co[ly * Wout_t + lx];
-        int32_t ky_min = (hx0 > base_h) ? (hx0 - base_h) : 0;
-        int32_t ky_max =
-            (hx1 < base_h + (int32_t)P - 1) ? (hx1 - base_h) : ((int32_t)P - 1);
-        if (ky_min > ky_max)
-          continue;
-        int32_t kx_min = (wx0 > base_w) ? (wx0 - base_w) : 0;
-        int32_t kx_max =
-            (wx1 < base_w + (int32_t)Q - 1) ? (wx1 - base_w) : ((int32_t)Q - 1);
-        if (kx_min > kx_max)
-          continue;
-        for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
-          float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-          const float *w_co_ci =
-              pWeight +
+    for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t h_abs = (int32_t)ih + hx0;
+      for (uint32_t iw = 0; iw < Win_t; ++iw) {
+        const int32_t w_abs = (int32_t)iw + wx0;
+        float accum = 0.0f;
+        for (uint32_t co = 0; co < Cout; ++co) {
+          const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
+          const float *w_co_ci = pWeight +
               ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
-          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
-            const int32_t ih = (base_h + ky) - hx0;
-            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
-              const int32_t iw = (base_w + kx) - wx0;
-              dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] +=
-                  dy_val * w_co_ci[(size_t)ky * (size_t)Q + (size_t)kx];
+          for (uint32_t ky = 0; ky < P; ++ky) {
+            const int32_t num_h = h_abs + pad_top - (int32_t)ky;
+            if (num_h < 0 || num_h % sh != 0) continue;
+            const int32_t ly = num_h / sh - gy0;
+            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            for (uint32_t kx = 0; kx < Q; ++kx) {
+              const int32_t num_w = w_abs + pad_left - (int32_t)kx;
+              if (num_w < 0 || num_w % sw != 0) continue;
+              const int32_t lx = num_w / sw - gx0;
+              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
+                       w_co_ci[(size_t)ky * Q + kx];
             }
           }
         }
+        dx_ci[ih * Win_t + iw] = accum;
       }
     }
   }
@@ -952,75 +932,37 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_tiled(
     return;
   }
 
-  // ---- Clear dx tile for this core's input channels ----
+  (void)hx1;
+  (void)wx1;
+  // Gather: ci -> ih -> iw -> (co, ky, kx)
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * (size_t)Hin_t * (size_t)Win_t;
-
-    for (uint32_t ih = 0; ih < Hin_t; ++ih) {
-      float *row = dx_ci + (size_t)ih * (size_t)Win_t;
-      for (uint32_t iw = 0; iw < Win_t; ++iw) {
-        row[iw] = 0.0f;
-      }
-    }
-  }
-
-  // ---- Main computation: scatter from dy to dx ----
-  // For each input channel assigned to this core
-  for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
-    float *dx_ci = pGradIn + (size_t)ci * (size_t)Hin_t * (size_t)Win_t;
-
-    // Determine which output channels contribute to this input channel
-    // For depthwise with multiplier: input channel ci corresponds to
-    // output channels [ci * channels_per_group_out, (ci+1) *
-    // channels_per_group_out)
     const uint32_t co_start = ci * channels_per_group_out;
-    const uint32_t co_stop = co_start + channels_per_group_out;
-
-    // Accumulate gradients from all corresponding output channels
-    for (uint32_t co = co_start; co < co_stop; ++co) {
-      const float *dy_co =
-          pGradOut + (size_t)co * (size_t)Hout_t * (size_t)Wout_t;
-
-      // DW weight layout: [Cout][1][P][Q] -> for channel co, weights at
-      // [co][P][Q]
-      const float *w_co = pWeight + (size_t)co * (size_t)P * (size_t)Q;
-
-      // ---- Scatter from dy tile into dx tile ----
-      for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-        const int32_t oy = (int32_t)offset_grad_out_h + (int32_t)ly;
-        const int32_t base_h = oy * sh - pad_top;
-
-        for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-          const int32_t ox = (int32_t)offset_grad_out_w + (int32_t)lx;
-          const int32_t base_w = ox * sw - pad_left;
-
-          const float dy_val = dy_co[ly * Wout_t + lx];
-
-          // Intersect kernel footprint with dx tile bounds
-          int32_t ky_min = max_i32(0, hx0 - base_h);
-          int32_t ky_max = min_i32((int32_t)P - 1, hx1 - base_h);
-          if (ky_min > ky_max)
-            continue;
-
-          int32_t kx_min = max_i32(0, wx0 - base_w);
-          int32_t kx_max = min_i32((int32_t)Q - 1, wx1 - base_w);
-          if (kx_min > kx_max)
-            continue;
-
-          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
-            const int32_t ih = (base_h + ky) - hx0; // local in dx tile
-
-            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
-              const int32_t iw = (base_w + kx) - wx0;
-
-              const size_t w_idx =
-                  (size_t)(uint32_t)ky * (size_t)Q + (size_t)(uint32_t)kx;
-
-              dx_ci[(size_t)(uint32_t)ih * (size_t)Win_t +
-                    (size_t)(uint32_t)iw] += dy_val * w_co[w_idx];
+    const uint32_t co_stop  = co_start + channels_per_group_out;
+    for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t h_abs = (int32_t)ih + hx0;
+      for (uint32_t iw = 0; iw < Win_t; ++iw) {
+        const int32_t w_abs = (int32_t)iw + wx0;
+        float accum = 0.0f;
+        for (uint32_t co = co_start; co < co_stop; ++co) {
+          const float *dy_co = pGradOut + (size_t)co * (size_t)Hout_t * (size_t)Wout_t;
+          const float *w_co  = pWeight + (size_t)co * (size_t)P * (size_t)Q;
+          for (uint32_t ky = 0; ky < P; ++ky) {
+            const int32_t num_h = h_abs + pad_top - (int32_t)ky;
+            if (num_h < 0 || num_h % sh != 0) continue;
+            const int32_t ly = num_h / sh - (int32_t)offset_grad_out_h;
+            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            for (uint32_t kx = 0; kx < Q; ++kx) {
+              const int32_t num_w = w_abs + pad_left - (int32_t)kx;
+              if (num_w < 0 || num_w % sw != 0) continue;
+              const int32_t lx = num_w / sw - (int32_t)offset_grad_out_w;
+              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
+                       w_co[(size_t)ky * Q + kx];
             }
           }
         }
+        dx_ci[(size_t)ih * (size_t)Win_t + (size_t)iw] = accum;
       }
     }
   }
