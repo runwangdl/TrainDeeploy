@@ -62,7 +62,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                     # all cumulative offsets are 0; otherwise enumerate outer windows
                     # in column-major order (matching computeTileHyperRectangles).
                     tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if tuple(tile_dims) == tuple(buf_shape):
+                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
                         # Full tensor used every outer iteration — all offsets zero.
                         cum_byte_offsets = [0] * len(original_rectangles)
                     else:
@@ -132,7 +132,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                 all_zero = all(all(x == 0 for x in r.offset[-buf_rank:]) for r in original_rectangles)
                 if all_zero and not isinstance(externalBuffer, _ReferenceBuffer):
                     tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if tuple(tile_dims) == tuple(buf_shape):
+                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
                         cum_byte_offsets = [0] * len(original_rectangles)
                     else:
                         import math as _math
