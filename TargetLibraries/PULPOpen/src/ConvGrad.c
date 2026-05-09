@@ -462,18 +462,23 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_tiled(
         float accum = 0.0f;
         for (uint32_t co = 0; co < Cout; ++co) {
           const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
-          const float *w_co_ci = pWeight +
+          const float *w_co_ci =
+              pWeight +
               ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
           for (uint32_t ky = 0; ky < P; ++ky) {
             const int32_t num_h = h_abs + pad_top - (int32_t)ky;
-            if (num_h < 0 || num_h % sh != 0) continue;
+            if (num_h < 0 || num_h % sh != 0)
+              continue;
             const int32_t ly = num_h / sh - gy0;
-            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            if (ly < 0 || (uint32_t)ly >= Hout_t)
+              continue;
             for (uint32_t kx = 0; kx < Q; ++kx) {
               const int32_t num_w = w_abs + pad_left - (int32_t)kx;
-              if (num_w < 0 || num_w % sw != 0) continue;
+              if (num_w < 0 || num_w % sw != 0)
+                continue;
               const int32_t lx = num_w / sw - gx0;
-              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              if (lx < 0 || (uint32_t)lx >= Wout_t)
+                continue;
               accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
                        w_co_ci[(size_t)ky * Q + kx];
             }
@@ -790,13 +795,9 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     uint16_t offset_grad_in_h,          // dX tile offset H (global)
     uint16_t offset_grad_in_w,          // dX tile offset W (global)
     uint16_t offset_grad_out_h,         // dY tile offset H (global)
-    uint16_t offset_grad_out_w,         // dY tile offset W (global)
-    float *__restrict__ ctxtBuffer, uint32_t ctxtBufferSize,
-    float *__restrict__ btBuffer, uint32_t btBufferSize) {
+    uint16_t offset_grad_out_w) {       // dY tile offset W (global)
   (void)padding_y_bottom;
   (void)padding_x_right;
-  (void)ctxtBuffer; (void)ctxtBufferSize;
-  (void)btBuffer; (void)btBufferSize;
 
   const uint32_t Hout_t = dim_im_out_x;
   const uint32_t Wout_t = dim_im_out_y;
@@ -841,18 +842,23 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
         float accum = 0.0f;
         for (uint32_t co = 0; co < Cout; ++co) {
           const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
-          const float *w_co_ci = pWeight +
+          const float *w_co_ci =
+              pWeight +
               ((size_t)co * (size_t)Cin + (size_t)ci) * (size_t)P * (size_t)Q;
           for (uint32_t ky = 0; ky < P; ++ky) {
             const int32_t num_h = h_abs + pad_top - (int32_t)ky;
-            if (num_h < 0 || num_h % sh != 0) continue;
+            if (num_h < 0 || num_h % sh != 0)
+              continue;
             const int32_t ly = num_h / sh - gy0;
-            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            if (ly < 0 || (uint32_t)ly >= Hout_t)
+              continue;
             for (uint32_t kx = 0; kx < Q; ++kx) {
               const int32_t num_w = w_abs + pad_left - (int32_t)kx;
-              if (num_w < 0 || num_w % sw != 0) continue;
+              if (num_w < 0 || num_w % sw != 0)
+                continue;
               const int32_t lx = num_w / sw - gx0;
-              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              if (lx < 0 || (uint32_t)lx >= Wout_t)
+                continue;
               accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
                        w_co_ci[(size_t)ky * Q + kx];
             }
@@ -938,25 +944,30 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_tiled(
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
     float *dx_ci = pGradIn + (size_t)ci * (size_t)Hin_t * (size_t)Win_t;
     const uint32_t co_start = ci * channels_per_group_out;
-    const uint32_t co_stop  = co_start + channels_per_group_out;
+    const uint32_t co_stop = co_start + channels_per_group_out;
     for (uint32_t ih = 0; ih < Hin_t; ++ih) {
       const int32_t h_abs = (int32_t)ih + hx0;
       for (uint32_t iw = 0; iw < Win_t; ++iw) {
         const int32_t w_abs = (int32_t)iw + wx0;
         float accum = 0.0f;
         for (uint32_t co = co_start; co < co_stop; ++co) {
-          const float *dy_co = pGradOut + (size_t)co * (size_t)Hout_t * (size_t)Wout_t;
-          const float *w_co  = pWeight + (size_t)co * (size_t)P * (size_t)Q;
+          const float *dy_co =
+              pGradOut + (size_t)co * (size_t)Hout_t * (size_t)Wout_t;
+          const float *w_co = pWeight + (size_t)co * (size_t)P * (size_t)Q;
           for (uint32_t ky = 0; ky < P; ++ky) {
             const int32_t num_h = h_abs + pad_top - (int32_t)ky;
-            if (num_h < 0 || num_h % sh != 0) continue;
+            if (num_h < 0 || num_h % sh != 0)
+              continue;
             const int32_t ly = num_h / sh - (int32_t)offset_grad_out_h;
-            if (ly < 0 || (uint32_t)ly >= Hout_t) continue;
+            if (ly < 0 || (uint32_t)ly >= Hout_t)
+              continue;
             for (uint32_t kx = 0; kx < Q; ++kx) {
               const int32_t num_w = w_abs + pad_left - (int32_t)kx;
-              if (num_w < 0 || num_w % sw != 0) continue;
+              if (num_w < 0 || num_w % sw != 0)
+                continue;
               const int32_t lx = num_w / sw - (int32_t)offset_grad_out_w;
-              if (lx < 0 || (uint32_t)lx >= Wout_t) continue;
+              if (lx < 0 || (uint32_t)lx >= Wout_t)
+                continue;
               accum += dy_co[(uint32_t)ly * Wout_t + (uint32_t)lx] *
                        w_co[(size_t)ky * Q + kx];
             }
