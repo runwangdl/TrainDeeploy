@@ -330,6 +330,9 @@ def test_siracusa_train_kernels(test_name, deeploy_test_dir, toolchain, toolchai
 @pytest.mark.training
 @pytest.mark.parametrize("test_name", SIRACUSA_TRAINING_TESTS, ids = SIRACUSA_TRAINING_TESTS)
 def test_siracusa_training(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen, skipsim) -> None:
+    # Reuse the tiled overrides table — same models, same tolerance / data-input
+    # quirks regardless of whether tiling is on.
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -341,6 +344,8 @@ def test_siracusa_training(test_name, deeploy_test_dir, toolchain, toolchain_dir
         tiling = False,
         cores = SIRACUSA_DEFAULT_CORES,
         training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
