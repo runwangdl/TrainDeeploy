@@ -13,13 +13,11 @@ DEFAULT_CORES = 8
 L2_SINGLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
     "Kernels/FP32/GEMM/TransB": [8000],
-    # Pointwise (1x1) ConvGradX from the MobileNet-style training backward
-    # path: binds to RedMulE via PWConvGradX2DRedmuleMapper inserted into
-    # PULPCluster's ConvGradXLayer in RedmulePlatform.__init__.  L1=8000
-    # mirrors the GEMM kernel budget so the tiler picks similar tile shapes.
-    # ConvGradW_PW is intentionally NOT in the matrix: the analogous
-    # PWConvGradW2DRedmuleMapper exists in tree but is currently not
-    # registered (see comment in Platform.py).
+    # Pointwise (1x1) ConvGrad fixtures from the MobileNet / ResNet8 backward
+    # paths.  Both bind to RedMulE via the PWConvGrad{W,X}2DRedmuleMapper
+    # inserted into PULPCluster's ConvGrad{W,X}Layer in
+    # RedmulePlatform.__init__.  L1=8000 mirrors the GEMM kernel budget.
+    "Kernels/FP32/ConvGradW_PW": [8000],
     "Kernels/FP32/ConvGradX_PW_block_11": [8000],
 }
 
@@ -28,18 +26,13 @@ L2_DOUBLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
 }
 
-# L3 single-buffer training models. Mirrors the Siracusa-only tiled training
-# CI; on Siracusa_w_redmule the forward GEMM / MatMul / Conv ops bind to
-# RedMulE (FP32) while every other op (LayerNorm/GELU/*Grad/Softmax/...) falls
-# back to PULPCluster via the second engine in RedmulePlatform.  ResNet8 and
-# MobileNetV1 are mostly Conv-heavy (the forward Conv kernel is RedMulE-bound
-# as of 4517cc9); CCT is mostly transformer matmul/gemm.  Together they
-# bracket the workload mix RedMulE actually sees in training.
-L3_SINGLEBUFFER_TRAINING_MODELS = {
-    "Models/Training/ResNet8/resnet8_train": [128000],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
-    "Models/Training/CCT/cct_train": [128000],
-}
+# L3 single-buffer training models.  Temporarily empty: we're isolating the
+# new PWConvGrad{W,X} RedMulE kernels via the kernel-test matrix above
+# (Kernels/FP32/ConvGradW_PW + Kernels/FP32/ConvGradX_PW_block_11), which
+# exercises the kernels directly with deterministic reference inputs and
+# avoids confounding training-graph effects.  Restore the
+# ResNet8 / MobileNetV1 / CCT entries once the kernel tests are green on CI.
+L3_SINGLEBUFFER_TRAINING_MODELS = {}
 
 # Match the per-model overrides used in test_siracusa_tiled_config so the
 # RedMulE training run inherits the same num_data_inputs and tolerance

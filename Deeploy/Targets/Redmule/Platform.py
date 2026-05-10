@@ -51,24 +51,17 @@ class RedmulePlatform(PULPPlatform):
         # variants fall through to PULP's DW / regular mappers as before.
         pulp_cluster = next((e for e in self.engines if e.name == "PULPCluster"), None)
         if pulp_cluster is not None:
-            # Only ConvGradX is hooked up.  PWConvGradW2DRedmuleMapper exists
-            # (kernel + template + binding all in tree) but inserting it into
-            # the PULPCluster ConvGradWLayer makes the tiler infeasible on
-            # ResNet8 / MobileNetV1 -- the pattern-memory solver appears to
-            # account for the inserted mapper's transient buffer footprint
-            # even on 3x3 / DW ConvGradW nodes where the parser declines and
-            # the mapper is never selected (see exit=1 reproducer with
-            # only-W-inserted in /tmp/v6_r8.log, while only-X-inserted is
-            # green).  Diagnosing properly needs a deeper look at how
-            # TilingReadyNodeBindings instances aggregate across layer
-            # mappers; left as a follow-up.
-            #
-            # ConvGradX has the same construction but doesn't trip it,
-            # presumably because its template's transposeBuffer footprint
-            # (C_in * C_out) is identical in size to PULP's existing PW
-            # template, while ConvGradW introduces a new C_in*H_in*W_in
-            # buffer that PULP's regular ConvGradW kernel never hoists.
+            # Both PWConvGradW and PWConvGradX RedMulE mappers are hooked up
+            # to PULPCluster's existing layer mapper lists.  ConvGradW was
+            # disabled temporarily in 68d1639 because its template sized the
+            # transpose buffer at C_in * H_in * W_in, which over-counted the
+            # actual footprint for stride > 1 1x1 convs (ResNet8 layer2/3
+            # downsample) and tripped tiler infeasibility on the regular-Conv
+            # backward pattern memory.  After dropping that to the exact
+            # C_in * H_out * W_out and teaching the kernel to sample X at
+            # strided positions, the W path is back in.
             for op_type, redmule_mapper in (
+                ("ConvGradW", PWConvGradW2DRedmuleMapper),
                 ("ConvGradX", PWConvGradX2DRedmuleMapper),
             ):
                 layer_factory = pulp_cluster.Mapping.get(op_type)

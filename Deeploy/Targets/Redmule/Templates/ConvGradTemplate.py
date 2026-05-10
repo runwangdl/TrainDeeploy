@@ -32,14 +32,23 @@ class RedmulePWConvGradWTemplate(NodeTemplate):
     def __init__(self, templateStr: str):
         super().__init__(templateStr)
 
+    # Must stay in sync with PWGW_CHUNK_P in PWConvGrad_fp32_Redmule.c.
+    PWGW_CHUNK_P = 16
+
     @staticmethod
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        bt_dim = (operatorRepresentation["data_in_type"].typeWidth // 8) * \
-                 operatorRepresentation['ch_im_in'] * \
-                 operatorRepresentation['dim_im_in_x'] * \
-                 operatorRepresentation['dim_im_in_y']
+        # Fixed-size chunk scratch: PWGW_CHUNK_P rows of [C_in] for the
+        # X-sampled-and-transposed slice + PWGW_CHUNK_P rows of [C_out] for
+        # the dY view (used by the multi-chunk path when P > CHUNK_P).
+        # Independent of the layer's feature-map area -- crucial on
+        # MobileNetV1 early blocks where H_out * W_out can hit 48*48 and a
+        # full transpose buffer would blow L1.
+        wbytes = operatorRepresentation["data_in_type"].typeWidth // 8
+        chunk = RedmulePWConvGradWTemplate.PWGW_CHUNK_P
+        bt_dim = wbytes * chunk * (operatorRepresentation['ch_im_in'] +
+                                   operatorRepresentation['ch_im_out'])
         bt_name = operatorRepresentation['nodeName'] + "_transpose_buffer"
         return [(bt_name, bt_dim)]
 
@@ -55,12 +64,19 @@ class RedmulePWConvGradWTemplate(NodeTemplate):
 
 
 class RedmulePWConvGradXTemplate(NodeTemplate):
-    """RedMulE pointwise ConvGradX: dX = W^T @ dY (1x1 kernel).
+    """RedMulE pointwise ConvGradX: dX = scatter(W^T @ dY) (1x1 kernel).
 
-    Reserves a C_in * C_out transient buffer in L1 to hold the
-    transposed weight (identical size to the pulp-trainlib version's
-    transpose buffer, so the existing PWConvGradXTileConstraint keeps
-    working unchanged).
+    For stride 1 the transpose buffer only holds C_in * C_out floats (the
+    transposed weight matrix); the RedMulE GEMM writes the [C_in, H*W]
+    result straight into pGradIn.
+
+    For stride > 1 the GEMM output is the *dense* [C_in, H_out * W_out]
+    matrix and must be scattered into the [C_in, H_in, W_in] dX tensor at
+    the strided positions (the rest of dX stays zero).  In that case the
+    transpose buffer is also reused to hold the dense GEMM result, so the
+    template reserves C_in * C_out + C_in * H_out * W_out floats.  At
+    stride 1 the dense buffer is unused but the over-allocation is small
+    enough to keep the worst-case size simple.
     """
 
     def __init__(self, templateStr: str):
@@ -70,9 +86,10 @@ class RedmulePWConvGradXTemplate(NodeTemplate):
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        bt_dim = (operatorRepresentation["weight_type"].typeWidth // 8) * \
-                 operatorRepresentation['ch_im_in'] * \
-                 operatorRepresentation['ch_im_out']
+        wt_elts = operatorRepresentation['ch_im_in'] * operatorRepresentation['ch_im_out']
+        dense_elts = operatorRepresentation['ch_im_in'] * operatorRepresentation[
+            'dim_im_out_x'] * operatorRepresentation['dim_im_out_y']
+        bt_dim = (operatorRepresentation["weight_type"].typeWidth // 8) * (wt_elts + dense_elts)
         bt_name = operatorRepresentation['nodeName'] + "_transpose_buffer"
         return [(bt_name, bt_dim)]
 
