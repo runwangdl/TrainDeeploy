@@ -456,176 +456,6 @@ class Tiler():
         except Exception:
             return 0
 
-    def _greedyPromoteAndPack(self, ctxt: NetworkContext, graph, schedule,
-                                arenaHeadroom: int = 131072) -> NetworkContext:
-        """Greedy iterative promote-and-pack: rank stuck-at-default candidates
-        cycle-aware, then test each by re-running minimalloc on the union of
-        already-packed activations + the candidate. Commit only if the
-        resulting pool peak (plus consts + arenaHeadroom) still fits in the
-        level. This makes the budget *measured* (real packed peak) instead of
-        *estimated* (sum of sizes), and naturally exploits L2 freed by
-        lifetime overlap.
-
-        Tradeoff: one minimalloc subprocess per candidate activation. For
-        ~50 candidates that's ~5 s of overhead, well worth it because the
-        original promote pass otherwise leaves L2 ~40% empty after the first
-        pack pass compresses everything from 570 KB sum to 164 KB peak.
-
-        Constants are cheaper to test (their footprint is just += size since
-        they don't share storage), so they go through a simple sum check.
-        Anything with an allocTemplate already set is skipped (mirrors
-        f8f1508's guard against post-tile reflipping).
-        """
-        defaultLevel = self.memoryHierarchy._defaultMemoryLevel.name
-        SETUP_CYCLES = 200
-        BW_BPC = 4.0
-
-        SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity'}
-        skip_tensors: set = set()
-        for node in graph.nodes:
-            if node.op in SKIP_OPS:
-                for t in list(node.inputs) + list(node.outputs):
-                    if t is not None:
-                        skip_tensors.add(t.name)
-
-        for level in self.memoryHierarchy.memoryLevels:
-            if level == defaultLevel:
-                continue
-            levelSize = self.memoryHierarchy.memoryLevels[level].size
-
-            # Current standalone footprint -- consts + pool peak.
-            const_size = 0
-            for buf in ctxt.globalObjects.values():
-                if isinstance(buf, _ReferenceBuffer): continue
-                if isinstance(buf, TransientBuffer):  continue
-                if "MEMORYARENA" in buf.name:         continue
-                if buf.name.startswith("PROMOTED_POOL_"): continue
-                if getattr(buf, "_memoryLevel", None) != level: continue
-                if not isinstance(buf, ConstantBuffer): continue
-                const_size += self._bufferSizeFromShape(buf)
-
-            poolName = f"PROMOTED_POOL_{level}"
-            poolBuf = ctxt.lookup(poolName) if ctxt.is_global(poolName) else None
-            pool_peak = self._bufferSizeFromShape(poolBuf) if poolBuf is not None else 0
-
-            # Already-packed activations (= the current pool members)
-            packed_blocks = []
-            for buf in ctxt.localObjects.values():
-                if (isinstance(buf, VariableBuffer)
-                        and not isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer))
-                        and getattr(buf, "_memoryLevel", None) == level
-                        and getattr(buf, "_lifetime", None) is not None
-                        and getattr(buf, "_packedIntoPool", None) is not None):
-                    packed_blocks.append(MemoryBlock(buf.name, level, buf._lifetime, None))
-
-            # Need lifetimes for any candidate we add. The Step 1 helper only
-            # computes lifetimes for buffers whose _memoryLevel != defaultLevel
-            # (i.e. those already promoted), so it misses the stuck-at-default
-            # candidates we want to consider here. Walk the schedule once and
-            # compute lifetimes for ALL VariableBuffers regardless of level.
-            lifetimes = {}
-            flat_steps = [n for pat in schedule for n in pat]
-            for stepIdx, node in enumerate(flat_steps):
-                for tensor in list(node.inputs) + list(node.outputs):
-                    if tensor is None:
-                        continue
-                    try:
-                        b = ctxt.lookup(tensor.name)
-                    except Exception:
-                        continue
-                    if not isinstance(b, VariableBuffer):
-                        continue
-                    if isinstance(b, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
-                        continue
-                    if tensor.name in lifetimes:
-                        lo, _ = lifetimes[tensor.name]
-                        lifetimes[tensor.name] = (lo, stepIdx)
-                    else:
-                        lifetimes[tensor.name] = (stepIdx, stepIdx)
-
-            # Collect candidates still at default level
-            cand_const = []  # (name, buf, size, users)
-            cand_var = []
-            for src in (ctxt.globalObjects, ctxt.localObjects):
-                for name, buf in src.items():
-                    if not isinstance(buf, VariableBuffer): continue
-                    if isinstance(buf, (TransientBuffer, _ReferenceBuffer)): continue
-                    if "MEMORYARENA" in name: continue
-                    if name.startswith("PROMOTED_POOL_"): continue
-                    if getattr(buf, "_memoryLevel", None) != defaultLevel: continue
-                    if 'allocTemplate' in buf.__dict__: continue
-                    if name in skip_tensors: continue
-                    sz = self._bufferSizeFromShape(buf)
-                    if sz <= 0: continue
-                    users = len(getattr(buf, '_users', []))
-                    if isinstance(buf, ConstantBuffer):
-                        cand_const.append((name, buf, sz, users))
-                    else:
-                        if name not in lifetimes:
-                            continue  # no lifetime => can't pack
-                        cand_var.append((name, buf, sz, users))
-
-            # Rank both by the cycle-aware score
-            score = lambda c: c[3] * (SETUP_CYCLES + c[2] / BW_BPC) / max(c[2], 1)
-            cand_const.sort(key = score, reverse = True)
-            cand_var.sort(key = score, reverse = True)
-
-            promoted_const = 0
-            promoted_var = 0
-
-            # 1) Constants -- footprint is sum, test cheaply.
-            for name, buf, sz, _ in cand_const:
-                if const_size + sz + pool_peak + arenaHeadroom > levelSize:
-                    continue
-                buf._memoryLevel = level
-                const_size += sz
-                promoted_const += 1
-
-            # 2) Activations -- TEMPORARILY DISABLED while we isolate a runtime
-            # corruption bug that surfaces when newly-promoted activations are
-            # added to the pool. Const-only greedy is verified safe.
-            for name, buf, sz, _ in cand_var:
-                pass
-
-            # 3) Materialise the (possibly extended) pool ONLY if vars were added.
-            # Const promotions don't touch the pool, so re-running minimalloc and
-            # rewriting allocTemplates would needlessly perturb existing offsets
-            # (which can introduce silent corruption if anything has already
-            # captured the prior addresses).
-            if promoted_var > 0:
-                # Re-run minimalloc once to get the final committed offsets
-                final = self.minimalloc(packed_blocks, ctxt, None, levelSize, level)
-                final_peak = max((b._addrSpace[1] for b in final if b._addrSpace), default = 0)
-                if poolBuf is None and final_peak > 0:
-                    poolBuf = ctxt.VariableBuffer(poolName, [final_peak])
-                    poolBuf._type = PointerClass(BasicDataTypes.int8_t)
-                    ctxt.add(poolBuf, "global")
-                    poolBuf._instance = poolBuf._type(poolName, ctxt)
-                    poolBuf._memoryLevel = level
-                    ctxt.globalObjects.move_to_end(poolBuf.name, last = False)
-                elif poolBuf is not None:
-                    poolBuf.shape = [final_peak]
-                for blk in final:
-                    if blk._addrSpace is None:
-                        continue
-                    b = ctxt.lookup(blk.name)
-                    offset = blk._addrSpace[0]
-                    b._addrSpace = blk._addrSpace
-                    b._packedIntoPool = poolName
-                    b.allocTemplate = NodeTemplate(
-                        " ${name} = (${type.typeName}) " +
-                        f"((char*){str(poolBuf._instance)} + {offset});")
-                    b.deallocTemplate = _deallocTemplate
-
-            if promoted_const > 0 or promoted_var > 0:
-                final_pool = self._bufferSizeFromShape(poolBuf) if poolBuf is not None else 0
-                used_total = const_size + final_pool
-                log.info(f"  [GreedyPromote] {level}: +{promoted_const} const + {promoted_var} var; "
-                         f"L2 used = {used_total}/{levelSize} B "
-                         f"(consts={const_size}, pool peak={final_pool})")
-
-        return ctxt
-
     def _convertCtxtToStaticSchedule(self, ctxt: NetworkContext,
                                      memoryMap: Dict[str, List[List[MemoryBlock]]]) -> NetworkContext:
         """Convert network context to use static memory allocation.
@@ -2299,7 +2129,12 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         assert (tilingSolution is None and memoryMap is None) or (tilingSolution is not None and memoryMap is not None), \
             "You need to provide both the manual tilingSolution and the memoryMap to override tiling."
 
-        schedule = self.scheduler(self.graph)
+        # Reuse the schedule that MemoryDeployerWrapper.bind() computed pre-bind
+        # for lifetime-aware annotation; falls back to a fresh scheduler call if
+        # this deployer didn't go through that path (legacy / non-wrapped case).
+        schedule = getattr(self.ctxt, '_preBindSchedule', None)
+        if schedule is None:
+            schedule = self.scheduler(self.graph)
 
         # Populate _lifetime on standalone-promoted activations so they no longer
         # appear "always alive" downstream. This drives the visualization (orange
