@@ -158,3 +158,81 @@ def toolchain(request):
 def cmake_args(request):
     """Return additional CMake arguments."""
     return request.config.getoption("--cmake-args")
+
+
+# ---------------------------------------------------------------------------
+# Training cycle summary: at session end, scan $GITHUB_STEP_SUMMARY for any
+# training cycle section emitted by run_and_assert_test, join SB and DB rows
+# by (test, l1), and append a comparison table with speedup.
+# ---------------------------------------------------------------------------
+def _parse_training_section(section_body: str):
+    """Parse rows of `| test | l1 | mode | train_cycles | opt_cycles | weight_sram |`.
+
+    Returns list of dicts with keys: test, l1, mode, train, opt, sram.
+    """
+    rows = []
+    for line in section_body.splitlines():
+        if not line.startswith("| "):
+            continue
+        if "train_cycles" in line or "------" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 6:
+            continue
+        try:
+            train = int(cells[3].replace(",", ""))
+            opt = int(cells[4].replace(",", ""))
+            sram = int(cells[5].replace(",", ""))
+        except ValueError:
+            continue
+        rows.append({"test": cells[0], "l1": cells[1], "mode": cells[2], "train": train, "opt": opt, "sram": sram})
+    return rows
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path or not os.path.exists(summary_path):
+        return
+    try:
+        with open(summary_path, "r") as f:
+            existing = f.read()
+    except Exception:
+        return
+
+    # Find every "## Siracusa L? training cycles" section and append a join.
+    import re as _re
+    for heading in _re.findall(r"^## (Siracusa L[23] training cycles)$", existing, flags = _re.MULTILINE):
+        start = existing.find(f"## {heading}")
+        rest = existing[start + len(f"## {heading}"):]
+        next_section = rest.find("\n## ")
+        body = rest if next_section == -1 else rest[:next_section]
+        rows = _parse_training_section(body)
+        if not rows:
+            continue
+        # Join SB and DB rows by (test, l1).
+        by_key: dict = {}
+        for r in rows:
+            by_key.setdefault((r["test"], r["l1"]), {})[r["mode"]] = r
+        try:
+            with open(summary_path, "a") as f:
+                f.write(f"\n### {heading} — SB vs DB speedup\n\n")
+                f.write("| Test | L1 (B) | SB train | DB train | train Δ | SB opt | DB opt | opt Δ |\n")
+                f.write("|------|--------|----------|----------|---------|--------|--------|-------|\n")
+                for (test, l1), modes in sorted(by_key.items()):
+                    sb = modes.get("SB")
+                    db = modes.get("DB")
+                    sb_t = f"{sb['train']:,}" if sb else "—"
+                    db_t = f"{db['train']:,}" if db else "—"
+                    sb_o = f"{sb['opt']:,}" if sb else "—"
+                    db_o = f"{db['opt']:,}" if db else "—"
+                    if sb and db and sb['train'] > 0:
+                        delta_t = f"{(sb['train'] - db['train']) / sb['train'] * 100:+.1f}%"
+                    else:
+                        delta_t = "—"
+                    if sb and db and sb['opt'] > 0:
+                        delta_o = f"{(sb['opt'] - db['opt']) / sb['opt'] * 100:+.1f}%"
+                    else:
+                        delta_o = "—"
+                    f.write(f"| {test} | {l1} | {sb_t} | {db_t} | {delta_t} | {sb_o} | {db_o} | {delta_o} |\n")
+        except Exception:
+            pass

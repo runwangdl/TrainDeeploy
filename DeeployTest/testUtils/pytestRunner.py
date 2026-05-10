@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import re
 from pathlib import Path
 from typing import List, Literal, Optional
 
@@ -16,6 +17,16 @@ __all__ = [
     'configure_cmake',
     'run_simulation',
 ]
+
+# Tracks which Markdown sections we've already emitted a header for inside the
+# current pytest session. Keeps run_and_assert_test idempotent across
+# parametrised cases that share a section.
+_METRIC_SECTIONS_WRITTEN: set = set()
+
+# `BENCH train_cycles=<N> opt_cycles=<M> weight_sram=<K>` — printed once per
+# training run by the test harness; captured here so we can append a cycles
+# row to $GITHUB_STEP_SUMMARY for SB-vs-DB comparison.
+_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)")
 
 
 def get_worker_id() -> str:
@@ -122,9 +133,52 @@ def create_test_config(
     return config
 
 
-def run_and_assert_test(test_name: str, config: DeeployTestConfig, skipgen: bool, skipsim: bool) -> None:
+def _emit_training_cycle_row(test_name: str, config: DeeployTestConfig, stdout: str, metric_section: str) -> None:
+    """Parse `BENCH train_cycles=...` from the test's stdout and append a row
+    to $GITHUB_STEP_SUMMARY under `## {metric_section}`. The header is emitted
+    once per (section, session) pair via _METRIC_SECTIONS_WRITTEN.
+
+    No-op when not running under GitHub Actions or when no BENCH line was
+    captured (e.g. inference tests, --skipsim runs).
+    """
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+    m = _TRAIN_BENCH_RE.search(stdout or "")
+    if not m:
+        return
+    train_cycles, opt_cycles, weight_sram = m.group(1), m.group(2), m.group(3)
+    db_flag = "DB" if "--doublebuffer" in (config.gen_args or []) else "SB"
+    l1 = "—"
+    for arg in config.gen_args or []:
+        if arg.startswith("--l1="):
+            l1 = arg.split("=", 1)[1]
+            break
+    try:
+        with open(summary_path, "a") as f:
+            if metric_section not in _METRIC_SECTIONS_WRITTEN:
+                f.write(f"\n## {metric_section}\n\n")
+                f.write("| Test | L1 (B) | Mode | train_cycles | opt_cycles | weight_sram |\n")
+                f.write("|------|--------|------|--------------|------------|-------------|\n")
+                _METRIC_SECTIONS_WRITTEN.add(metric_section)
+            f.write(f"| {test_name} | {l1} | {db_flag} | {int(train_cycles):,} | {int(opt_cycles):,} | "
+                    f"{int(weight_sram):,} |\n")
+    except Exception:
+        # Best-effort: never let summary IO failure mask a real test result.
+        pass
+
+
+def run_and_assert_test(test_name: str,
+                        config: DeeployTestConfig,
+                        skipgen: bool,
+                        skipsim: bool,
+                        metric_section: Optional[str] = None) -> None:
     """
     Shared helper function to run a test and assert its results.
+
+    When `metric_section` is non-None and $GITHUB_STEP_SUMMARY is set, append
+    a cycle-count row to that Markdown section so reviewers can see SB-vs-DB
+    deltas directly in the workflow summary panel.
 
     Raises:
         AssertionError: If test fails or has errors
@@ -136,3 +190,6 @@ def run_and_assert_test(test_name: str, config: DeeployTestConfig, skipgen: bool
 
     if result.error_count >= 0:
         assert result.error_count == 0, (f"Found {result.error_count} errors out of {result.total_count} tests")
+
+    if metric_section:
+        _emit_training_cycle_row(test_name, config, result.stdout, metric_section)

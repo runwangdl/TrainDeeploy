@@ -13,7 +13,7 @@ import onnx_graphsurgeon as gs
 from testUtils.codeGenerateTraining import generateTrainingTestNetwork
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
-from testUtils.tilingUtils import TrainingDBTiler, TrainingSBTiler
+from testUtils.tilingUtils import TrainingDBOnlyL3Tiler, TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum, _infer_num_data_inputs, \
     _infer_total_mb, _load_reference_losses, _mockScheduler, add_training_inference_args
 from testUtils.typeMapping import inferTypeAndOffset
@@ -137,7 +137,10 @@ def generateTiledTrainingNetwork(args) -> None:
     unique_params = f"{args.dumpdir}_L1{args.l1}_L2{args.l2}_{args.defaultMemLevel}_DB{args.doublebuffer}"
     testIdentifier = hashlib.md5(unique_params.encode()).hexdigest()[:16]
 
-    tilerCls = TrainingDBTiler if args.doublebuffer else TrainingSBTiler
+    if args.doublebuffer:
+        tilerCls = TrainingDBOnlyL3Tiler if args.defaultMemLevel == "L3" else TrainingDBTiler
+    else:
+        tilerCls = TrainingSBTiler
     deployer = TilerDeployerWrapper(deployer, tilerCls, testName = testIdentifier, workDir = args.dumpdir)
     deployer.tiler.visualizeMemoryAlloc = args.plotMemAlloc
     deployer.tiler.memoryAllocStrategy = args.memAllocStrategy
