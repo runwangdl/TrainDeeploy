@@ -189,19 +189,39 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # fake_l1_size baselining method: spike with --l1=4_000_000 → read off
 # MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
 L3_UNTILED_TRAINING_MODELS = {
+    # Per-model l1 / l2 / fake_l1_size were established by spiking
+    # testMVPTraining.py with --defaultMemLevel=L3 and reading
+    # MEMORYARENA_L1 from the generated TrainingNetwork.c.
+    #
+    #   - l1: planner-side budget passed to SBTiler (forces single-tile
+    #     schedules when generous enough).  Use the smallest value that
+    #     still compiles and yields the minimal-tile shape — larger values
+    #     blow MiniMalloc's RAM appetite past CI's 16 GB ceiling.
+    #   - l2: planner-side L2 budget; 2 MB matches the existing tiled L3
+    #     baseline.
+    #   - fake_l1_size: physical bytes for the FC-L2-backed pi_cl_l1_malloc
+    #     arena (deeploy_fake_l1.c).  Must be ≥ MEMORYARENA_L1, with a
+    #     small headroom for alignment.
+    "Models/Training/CCT/cct_train": {
+        "l1": 64_000,
+        "l2": 2_000_000,
+        "fake_l1_size": 32_768,  # peak L1 working = 16388 B
+    },
+    "Models/Training/CCT_LoRA/cct_lora_train": {
+        "l1": 64_000,
+        "l2": 2_000_000,
+        "fake_l1_size": 32_768,  # peak L1 working = 16384 B
+    },
     "Models/Training/ResNet8/resnet8_train": {
-        # 800 KB is the smallest --l1 that still yields the minimal-tile
-        # schedule (peak L1 working set = 739 KB).  Anything between 800 KB
-        # and 4 MB produces identical numTiles arrays — we use the smallest
-        # value because the SBTiler's constraint solver (MiniMalloc) burns
-        # ubuntu-latest's 7 GB RAM at --l1=4 MB.
         "l1": 800_000,
         "l2": 2_000_000,
-        "fake_l1_size": 1_048_576,  # spike measured 739 KB; 1 MB headroom
+        "fake_l1_size": 1_048_576,  # peak L1 working = 739328 B
     },
-    # MobileNetV1 / CCT / CCT_LoRA fixtures pending: ResNet8 ships first as
-    # the fastest-to-validate L3 baseline.  Each new entry needs an explicit
-    # spike to size fake_l1_size before adding here.
+    "Models/Training/MobileNetV1/mobilenetv1_train": {
+        "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
+        "l2": 2_000_000,
+        "fake_l1_size": 786_432,  # peak L1 working = 542720 B
+    },
 }
 
 # Per-model overrides for training tests.

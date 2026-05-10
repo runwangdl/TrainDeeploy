@@ -45,3 +45,11 @@ jobs:
           pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}" ${{ inputs.pytest-extra-args }}
           echo "=== free -m after pytest ==="; free -m || true
         shell: bash
+      - name: Build footprint summary
+        if: always()
+        env:
+          FOOTPRINT_SUMMARY_LABEL: ${{ inputs.pytest-marker }}
+        run: |
+          cd DeeployTest
+          python3 ../scripts/ci_footprint_summary.py TEST_SIRACUSA || true
+        shell: bash
