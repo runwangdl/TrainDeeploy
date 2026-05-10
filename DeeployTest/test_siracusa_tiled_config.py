@@ -209,8 +209,18 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # or a beefier runner.
 L3_UNTILED_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": {
-        "l1": 64_000,
+        # Big-CCT (img_size=32, embedding_dim=128, n_conv_layers=2) — peak
+        # L1 working = 524 KB > physical L1 (256 KB).  Same regime as
+        # ResNet8/MobileNet now.  --l1=200K..400K trip a codegen assert
+        # ("Keys should be the same while generating DMA transfer for
+        # tensor 'data_in'/'data_out'"); 800K is the smallest value that
+        # gets through to a clean schedule.
+        "l1": 800_000,
         "l2": 2_000_000,
+        # Cap to 1 step so testinputs.h doesn't blow .data section.
+        "n_steps": 1,
+        "n_accum": 1,
+        "num_data_inputs": 1,
         "skip_sim_in_ci": False,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
