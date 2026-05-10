@@ -159,10 +159,27 @@ class PromoteTensorsToL2(SequentialPass):
         # Account for tensors already promoted to L2 by a previous call to this pass.
         # MemoryDeployerWrapper calls apply() up to 3 times; each call must not exceed
         # the shared L2 budget, so we subtract what is already committed.
+        #
+        # Exclude buffers that don't physically occupy standalone L2 storage:
+        #   - _ReferenceBuffer: aliases another buffer, no bytes of its own
+        #   - TransientBuffer:  scratch, managed via the tiling arena, not standalone
+        #   - "MEMORYARENA" in name: allocator-internal arena scratch
+        # Without these guards, post-tile invocations double-count tile-staging buffers
+        # that happen to be tagged at L2, inflating already_l2 by hundreds of KB and
+        # making the "promoted N / M bytes" log line meaningless.
+        def _occupies_standalone_l2(buf) -> bool:
+            if isinstance(buf, _ReferenceBuffer):
+                return False
+            if isinstance(buf, TransientBuffer):
+                return False
+            if "MEMORYARENA" in buf.name:
+                return False
+            return getattr(buf, '_memoryLevel', None) == 'L2'
+
         already_l2 = sum(
             self._bufferSize(buf)
             for buf in {**ctxt.globalObjects, **ctxt.localObjects}.values()
-            if getattr(buf, '_memoryLevel', None) == 'L2'
+            if _occupies_standalone_l2(buf)
         )
         l2_used = already_l2
         promoted = []
@@ -175,5 +192,12 @@ class PromoteTensorsToL2(SequentialPass):
         print(f"  [PromoteTensorsToL2] promoted {len(promoted)} tensors, "
               f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, new={l2_used - already_l2}, "
               f"strategy={self.strategy!r})")
+
+        if l2_used > self.l2Budget:
+            print(f"  [PromoteTensorsToL2] WARNING: standalone L2 footprint {l2_used} B "
+                  f"exceeds promote budget {self.l2Budget} B by {l2_used - self.l2Budget} B. "
+                  f"This usually means tile() hoisted additional buffers to L2 after the "
+                  f"earlier promote calls; minimalloc may then place arena buffers in "
+                  f"physically-occupied addresses and produce silently wrong output.")
 
         return ctxt, graph
