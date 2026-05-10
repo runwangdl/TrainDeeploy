@@ -529,6 +529,9 @@ class MemoryScheduler():
                     continue
                 constantTensorSize += np.prod(buffer.shape) * buffer._type.referencedType.typeWidth // 8
 
+        import os
+        if os.environ.get("DEBUG_CTO"):
+            print(f"  [DEBUG getConstantTensorOffset {memoryLevel} default={defaultMemoryLevel}] = {int(constantTensorSize):,} B")
         return int(constantTensorSize)
 
     def _scheduleMemoryConstraints(self,
