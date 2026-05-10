@@ -575,6 +575,41 @@ def _patch_shared_buffers(retStr: str, shared_input_map: Dict[int, int], shared_
     retStr = _arena_pat.sub(_replace, retStr)
 
     # ------------------------------------------------------------------
+    # Drop load_file_to_ram() for shared I/O buffers.
+    #
+    # InitOptimizerNetwork() emits one line per input:
+    #
+    #     load_file_to_ram(DeeployOptNetwork_input_N, "N.hex");
+    #
+    # which expands to cl_ram_write(addr, ...). cl_ram_write expects
+    # `addr` to be a hyperram (L3) offset; the underlying DMA engine
+    # masks it to the hyperram address range. For a shared input that
+    # has been redirected (above) to a TrainingNetwork buffer, the
+    # destination address is whatever level that buffer lives in -- and
+    # once PromoteTensorsToL2 starts hoisting training inputs to L2,
+    # that pointer is an L2 address. Stripping it to a hyperram offset
+    # yields nonsense (e.g. 0x10800000 -> 0x800000) which GVSoC reports
+    # as `/ram out-of-bound request (addr 0x800000, ram_size 0x800000)`
+    # and the simulation aborts.
+    #
+    # These loads are also dead code: the test harness re-initialises
+    # every shared input via l3_aware_copy(testInitWeights[]) after both
+    # InitTrainingNetwork() and InitOptimizerNetwork() return, and that
+    # helper picks the right L2/L3 writer per buffer.
+    _load_pat = re.compile(r'[^\n]*load_file_to_ram\s*\(\s*DeeployOptNetwork_(input|output)_(\d+)\s*,[^;]+\);\s*\n')
+
+    def _maybe_drop_load(m: re.Match) -> str:
+        kind = m.group(1)
+        idx = int(m.group(2))
+        if kind == "input" and idx in shared_input_map:
+            return ''
+        if kind == "output" and idx in shared_output_map:
+            return ''
+        return m.group(0)
+
+    retStr = _load_pat.sub(_maybe_drop_load, retStr)
+
+    # ------------------------------------------------------------------
     # Arena elimination: if a MEMORYARENA_Lx is no longer used for any
     # pointer arithmetic after the redirects, its malloc is dead and can
     # be removed to reclaim L2/L3.  The global declaration is left in

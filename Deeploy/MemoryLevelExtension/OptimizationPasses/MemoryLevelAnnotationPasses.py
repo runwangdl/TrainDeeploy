@@ -263,22 +263,17 @@ class PromoteTensorsToL2(SequentialPass):
         except Exception:
             pass
         l1_safety = float('inf')
-        # The hierarchy isn't on `self`; pull it from ctxt indirectly. Easier:
-        # accept either ctxt.memoryHierarchy or fall back to no L1 cap.
+        # The hierarchy isn't on `self`; pull it from ctxt indirectly.
+        # If we have the hierarchy, reject activations whose untiled size
+        # exceeds the smallest level (L1): an activation that doesn't fit
+        # in L1 forces tile() to L1-stage it whole and the L1 minimalloc
+        # fails. Constants are tiled by their consumer kernels and are
+        # not subject to this constraint.
         for src_attr in ('memoryHierarchy', '_memoryHierarchy'):
             mh = getattr(ctxt, src_attr, None)
             if mh is not None and hasattr(mh, 'memoryLevels'):
                 try:
-                    # 75% of L1: an activation/const whose untiled size exceeds
-                    # this cannot be safely whole-staged into L1 by an untiled
-                    # kernel (e.g. SGD, SCE) -- the remaining 25% is needed for
-                    # double-buffering scratch, return-buffer staging, and
-                    # other tile()-internal allocations. Without this margin
-                    # ResNet8 / MobileNetV1 training hang inside GVSoC when a
-                    # ~700 KB conv weight is promoted to L2 (cap=1031072) and
-                    # the SGD update kernel tries to fit the whole tensor in
-                    # L1=128 KB.
-                    l1_safety = int(min(lv.size for lv in mh.memoryLevels.values()) * 0.75)
+                    l1_safety = min(lv.size for lv in mh.memoryLevels.values())
                     break
                 except Exception:
                     pass
@@ -312,19 +307,14 @@ class PromoteTensorsToL2(SequentialPass):
 
         for name, buf, size, _ in candidates:
             is_const = isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)
-            # Apply the L1 staging guard to constants too. Big SGD/SCE/etc.
-            # kernels that consume a constant weight are untiled, so they need
-            # to fit the whole tensor in L1; a ~700 KB conv weight at L2 still
-            # cannot be staged whole into L1=128 KB and produces silently
-            # corrupt output (or DMA spin) in untiled kernels.
-            if size >= l1_safety:
-                continue
             if is_const:
                 if trial_total(size, var_blocks) <= self.l2Budget:
                     buf._memoryLevel = 'L2'
                     const_used += size
                     promoted.append((name, size))
             else:
+                if size >= l1_safety:
+                    continue
                 lt = getattr(buf, '_lifetime', None)
                 if lt is None:
                     # No lifetime info -> can't measure overlap; charge full size
