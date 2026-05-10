@@ -55,4 +55,17 @@ jobs:
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "promote and l3 and singlebuffer"
+      pytest-marker: "models and promote and l3 and singlebuffer"
+
+  # Training tests - L3 singlebuffer with PromoteTensorsToL2 enabled.
+  # Verifies the promotion pass works on training graphs (forward +
+  # backward + optimizer) and emits a "Tiled L3 training + promote
+  # cycle reference" Markdown table to the run summary so reviewers
+  # can compare against the no-promote training baseline.
+  siracusa-training-tiled-l3-singlebuffer-promote:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and promote and l3 and singlebuffer"
