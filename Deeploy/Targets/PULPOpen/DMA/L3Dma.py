@@ -61,4 +61,5 @@ class L3Dma(AsyncDma):
 
 
 # LMACAN: It's a hack because the driver is now working correctly
-l3DmaHack = BlockingDmaFromAsyncDmaAdapter(L3Dma())
+# WMR: temp — try true async to unblock L3 DB pipelining for ResNet/MobileNet
+l3DmaHack = L3Dma()
