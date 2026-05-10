@@ -201,7 +201,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     if not path or not os.path.exists(path):
         return
     try:
-        existing = open(path).read()
+        with open(path) as _f:
+            existing = _f.read()
     except Exception:
         return
     if "## Tensor-promotion strategy benchmark" not in existing:
