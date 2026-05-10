@@ -29,10 +29,9 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # NOTE: All other Siracusa-tiled jobs are temporarily disabled on this
-  # branch so the L3-untiled job runs in isolation while we collect
-  # cycle-count data. Restore the L2 / L3 singlebuffer entries below
-  # before merging.
+  # NOTE: L2 singlebuffer still commented out — only need fresh L3
+  # singlebuffer numbers for the big-CCT tiled cycle (other 3 already
+  # measured).  Restore the L2 entry below before merging.
   #
   # # Training tests - L2 singlebuffer
   # siracusa-training-tiled-l2-singlebuffer:
@@ -42,15 +41,15 @@ jobs:
   #     runner: ${{ needs.select-env.outputs.runner }}
   #     docker-image: ${{ needs.select-env.outputs.image }}
   #     pytest-marker: "training and l2 and singlebuffer"
-  #
-  # # Training tests - L3 singlebuffer
-  # siracusa-training-tiled-l3-singlebuffer:
-  #   needs: select-env
-  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
-  #   with:
-  #     runner: ${{ needs.select-env.outputs.runner }}
-  #     docker-image: ${{ needs.select-env.outputs.image }}
-  #     pytest-marker: "training and l3 and singlebuffer"
+
+  # Training tests - L3 singlebuffer (re-run to pick up big-CCT tiled).
+  siracusa-training-tiled-l3-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l3 and singlebuffer"
 
   # Training tests - L3 untiled baseline.  Codegen post-process rewrites
   # every L1-annotated buffer to FC L2 so cluster cores access kernel
