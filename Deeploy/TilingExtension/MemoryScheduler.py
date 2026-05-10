@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Literal, Optional, Tuple, Union
 
 import numpy as np
+import onnx_graphsurgeon as gs
 from ortools.constraint_solver.pywrapcp import IntVar
 
 from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.LoweringOptimizationPasses import _permute
@@ -441,11 +442,25 @@ class MemoryScheduler():
         (i.e. before any promotion has happened, when every activation is still
         at the default level). The pre-bind PromoteTensorsToL2 call uses this
         to make lifetime-aware greedy decisions.
+
+        Accepts either schedule format Deeploy uses:
+          - List[List[Node]] -- the tiled / pattern-based scheduler output
+          - List[Node]       -- the simple per-deployer scheduler default
+                                (e.g. MemoryLevelAwareDeployer's
+                                ``lambda graph: list(graph.nodes)``).
+        Mixing is tolerated; non-Node, non-iterable items are silently skipped.
         """
         flat_steps = []
-        for pattern in schedule:
-            for node in pattern:
-                flat_steps.append(node)
+        for item in schedule:
+            if isinstance(item, gs.Node):
+                flat_steps.append(item)
+            else:
+                try:
+                    for node in item:
+                        if isinstance(node, gs.Node):
+                            flat_steps.append(node)
+                except TypeError:
+                    pass
 
         lifetimes: Dict[str, Tuple[int, int]] = {}
         for stepIdx, node in enumerate(flat_steps):
@@ -482,11 +497,20 @@ class MemoryScheduler():
         their lifetime unset so they were treated as forever-alive in codegen and viz.
         Returning a real lifetime here is the foundation for compacting them into a
         shared L2 pool by non-overlapping reuse.
+
+        Accepts either ``List[Node]`` or ``List[List[Node]]`` schedule formats.
         """
         flat_steps = []
-        for pattern in schedule:
-            for node in pattern:
-                flat_steps.append(node)
+        for item in schedule:
+            if isinstance(item, gs.Node):
+                flat_steps.append(item)
+            else:
+                try:
+                    for node in item:
+                        if isinstance(node, gs.Node):
+                            flat_steps.append(node)
+                except TypeError:
+                    pass
 
         lifetimes: Dict[str, Tuple[int, int]] = {}
         for stepIdx, node in enumerate(flat_steps):
