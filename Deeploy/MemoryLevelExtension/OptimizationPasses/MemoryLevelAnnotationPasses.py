@@ -206,6 +206,32 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 candidates.append((name, buf, size, len(buf._users)))
 
+            # Graph I/O lives in globalObjects as VariableBuffer (not ConstantBuffer).
+            # Without this loop they stay in L3 even when there is plenty of L2 budget
+            # left -- e.g. on ResNet8 training the unpromoted "input_*" / "output_*"
+            # weight-and-grad tensors account for ~950 KB of L3 use. The Siracusa
+            # training harness's l3_aware_copy() / IS_L2() helpers already handle
+            # an L2-resident graph I/O destination correctly, so we can promote them.
+            for name, buf in ctxt.globalObjects.items():
+                if not isinstance(buf, VariableBuffer):
+                    continue
+                if isinstance(buf, (ConstantBuffer, _ReferenceBuffer)):
+                    continue
+                if isinstance(buf, TransientBuffer):
+                    continue
+                if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
+                    continue
+                if name in skip_tensors:
+                    continue
+                if 'allocTemplate' in buf.__dict__:
+                    continue
+                size = self._bufferSize(buf)
+                if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
+                    continue
+                if size < self.minBufferBytes:
+                    continue
+                candidates.append((name, buf, size, len(buf._users)))
+
         if self.strategy == 'cycle-aware':
             candidates.sort(key = lambda x: x[3] * (self.setupCycles + x[2] / self.bw) / max(x[2], 1), reverse = True)
         elif self.strategy == 'greedy-score':
