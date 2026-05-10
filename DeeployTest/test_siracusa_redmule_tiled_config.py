@@ -26,13 +26,19 @@ L2_DOUBLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
 }
 
-# L3 single-buffer training models.  Temporarily empty: we're isolating the
-# new PWConvGrad{W,X} RedMulE kernels via the kernel-test matrix above
-# (Kernels/FP32/ConvGradW_PW + Kernels/FP32/ConvGradX_PW_block_11), which
-# exercises the kernels directly with deterministic reference inputs and
-# avoids confounding training-graph effects.  Restore the
-# ResNet8 / MobileNetV1 / CCT entries once the kernel tests are green on CI.
-L3_SINGLEBUFFER_TRAINING_MODELS = {}
+# L3 single-buffer training models.  Pared down to just CCT for now: the
+# new PWConvGrad{W,X} RedMulE kernels are primarily validated via the
+# kernel-test matrix above (Kernels/FP32/ConvGradW_PW +
+# Kernels/FP32/ConvGradX_PW_block_11) which uses deterministic ORT-computed
+# references.  A fully-empty dict here would make
+# `@pytest.mark.parametrize` error out at collection time with
+# "error raised while trying to determine id of parameter 'test_params' at
+# position 0", blocking the kernel jobs that share the same test module --
+# so we keep CCT as a minimum (smallest of the three).  Re-add ResNet8 and
+# MobileNetV1 once the new W kernel's tiler interaction is confirmed.
+L3_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": [128000],
+}
 
 # Match the per-model overrides used in test_siracusa_tiled_config so the
 # RedMulE training run inherits the same num_data_inputs and tolerance
