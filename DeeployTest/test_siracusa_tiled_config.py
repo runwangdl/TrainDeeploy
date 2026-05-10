@@ -159,7 +159,9 @@ L3_DOUBLEBUFFER_MODELS = {
 # L2 size is fixed by the runner at 2_000_000 to match the validated local run.
 L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    # 32 KB variant matches the L2 DB matrix so the SB/DB join table in
+    # the workflow summary actually pairs up.
+    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
 }
 
@@ -174,9 +176,14 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 
 # Double-buffered training models. Start narrow: only SimpleMLP until DB+alias
 # path is validated end-to-end. Expand to Autoencoder/DSCNN once stable.
+# L2 DB at L1=128 KB → almost all ops are 1-tile (tensors fit comfortably);
+# DB pass triggers but has nothing to pipeline. Add a 32 KB autoencoder
+# variant so ~8 of 55 ops become 2-4 tiles and DB pipelining actually
+# fires. DSCNN is structurally DB-unfriendly at L2 (depthwise/pointwise
+# Conv weights are tiny, only ~1 of 97 ops multi-tiles even at L1=16 KB).
 L2_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
     "Models/Training/DSCNN/dscnn_train": [128000],
 }
 
