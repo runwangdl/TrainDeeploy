@@ -40,6 +40,7 @@ from test_siracusa_tiled_config import L2_DOUBLEBUFFER_TRAINING_MODELS as SIRACU
 from test_siracusa_tiled_config import L2_SINGLEBUFFER_KERNELS, L2_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L2_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
+from test_siracusa_tiled_config import L3_DOUBLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_DOUBLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_PROMOTE_MODELS as SIRACUSA_L3_SINGLEBUFFER_PROMOTE_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import \
@@ -381,7 +382,7 @@ def test_siracusa_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, 
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
     )
-    run_and_assert_test(test_name, config, skipgen, skipsim)
+    run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "Siracusa L2 training cycles")
 
 
 @pytest.mark.siracusa_tiled
@@ -415,7 +416,41 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
     )
-    run_and_assert_test(test_name, config, skipgen, skipsim)
+    run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "Siracusa L3 training cycles")
+
+
+@pytest.mark.siracusa_tiled
+@pytest.mark.training
+@pytest.mark.doublebuffer
+@pytest.mark.l3
+@pytest.mark.parametrize(
+    "test_params",
+    generate_test_params(SIRACUSA_L3_DOUBLEBUFFER_TRAINING_MODELS, "L3-doublebuffer-training"),
+    ids = param_id,
+)
+def test_siracusa_tiled_training_l3_doublebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
+                                                 skipgen, skipsim) -> None:
+    test_name, l1, _config_name = test_params
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = cmake_args,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = l1,
+        l2 = 2000000,
+        default_mem_level = "L3",
+        double_buffer = True,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "Siracusa L3 training cycles")
 
 
 @pytest.mark.siracusa_tiled
@@ -449,7 +484,7 @@ def test_siracusa_tiled_training_l2_doublebuffer(test_params, deeploy_test_dir, 
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
     )
-    run_and_assert_test(test_name, config, skipgen, skipsim)
+    run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "Siracusa L2 training cycles")
 
 
 @pytest.mark.siracusa_tiled

@@ -128,3 +128,19 @@ class TrainingDBTiler(DBTiler):
             if node.op in self.DB_OPT_OUT_OPS:
                 return 1
         return super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
+
+
+class TrainingDBOnlyL3Tiler(TrainingDBTiler):
+    """L3-mode training DB: double-buffer only the L3→L2 hop, leave L2→L1 SB.
+
+    Mirrors the inference path's `DBOnlyL3Tiler`. Plain `TrainingDBTiler` doubles
+    every memory hop's coefficient — for `defaultMemLevel=L3` that means L2
+    staging buffers also get doubled, which blows the 2 MB L2 capacity on
+    ResNet8/MobileNetV1 training graphs (constraint solver returns infeasible).
+    """
+
+    def multiBufferStrategy(self, tilerModel: TilerModel, ctxt: NetworkContext, pattern: SubGraph, path: List[str],
+                            hop: str, tensorName: str) -> Union[int, IntVar]:
+        if hop == "L1":
+            return 1
+        return super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
