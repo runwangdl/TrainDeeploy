@@ -40,6 +40,7 @@ from test_siracusa_tiled_config import L2_DOUBLEBUFFER_KERNELS, L2_DOUBLEBUFFER_
 from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L2_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
+from test_siracusa_tiled_config import L3_UNTILED_TRAINING_MODELS as SIRACUSA_L3_UNTILED_TRAINING_MODELS
 from test_siracusa_tiled_config import TRAINING_MODEL_OVERRIDES as SIRACUSA_TRAINING_MODEL_OVERRIDES
 from test_snitch_config import DEFAULT_NUM_CORES as SNITCH_DEFAULT_NUM_CORES
 from test_snitch_config import KERNEL_TESTS as SNITCH_KERNEL_TESTS
@@ -409,6 +410,51 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         cores = SIRACUSA_DEFAULT_CORES,
         l1 = l1,
         l2 = 2000000,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.siracusa_tiled
+@pytest.mark.training
+@pytest.mark.untiled
+@pytest.mark.l3
+@pytest.mark.parametrize(
+    "test_name",
+    list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
+    ids = list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
+)
+def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
+                                            skipgen, skipsim) -> None:
+    """Untiled-L3 baseline.
+
+    Reuses the tiled codegen pipeline but inflates --l1 large enough that the
+    SBTiler picks single-tile-per-tensor schedules.  The deeploy_fake_l1 shim
+    (DEEPLOY_L1_AS_L2) redirects pi_cl_l1_malloc into an FC-L2 arena so the
+    oversized "L1" working buffer (>physical 256 KB) actually fits.
+    """
+    fixture = SIRACUSA_L3_UNTILED_TRAINING_MODELS[test_name]
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    extra_cmake = list(cmake_args) + [
+        f"-DDEEPLOY_L1_AS_L2=ON",
+        f"-DDEEPLOY_FAKE_L1_SIZE={fixture['fake_l1_size']}",
+    ]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = extra_cmake,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = fixture["l1"],
+        l2 = fixture["l2"],
         default_mem_level = "L3",
         double_buffer = False,
         training = True,

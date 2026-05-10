@@ -71,6 +71,23 @@ target_link_libraries(deeploypulp PUBLIC pulp-nn-mixed)
 target_link_libraries(deeploypulp INTERFACE pulp-sdk)
 target_sources(deeploypulp INTERFACE $<TARGET_OBJECTS:pulp-sdk>)
 
+# Untiled-L3 baseline: redirect pi_cl_l1_malloc/free to a static L2 arena via
+# linker --wrap so cluster-L1 alloc requests up to DEEPLOY_FAKE_L1_SIZE bytes
+# (must be ≤ remaining FC L2 ~1.94 MB) succeed even though physical L1 is only
+# 256 KB. Source file deeploy_fake_l1.c is no-op when DEEPLOY_L1_AS_L2 is OFF.
+option(DEEPLOY_L1_AS_L2 "Redirect pi_cl_l1_malloc to a static FC-L2 arena (untiled-L3 baseline)" OFF)
+set(DEEPLOY_FAKE_L1_SIZE "1048576" CACHE STRING "Size in bytes of the fake-L1 arena placed in FC L2")
+if(DEEPLOY_L1_AS_L2)
+  target_compile_definitions(deeploypulp PRIVATE
+    DEEPLOY_L1_AS_L2
+    DEEPLOY_FAKE_L1_SIZE=${DEEPLOY_FAKE_L1_SIZE}
+  )
+  target_link_options(deeploypulp INTERFACE
+    "-Wl,--wrap=pi_cl_l1_malloc"
+    "-Wl,--wrap=pi_cl_l1_free"
+  )
+endif()
+
 set(PULP_NNX_PLATFORMS "Siracusa;Siracusa_w_neureka")
 if (platform IN_LIST PULP_NNX_PLATFORMS)
   if (platform STREQUAL "Siracusa" OR platform STREQUAL "Siracusa_w_neureka")

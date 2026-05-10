@@ -172,6 +172,33 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [128000],
 }
 
+# Untiled-L3 baseline.  Same fixtures as L3_SINGLEBUFFER_TRAINING_MODELS but
+# the L1 budget is inflated so the SBTiler picks single-tile-per-tensor
+# schedules (numTiles == 1 on every dim) — semantically untiled per op, but
+# still uses the tile-codegen DMA wrappers because cluster cores cannot deref
+# HyperRAM directly. The L1 working buffer ends up larger than physical
+# Siracusa L1 (256 KB), so the deeploy_fake_l1 shim redirects pi_cl_l1_malloc
+# into an FC-L2 arena via -Wl,--wrap; size cap = DEEPLOY_FAKE_L1_SIZE (set
+# per-fixture below to fit the model's peak L1 working set with headroom).
+#
+# Maps test_name -> dict with:
+#   l1: planner-side L1 size (forces single-tile schedules)
+#   l2: planner-side L2 size
+#   fake_l1_size: physical bytes for the FC-L2 arena backing pi_cl_l1_malloc
+#
+# fake_l1_size baselining method: spike with --l1=4_000_000 → read off
+# MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
+L3_UNTILED_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": {
+        "l1": 4_000_000,
+        "l2": 2_000_000,
+        "fake_l1_size": 1_048_576,  # spike measured 739 KB; 1 MB headroom
+    },
+    # MobileNetV1 / CCT / CCT_LoRA fixtures pending: ResNet8 ships first as
+    # the fastest-to-validate L3 baseline.  Each new entry needs an explicit
+    # spike to size fake_l1_size before adding here.
+}
+
 # Per-model overrides for training tests.
 #
 # - num_data_inputs: required when inputs.npz has only one mini-batch (no
