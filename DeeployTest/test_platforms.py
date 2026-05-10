@@ -41,6 +41,7 @@ from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACU
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_PROMOTE_MODELS as SIRACUSA_L3_SINGLEBUFFER_PROMOTE_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
+from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE as SIRACUSA_L3_TRAINING_MODELS_PROMOTE
 from test_siracusa_tiled_config import TRAINING_MODEL_OVERRIDES as SIRACUSA_TRAINING_MODEL_OVERRIDES
 from test_snitch_config import DEFAULT_NUM_CORES as SNITCH_DEFAULT_NUM_CORES
 from test_snitch_config import KERNEL_TESTS as SNITCH_KERNEL_TESTS
@@ -419,6 +420,55 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
                         skipsim,
                         report_metric = metric,
                         metric_section = "Tiled L3 training cycle reference")
+
+
+@pytest.mark.siracusa_tiled
+@pytest.mark.training
+@pytest.mark.singlebuffer
+@pytest.mark.l3
+@pytest.mark.promote
+@pytest.mark.parametrize(
+    "test_params",
+    [(t, l1, strat, acts) for t, configs in SIRACUSA_L3_TRAINING_MODELS_PROMOTE.items() for l1, strat, acts in configs],
+    ids = lambda p: f"{p[0]}-{p[1]}-{p[2]}-{'act' if p[3] else 'noact'}",
+)
+def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_test_dir, toolchain, toolchain_dir,
+                                                         cmake_args, skipgen, skipsim) -> None:
+    """L3 training + PromoteTensorsToL2. Mirrors the no-promote training test
+    but enables the pre-bind promotion pass on the training graph (and the
+    optimizer graph). Cycle counts feed a separate Markdown summary section
+    so reviewers can compare against the no-promote baseline."""
+    test_name, l1, strategy, include_acts = test_params
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = cmake_args,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = l1,
+        l2 = 2000000,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+        promote_to_l2 = True,
+        promote_to_l2_strategy = strategy,
+        promote_to_l2_include_activations = include_acts,
+        promote_to_l2_max_buffer_bytes = 2048,
+    )
+    metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
+    run_and_assert_test(test_name,
+                        config,
+                        skipgen,
+                        skipsim,
+                        report_metric = metric,
+                        metric_section = "Tiled L3 training + promote cycle reference")
 
 
 def _generate_promote_test_params(test_dict):

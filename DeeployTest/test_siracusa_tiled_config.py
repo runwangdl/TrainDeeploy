@@ -172,6 +172,17 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [128000],
 }
 
+# Same models, runs WITH PromoteTensorsToL2 enabled so the training cycle
+# table shows cycles with-vs-without promotion side by side. Each entry is
+# (l1, strategy, includeActivations). Conservative MaxBufferBytes=2048 to
+# avoid the wider-cap codegen edge cases on training graphs.
+L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
+    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True)],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True)],
+    "Models/Training/CCT/cct_train": [(128000, "cycle-aware", True)],
+    "Models/Training/CCT_LoRA/cct_lora_train": [(128000, "cycle-aware", True)],
+}
+
 # Per-model overrides for training tests.
 #
 # - num_data_inputs: required when inputs.npz has only one mini-batch (no
