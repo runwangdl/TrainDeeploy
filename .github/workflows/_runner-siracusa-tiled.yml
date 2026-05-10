@@ -17,6 +17,14 @@ name: _runner-siracusa-tiled
       pytest-marker:
         required: true
         type: string
+      # Extra flags injected into the pytest command (between -v and the -m
+      # marker filter).  Default empty preserves the existing sequential
+      # invocation; callers that want simulator stdout (e.g. GVSoC cycle
+      # counts) in the CI log can override with "-s" to disable capture.
+      pytest-flags:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   test-runner-siracusa-tiled:
@@ -36,5 +44,5 @@ jobs:
       - name: Run Test
         run: |
           cd DeeployTest
-          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
+          pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
         shell: bash

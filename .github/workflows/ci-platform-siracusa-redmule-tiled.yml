@@ -56,3 +56,8 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and singlebuffer and l3"
+      # Disable pytest's stdout capture so GVSoC's "Cycles" report from the
+      # cct_train simulation lands in the CI log; needs -p no:xdist because
+      # the parallel worker plugin would otherwise re-buffer stdout.  Only
+      # one test case in this matrix anyway, so dropping -n 4 is harmless.
+      pytest-flags: "-s -p no:xdist"

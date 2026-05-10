@@ -17,6 +17,15 @@ name: _runner-siracusa-redmule-tiled-sequential
       pytest-marker:
         required: true
         type: string
+      # Extra flags injected into the pytest command, between -v and the -m
+      # marker filter.  Default keeps the original 4-worker xdist behavior;
+      # callers that want simulator stdout (e.g. GVSoC cycle counts) in the
+      # CI log can override with "-s -p no:xdist" to disable capture and
+      # the parallel worker plugin (xdist eats per-test stdout).
+      pytest-flags:
+        required: false
+        type: string
+        default: "-n 4"
 
 jobs:
   test-runner-siracusa-redmule-tiled:
@@ -41,5 +50,5 @@ jobs:
           cd DeeployTest
           mkdir -p /app/.ccache
           export CCACHE_DIR=/app/.ccache
-          pytest test_platforms.py -v -n 4 -m "siracusa_redmule_tiled and ${{ inputs.pytest-marker }}"
+          pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_redmule_tiled and ${{ inputs.pytest-marker }}"
         shell: bash
