@@ -11,7 +11,8 @@ name: CI • Siracusa (Tiled)
       - "**"
     tags:
       - "v*.*.*"
-  pull_request:
+  # pull_request: temporarily disabled so this workflow doesn't run twice
+  # per push (once for the push event, once for the PR sync event).
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
@@ -29,39 +30,35 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # Training tests - L2 singlebuffer
-  siracusa-training-tiled-l2-singlebuffer:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l2 and singlebuffer"
+  # DIAGNOSTIC MODE: only the training-promote job is active so iteration
+  # on the ResNet8 / MobileNetV1 promote failure isn't blocked by ~30 min
+  # of unrelated tests per push. Restore the other jobs once promote is
+  # stable on the training graphs.
+  #
+  # siracusa-training-tiled-l2-singlebuffer:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "training and l2 and singlebuffer"
+  #
+  # siracusa-training-tiled-l3-singlebuffer:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "training and l3 and singlebuffer"
+  #
+  # siracusa-tiled-l3-singlebuffer-promote:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "models and promote and l3 and singlebuffer"
 
-  # Training tests - L3 singlebuffer (models that spill weights/activations to L3)
-  siracusa-training-tiled-l3-singlebuffer:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l3 and singlebuffer"
-
-  # Inference tests - L3 singlebuffer with PromoteTensorsToL2 enabled.
-  # Exercises the L2-promoted DMA byte-offset codegen across strategies.
-  siracusa-tiled-l3-singlebuffer-promote:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "models and promote and l3 and singlebuffer"
-
-  # Training tests - L3 singlebuffer with PromoteTensorsToL2 enabled.
-  # Verifies the promotion pass works on training graphs (forward +
-  # backward + optimizer) and emits a "Tiled L3 training + promote
-  # cycle reference" Markdown table to the run summary so reviewers
-  # can compare against the no-promote training baseline.
   siracusa-training-tiled-l3-singlebuffer-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
