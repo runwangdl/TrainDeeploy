@@ -190,8 +190,8 @@ class DeeployRunnerArgumentParser(argparse.ArgumentParser):
                               help = 'Skip promotion candidates larger than this; 0 = no cap. Default: 2048\n')
             self.add_argument('--promoteToL2Headroom',
                               type = int,
-                              default = 64000,
-                              help = 'Bytes reserved in L2 for tile staging. Default: 64000\n')
+                              default = 131072,
+                              help = 'Bytes reserved in L2 for tile staging. Default: 131072\n')
 
         self.args = None
 

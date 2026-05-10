@@ -246,8 +246,8 @@ if __name__ == '__main__':
                         help = 'Skip candidates larger than this many bytes; 0 = no cap. Default: 2048.')
     parser.add_argument('--promoteToL2Headroom',
                         type = int,
-                        default = 64000,
-                        help = 'Bytes reserved in L2 for tile staging (not available for promotion). Default: 64000.')
+                        default = 131072,
+                        help = 'Bytes reserved in L2 for tile staging (not available for promotion). Default: 131072.')
 
     parser.set_defaults(shouldFail = False)
     args = parser.parse_args()

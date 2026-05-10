@@ -57,6 +57,10 @@ class PromoteTensorsToL2(SequentialPass):
     Args:
         l2Size:                 L2 capacity in bytes (from MemoryHierarchy).
         headroom:               Bytes reserved for tile staging; not available for promotion.
+                                Default 131072 covers the typical largest single tile-staging
+                                buffer on 1 MB L2 configurations; raise it if minimalloc fails
+                                with "capacity of N bytes" where N is too small for the actual
+                                arena peak demand.
         strategy:               One of 'cycle-aware' (default), 'greedy-score',
                                 'knapsack-ratio', 'smallest', 'largest', 'random'.
         includeActivations:     If True, also promote VariableBuffers (activations) from
@@ -75,7 +79,7 @@ class PromoteTensorsToL2(SequentialPass):
 
     def __init__(self,
                  l2Size: int,
-                 headroom: int = 64000,
+                 headroom: int = 131072,
                  strategy: str = 'cycle-aware',
                  includeActivations: bool = False,
                  maxBufferBytes: int = 2048,

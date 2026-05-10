@@ -546,6 +546,32 @@ class Tiler():
             log.error(
                 f"Memory allocator failed with return code {minimallocOutput.returncode} at memory level {memoryLevel} with capacity of {capacity} bytes!"
             )
+            # Diagnostic: read back the input csv we just fed minimalloc and report the
+            # peak simultaneous footprint so the user knows whether the budget is just
+            # short (-> increase --promoteToL2Headroom) or the input itself doesn't fit
+            # (-> a different problem unrelated to promotion).
+            try:
+                with open(f"{self._minimalloc_input}.csv", mode = "r", newline = "") as f:
+                    rows = list(csv.DictReader(f))
+                if rows:
+                    events = []
+                    for r in rows:
+                        events.append((int(r["lower"]), 1, int(r["size"])))
+                        events.append((int(r["upper"]), 0, int(r["size"])))
+                    events.sort()
+                    peak = live = 0
+                    for _, isEnter, sz in events:
+                        if isEnter:
+                            live += sz
+                            peak = max(peak, live)
+                        else:
+                            live -= sz
+                    log.error(f"  arena needs at least {peak} bytes (peak simultaneous footprint of "
+                              f"{len(rows)} buffer(s)); shortfall is {peak - capacity} bytes.")
+                    log.error(f"  If running with --promoteToL2, increase --promoteToL2Headroom by "
+                              f"at least {peak - capacity} bytes to free up arena space.")
+            except Exception:
+                pass
             raise subprocess.CalledProcessError(minimallocOutput.returncode, " ".join(minimallocOutput.args))
 
         with open(f"{self._minimalloc_output}.csv", mode = "r", newline = "") as file:
