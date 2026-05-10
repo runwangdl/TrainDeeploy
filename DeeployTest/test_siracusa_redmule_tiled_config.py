@@ -20,11 +20,16 @@ L2_DOUBLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
 }
 
-# L3 single-buffer training models. Same fixtures used by the Siracusa-only
-# tiled training CI; on Siracusa_w_redmule the GEMM/Matmul ops are bound to
-# RedMulE while the rest of the graph (LayerNorm/GELU/Conv-grad/...) falls
-# back to PULPCluster kernels via the second engine in RedmulePlatform.
+# L3 single-buffer training models. Mirrors the Siracusa-only tiled training
+# CI; on Siracusa_w_redmule the forward GEMM / MatMul / Conv ops bind to
+# RedMulE (FP32) while every other op (LayerNorm/GELU/*Grad/Softmax/...) falls
+# back to PULPCluster via the second engine in RedmulePlatform.  ResNet8 and
+# MobileNetV1 are mostly Conv-heavy (the forward Conv kernel is RedMulE-bound
+# as of 4517cc9); CCT is mostly transformer matmul/gemm.  Together they
+# bracket the workload mix RedMulE actually sees in training.
 L3_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
     "Models/Training/CCT/cct_train": [128000],
 }
 

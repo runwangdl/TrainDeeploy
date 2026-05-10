@@ -30,8 +30,7 @@ import onnx_graphsurgeon as gs
 from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.DeeployTypes import DeploymentPlatform, TopologyOptimizer
 from Deeploy.Targets.PULPOpen.Deployer import PULPDeployer
-from Deeploy.Targets.Redmule.TopologyOptimizationPasses.Passes import RedMuleAdjustWeightMemoryLayoutPass, \
-    RedMuleGEMMTransposePass
+from Deeploy.Targets.Redmule.TopologyOptimizationPasses.Passes import RedMuleGEMMTransposePass
 
 
 class RedmuleDeployer(PULPDeployer):
@@ -50,6 +49,11 @@ class RedmuleDeployer(PULPDeployer):
                          default_channels_first, deeployStateDir, inputOffsets)
 
         self.loweringOptimizer.passes += [
-            RedMuleAdjustWeightMemoryLayoutPass("Redmule"),
+            # RedMuleAdjustWeightMemoryLayoutPass is currently not registered:
+            # it transposes Conv weights from [F,P,Q,C] to [P,Q,C,F] for the
+            # RedMulE accelerator, but Conv is back on PULPClusterEngine (see
+            # Engine.RedmuleMapping for why) and PULP expects [F,P,Q,C].
+            # Restore alongside the Conv mapping when RedmuleConv2DTileConstraint
+            # learns spatial tiling.
             RedMuleGEMMTransposePass("Redmule")
         ]

@@ -39,14 +39,17 @@ class RedmuleFloatConvIm2ColTemplate(NodeTemplate):
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        # Full im2col matrix: one (P*Q*C)-flattened row per output position.
-        # The kernel builds the whole thing in one shot to amortise RedMulE's
-        # per-trigger MMIO setup cost.  Size is in bytes (4 = sizeof float32);
-        # the L1 tiler must fit this alongside input / weight / bias / output
-        # tiles, so dim_im_out_y / dim_im_out_x here are tile-local values.
+        # Streaming im2col buffer: IM2COL_CHUNK_ROWS rows of K = C*P*Q FP32
+        # values.  Must stay in sync with the IM2COL_CHUNK_ROWS macro in
+        # Conv2d_Im2Col_fp32_Redmule.c.  A full-image im2col would blow L1
+        # for non-trivial Conv layers (e.g. ResNet8 with H_out*W_out=1024
+        # and K=144 -> 576 KiB), which made the tiler infeasible; capping
+        # the buffer at 16 rows keeps every Conv layer tilable, at the cost
+        # of a few extra RedMulE MMIO triggers per layer.
+        IM2COL_CHUNK_ROWS = 16
         k_per_row = (operatorRepresentation['ch_im_in'] * operatorRepresentation['dim_kernel_x'] *
                      operatorRepresentation['dim_kernel_y'])
-        im2col_dim = 4 * operatorRepresentation['dim_im_out_y'] * operatorRepresentation['dim_im_out_x'] * k_per_row
+        im2col_dim = 4 * IM2COL_CHUNK_ROWS * k_per_row
         im2col_name = operatorRepresentation['nodeName'] + "_buffer"
         return [(im2col_name, im2col_dim)]
 

@@ -17,6 +17,15 @@ extern void Gemm_fp32_fp32_fp32_fp32_Redmule(
     const float32_t *__restrict__ pBias, float32_t *__restrict__ pDstY,
     uint32_t M, uint32_t N, uint32_t O);
 
+// Chunk size for the streaming im2col + RedMulE pipeline.  Chosen to be 16
+// because RedMulE's FP32 mode wants M divisible by 16 for full 4x12-array
+// utilisation, and 16 rows × K columns fits comfortably in L1 for any K we
+// reasonably expect from a Conv layer (e.g. C·P·Q = 576 for a 3x3 Conv with
+// 64 input channels -> 16*576*4 = 36 KiB).  The transient buffer hoisted by
+// RedmuleFloatConvIm2ColTemplate.computeTransientBuffersSize is sized to
+// exactly this many rows.
+#define IM2COL_CHUNK_ROWS 16
+
 // Layout assumptions:
 //   pIn      : input  in HWC, shape [H, W, C]
 //   pWeight  : weight after RedMuleAdjustWeightMemoryLayoutPass, which
@@ -26,25 +35,28 @@ extern void Gemm_fp32_fp32_fp32_fp32_Redmule(
 //   pOut     : output in HWC, shape [H_out, W_out, F]
 //   pBias    : optional bias of shape [F], broadcast across all output
 //              positions when has_bias is true.
-//   pIm2ColBuf: transient L1 scratch of size H_out * W_out * (C*P*Q) floats,
-//              hoisted by RedmuleFloatConvIm2ColTemplate.
+//   pIm2ColBuf: transient L1 scratch of size IM2COL_CHUNK_ROWS * (C*P*Q)
+//              floats, hoisted by ConvTemplate.computeTransientBuffersSize.
 //
-// Compute:
-//   1. All cluster cores cooperatively build the full im2col matrix
-//      [N_out, K] in pIm2ColBuf, where each row is the (p,q,c)-flattened
-//      receptive field for one output position.  Out-of-bounds positions
-//      from padding are filled with 0.
-//   2. Cluster barrier.
-//   3. Master core triggers a single RedMulE GEMM:
-//          [N_out, K] @ [K, F]  ->  [N_out, F]
-//      with bias broadcast in-place when has_bias is set.
-//   4. Cluster barrier so the rest of the network sees a valid pOut.
+// Compute (streaming):
+//   For each chunk of IM2COL_CHUNK_ROWS output positions:
+//     1. All cluster cores cooperatively build the chunk's im2col rows
+//        into pIm2ColBuf (zero-pad when h_in/w_in fall outside the input).
+//     2. Cluster barrier.
+//     3. Master core triggers one RedMulE GEMM:
+//            [chunk_rows, K] @ [K, F]  ->  [chunk_rows, F]
+//        written directly into the corresponding stripe of pOut.  When
+//        has_bias is set, the [F] bias is broadcast into that stripe
+//        first and then Gemm is called with y_addr = z_addr = stripe
+//        (same y=z aliasing pattern Matmul_fp32_Redmule already uses).
+//     4. Cluster barrier.
 //
-// The whole-image im2col + one-shot RedMulE call is preferred over a
-// per-pixel call because RedMulE's setup cost (register writes + the
-// blocking *wait_reg read) is several hundred cycles -- amortizing it
-// across one large matmul is a big win.  L1 budget for the im2col buf
-// is reserved by computeTransientBuffersSize in ConvTemplate.py.
+// Streaming was chosen over whole-image im2col because larger Conv layers
+// (e.g. ResNet8 middle layers with H_out*W_out ≥ 1024) would otherwise
+// blow the L1 budget: a 1024-row im2col with K=144 is 576 KiB, far above
+// the 128 KiB L1 tile budget.  16 rows per chunk costs a few extra RedMulE
+// triggers (~200 cycles each) but lets the tiler keep working at any
+// reasonable Conv size.
 void Conv2d_Im2Col_fp32_fp32_fp32_HWC_8_Redmule(
     const float32_t *__restrict__ pIn, uint32_t H, uint32_t W, uint32_t C,
     const float32_t *__restrict__ pWeight, uint32_t P, uint32_t Q, uint32_t SP,
@@ -60,63 +72,71 @@ void Conv2d_Im2Col_fp32_fp32_fp32_HWC_8_Redmule(
   const uint32_t N_out = H_out * W_out;
   const uint32_t K = C * P * Q;
 
-  // ---- 1. Parallel im2col -------------------------------------------------
-  // Each core handles a contiguous slice of output positions.  The slice
-  // is sized so that no core writes past the buffer end even when N_out
-  // is not divisible by NUM_CORES.
-  const uint32_t chunk = (N_out + NUM_CORES - 1) / NUM_CORES;
-  const uint32_t pos_start = MIN((uint32_t)core_id * chunk, N_out);
-  const uint32_t pos_end = MIN(pos_start + chunk, N_out);
+  for (uint32_t row_start = 0; row_start < N_out;
+       row_start += IM2COL_CHUNK_ROWS) {
+    const uint32_t this_chunk =
+        ((N_out - row_start) < IM2COL_CHUNK_ROWS) ? (N_out - row_start)
+                                                  : IM2COL_CHUNK_ROWS;
 
-  for (uint32_t pos = pos_start; pos < pos_end; ++pos) {
-    const uint32_t h_out = pos / W_out;
-    const uint32_t w_out = pos % W_out;
-    float32_t *row = pIm2ColBuf + pos * K;
-    uint32_t k = 0;
-    for (uint32_t p = 0; p < P; ++p) {
-      const int32_t h_in = (int32_t)(h_out * SP + p) - (int32_t)pad_top;
-      const bool h_in_range = (h_in >= 0) && (h_in < (int32_t)H);
-      for (uint32_t q = 0; q < Q; ++q) {
-        const int32_t w_in = (int32_t)(w_out * SQ + q) - (int32_t)pad_left;
-        if (h_in_range && (w_in >= 0) && (w_in < (int32_t)W)) {
-          const uint32_t in_base = ((uint32_t)h_in * W + (uint32_t)w_in) * C;
-          for (uint32_t c = 0; c < C; ++c) {
-            row[k++] = pIn[in_base + c];
-          }
-        } else {
-          // Zero-padding.
-          for (uint32_t c = 0; c < C; ++c) {
-            row[k++] = 0.0f;
+    // ---- 1. Parallel im2col over this chunk's rows ----------------------
+    // Each core fills a contiguous slice of the chunk; with CHUNK_ROWS=16
+    // and NUM_CORES=8, every core handles exactly 2 rows when the chunk is
+    // full.  A short tail chunk (e.g. last 5 rows) leaves the higher-numbered
+    // cores idle.
+    const uint32_t local_chunk =
+        (this_chunk + NUM_CORES - 1) / NUM_CORES;
+    const uint32_t local_start =
+        ((uint32_t)core_id * local_chunk < this_chunk)
+            ? ((uint32_t)core_id * local_chunk)
+            : this_chunk;
+    const uint32_t local_end = ((local_start + local_chunk) < this_chunk)
+                                   ? (local_start + local_chunk)
+                                   : this_chunk;
+
+    for (uint32_t r = local_start; r < local_end; ++r) {
+      const uint32_t pos = row_start + r;
+      const uint32_t h_out = pos / W_out;
+      const uint32_t w_out = pos % W_out;
+      float32_t *row = pIm2ColBuf + r * K;
+      uint32_t k = 0;
+      for (uint32_t p = 0; p < P; ++p) {
+        const int32_t h_in = (int32_t)(h_out * SP + p) - (int32_t)pad_top;
+        const bool h_in_range = (h_in >= 0) && (h_in < (int32_t)H);
+        for (uint32_t q = 0; q < Q; ++q) {
+          const int32_t w_in = (int32_t)(w_out * SQ + q) - (int32_t)pad_left;
+          if (h_in_range && (w_in >= 0) && (w_in < (int32_t)W)) {
+            const uint32_t in_base = ((uint32_t)h_in * W + (uint32_t)w_in) * C;
+            for (uint32_t c = 0; c < C; ++c) {
+              row[k++] = pIn[in_base + c];
+            }
+          } else {
+            for (uint32_t c = 0; c < C; ++c) {
+              row[k++] = 0.0f;
+            }
           }
         }
       }
     }
-  }
 
-  // Synchronise all cores before handing the matrix to RedMulE.
-  pi_cl_team_barrier(0);
+    pi_cl_team_barrier(0);
 
-  // ---- 2. RedMulE GEMM ----------------------------------------------------
-  if (core_id == 0) {
-    if (has_bias) {
-      // RedMulE Gemm computes Z = X*W + Y where Y is read element-wise as
-      // an [M, O] matrix.  Our bias is just [F]; broadcast it into pOut
-      // first so y_addr = pOut points at a per-output-row replica, and
-      // then have Z alias pOut too (the existing MatMul_*_Redmule kernel
-      // already shows that y_addr == z_addr is supported).
-      for (uint32_t i = 0; i < N_out; ++i) {
-        for (uint32_t f = 0; f < F; ++f) {
-          pOut[i * F + f] = pBias[f];
+    // ---- 2. RedMulE GEMM for this chunk's output stripe -----------------
+    if (core_id == 0) {
+      float32_t *out_stripe = pOut + row_start * F;
+      if (has_bias) {
+        for (uint32_t i = 0; i < this_chunk; ++i) {
+          for (uint32_t f = 0; f < F; ++f) {
+            out_stripe[i * F + f] = pBias[f];
+          }
         }
+        Gemm_fp32_fp32_fp32_fp32_Redmule(pIm2ColBuf, pWeight, out_stripe,
+                                         out_stripe, this_chunk, K, F);
+      } else {
+        MatMul_fp32_fp32_fp32_Redmule(pIm2ColBuf, pWeight, out_stripe,
+                                      this_chunk, K, F);
       }
-      Gemm_fp32_fp32_fp32_fp32_Redmule(pIm2ColBuf, pWeight, pOut, pOut, N_out,
-                                       K, F);
-    } else {
-      // MatMul_*_Redmule zeroes pOut internally before triggering, so we
-      // do not need to clear it here.
-      MatMul_fp32_fp32_fp32_Redmule(pIm2ColBuf, pWeight, pOut, N_out, K, F);
     }
-  }
 
-  pi_cl_team_barrier(0);
+    pi_cl_team_barrier(0);
+  }
 }

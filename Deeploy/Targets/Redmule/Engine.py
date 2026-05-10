@@ -39,7 +39,24 @@ GEMMMRedmuleMapper = NodeMapper(GEMMRedmuleParser(noBiasHoisting = False), Redmu
 
 RedmuleMapping = {
     'MatMul': MatMulLayer([MatMulRedmuleMapper]),
-    'Conv': ConvLayer([Conv2DRedmuleMapper]),
+    # 'Conv' is currently routed to PULPClusterEngine (see comment below).
+    # The RedMulE-accelerated kernel and its template are kept in-tree
+    # (TargetLibraries/PULPOpen/src/Conv2d_Im2Col_fp32_Redmule.c +
+    # Deeploy/Targets/Redmule/Templates/ConvTemplate.py) so the path is
+    # ready to re-enable once RedmuleConv2DTileConstraint learns spatial
+    # tiling with halo regions.  Today its addPolicyConstraint hard-pins
+    # inputHeightVar / inputWidthVar to the full feature-map size, which
+    # forces the entire activation tensor into L1 -- workable for tiny
+    # tokenizer-style Convs (CCT2 has 8x8 inputs and L1=128 KiB fits),
+    # but ResNet8 / MobileNet middle layers exceed L1 immediately
+    # (32x32x16 input + 32x32x16 output alone is 128 KiB).  PULP's
+    # Conv2DTileConstraint already supports spatial halos, so falling
+    # back keeps the bigger Conv-heavy training fixtures tilable while
+    # MatMul / Gemm continue to bind to RedMulE.
+    #
+    # When that tile-constraint upgrade lands, restore:
+    #     'Conv': ConvLayer([Conv2DRedmuleMapper]),
+    # and the matching RedMuleAdjustWeightMemoryLayoutPass in Deployer.py.
     'Gemm': GEMMLayer([GEMMMRedmuleMapper]),
 }
 

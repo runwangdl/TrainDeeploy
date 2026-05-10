@@ -53,7 +53,7 @@ jobs:
           set -o pipefail
           pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_redmule_tiled and ${{ inputs.pytest-marker }}" 2>&1 | tee /tmp/pytest_out.log
         shell: bash
-      - name: Report cycle counts (RedMulE side)
+      - name: Report cycle counts (RedMulE side, with speedup vs Siracusa)
         if: always()
         shell: bash
         env:
@@ -62,76 +62,100 @@ jobs:
           REPO: ${{ github.repository }}
           MARKER: ${{ inputs.pytest-marker }}
         run: |
-          # Only the training job emits BENCH lines; kernel jobs noop quietly.
-          if ! grep -q '^BENCH train_cycles=' /tmp/pytest_out.log 2>/dev/null; then
-            echo "No BENCH line found (probably a kernel-only job); skipping summary."
-            exit 0
-          fi
-          RMU_LINE=$(grep -m1 '^BENCH train_cycles=' /tmp/pytest_out.log)
-          RMU_TRAIN=$(echo "$RMU_LINE" | sed -nE 's/.*train_cycles=([0-9]+).*/\1/p')
-          RMU_OPT=$(echo "$RMU_LINE"   | sed -nE 's/.*opt_cycles=([0-9]+).*/\1/p')
-          {
-            echo "## Siracusa + RedMulE cycles ($MARKER)"
-            echo ""
-            echo "| metric | RedMulE |"
-            echo "|---|---:|"
-            echo "| train_cycles | ${RMU_TRAIN} |"
-            echo "| opt_cycles   | ${RMU_OPT}   |"
-            echo ""
-            echo "_Counted on commit \`${HEAD_SHA:0:7}\` via GVSoC._"
-          } >> "$GITHUB_STEP_SUMMARY"
-          # Try to pull the matching Siracusa-baseline run on the same SHA and
-          # diff the cycles -- best-effort, network failures shouldn't make
-          # the whole training job red.
-          set +e
-          BASE_RUN=$(curl -sS -H "Authorization: bearer $GH_TOKEN" \
-              "https://api.github.com/repos/${REPO}/actions/runs?head_sha=${HEAD_SHA}&per_page=30" \
-              | python3 -c "
-          import json, sys
-          d = json.load(sys.stdin)
-          for r in d.get('workflow_runs', []):
-              if r['name'] == 'CI • Siracusa (Tiled)' and r['event'] == 'push':
-                  print(r['id']); break")
-          if [ -z "$BASE_RUN" ]; then
-            echo "_No matching Siracusa (Tiled) push run on this SHA — skipping speedup diff._" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          BASE_JOB=$(curl -sS -H "Authorization: bearer $GH_TOKEN" \
-              "https://api.github.com/repos/${REPO}/actions/runs/${BASE_RUN}/jobs" \
-              | python3 -c "
-          import json, sys
-          d = json.load(sys.stdin)
-          for j in d.get('jobs', []):
-              n = j['name'].lower()
-              if 'training' in n and 'l3' in n and j.get('conclusion')=='success':
-                  print(j['id']); break")
-          if [ -z "$BASE_JOB" ]; then
-            echo "_Siracusa training-L3 job not finished or not green yet — speedup diff skipped._" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          BASE_LOG=$(mktemp)
-          curl -sSL -H "Authorization: bearer $GH_TOKEN" \
-              "https://api.github.com/repos/${REPO}/actions/jobs/${BASE_JOB}/logs" -o "$BASE_LOG"
-          # CCT_train fixture has a fixed weight_sram=94953; match on that so
-          # we pair the exact same model size even when the Siracusa run is
-          # interleaving multiple models.
-          BASE_LINE=$(grep -m1 '^BENCH train_cycles=.*weight_sram=94953' "$BASE_LOG" \
-                    || grep -m1 '^BENCH train_cycles=' "$BASE_LOG")
-          if [ -z "$BASE_LINE" ]; then
-            echo "_No BENCH line found in Siracusa baseline log — speedup diff skipped._" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          BASE_TRAIN=$(echo "$BASE_LINE" | sed -nE 's/.*train_cycles=([0-9]+).*/\1/p')
-          BASE_OPT=$(echo "$BASE_LINE"   | sed -nE 's/.*opt_cycles=([0-9]+).*/\1/p')
-          python3 - <<PY >> "$GITHUB_STEP_SUMMARY"
-          base_t, base_o = ${BASE_TRAIN}, ${BASE_OPT}
-          rmu_t,  rmu_o  = ${RMU_TRAIN},  ${RMU_OPT}
-          print()
-          print("## Speedup vs Siracusa baseline")
-          print()
-          print("| metric | Siracusa | + RedMulE | speedup |")
-          print("|---|---:|---:|:---:|")
-          print(f"| train_cycles | {base_t:,} | {rmu_t:,} | {base_t/rmu_t:.3f}× |")
-          print(f"| opt_cycles   | {base_o:,} | {rmu_o:,} | {base_o/rmu_o:.3f}× |")
-          print(f"| **total**    | {base_t+base_o:,} | {rmu_t+rmu_o:,} | **{(base_t+base_o)/(rmu_t+rmu_o):.3f}×** |")
+          python3 - <<'PY'
+          import json, os, re, sys, urllib.request, pathlib
+          LOG_PATH = "/tmp/pytest_out.log"
+          PAT = re.compile(r'^BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)')
+
+          if not pathlib.Path(LOG_PATH).exists():
+              print("no pytest log found; skipping")
+              sys.exit(0)
+
+          # 1. parse RedMulE side's BENCH lines (one per training model)
+          rmu = []
+          with open(LOG_PATH) as fh:
+              for line in fh:
+                  m = PAT.search(line)
+                  if m:
+                      rmu.append({
+                          'train': int(m.group(1)), 'opt': int(m.group(2)),
+                          'sram': int(m.group(3))})
+          if not rmu:
+              print("No BENCH line in pytest output (kernel-only job?). Skipping summary.")
+              sys.exit(0)
+
+          out = []
+          marker = os.environ.get('MARKER', '?')
+          sha = os.environ.get('HEAD_SHA', '')[:7]
+          out.append(f"## Siracusa + RedMulE cycles ({marker})")
+          out.append("")
+          out.append("| weight_sram | train_cycles | opt_cycles |")
+          out.append("|---:|---:|---:|")
+          for r in rmu:
+              out.append(f"| {r['sram']:,} | {r['train']:,} | {r['opt']:,} |")
+          out.append("")
+          out.append(f"_Counted on commit `{sha}` via GVSoC._")
+
+          # 2. best-effort: find Siracusa baseline on same SHA, build speedup table
+          repo = os.environ.get('REPO', '')
+          head_sha = os.environ.get('HEAD_SHA', '')
+          tok = os.environ.get('GH_TOKEN', '')
+
+          def gh(url):
+              req = urllib.request.Request(url, headers={'Authorization': f'bearer {tok}'})
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  return r.read()
+
+          try:
+              runs = json.loads(gh(
+                  f"https://api.github.com/repos/{repo}/actions/runs"
+                  f"?head_sha={head_sha}&per_page=30"))
+              base_run_id = next(
+                  (r['id'] for r in runs.get('workflow_runs', [])
+                   if r['name'] == 'CI • Siracusa (Tiled)' and r['event'] == 'push'),
+                  None)
+              if base_run_id is None:
+                  out += ["", "_No matching `Siracusa (Tiled)` push run on this SHA — speedup diff skipped._"]
+              else:
+                  jobs = json.loads(gh(
+                      f"https://api.github.com/repos/{repo}/actions/runs/{base_run_id}/jobs"))
+                  base_job_id = next(
+                      (j['id'] for j in jobs.get('jobs', [])
+                       if 'training' in j['name'].lower()
+                       and 'l3' in j['name'].lower()
+                       and j.get('conclusion') == 'success'),
+                      None)
+                  if base_job_id is None:
+                      out += ["", "_Siracusa training-L3 baseline job not finished/green yet — speedup diff skipped._"]
+                  else:
+                      txt = gh(f"https://api.github.com/repos/{repo}/actions/jobs/{base_job_id}/logs").decode('utf-8','replace')
+                      base = {}
+                      for line in txt.splitlines():
+                          m = PAT.search(line)
+                          if m:
+                              base[int(m.group(3))] = {
+                                  'train': int(m.group(1)),
+                                  'opt': int(m.group(2))}
+                      out += ["", "## Speedup vs Siracusa baseline (matched by weight_sram)", ""]
+                      out += ["| weight_sram | Siracusa train | + RedMulE train | sp<sub>train</sub> | Siracusa opt | + RedMulE opt | sp<sub>opt</sub> |"]
+                      out += ["|---:|---:|---:|:---:|---:|---:|:---:|"]
+                      for r in rmu:
+                          b = base.get(r['sram'])
+                          if b is None:
+                              out.append(f"| {r['sram']:,} | — | {r['train']:,} | _no match_ | — | {r['opt']:,} | — |")
+                          else:
+                              st = b['train'] / r['train']
+                              so = b['opt']   / r['opt']
+                              out.append(
+                                  f"| {r['sram']:,} | {b['train']:,} | {r['train']:,} | **{st:.3f}×** "
+                                  f"| {b['opt']:,} | {r['opt']:,} | **{so:.3f}×** |")
+          except Exception as e:
+              out += ["", f"_Baseline lookup failed: `{type(e).__name__}: {e}` — RedMulE numbers above are still valid._"]
+
+          text = "\n".join(out) + "\n"
+          print(text)
+          sp = os.environ.get('GITHUB_STEP_SUMMARY')
+          if sp:
+              with open(sp, 'a') as f:
+                  f.write(text)
           PY
