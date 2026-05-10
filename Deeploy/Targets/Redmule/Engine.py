@@ -29,6 +29,8 @@ from Deeploy.DeeployTypes import DeploymentEngine, NodeMapper
 from Deeploy.Targets.Generic.Layers import ConvGradWLayer, ConvGradXLayer, ConvLayer, GEMMLayer, MatMulLayer
 from Deeploy.Targets.Generic.Parsers import MatMulParser
 from Deeploy.Targets.PULPOpen.Parsers import PULPFPConv2DParser, PULPPWConvGradW2DParser, PULPPWConvGradX2DParser
+from Deeploy.Targets.PULPOpen.Platform import ConvGradWMapper as PULPConvGradWMapper, \
+    ConvGradXMapper as PULPConvGradXMapper, DwConvGradWMapper, DwConvGradxMapper
 from Deeploy.Targets.Redmule.Parsers import GEMMRedmuleParser
 from Deeploy.Targets.Redmule.Tiler import RedmuleConvTilingReadyBindings, RedmuleGEMMTilingReadyBindings, \
     RedmuleMatMulTilingReadyBindings, RedmulePWConvGradW2DTilingReadyBindings, RedmulePWConvGradX2DTilingReadyBindings
@@ -63,13 +65,21 @@ RedmuleMapping = {
     #     'Conv': ConvLayer([Conv2DRedmuleMapper]),
     # and the matching RedMuleAdjustWeightMemoryLayoutPass in Deployer.py.
     'Gemm': GEMMLayer([GEMMMRedmuleMapper]),
-    # Pointwise (1x1) ConvGrad: only the PW variant is mapped here.  The
-    # PULPPWConvGrad*Parsers require kernel_shape == [1, 1] and group == 1,
-    # so non-PW backward Convs (regular 3x3 ConvGradW, depthwise variants)
-    # transparently fall through to PULPClusterEngine -- which carries the
-    # full [PW, DW, regular] mapper list.
-    'ConvGradW': ConvGradWLayer([PWConvGradW2DRedmuleMapper]),
-    'ConvGradX': ConvGradXLayer([PWConvGradX2DRedmuleMapper]),
+    # NOTE: ConvGradW / ConvGradX are intentionally NOT mapped here.
+    # _selectEngine() is first-match across engines, so putting them on the
+    # RedmuleEngine would route every 3x3 / depthwise ConvGrad through this
+    # engine's layer and never let PULPClusterEngine see them.  We tried a
+    # "complete" RedmuleEngine layer ([PW_Redmule, DW_PULP, regular_PULP])
+    # but the resulting tiler hit infeasible memory-pattern constraints on
+    # ResNet8 / MobileNet despite using identical mapper instances to
+    # PULP -- some interaction between the layer object identity and the
+    # tiling-pattern solver we couldn't fully diagnose.
+    #
+    # Instead, the RedMulE PWConvGrad mappers are inserted into the
+    # existing PULPClusterEngine ConvGradW / ConvGradX layers at position 0
+    # in RedmulePlatform.__init__.  That keeps the layer object identical
+    # to the pure-PULP path (matters for the tiler) while still ensuring
+    # 1x1 ConvGrads bind to the RedMulE kernels.
 }
 
 _includeList = []

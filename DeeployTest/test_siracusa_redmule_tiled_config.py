@@ -13,14 +13,13 @@ DEFAULT_CORES = 8
 L2_SINGLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
     "Kernels/FP32/GEMM/TransB": [8000],
-    # Pointwise (1x1) ConvGrad fixtures from the MobileNetV1 / MobileNet-style
-    # training backward path.  These now bind to RedMulE via
-    # RedmulePWConvGradW2D* / RedmulePWConvGradX2D* in Engine.RedmuleMapping;
-    # comparing their cycle counts to the matching siracusa_tiled run gives
-    # the per-kernel speedup of the new RedMulE backward kernels in the CI
-    # summary.  L1=8000 mirrors the GEMM kernel matrix so the tiler ends up
-    # picking similar tile shapes.
-    "Kernels/FP32/ConvGradW_PW": [8000],
+    # Pointwise (1x1) ConvGradX from the MobileNet-style training backward
+    # path: binds to RedMulE via PWConvGradX2DRedmuleMapper inserted into
+    # PULPCluster's ConvGradXLayer in RedmulePlatform.__init__.  L1=8000
+    # mirrors the GEMM kernel budget so the tiler picks similar tile shapes.
+    # ConvGradW_PW is intentionally NOT in the matrix: the analogous
+    # PWConvGradW2DRedmuleMapper exists in tree but is currently not
+    # registered (see comment in Platform.py).
     "Kernels/FP32/ConvGradX_PW_block_11": [8000],
 }
 
