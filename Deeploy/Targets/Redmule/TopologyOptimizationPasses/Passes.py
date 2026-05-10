@@ -148,3 +148,84 @@ class RedMuleGEMMTransposePass(ReplaceSequentialPatternPass):
         super().__init__(pattern = pattern,
                          replacement_fn = _redmule_gemm_transpose_fun,
                          name = "_REDMULE_GEMM_TRANSPOSE_PASS")
+
+
+def _redmule_biasless_gemm_to_matmul_fun(graph: gs.Graph, match: Match, name: str):
+    """Rewrite a 2-input ONNX Gemm (no C / bias) into an equivalent MatMul.
+
+    Backward-pass codegen (e.g. the ``GradFusedMatMul`` rewrites that fall out
+    of the CCT training graph) emits ``Gemm`` nodes with only A and B and no
+    bias, which the ``GEMMRedmuleParser`` accepts but for which the
+    ``RedmuleGEMMTileConstraint`` then crashes (KeyError on ``parseDict['C']``).
+    A bias-less Gemm with alpha=1 is mathematically just a MatMul, and the
+    Redmule platform already maps ONNX ``MatMul`` to a kernel that doesn't
+    expect a C operand -- so we lower it here.
+
+    transA / transB are materialized as explicit ``Transpose`` nodes (or, for
+    constant operands, folded into the constant) before the op is rewritten,
+    because ``MatMul`` has no equivalent attributes.
+    """
+    gemm_node = list(match.nodes_map.values())[0]
+
+    # Pattern matcher may match Gemms with 3 inputs too; act only on the
+    # bias-less subset.
+    if len(gemm_node.inputs) != 2:
+        return graph
+
+    # Anything other than alpha=1 cannot be expressed as a plain MatMul.
+    if gemm_node.attrs.get('alpha', 1.0) != 1.0:
+        return graph
+
+    transA = gemm_node.attrs.get('transA', 0)
+    transB = gemm_node.attrs.get('transB', 0)
+
+    for inputIdx, transFlag in ((0, transA), (1, transB)):
+        if not transFlag:
+            continue
+        operand = gemm_node.inputs[inputIdx]
+        if isinstance(operand, gs.Constant):
+            if len(operand.values.shape) > 2:
+                perm = list(range(len(operand.values.shape)))
+                perm[-1], perm[-2] = perm[-2], perm[-1]
+                operand.values = np.transpose(operand.values, perm)
+            else:
+                operand.values = np.transpose(operand.values)
+        else:
+            perm = list(range(len(operand.shape)))
+            perm[-1], perm[-2] = perm[-2], perm[-1]
+            anchorTransposeNode = _appendTranspose(operand, gemm_node, perm)
+            graph.nodes.append(anchorTransposeNode)
+
+    gemm_node.op = "MatMul"
+    gemm_node.attrs.clear()
+
+    return graph
+
+
+@contextagnostic
+class RedMuleBiaslessGemmToMatMulPass(ReplaceSequentialPatternPass):
+    """Lower bias-less (2-input) ONNX Gemm nodes to MatMul on the Redmule path.
+
+    Must run before RedMuleGEMMTransposePass so the latter only sees the
+    real (3-input) Gemm nodes; otherwise its replacement_fn would write
+    ``transA`` / ``transB`` back to 0 on what is now a MatMul, and a stale
+    ``Gemm`` op type would still hit the bias-required tile constraint.
+    """
+
+    def __init__(self, redmuleEngineName: str):
+        pattern = gs.Graph()
+
+        input_a = gs.Variable(name = "input_a")
+        input_b = gs.Variable(name = "input_b")
+
+        gemm_output = pattern.layer(op = "Gemm",
+                                    name = "gemm_node",
+                                    inputs = [input_a, input_b],
+                                    outputs = ["gemm_output"])
+
+        pattern.inputs = [input_a, input_b]
+        pattern.outputs = [gemm_output]
+
+        super().__init__(pattern = pattern,
+                         replacement_fn = _redmule_biasless_gemm_to_matmul_fun,
+                         name = "_REDMULE_BIASLESS_GEMM_TO_MATMUL_PASS")
