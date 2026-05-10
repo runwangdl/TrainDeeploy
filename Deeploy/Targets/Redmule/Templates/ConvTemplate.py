@@ -39,8 +39,14 @@ class RedmuleFloatConvIm2ColTemplate(NodeTemplate):
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        im2col_dim = 4 * 8 * (operatorRepresentation['ch_im_in'] * operatorRepresentation['dim_kernel_x'] *
-                              operatorRepresentation['dim_kernel_y'])
+        # Full im2col matrix: one (P*Q*C)-flattened row per output position.
+        # The kernel builds the whole thing in one shot to amortise RedMulE's
+        # per-trigger MMIO setup cost.  Size is in bytes (4 = sizeof float32);
+        # the L1 tiler must fit this alongside input / weight / bias / output
+        # tiles, so dim_im_out_y / dim_im_out_x here are tile-local values.
+        k_per_row = (operatorRepresentation['ch_im_in'] * operatorRepresentation['dim_kernel_x'] *
+                     operatorRepresentation['dim_kernel_y'])
+        im2col_dim = 4 * operatorRepresentation['dim_im_out_y'] * operatorRepresentation['dim_im_out_x'] * k_per_row
         im2col_name = operatorRepresentation['nodeName'] + "_buffer"
         return [(im2col_name, im2col_dim)]
 
@@ -72,6 +78,8 @@ for (uint32_t n=0; n<${batch}; ++n) {
         ${dim_kernel_x},
         ${stride_y},
         ${stride_x},
+        ${bias},
+        ${has_bias},
         ref_${data_out}_${data_out},
         ${ch_im_out},
         ${padding_y_top},
