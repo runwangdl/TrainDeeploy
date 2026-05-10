@@ -23,7 +23,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from Deeploy.Targets.Redmule.Bindings import RedmuleConv2DBindings, RedmuleGEMMBindings, RedmuleMatmulBindings
+from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import PWConvGradWTileConstraint, \
+    PWConvGradXTileConstraint
+from Deeploy.Targets.Redmule.Bindings import RedmuleConv2DBindings, RedmuleGEMMBindings, RedmuleMatmulBindings, \
+    RedmulePWConvGradW2DBindings, RedmulePWConvGradX2DBindings
 from Deeploy.Targets.Redmule.TileConstraints.ConvTileConstraint import RedmuleConv2DTileConstraint
 from Deeploy.Targets.Redmule.TileConstraints.GEMMTileConstraint import RedmuleGEMMTileConstraint
 from Deeploy.Targets.Redmule.TileConstraints.MatmulTileConstraint import RedmuleMatmulTileConstraint
@@ -35,3 +38,12 @@ RedmuleConvTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = RedmuleC
                                                          tileConstraint = RedmuleConv2DTileConstraint())
 RedmuleGEMMTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = RedmuleGEMMBindings,
                                                          tileConstraint = RedmuleGEMMTileConstraint())
+
+# Reuse PULP's PWConvGradW / PWConvGradX tile constraints unchanged -- the
+# tile-shape search depends only on the op semantics (1x1 conv backward),
+# not on which engine ends up running the kernel.  Only the binding body
+# (= template + kernel) differs.
+RedmulePWConvGradW2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = RedmulePWConvGradW2DBindings,
+                                                                  tileConstraint = PWConvGradWTileConstraint())
+RedmulePWConvGradX2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = RedmulePWConvGradX2DBindings,
+                                                                  tileConstraint = PWConvGradXTileConstraint())

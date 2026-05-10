@@ -26,16 +26,21 @@
 from typing import List
 
 from Deeploy.DeeployTypes import DeploymentEngine, NodeMapper
-from Deeploy.Targets.Generic.Layers import ConvLayer, GEMMLayer, MatMulLayer
+from Deeploy.Targets.Generic.Layers import ConvGradWLayer, ConvGradXLayer, ConvLayer, GEMMLayer, MatMulLayer
 from Deeploy.Targets.Generic.Parsers import MatMulParser
-from Deeploy.Targets.PULPOpen.Parsers import PULPFPConv2DParser
+from Deeploy.Targets.PULPOpen.Parsers import PULPFPConv2DParser, PULPPWConvGradW2DParser, PULPPWConvGradX2DParser
 from Deeploy.Targets.Redmule.Parsers import GEMMRedmuleParser
 from Deeploy.Targets.Redmule.Tiler import RedmuleConvTilingReadyBindings, RedmuleGEMMTilingReadyBindings, \
-    RedmuleMatMulTilingReadyBindings
+    RedmuleMatMulTilingReadyBindings, RedmulePWConvGradW2DTilingReadyBindings, RedmulePWConvGradX2DTilingReadyBindings
 
 MatMulRedmuleMapper = NodeMapper(MatMulParser(), RedmuleMatMulTilingReadyBindings)
 Conv2DRedmuleMapper = NodeMapper(PULPFPConv2DParser(), RedmuleConvTilingReadyBindings)
 GEMMMRedmuleMapper = NodeMapper(GEMMRedmuleParser(noBiasHoisting = False), RedmuleGEMMTilingReadyBindings)
+# Pointwise (1x1) ConvGradW / ConvGradX reuse PULP's parsers verbatim --
+# they only screen for kernel_shape=[1,1] / group=1 and populate the same
+# operatorRepresentation keys our Redmule templates consume.
+PWConvGradW2DRedmuleMapper = NodeMapper(PULPPWConvGradW2DParser(), RedmulePWConvGradW2DTilingReadyBindings)
+PWConvGradX2DRedmuleMapper = NodeMapper(PULPPWConvGradX2DParser(), RedmulePWConvGradX2DTilingReadyBindings)
 
 RedmuleMapping = {
     'MatMul': MatMulLayer([MatMulRedmuleMapper]),
@@ -58,6 +63,13 @@ RedmuleMapping = {
     #     'Conv': ConvLayer([Conv2DRedmuleMapper]),
     # and the matching RedMuleAdjustWeightMemoryLayoutPass in Deployer.py.
     'Gemm': GEMMLayer([GEMMMRedmuleMapper]),
+    # Pointwise (1x1) ConvGrad: only the PW variant is mapped here.  The
+    # PULPPWConvGrad*Parsers require kernel_shape == [1, 1] and group == 1,
+    # so non-PW backward Convs (regular 3x3 ConvGradW, depthwise variants)
+    # transparently fall through to PULPClusterEngine -- which carries the
+    # full [PW, DW, regular] mapper list.
+    'ConvGradW': ConvGradWLayer([PWConvGradW2DRedmuleMapper]),
+    'ConvGradX': ConvGradXLayer([PWConvGradX2DRedmuleMapper]),
 }
 
 _includeList = []

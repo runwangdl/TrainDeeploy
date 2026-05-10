@@ -106,6 +106,27 @@ void PULP_PWConvGradW2d_fp32_fp32_fp32_CHW(
     uint32_t C_out, const float *__restrict__ pInput, uint32_t H_in,
     uint32_t W_in, uint32_t C_in, float *__restrict__ pGradWeight);
 
+// RedMulE-accelerated pointwise (1x1) Conv backward weight gradient.
+// Same arg order as PULP_PWConvGradW2d_fp32_fp32_fp32_CHW plus a
+// pTransposeBuffer of C_in * H_in * W_in FP32 elements (reserved by
+// RedmulePWConvGradW2DTemplate.computeTransientBuffersSize) used to
+// materialise X^T before firing one RedMulE GEMM.
+void PWConvGradW2d_fp32_fp32_fp32_CHW_Redmule(
+    const float32_t *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
+    uint32_t C_out, const float32_t *__restrict__ pInput, uint32_t H_in,
+    uint32_t W_in, uint32_t C_in, float32_t *__restrict__ pGradWeight,
+    float32_t *__restrict__ pTransposeBuffer);
+
+// RedMulE-accelerated pointwise (1x1) Conv backward input gradient.
+// Mirrors PULP_PWConvGradX2d_fp32_fp32_fp32_CHW signature; the C_in*C_out
+// transpose buffer is reused for W^T before firing one RedMulE GEMM.
+void PWConvGradX2d_fp32_fp32_fp32_CHW_Redmule(
+    const float32_t *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
+    uint32_t C_out, const float32_t *__restrict__ pWeight, uint32_t C_in,
+    float32_t *__restrict__ pGradIn, uint32_t H_in, uint32_t W_in,
+    float32_t *__restrict__ pTransposeBuffer,
+    uint32_t transposeBufferSize);
+
 void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
     uint32_t C_out, const float *__restrict__ pWeight, uint32_t C_in,

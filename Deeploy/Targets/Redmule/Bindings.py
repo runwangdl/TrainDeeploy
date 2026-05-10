@@ -29,8 +29,8 @@ from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import float32_t
 from Deeploy.DeeployTypes import NodeBinding
 from Deeploy.Targets.Generic.TypeCheckers import ConvChecker, GEMMChecker, MatMulChecker
-from Deeploy.Targets.PULPOpen.Bindings import ForkTransformer
-from Deeploy.Targets.Redmule.Templates import ConvTemplate, GEMMTemplate, MatmulTemplate
+from Deeploy.Targets.PULPOpen.Bindings import ClusterTransformer, ForkTransformer
+from Deeploy.Targets.Redmule.Templates import ConvGradTemplate, ConvTemplate, GEMMTemplate, MatmulTemplate
 
 RedmuleMatmulBindings = [
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
@@ -49,4 +49,18 @@ RedmuleGEMMBindings = [
         GEMMChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), GEMMTemplate.referenceTemplate,
         ForkTransformer)
+]
+
+# Pointwise (1x1) ConvGradW / ConvGradX routed to RedMulE.  The PULP versions
+# (PULPFloatPWConvGradW2DBindings / PULPFloatPWConvGradX2DBindings) use the
+# same ConvChecker signature, so the binding is identical apart from which
+# template -> kernel symbol is selected.
+RedmulePWConvGradW2DBindings = [
+    NodeBinding(ConvChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                ConvGradTemplate.referencePWConvGradW2DTemplate, ClusterTransformer)
+]
+
+RedmulePWConvGradX2DBindings = [
+    NodeBinding(ConvChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                ConvGradTemplate.referencePWConvGradX2DTemplate, ClusterTransformer)
 ]

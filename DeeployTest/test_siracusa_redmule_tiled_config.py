@@ -13,6 +13,15 @@ DEFAULT_CORES = 8
 L2_SINGLEBUFFER_KERNELS = {
     "Kernels/FP32/GEMM/Regular": [8000],
     "Kernels/FP32/GEMM/TransB": [8000],
+    # Pointwise (1x1) ConvGrad fixtures from the MobileNetV1 / MobileNet-style
+    # training backward path.  These now bind to RedMulE via
+    # RedmulePWConvGradW2D* / RedmulePWConvGradX2D* in Engine.RedmuleMapping;
+    # comparing their cycle counts to the matching siracusa_tiled run gives
+    # the per-kernel speedup of the new RedMulE backward kernels in the CI
+    # summary.  L1=8000 mirrors the GEMM kernel matrix so the tiler ends up
+    # picking similar tile shapes.
+    "Kernels/FP32/ConvGradW_PW": [8000],
+    "Kernels/FP32/ConvGradX_PW_block_11": [8000],
 }
 
 # L2 double-buffer kernel tests
