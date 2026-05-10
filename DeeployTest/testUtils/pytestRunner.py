@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
@@ -16,6 +17,16 @@ __all__ = [
     'configure_cmake',
     'run_simulation',
 ]
+
+# Tracks which Markdown sections we've already emitted a header for inside the
+# current pytest session. Keeps run_and_assert_test idempotent across
+# parametrised cases that share a section.
+_METRIC_SECTIONS_WRITTEN: set = set()
+
+# `BENCH train_cycles=<N> opt_cycles=<M> weight_sram=<K>` — printed once per
+# training run by the test harness; captured here so we can append a cycles
+# row to $GITHUB_STEP_SUMMARY for SB-vs-DB comparison.
+_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)")
 
 
 def get_worker_id() -> str:
@@ -216,3 +227,6 @@ def run_and_assert_test(test_name: str,
 
     if result.error_count >= 0:
         assert result.error_count == 0, (f"Found {result.error_count} errors out of {result.total_count} tests")
+
+    if metric_section:
+        _emit_training_cycle_row(test_name, config, result.stdout, metric_section)

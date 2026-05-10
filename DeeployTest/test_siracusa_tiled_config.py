@@ -179,8 +179,14 @@ L2_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/DSCNN/dscnn_train": [128000],
 }
 
-# Empty placeholder; populate after L2 DB path is green.
-L3_DOUBLEBUFFER_TRAINING_MODELS: dict = {}
+# L3 DB training: only DB the L3↔L2 hop (TrainingDBOnlyL3Tiler) so the L2
+# staging budget doesn't double. CCT/CCT_LoRA left out — their backward
+# alias graph still trips MemoryAllocation _live tracking even with our
+# opt-out blacklist (a separate follow-up).
+L3_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
+}
 
 # Per-model overrides for training tests.
 #

@@ -29,17 +29,19 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # Training tests - L2 singlebuffer
-  siracusa-training-tiled-l2-singlebuffer:
+  # Training tests - L2 (SB + DB combined so the runner emits a single
+  # SB-vs-DB cycle comparison table to $GITHUB_STEP_SUMMARY).
+  siracusa-training-tiled-l2:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l2 and singlebuffer"
+      pytest-marker: "training and l2"
 
-  # Training tests - L2 doublebuffer (TrainingDBTiler + per-op opt-out blacklist)
-  siracusa-training-tiled-l2-doublebuffer:
+  # Training tests - L3 (SB + DB combined; DB uses TrainingDBOnlyL3Tiler so
+  # the L2 staging budget doesn't double).
+  siracusa-training-tiled-l3:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
@@ -55,6 +57,15 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and singlebuffer and not promote"
+
+  # Training tests - L3 doublebuffer
+  siracusa-training-tiled-l3-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l3 and doublebuffer"
 
   # Inference L3 + PromoteTensorsToL2 regression
   siracusa-inference-tiled-promote:
