@@ -89,33 +89,25 @@ class TrainingSBTiler(SBTiler):
 class TrainingDBTiler(DBTiler):
     memorySchedulerClass = TrainingMemoryScheduler
 
-    # Operators where DB doesn't fit cleanly — fall back to SB for any pattern
-    # containing one of these. Reasons:
-    #   - SGD, InPlaceAccumulatorV2: in-place outputs aliased to inputs;
-    #     DB's per-tensor multibuffer hoist would split the alias across two
-    #     L1 slots and the in-place semantic breaks.
-    #   - SoftmaxCrossEntropyLossGrad: produces output_grad that is consumed
-    #     by *two* downstream Gemm nodes (multi-consumer intermediate); DB's
-    #     hoist+egress logic interacts badly with MemoryAllocation's _live
-    #     tracking and double-deallocates the tensor.
+    # Operators where DB cannot fall through the scalar-pattern check below.
+    # All other "previously opted out" ops (SoftmaxCrossEntropyLoss, MSELoss,
+    # MSELossGrad, Gemm) are now handled by the scalar-pattern check — they
+    # all have a scalar tensor (loss, lazy_reset_grad) somewhere in their
+    # pattern that triggers the fall-back to SB.
     DB_OPT_OUT_OPS = frozenset({
+        # In-place alias outputs (output is _alias'd to an input). DB's
+        # per-tensor multibuffer hoist would split the alias across two L1
+        # slots and break in-place semantics. Note: InPlaceAccumulatorV2
+        # also has the lazy_reset_grad scalar, but we keep it explicit
+        # because the alias semantics are the primary concern.
         "SGD",
         "InPlaceAccumulatorV2",
-        # Loss + grad heads: small, with awkward shapes (multi-output, scalar,
-        # or multi-consumer intermediates) — confuse DB hoist / dealloc.
-        # DSCNN passes DB CI with SCE/SCEGrad opted out; MSE pair opted out
-        # by analogy (autoencoder is the only model exercising them).
-        "SoftmaxCrossEntropyLoss",
+        # SoftmaxCrossEntropyLossGrad's output_grad is consumed by 2 backward
+        # Gemms (multi-consumer intermediate) — DB's per-consumer hoist
+        # inflates _users and breaks MemoryAllocation _live tracking.
+        # Tracked separately; needs a real fix in the DB pass / _users
+        # accounting rather than an opt-out.
         "SoftmaxCrossEntropyLossGrad",
-        "MSELoss",
-        "MSELossGrad",
-        # Gemm: backward Gemm under DB silently produces wrong gradients on
-        # multi-tile training graphs (autoencoder DB CI: losses constant
-        # ~0.097 across 4 update steps — model not learning — while DSCNN DB
-        # Conv-only was numerically correct). Conservative opt-out until
-        # backward Gemm DB egress is debugged. Conv DB still gives most of
-        # the real cycle win on training graphs (DSCNN/MobileNet/ResNet).
-        "Gemm",
     })
 
     def multiBufferStrategy(self, tilerModel: TilerModel, ctxt: NetworkContext, pattern: SubGraph, path: List[str],
@@ -127,6 +119,20 @@ class TrainingDBTiler(DBTiler):
         for node in pattern:
             if node.op in self.DB_OPT_OUT_OPS:
                 return 1
+        # If ANY tensor in this pattern is scalar (product-of-dims <= 1),
+        # force coefficient=1 for the WHOLE pattern. Otherwise we end up
+        # with mixed coefficients (scalar=1, non-scalar=2) — neither
+        # SB.apply (needs all=1) nor DB.apply (needs all=2) is applicable
+        # and the codegen degenerates to a bare kernel call with NO DMA
+        # setup, so the kernel reads stale L1 data. This was the real
+        # cause of the "autoencoder weights frozen" symptom previously
+        # mis-attributed to Gemm: MSELoss's scalar `loss` output triggered
+        # this degenerate case.
+        for node in pattern:
+            for tensor in list(node.inputs) + list(node.outputs):
+                tname = tensor.name
+                if ctxt.is_buffer(tname) and _isScalarBuffer(ctxt, tname):
+                    return 1
         return super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
 
 
