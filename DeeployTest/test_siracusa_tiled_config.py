@@ -180,7 +180,7 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # variant because cct_lora locally showed -40% with cycle-aware and is
 # expected to widen further with largest.
 L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
-    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True)],
+    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True), (128000, "largest", True)],
     "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True)],
     "Models/Training/CCT/cct_train": [
         (128000, "cycle-aware", True),

@@ -460,7 +460,11 @@ def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_te
         promote_to_l2 = True,
         promote_to_l2_strategy = strategy,
         promote_to_l2_include_activations = include_acts,
-        promote_to_l2_max_buffer_bytes = 2048,
+        # Use the same wide cap (1031072) the inference promote test uses
+        # so big conv weights -- the actual cycle hot path on ResNet8 /
+        # MobileNetV1 backward -- become eligible candidates instead of
+        # being filtered out by the conservative 2048 default.
+        promote_to_l2_max_buffer_bytes = 1031072,
     )
     metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
     run_and_assert_test(test_name,
