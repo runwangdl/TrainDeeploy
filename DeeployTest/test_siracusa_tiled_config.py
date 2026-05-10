@@ -205,8 +205,17 @@ TRAINING_MODEL_OVERRIDES = {
 # regressions in the column-major offset enumeration.
 L3_SINGLEBUFFER_PROMOTE_MODELS = {
     "Models/CCT/FP32/CCT_2_32_32_128": [
-        (128000, "cycle-aware", False),
+        # (l1, strategy, includeActivations) -- "off" means no promotion
+        # (baseline reference for the cycle delta in the run summary).
+        # All non-baseline cases run with includeActivations=True because the
+        # weights-only path with the wider 1 MB MaxBufferBytes cap exercises a
+        # PR #19-known cumByteOffset codegen edge case for some strategies.
+        (128000, "off", False),
         (128000, "cycle-aware", True),
-        (128000, "random", False),
+        (128000, "random", True),
+        (128000, "greedy-score", True),
+        (128000, "largest", True),
+        (128000, "smallest", True),
+        (128000, "knapsack-ratio", True),
     ],
 }

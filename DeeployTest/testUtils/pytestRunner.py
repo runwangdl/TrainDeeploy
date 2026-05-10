@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from .core import DeeployTestConfig, build_binary, configure_cmake, get_test_paths, run_complete_test, run_simulation
 
@@ -56,7 +56,7 @@ def create_test_config(
     promote_to_l2_strategy: str = "cycle-aware",
     promote_to_l2_include_activations: bool = False,
     promote_to_l2_max_buffer_bytes: int = 2048,
-    promote_to_l2_headroom: int = 64000,
+    promote_to_l2_headroom: int = 131072,
     gen_args: Optional[List[str]] = None,
 ) -> DeeployTestConfig:
 
@@ -135,14 +135,51 @@ def create_test_config(
     return config
 
 
-def run_and_assert_test(test_name: str, config: DeeployTestConfig, skipgen: bool, skipsim: bool) -> None:
+def extract_runtime_cycles(stdout: str) -> Optional[int]:
+    """Parse the GVSoC ``Runtime: N cycles`` line out of test stdout."""
+    import re
+    m = re.search(r"Runtime:\s*([0-9]+)\s+cycles", stdout)
+    return int(m.group(1)) if m else None
+
+
+def run_and_assert_test(test_name: str,
+                        config: DeeployTestConfig,
+                        skipgen: bool,
+                        skipsim: bool,
+                        report_metric: Optional[Dict[str, str]] = None) -> None:
     """
     Shared helper function to run a test and assert its results.
+
+    If ``report_metric`` is given (a dict of label -> value) and a cycle count
+    is parseable from stdout, append a row to ``$GITHUB_STEP_SUMMARY`` so the
+    metric shows up in the GitHub Actions run summary, and print a tagged line
+    that survives pytest's stdout capture.
 
     Raises:
         AssertionError: If test fails or has errors
     """
     result = run_complete_test(config, skipgen = skipgen, skipsim = skipsim)
+
+    cycles = extract_runtime_cycles(result.stdout) if result.stdout else None
+
+    if report_metric is not None:
+        labels = " ".join(f"{k}={v}" for k, v in report_metric.items())
+        cycles_str = f"{cycles:,}" if cycles is not None else "n/a"
+        # Always print a clearly-tagged line; pytest captures stdout but shows
+        # it on failure, and `-rA` (used in CI) shows captured output for
+        # passing tests too.
+        print(f"\n[METRIC] test={test_name} {labels} cycles={cycles_str}", flush = True)
+        # Append a Markdown table row to GITHUB_STEP_SUMMARY when running in
+        # GitHub Actions; the file is auto-created and rendered as Markdown
+        # in the workflow summary panel.
+        summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summary_path and cycles is not None:
+            row_cells = [test_name] + [str(v) for v in report_metric.values()] + [f"{cycles:,}"]
+            try:
+                with open(summary_path, "a") as f:
+                    f.write("| " + " | ".join(row_cells) + " |\n")
+            except Exception:
+                pass
 
     assert result.success, (f"Test {test_name} failed with {result.error_count} errors out of {result.total_count}\n"
                             f"Output:\n{result.stdout}")

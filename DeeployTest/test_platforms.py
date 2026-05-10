@@ -443,8 +443,14 @@ def _promote_param_id(param):
 def test_siracusa_tiled_promote_l3_singlebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
                                                 skipgen, skipsim) -> None:
     """L3 inference + PromoteTensorsToL2 regression. Verifies the L2-promoted
-    DMA byte-offset codegen produces correct results across strategies."""
+    DMA byte-offset codegen produces correct results across strategies.
+
+    The strategy="off" parameter is the no-promotion baseline; downstream the
+    test runner appends each strategy's runtime cycles to ``$GITHUB_STEP_SUMMARY``
+    so the GitHub Actions UI shows a comparison table directly in the run summary.
+    """
     test_name, l1, strategy, include_acts = test_params
+    promote = strategy != "off"
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -458,11 +464,17 @@ def test_siracusa_tiled_promote_l3_singlebuffer(test_params, deeploy_test_dir, t
         l1 = l1,
         default_mem_level = "L3",
         double_buffer = False,
-        promote_to_l2 = True,
-        promote_to_l2_strategy = strategy,
-        promote_to_l2_include_activations = include_acts,
+        promote_to_l2 = promote,
+        promote_to_l2_strategy = strategy if promote else "cycle-aware",
+        promote_to_l2_include_activations = include_acts if promote else False,
+        promote_to_l2_max_buffer_bytes = 1031072 if promote else 2048,
     )
-    run_and_assert_test(test_name, config, skipgen, skipsim)
+    metric = {
+        "strategy": strategy,
+        "activations": "yes" if include_acts else "no",
+        "l1": str(l1),
+    }
+    run_and_assert_test(test_name, config, skipgen, skipsim, report_metric = metric)
 
 
 @pytest.mark.siracusa_tiled

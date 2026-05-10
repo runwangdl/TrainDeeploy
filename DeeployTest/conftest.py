@@ -159,3 +159,88 @@ def toolchain(request):
 def cmake_args(request):
     """Return additional CMake arguments."""
     return request.config.getoption("--cmake-args")
+
+
+# ---------------------------------------------------------------------------
+# Promotion-strategy benchmark: Markdown summary written to
+# $GITHUB_STEP_SUMMARY so the GitHub Actions UI shows a comparison table
+# directly in the workflow run summary panel.
+# ---------------------------------------------------------------------------
+
+PROMOTION_METRIC_HEADER_DONE = False
+
+
+def _promotion_summary_path():
+    return os.environ.get("GITHUB_STEP_SUMMARY")
+
+
+@pytest.fixture(autouse = True)
+def _promotion_summary_header():
+    """Emit a Markdown table header once per session if running under GH Actions
+    AND the session contains promotion tests. The actual rows are appended by
+    pytestRunner.run_and_assert_test as each parametrised case finishes."""
+    global PROMOTION_METRIC_HEADER_DONE
+    path = _promotion_summary_path()
+    if path and not PROMOTION_METRIC_HEADER_DONE:
+        try:
+            with open(path, "a") as f:
+                f.write("\n## Tensor-promotion strategy benchmark\n\n")
+                f.write("| Test | Strategy | Activations | L1 (B) | Cycles |\n")
+                f.write("|------|----------|-------------|--------|--------|\n")
+            PROMOTION_METRIC_HEADER_DONE = True
+        except Exception:
+            pass
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    """At the end of the session, recompute the savings table from the
+    Markdown rows already written by individual tests and append a second
+    table that shows ``cycles`` and ``Δ vs off`` so reviewers see deltas
+    without doing arithmetic."""
+    path = _promotion_summary_path()
+    if not path or not os.path.exists(path):
+        return
+    try:
+        existing = open(path).read()
+    except Exception:
+        return
+    if "## Tensor-promotion strategy benchmark" not in existing:
+        return
+
+    # Parse the Markdown rows we appended (after the header).
+    rows = []
+    for line in existing.splitlines():
+        if not line.startswith("| ") or "Cycles" in line or "---" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 5:
+            continue
+        try:
+            cycles = int(cells[-1].replace(",", ""))
+        except ValueError:
+            continue
+        rows.append((cells[0], cells[1], cells[2], cells[3], cycles))
+
+    # Find the "off" baseline per (test, l1) pair
+    baselines = {(t, l1): cyc for t, strat, _, l1, cyc in rows if strat == "off"}
+    if not rows or not baselines:
+        return
+
+    try:
+        with open(path, "a") as f:
+            f.write("\n### Cycle savings vs `off` baseline\n\n")
+            f.write("| Test | Strategy | Activations | Cycles | Δ vs baseline |\n")
+            f.write("|------|----------|-------------|--------|---------------|\n")
+            for t, strat, acts, l1, cyc in rows:
+                base = baselines.get((t, l1))
+                if base is None:
+                    continue
+                if strat == "off":
+                    delta = "—"
+                else:
+                    pct = (cyc - base) / base * 100
+                    delta = f"{pct:+.2f}%"
+                f.write(f"| {t} | `{strat}` | {acts} | {cyc:,} | {delta} |\n")
+            f.write("\n")
+    except Exception:
+        pass
