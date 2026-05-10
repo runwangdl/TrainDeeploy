@@ -188,21 +188,41 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 #
 # fake_l1_size baselining method: spike with --l1=4_000_000 → read off
 # MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
-# Untiled-L3 baseline.  ONLY contains models whose peak L1 working set
-# exceeds physical Siracusa L1 (~256 KB) — those are the only ones where
-# "untiled-L3" produces a different schedule than the existing tiled L3
-# singlebuffer test.  Smaller models (CCT, CCT_LoRA, ~16 KB working) get
-# the same byte-for-byte TrainingNetwork.c whether you pick tiled L3 or
-# untiled L3, so adding them here would be redundant — their tiled L3
-# entry IS their untiled-L3 baseline.
+# Untiled-L3 baseline — single-tile-per-tensor schedules for every L3
+# training model so the user can read off "untiled L3 latency" alongside
+# the existing tiled-L3 cycles.  Each fixture goes through the same
+# SBTiler infrastructure as the L3 singlebuffer tests, but with --l1
+# inflated to the smallest value that still yields the minimal-tile
+# shape — at that point the generated C is one kernel call per op with
+# integral L3↔L2 DMA wrappers, no spatial split.
 #
-# The deeploy_fake_l1 shim (DEEPLOY_L1_AS_L2) intercepts pi_cl_l1_malloc
-# and serves it from a static FC-L2 arena, which is the only way the
-# 700-KB-class L1 working buffer can fit at runtime.  The shim has the
-# side effect of redirecting *every* pi_cl_l1_malloc call (including any
-# SDK-internal one), which breaks small models that don't actually need
-# it — hence the per-fixture needs_fake_l1 gate.
+# Two per-fixture knobs:
+#
+#   - needs_fake_l1: True when peak L1 working > physical Siracusa L1
+#     (256 KB).  When True, build adds -DDEEPLOY_L1_AS_L2 + the linker
+#     wrap that serves oversized pi_cl_l1_malloc calls from a static
+#     FC-L2 arena (deeploy_fake_l1.c).  Small-working-set models (CCT /
+#     CCT_LoRA, ~16 KB peak) leave it False — they fit real L1 and
+#     produce byte-identical codegen to the tiled L3 entry, so their
+#     untiled cycles == tiled cycles by construction.
+#
+#   - skip_sim_in_ci: True for models where gvsoc has historically
+#     OOMed the runner during the long single-tile loop.  CI still
+#     verifies codegen + compile + link in that case; sim is a manual
+#     local exercise.
 L3_UNTILED_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": {
+        "l1": 64_000,
+        "l2": 2_000_000,
+        "needs_fake_l1": False,  # peak L1 working = 16388 B fits real L1
+        "skip_sim_in_ci": False,
+    },
+    "Models/Training/CCT_LoRA/cct_lora_train": {
+        "l1": 64_000,
+        "l2": 2_000_000,
+        "needs_fake_l1": False,  # peak L1 working = 16384 B
+        "skip_sim_in_ci": False,
+    },
     "Models/Training/ResNet8/resnet8_train": {
         # 800 KB is the smallest --l1 that yields the minimal-tile shape
         # (peak L1 working = 739 KB).  Larger values inflate MiniMalloc's
@@ -211,19 +231,18 @@ L3_UNTILED_TRAINING_MODELS = {
         "l2": 2_000_000,
         "fake_l1_size": 1_048_576,  # peak L1 working = 739328 B
         "needs_fake_l1": True,
-        # Two prior CI runs got SIGKILLed (exit 137) at ~8 min during sim
-        # — gvsoc memory grows unbounded for the long single-tile training
-        # loop.  --skipsim until that's debugged or we move to a bigger
-        # runner.  --skipsim still verifies codegen + compile + the
-        # fake-L1 shim's link integrity.
-        "skip_sim_in_ci": True,
+        # Try sim again with the fixed shim (real-L1-first, fall back to
+        # FC-L2 arena only when L1 is exhausted).  Earlier runs OOMed at
+        # ~8 min — believed to be the broken shim looping cluster init,
+        # not a real gvsoc memory leak.
+        "skip_sim_in_ci": False,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
         "l2": 2_000_000,
         "fake_l1_size": 786_432,  # peak L1 working = 542720 B
         "needs_fake_l1": True,
-        "skip_sim_in_ci": True,  # same OOM concern as ResNet8
+        "skip_sim_in_ci": False,
     },
 }
 
