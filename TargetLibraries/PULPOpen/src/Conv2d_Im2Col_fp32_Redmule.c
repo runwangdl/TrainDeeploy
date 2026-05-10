@@ -79,8 +79,7 @@ void Conv2d_Im2Col_fp32_fp32_fp32_HWC_8_Redmule(
       for (uint32_t q = 0; q < Q; ++q) {
         const int32_t w_in = (int32_t)(w_out * SQ + q) - (int32_t)pad_left;
         if (h_in_range && (w_in >= 0) && (w_in < (int32_t)W)) {
-          const uint32_t in_base =
-              ((uint32_t)h_in * W + (uint32_t)w_in) * C;
+          const uint32_t in_base = ((uint32_t)h_in * W + (uint32_t)w_in) * C;
           for (uint32_t c = 0; c < C; ++c) {
             row[k++] = pIn[in_base + c];
           }

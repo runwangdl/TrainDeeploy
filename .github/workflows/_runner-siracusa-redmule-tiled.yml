@@ -50,5 +50,88 @@ jobs:
           cd DeeployTest
           mkdir -p /app/.ccache
           export CCACHE_DIR=/app/.ccache
-          pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_redmule_tiled and ${{ inputs.pytest-marker }}"
+          set -o pipefail
+          pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_redmule_tiled and ${{ inputs.pytest-marker }}" 2>&1 | tee /tmp/pytest_out.log
         shell: bash
+      - name: Report cycle counts (RedMulE side)
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          REPO: ${{ github.repository }}
+          MARKER: ${{ inputs.pytest-marker }}
+        run: |
+          # Only the training job emits BENCH lines; kernel jobs noop quietly.
+          if ! grep -q '^BENCH train_cycles=' /tmp/pytest_out.log 2>/dev/null; then
+            echo "No BENCH line found (probably a kernel-only job); skipping summary."
+            exit 0
+          fi
+          RMU_LINE=$(grep -m1 '^BENCH train_cycles=' /tmp/pytest_out.log)
+          RMU_TRAIN=$(echo "$RMU_LINE" | sed -nE 's/.*train_cycles=([0-9]+).*/\1/p')
+          RMU_OPT=$(echo "$RMU_LINE"   | sed -nE 's/.*opt_cycles=([0-9]+).*/\1/p')
+          {
+            echo "## Siracusa + RedMulE cycles ($MARKER)"
+            echo ""
+            echo "| metric | RedMulE |"
+            echo "|---|---:|"
+            echo "| train_cycles | ${RMU_TRAIN} |"
+            echo "| opt_cycles   | ${RMU_OPT}   |"
+            echo ""
+            echo "_Counted on commit \`${HEAD_SHA:0:7}\` via GVSoC._"
+          } >> "$GITHUB_STEP_SUMMARY"
+          # Try to pull the matching Siracusa-baseline run on the same SHA and
+          # diff the cycles -- best-effort, network failures shouldn't make
+          # the whole training job red.
+          set +e
+          BASE_RUN=$(curl -sS -H "Authorization: bearer $GH_TOKEN" \
+              "https://api.github.com/repos/${REPO}/actions/runs?head_sha=${HEAD_SHA}&per_page=30" \
+              | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          for r in d.get('workflow_runs', []):
+              if r['name'] == 'CI • Siracusa (Tiled)' and r['event'] == 'push':
+                  print(r['id']); break")
+          if [ -z "$BASE_RUN" ]; then
+            echo "_No matching Siracusa (Tiled) push run on this SHA — skipping speedup diff._" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          BASE_JOB=$(curl -sS -H "Authorization: bearer $GH_TOKEN" \
+              "https://api.github.com/repos/${REPO}/actions/runs/${BASE_RUN}/jobs" \
+              | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          for j in d.get('jobs', []):
+              n = j['name'].lower()
+              if 'training' in n and 'l3' in n and j.get('conclusion')=='success':
+                  print(j['id']); break")
+          if [ -z "$BASE_JOB" ]; then
+            echo "_Siracusa training-L3 job not finished or not green yet — speedup diff skipped._" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          BASE_LOG=$(mktemp)
+          curl -sSL -H "Authorization: bearer $GH_TOKEN" \
+              "https://api.github.com/repos/${REPO}/actions/jobs/${BASE_JOB}/logs" -o "$BASE_LOG"
+          # CCT_train fixture has a fixed weight_sram=94953; match on that so
+          # we pair the exact same model size even when the Siracusa run is
+          # interleaving multiple models.
+          BASE_LINE=$(grep -m1 '^BENCH train_cycles=.*weight_sram=94953' "$BASE_LOG" \
+                    || grep -m1 '^BENCH train_cycles=' "$BASE_LOG")
+          if [ -z "$BASE_LINE" ]; then
+            echo "_No BENCH line found in Siracusa baseline log — speedup diff skipped._" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          BASE_TRAIN=$(echo "$BASE_LINE" | sed -nE 's/.*train_cycles=([0-9]+).*/\1/p')
+          BASE_OPT=$(echo "$BASE_LINE"   | sed -nE 's/.*opt_cycles=([0-9]+).*/\1/p')
+          python3 - <<PY >> "$GITHUB_STEP_SUMMARY"
+          base_t, base_o = ${BASE_TRAIN}, ${BASE_OPT}
+          rmu_t,  rmu_o  = ${RMU_TRAIN},  ${RMU_OPT}
+          print()
+          print("## Speedup vs Siracusa baseline")
+          print()
+          print("| metric | Siracusa | + RedMulE | speedup |")
+          print("|---|---:|---:|:---:|")
+          print(f"| train_cycles | {base_t:,} | {rmu_t:,} | {base_t/rmu_t:.3f}× |")
+          print(f"| opt_cycles   | {base_o:,} | {rmu_o:,} | {base_o/rmu_o:.3f}× |")
+          print(f"| **total**    | {base_t+base_o:,} | {rmu_t+rmu_o:,} | **{(base_t+base_o)/(rmu_t+rmu_o):.3f}×** |")
+          PY
