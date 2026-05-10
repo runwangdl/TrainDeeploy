@@ -38,9 +38,8 @@ class TransposeTileConstraint(TileConstraint):
         # ranks already match, offsets are 0 and behavior is unchanged.
         inputOffset = len(inputShape) - len(perm)
         outputOffset = len(outputShape) - len(perm)
-        assert inputOffset >= 0 and outputOffset >= 0, (
-            f"Transpose perm {perm} is longer than tensor ranks "
-            f"data_in={inputShape}, data_out={outputShape}")
+        assert inputOffset >= 0 and outputOffset >= 0, (f"Transpose perm {perm} is longer than tensor ranks "
+                                                        f"data_in={inputShape}, data_out={outputShape}")
 
         # Add I/O dimensions to the model as variables
         for bufferName in [inputBufferName, outputBufferName]:
@@ -49,9 +48,8 @@ class TransposeTileConstraint(TileConstraint):
         # Map output spatial dims to input spatial dims via perm.
         for idx, perm_idx in enumerate(perm):
             tilerModel.addConstraint(
-                tilerModel.getTensorDimVar(tensorName = outputBufferName,
-                                           dimIdx = outputOffset + idx) == tilerModel.getTensorDimVar(
-                                               tensorName = inputBufferName, dimIdx = inputOffset + perm_idx))
+                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = outputOffset + idx) ==
+                tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = inputOffset + perm_idx))
 
         return tilerModel
 

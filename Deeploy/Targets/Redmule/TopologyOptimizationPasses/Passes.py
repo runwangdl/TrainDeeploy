@@ -148,4 +148,3 @@ class RedMuleGEMMTransposePass(ReplaceSequentialPatternPass):
         super().__init__(pattern = pattern,
                          replacement_fn = _redmule_gemm_transpose_fun,
                          name = "_REDMULE_GEMM_TRANSPOSE_PASS")
-

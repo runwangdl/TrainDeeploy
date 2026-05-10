@@ -26,7 +26,7 @@
 from typing import List
 
 from Deeploy.DeeployTypes import DeploymentEngine, NodeMapper
-from Deeploy.Targets.Generic.Layers import ConvLayer, GEMMLayer, MatMulLayer
+from Deeploy.Targets.Generic.Layers import GEMMLayer, MatMulLayer
 from Deeploy.Targets.Generic.Parsers import MatMulParser
 from Deeploy.Targets.PULPOpen.Parsers import PULPFPConv2DParser
 from Deeploy.Targets.Redmule.Parsers import GEMMRedmuleParser
