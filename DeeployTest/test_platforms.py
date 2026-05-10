@@ -428,8 +428,8 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
     list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
     ids = list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
 )
-def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
-                                            skipgen, skipsim) -> None:
+def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen,
+                                            skipsim) -> None:
     """Untiled-L3 baseline.
 
     Reuses the tiled codegen pipeline but inflates --l1 large enough that the

@@ -45,27 +45,27 @@ PI_L2 static uint8_t deeploy_fake_l1_arena[DEEPLOY_FAKE_L1_SIZE];
 static uint32_t deeploy_fake_l1_offset = 0;
 
 void *__wrap_pi_cl_l1_malloc(struct pi_device *device, uint32_t size) {
-    (void)device;
-    /* 8-byte alignment for every allocation so consecutive callers stay
-     * aligned even when `size` is not a multiple of 8. */
-    uint32_t aligned = (size + 7u) & ~7u;
-    if (deeploy_fake_l1_offset + aligned > DEEPLOY_FAKE_L1_SIZE) {
-        return (void *)0;
-    }
-    void *p = (void *)&deeploy_fake_l1_arena[deeploy_fake_l1_offset];
-    deeploy_fake_l1_offset += aligned;
-    return p;
+  (void)device;
+  /* 8-byte alignment for every allocation so consecutive callers stay
+   * aligned even when `size` is not a multiple of 8. */
+  uint32_t aligned = (size + 7u) & ~7u;
+  if (deeploy_fake_l1_offset + aligned > DEEPLOY_FAKE_L1_SIZE) {
+    return (void *)0;
+  }
+  void *p = (void *)&deeploy_fake_l1_arena[deeploy_fake_l1_offset];
+  deeploy_fake_l1_offset += aligned;
+  return p;
 }
 
 void __wrap_pi_cl_l1_free(struct pi_device *device, void *chunk, int size) {
-    (void)device;
-    (void)chunk;
-    (void)size;
-    /* Bump-allocator semantics: per-block free is a no-op. The harness
-     * frees the whole arena at teardown; we rewind there. */
-    if (deeploy_fake_l1_offset >= (uint32_t)size) {
-        deeploy_fake_l1_offset -= ((uint32_t)size + 7u) & ~7u;
-    }
+  (void)device;
+  (void)chunk;
+  (void)size;
+  /* Bump-allocator semantics: per-block free is a no-op. The harness
+   * frees the whole arena at teardown; we rewind there. */
+  if (deeploy_fake_l1_offset >= (uint32_t)size) {
+    deeploy_fake_l1_offset -= ((uint32_t)size + 7u) & ~7u;
+  }
 }
 
 #endif /* DEEPLOY_L1_AS_L2 */
