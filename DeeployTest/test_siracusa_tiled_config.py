@@ -190,37 +190,32 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
 # Untiled-L3 baseline — single-tile-per-tensor schedules for every L3
 # training model so the user can read off "untiled L3 latency" alongside
-# the existing tiled-L3 cycles.  Each fixture goes through the same
-# SBTiler infrastructure as the L3 singlebuffer tests, but with --l1
-# inflated to the smallest value that still yields the minimal-tile
-# shape — at that point the generated C is one kernel call per op with
-# integral L3↔L2 DMA wrappers, no spatial split.
+# the existing tiled-L3 cycles.
 #
-# Two per-fixture knobs:
+# Each fixture goes through the same SBTiler infrastructure as the L3
+# singlebuffer tests, with --l1 inflated to the smallest value that
+# yields the minimal-tile shape (one kernel call per op + integral
+# L3↔L2 DMA, no spatial split).
 #
-#   - needs_fake_l1: True when peak L1 working > physical Siracusa L1
-#     (256 KB).  When True, build adds -DDEEPLOY_L1_AS_L2 + the linker
-#     wrap that serves oversized pi_cl_l1_malloc calls from a static
-#     FC-L2 arena (deeploy_fake_l1.c).  Small-working-set models (CCT /
-#     CCT_LoRA, ~16 KB peak) leave it False — they fit real L1 and
-#     produce byte-identical codegen to the tiled L3 entry, so their
-#     untiled cycles == tiled cycles by construction.
+# After codegen, the test post-processes TrainingNetwork.c /
+# OptimizerNetwork.c to swap pmsis_l1_malloc → pi_l2_malloc and
+# PI_L1 → PI_L2, so every L1-annotated buffer physically lives in
+# FC L2.  Cluster cores access these via the fabric (~7x slower than
+# real L1) — that's the deliberate semantics of "untiled L2-resident".
 #
-#   - skip_sim_in_ci: True for models where gvsoc has historically
-#     OOMed the runner during the long single-tile loop.  CI still
-#     verifies codegen + compile + link in that case; sim is a manual
-#     local exercise.
+# skip_sim_in_ci: True for fixtures where gvsoc has historically OOMed
+# during the long single-tile loop.  CI still verifies codegen +
+# compile + link in that case; sim is deferred to a manual local run
+# or a beefier runner.
 L3_UNTILED_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": {
         "l1": 64_000,
         "l2": 2_000_000,
-        "needs_fake_l1": False,  # peak L1 working = 16388 B fits real L1
         "skip_sim_in_ci": False,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "l1": 64_000,
         "l2": 2_000_000,
-        "needs_fake_l1": False,  # peak L1 working = 16384 B
         "skip_sim_in_ci": False,
     },
     "Models/Training/ResNet8/resnet8_train": {
@@ -229,19 +224,11 @@ L3_UNTILED_TRAINING_MODELS = {
         # RAM appetite past CI's ceiling.
         "l1": 800_000,
         "l2": 2_000_000,
-        "fake_l1_size": 1_048_576,  # peak L1 working = 739328 B
-        "needs_fake_l1": True,
-        # Try sim again with the fixed shim (real-L1-first, fall back to
-        # FC-L2 arena only when L1 is exhausted).  Earlier runs OOMed at
-        # ~8 min — believed to be the broken shim looping cluster init,
-        # not a real gvsoc memory leak.
         "skip_sim_in_ci": False,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
         "l2": 2_000_000,
-        "fake_l1_size": 786_432,  # peak L1 working = 542720 B
-        "needs_fake_l1": True,
         "skip_sim_in_ci": False,
     },
 }

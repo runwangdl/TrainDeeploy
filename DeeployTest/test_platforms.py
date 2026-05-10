@@ -434,27 +434,29 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
                                             skipsim) -> None:
     """Untiled-L3 baseline.
 
-    Reuses the tiled codegen pipeline but inflates --l1 large enough that the
-    SBTiler picks single-tile-per-tensor schedules.  The deeploy_fake_l1 shim
-    (DEEPLOY_L1_AS_L2) redirects pi_cl_l1_malloc into an FC-L2 arena so the
-    oversized "L1" working buffer (>physical 256 KB) actually fits.
+    SBTiler picks single-tile-per-tensor schedules (--l1 inflated above the
+    op working set so no spatial split happens).  The generated C is one
+    kernel call per op with integral L3↔L2 DMA wrappers.
 
-    Per-model skip_sim_in_ci gate: large fixtures (ResNet8 / MobileNetV1)
-    skip the gvsoc sim on CI runners because two prior runs got SIGKILLed
-    at ~8 min during simulation.  Local runs (no `CI` env var) still run
-    the full pipeline so the user can verify losses manually.
+    To make the L1 staging buffer physically live in FC L2 (so cycles
+    represent "kernel actually accessing L2"), we post-process the
+    generated TrainingNetwork.c / OptimizerNetwork.c after codegen but
+    before cmake build:
+
+        pmsis_l1_malloc -> pi_l2_malloc
+        PI_L1           -> PI_L2
+
+    Every L1-annotated buffer ends up in FC L2.  Cluster cores access L2
+    via the fabric (~7x slower than real L1) — that's the deliberate
+    semantics of "untiled L2-resident".  No fake-L1 shim, no linker wrap,
+    no SDK pollution.
     """
+    from pathlib import Path
+
+    from testUtils.core.execution import build_binary, configure_cmake, generate_network, run_simulation
+
     fixture = SIRACUSA_L3_UNTILED_TRAINING_MODELS[test_name]
     overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
-    extra_cmake = list(cmake_args)
-    if fixture.get("needs_fake_l1", False):
-        # Only opt in when peak L1 working > physical L1 — the wrap also
-        # intercepts SDK-internal pi_cl_l1_malloc calls and starves the
-        # cluster on small models that don't need it.
-        extra_cmake += [
-            f"-DDEEPLOY_L1_AS_L2=ON",
-            f"-DDEEPLOY_FAKE_L1_SIZE={fixture['fake_l1_size']}",
-        ]
     effective_skipsim = skipsim or (os.environ.get("CI") == "true" and fixture.get("skip_sim_in_ci", False))
     config = create_test_config(
         test_name = test_name,
@@ -463,7 +465,7 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         deeploy_test_dir = deeploy_test_dir,
         toolchain = toolchain,
         toolchain_dir = toolchain_dir,
-        cmake_args = extra_cmake,
+        cmake_args = cmake_args,
         tiling = True,
         cores = SIRACUSA_DEFAULT_CORES,
         l1 = fixture["l1"],
@@ -474,7 +476,24 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
     )
-    run_and_assert_test(test_name, config, skipgen, effective_skipsim)
+
+    # Inline the test runner stages so we can sed between codegen and build.
+    generate_network(config, skip = skipgen)
+    for c_name in ("TrainingNetwork.c", "OptimizerNetwork.c"):
+        c_path = Path(config.gen_dir) / c_name
+        if not c_path.exists():
+            continue
+        text = c_path.read_text()
+        text = text.replace("pmsis_l1_malloc", "pi_l2_malloc")
+        text = text.replace("PI_L1 ", "PI_L2 ")
+        c_path.write_text(text)
+    configure_cmake(config)
+    build_binary(config)
+    result = run_simulation(config, skip = effective_skipsim)
+    assert result.success, (f"Test {test_name} failed with {result.error_count} errors out of "
+                            f"{result.total_count}\nOutput:\n{result.stdout}")
+    if result.error_count >= 0:
+        assert result.error_count == 0, (f"Found {result.error_count} errors out of {result.total_count} tests")
 
 
 @pytest.mark.siracusa_tiled

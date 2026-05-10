@@ -29,31 +29,33 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # Training tests - L2 singlebuffer
-  siracusa-training-tiled-l2-singlebuffer:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l2 and singlebuffer"
-
-  # Training tests - L3 singlebuffer (models that spill weights/activations to L3)
-  siracusa-training-tiled-l3-singlebuffer:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l3 and singlebuffer"
-
-  # Training tests - L3 untiled baseline (single-tile-per-tensor; uses fake-L1
-  # shim to back the oversized L1 working buffer with FC L2).
+  # NOTE: All other Siracusa-tiled jobs are temporarily disabled on this
+  # branch so the L3-untiled job runs in isolation while we collect
+  # cycle-count data. Restore the L2 / L3 singlebuffer entries below
+  # before merging.
   #
-  # Per-model skip_sim_in_ci gate (in test_siracusa_tiled_config.py) decides
-  # which fixtures actually run gvsoc on CI: CCT/CCT_LoRA do (16 KB working
-  # set, gvsoc fits comfortably); ResNet8/MobileNetV1 are --skipsim'd until
-  # the sim-side OOM at ~8 min is debugged or we move to a bigger runner.
+  # # Training tests - L2 singlebuffer
+  # siracusa-training-tiled-l2-singlebuffer:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "training and l2 and singlebuffer"
+  #
+  # # Training tests - L3 singlebuffer
+  # siracusa-training-tiled-l3-singlebuffer:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "training and l3 and singlebuffer"
+
+  # Training tests - L3 untiled baseline.  Codegen post-process rewrites
+  # every L1-annotated buffer to FC L2 so cluster cores access kernel
+  # buffers via the fabric — "untiled, L2-resident working set" cycle
+  # semantics for all 4 L3 models.
   siracusa-training-tiled-l3-untiled:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml

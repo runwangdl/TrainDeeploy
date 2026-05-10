@@ -5,13 +5,10 @@
 ---
 name: CI • Siracusa
 
+# NOTE: Push / pull_request triggers temporarily disabled on this branch
+# so only the L3-untiled job runs while we collect cycle-count data.
+# Restore the push: / pull_request: blocks before merging.
 "on":
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*.*.*"
-  pull_request:
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
