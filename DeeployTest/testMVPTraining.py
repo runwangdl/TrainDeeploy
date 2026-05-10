@@ -13,7 +13,7 @@ import onnx_graphsurgeon as gs
 from testUtils.codeGenerateTraining import generateTrainingTestNetwork
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
-from testUtils.tilingUtils import TrainingSBTiler
+from testUtils.tilingUtils import TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum, _infer_num_data_inputs, \
     _infer_total_mb, _load_reference_losses, _mockScheduler, add_training_inference_args
 from testUtils.typeMapping import inferTypeAndOffset
@@ -144,11 +144,13 @@ def generateTiledTrainingNetwork(args) -> None:
             ))
     deployer = MemoryDeployerWrapper(deployer, annotation_passes)
 
-    # 9. Wrap with tiler (TrainingSBTiler: SB strategy + extended input lifetimes for backward pass).
-    unique_params = f"{args.dumpdir}_L1{args.l1}_L2{args.l2}_{args.defaultMemLevel}"
+    # 9. Wrap with tiler. SB by default; --doublebuffer switches to TrainingDBTiler
+    #    (DB strategy + same TrainingMemoryScheduler input-lifetime extension).
+    unique_params = f"{args.dumpdir}_L1{args.l1}_L2{args.l2}_{args.defaultMemLevel}_DB{args.doublebuffer}"
     testIdentifier = hashlib.md5(unique_params.encode()).hexdigest()[:16]
 
-    deployer = TilerDeployerWrapper(deployer, TrainingSBTiler, testName = testIdentifier, workDir = args.dumpdir)
+    tilerCls = TrainingDBTiler if args.doublebuffer else TrainingSBTiler
+    deployer = TilerDeployerWrapper(deployer, tilerCls, testName = testIdentifier, workDir = args.dumpdir)
     deployer.tiler.visualizeMemoryAlloc = args.plotMemAlloc
     deployer.tiler.memoryAllocStrategy = args.memAllocStrategy
     deployer.tiler.searchStrategy = args.searchStrategy
@@ -257,6 +259,9 @@ if __name__ == '__main__':
                         type = str,
                         default = "L2",
                         help = "Default memory level for IO buffers. Default: L2.")
+    parser.add_argument("--doublebuffer",
+                        action = "store_true",
+                        help = "Enable double buffering for tile DMA transfers (TrainingDBTiler).")
     parser.add_argument("--memAllocStrategy",
                         type = str,
                         default = "MiniMalloc",
