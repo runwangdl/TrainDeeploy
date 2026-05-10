@@ -135,45 +135,76 @@ def create_test_config(
     return config
 
 
-def extract_runtime_cycles(stdout: str) -> Optional[int]:
-    """Parse the GVSoC ``Runtime: N cycles`` line out of test stdout."""
-    import re
-    m = re.search(r"Runtime:\s*([0-9]+)\s+cycles", stdout)
-    return int(m.group(1)) if m else None
+# Track which Markdown section headers we've already written into
+# $GITHUB_STEP_SUMMARY so each is emitted exactly once per pytest session
+# even though many tests share the same metric_section.
+_METRIC_SECTIONS_WRITTEN: set = set()
+
+
+def _emit_metric_section_header(summary_path: str, section: str, columns: list) -> None:
+    if section in _METRIC_SECTIONS_WRITTEN:
+        return
+    _METRIC_SECTIONS_WRITTEN.add(section)
+    try:
+        with open(summary_path, "a") as f:
+            f.write(f"\n## {section}\n\n")
+            f.write("| " + " | ".join(columns) + " |\n")
+            f.write("|" + "|".join(["------"] * len(columns)) + "|\n")
+    except Exception:
+        pass
 
 
 def run_and_assert_test(test_name: str,
                         config: DeeployTestConfig,
                         skipgen: bool,
                         skipsim: bool,
-                        report_metric: Optional[Dict[str, str]] = None) -> None:
+                        report_metric: Optional[Dict[str, str]] = None,
+                        metric_section: str = "Tensor-promotion strategy benchmark") -> None:
     """
     Shared helper function to run a test and assert its results.
 
     If ``report_metric`` is given (a dict of label -> value) and a cycle count
-    is parseable from stdout, append a row to ``$GITHUB_STEP_SUMMARY`` so the
-    metric shows up in the GitHub Actions run summary, and print a tagged line
-    that survives pytest's stdout capture.
+    is parseable from stdout, append a row to ``$GITHUB_STEP_SUMMARY`` (under
+    the ``metric_section`` heading) so the metric shows up in the GitHub
+    Actions run summary, and print a tagged line that survives pytest's
+    stdout capture.
+
+    ``metric_section`` lets unrelated test categories (e.g. promotion
+    benchmark vs. training cycle reference) write to separate Markdown
+    tables in the same workflow summary.
 
     Raises:
         AssertionError: If test fails or has errors
     """
     result = run_complete_test(config, skipgen = skipgen, skipsim = skipsim)
 
-    cycles = extract_runtime_cycles(result.stdout) if result.stdout else None
+    cycles = getattr(result, "runtime_cycles", None)
+    if cycles is None and getattr(result, "stdout", None):
+        # Training tests emit "BENCH train_cycles=N opt_cycles=M weight_sram=K"
+        # instead of "Runtime: N cycles"; fall back to that format so the
+        # training cycle reference table works the same as the inference one.
+        import re as _re
+        m = _re.search(r'BENCH\s+train_cycles=(\d+)', result.stdout)
+        if m:
+            cycles = int(m.group(1))
+
 
     if report_metric is not None:
         labels = " ".join(f"{k}={v}" for k, v in report_metric.items())
         cycles_str = f"{cycles:,}" if cycles is not None else "n/a"
         # Always print a clearly-tagged line; pytest captures stdout but shows
         # it on failure, and `-rA` (used in CI) shows captured output for
-        # passing tests too.
-        print(f"\n[METRIC] test={test_name} {labels} cycles={cycles_str}", flush = True)
+        # passing tests too. Embed the section so log greppers can group.
+        print(f"\n[METRIC] section={metric_section!r} test={test_name} {labels} cycles={cycles_str}",
+              flush = True)
         # Append a Markdown table row to GITHUB_STEP_SUMMARY when running in
         # GitHub Actions; the file is auto-created and rendered as Markdown
-        # in the workflow summary panel.
+        # in the workflow summary panel. The first row in each section also
+        # writes a heading so the table renders correctly.
         summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
         if summary_path and cycles is not None:
+            columns = ["Test"] + list(report_metric.keys()) + ["Cycles"]
+            _emit_metric_section_header(summary_path, metric_section, columns)
             row_cells = [test_name] + [str(v) for v in report_metric.values()] + [f"{cycles:,}"]
             try:
                 with open(summary_path, "a") as f:

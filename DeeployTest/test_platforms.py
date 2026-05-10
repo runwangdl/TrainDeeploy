@@ -412,7 +412,13 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
     )
-    run_and_assert_test(test_name, config, skipgen, skipsim)
+    metric = {"l1": str(l1), "l2": "2000000", "config": "L3-singlebuffer-training"}
+    run_and_assert_test(test_name,
+                        config,
+                        skipgen,
+                        skipsim,
+                        report_metric = metric,
+                        metric_section = "Tiled L3 training cycle reference")
 
 
 def _generate_promote_test_params(test_dict):
