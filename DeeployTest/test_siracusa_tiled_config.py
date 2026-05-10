@@ -190,7 +190,12 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
 L3_UNTILED_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": {
-        "l1": 4_000_000,
+        # 800 KB is the smallest --l1 that still yields the minimal-tile
+        # schedule (peak L1 working set = 739 KB).  Anything between 800 KB
+        # and 4 MB produces identical numTiles arrays — we use the smallest
+        # value because the SBTiler's constraint solver (MiniMalloc) burns
+        # ubuntu-latest's 7 GB RAM at --l1=4 MB.
+        "l1": 800_000,
         "l2": 2_000_000,
         "fake_l1_size": 1_048_576,  # spike measured 739 KB; 1 MB headroom
     },
