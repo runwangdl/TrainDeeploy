@@ -229,15 +229,15 @@ L3_UNTILED_TRAINING_MODELS = {
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
         "l2": 2_000_000,
-        # MobileNet's 4-batch testinputs.h is ~2.8 MB of static .data — at
-        # the limit of FC L2 heap when combined with the post-sed L1+L2
-        # working buffer (1042 KB).  Cutting to 1 train step × 1 accum
-        # step shrinks testinputs.h ~4x and frees enough heap for the
-        # remaining pi_l2_malloc calls to land in valid memory.  Cycle
-        # numbers are still meaningful: per-step train cycles are what
-        # we want to compare against the tiled L3 baseline.
+        # Cap training schedule (testinputs.h shrinks ~4x) AND force 1
+        # data input.  CCT/CCT_LoRA's MODEL_OVERRIDES has num_data_inputs=1
+        # and they pass; MobileNet's default DATA_INPUTS=2 may surface a
+        # second-input handling bug that's masked when only one input is
+        # consumed.  A 1-step + 1-input run is still apples-to-apples for
+        # per-step train_cycles vs tiled L3.
         "n_steps": 1,
         "n_accum": 1,
+        "num_data_inputs": 1,
         "skip_sim_in_ci": False,
     },
 }

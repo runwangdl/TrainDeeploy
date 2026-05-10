@@ -469,6 +469,10 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         extra_gen.append(f"--n-steps={fixture['n_steps']}")
     if "n_accum" in fixture:
         extra_gen.append(f"--n-accum={fixture['n_accum']}")
+    # Per-fixture num_data_inputs override (lets a fixture force the value
+    # the model overrides don't set globally — needed when a multi-input
+    # model triggers a code-path bug only with NUM_DATA_INPUTS > 1).
+    fixture_num_data = fixture.get("num_data_inputs", overrides.get("num_data_inputs"))
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -484,7 +488,7 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         default_mem_level = "L3",
         double_buffer = False,
         training = True,
-        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_num_data_inputs = fixture_num_data,
         training_tolerance = overrides.get("tolerance"),
         gen_args = extra_gen,
     )
