@@ -223,33 +223,28 @@ L3_UNTILED_TRAINING_MODELS = {
         "num_data_inputs": 1,
         "skip_sim_in_ci": False,
     },
-    "Models/Training/CCT_LoRA/cct_lora_train": {
-        "l1": 64_000,
-        "l2": 2_000_000,
-        "skip_sim_in_ci": False,
-    },
-    "Models/Training/ResNet8/resnet8_train": {
-        # 800 KB is the smallest --l1 that yields the minimal-tile shape
-        # (peak L1 working = 739 KB).  Larger values inflate MiniMalloc's
-        # RAM appetite past CI's ceiling.
-        "l1": 800_000,
-        "l2": 2_000_000,
-        "skip_sim_in_ci": False,
-    },
-    "Models/Training/MobileNetV1/mobilenetv1_train": {
-        "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
-        "l2": 2_000_000,
-        # Cap training schedule (testinputs.h shrinks ~4x) AND force 1
-        # data input.  CCT/CCT_LoRA's MODEL_OVERRIDES has num_data_inputs=1
-        # and they pass; MobileNet's default DATA_INPUTS=2 may surface a
-        # second-input handling bug that's masked when only one input is
-        # consumed.  A 1-step + 1-input run is still apples-to-apples for
-        # per-step train_cycles vs tiled L3.
-        "n_steps": 1,
-        "n_accum": 1,
-        "num_data_inputs": 1,
-        "skip_sim_in_ci": False,
-    },
+    # Other 3 fixtures (CCT_LoRA, ResNet8, MobileNetV1) temporarily
+    # disabled so this CI run isolates the big-CCT untiled measurement.
+    # Restore the entries below before merging.
+    #
+    # "Models/Training/CCT_LoRA/cct_lora_train": {
+    #     "l1": 64_000,
+    #     "l2": 2_000_000,
+    #     "skip_sim_in_ci": False,
+    # },
+    # "Models/Training/ResNet8/resnet8_train": {
+    #     "l1": 800_000,
+    #     "l2": 2_000_000,
+    #     "skip_sim_in_ci": False,
+    # },
+    # "Models/Training/MobileNetV1/mobilenetv1_train": {
+    #     "l1": 800_000,
+    #     "l2": 2_000_000,
+    #     "n_steps": 1,
+    #     "n_accum": 1,
+    #     "num_data_inputs": 1,
+    #     "skip_sim_in_ci": False,
+    # },
 }
 
 # Per-model overrides for training tests.
