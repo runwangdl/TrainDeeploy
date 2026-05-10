@@ -174,13 +174,22 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 
 # Same models, runs WITH PromoteTensorsToL2 enabled so the training cycle
 # table shows cycles with-vs-without promotion side by side. Each entry is
-# (l1, strategy, includeActivations). Conservative MaxBufferBytes=2048 to
-# avoid the wider-cap codegen edge cases on training graphs.
+# (l1, strategy, includeActivations). Conservative MaxBufferBytes=2048 (set
+# on the test side) to avoid the wider-cap codegen edge cases on training
+# graphs. cct_train and cct_lora_train get an additional `largest` strategy
+# variant because cct_lora locally showed -40% with cycle-aware and is
+# expected to widen further with largest.
 L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
     "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True)],
     "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True)],
-    "Models/Training/CCT/cct_train": [(128000, "cycle-aware", True)],
-    "Models/Training/CCT_LoRA/cct_lora_train": [(128000, "cycle-aware", True)],
+    "Models/Training/CCT/cct_train": [
+        (128000, "cycle-aware", True),
+        (128000, "largest", True),
+    ],
+    "Models/Training/CCT_LoRA/cct_lora_train": [
+        (128000, "cycle-aware", True),
+        (128000, "largest", True),
+    ],
 }
 
 # Per-model overrides for training tests.
