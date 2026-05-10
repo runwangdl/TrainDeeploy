@@ -188,41 +188,33 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 #
 # fake_l1_size baselining method: spike with --l1=4_000_000 → read off
 # MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
+# Untiled-L3 baseline.  ONLY contains models whose peak L1 working set
+# exceeds physical Siracusa L1 (~256 KB) — those are the only ones where
+# "untiled-L3" produces a different schedule than the existing tiled L3
+# singlebuffer test.  Smaller models (CCT, CCT_LoRA, ~16 KB working) get
+# the same byte-for-byte TrainingNetwork.c whether you pick tiled L3 or
+# untiled L3, so adding them here would be redundant — their tiled L3
+# entry IS their untiled-L3 baseline.
+#
+# The deeploy_fake_l1 shim (DEEPLOY_L1_AS_L2) intercepts pi_cl_l1_malloc
+# and serves it from a static FC-L2 arena, which is the only way the
+# 700-KB-class L1 working buffer can fit at runtime.  The shim has the
+# side effect of redirecting *every* pi_cl_l1_malloc call (including any
+# SDK-internal one), which breaks small models that don't actually need
+# it — hence the per-fixture needs_fake_l1 gate.
 L3_UNTILED_TRAINING_MODELS = {
-    # Per-model l1 / l2 / fake_l1_size were established by spiking
-    # testMVPTraining.py with --defaultMemLevel=L3 and reading
-    # MEMORYARENA_L1 from the generated TrainingNetwork.c.
-    #
-    #   - l1: planner-side budget passed to SBTiler (forces single-tile
-    #     schedules when generous enough).  Use the smallest value that
-    #     still compiles and yields the minimal-tile shape — larger values
-    #     blow MiniMalloc's RAM appetite past CI's 16 GB ceiling.
-    #   - l2: planner-side L2 budget; 2 MB matches the existing tiled L3
-    #     baseline.
-    #   - fake_l1_size: physical bytes for the FC-L2-backed pi_cl_l1_malloc
-    #     arena (deeploy_fake_l1.c).  Must be ≥ MEMORYARENA_L1, with a
-    #     small headroom for alignment.
-    "Models/Training/CCT/cct_train": {
-        "l1": 64_000,
-        "l2": 2_000_000,
-        "fake_l1_size": 32_768,  # peak L1 working = 16388 B
-        # Sim runs in CI: 16 KB working set is tiny enough that gvsoc
-        # doesn't OOM ubuntu-latest's 16 GB.
-        "skip_sim_in_ci": False,
-    },
-    "Models/Training/CCT_LoRA/cct_lora_train": {
-        "l1": 64_000,
-        "l2": 2_000_000,
-        "fake_l1_size": 32_768,  # peak L1 working = 16384 B
-        "skip_sim_in_ci": False,
-    },
     "Models/Training/ResNet8/resnet8_train": {
+        # 800 KB is the smallest --l1 that yields the minimal-tile shape
+        # (peak L1 working = 739 KB).  Larger values inflate MiniMalloc's
+        # RAM appetite past CI's ceiling.
         "l1": 800_000,
         "l2": 2_000_000,
         "fake_l1_size": 1_048_576,  # peak L1 working = 739328 B
-        # Two prior CI runs got SIGKILLed (exit 137) at ~8 min during sim.
-        # Skip until the sim-side memory leak is debugged or we move to a
-        # bigger runner.  --skipsim still verifies codegen + compile + the
+        "needs_fake_l1": True,
+        # Two prior CI runs got SIGKILLed (exit 137) at ~8 min during sim
+        # — gvsoc memory grows unbounded for the long single-tile training
+        # loop.  --skipsim until that's debugged or we move to a bigger
+        # runner.  --skipsim still verifies codegen + compile + the
         # fake-L1 shim's link integrity.
         "skip_sim_in_ci": True,
     },
@@ -230,6 +222,7 @@ L3_UNTILED_TRAINING_MODELS = {
         "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
         "l2": 2_000_000,
         "fake_l1_size": 786_432,  # peak L1 working = 542720 B
+        "needs_fake_l1": True,
         "skip_sim_in_ci": True,  # same OOM concern as ResNet8
     },
 }

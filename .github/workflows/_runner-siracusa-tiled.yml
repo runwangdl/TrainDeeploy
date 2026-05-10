@@ -53,3 +53,11 @@ jobs:
           cd DeeployTest
           python3 ../scripts/ci_footprint_summary.py TEST_SIRACUSA || true
         shell: bash
+      - name: Upload sim out.txt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-out-${{ inputs.pytest-marker }}
+          path: DeeployTest/out.txt
+          if-no-files-found: ignore
+          retention-days: 7

@@ -446,10 +446,15 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
     """
     fixture = SIRACUSA_L3_UNTILED_TRAINING_MODELS[test_name]
     overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
-    extra_cmake = list(cmake_args) + [
-        f"-DDEEPLOY_L1_AS_L2=ON",
-        f"-DDEEPLOY_FAKE_L1_SIZE={fixture['fake_l1_size']}",
-    ]
+    extra_cmake = list(cmake_args)
+    if fixture.get("needs_fake_l1", False):
+        # Only opt in when peak L1 working > physical L1 — the wrap also
+        # intercepts SDK-internal pi_cl_l1_malloc calls and starves the
+        # cluster on small models that don't need it.
+        extra_cmake += [
+            f"-DDEEPLOY_L1_AS_L2=ON",
+            f"-DDEEPLOY_FAKE_L1_SIZE={fixture['fake_l1_size']}",
+        ]
     effective_skipsim = skipsim or (os.environ.get("CI") == "true" and fixture.get("skip_sim_in_ci", False))
     config = create_test_config(
         test_name = test_name,
