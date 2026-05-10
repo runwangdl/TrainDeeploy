@@ -595,8 +595,10 @@ class Tiler():
 
         if self.memoryAllocStrategy == "MiniMalloc":
             log.debug(" - Solve Memory Allocation with MiniMalloc")
+            defaultMemoryLevelName = self.memoryHierarchy._defaultMemoryLevel.name
             for memoryLevel in memoryMap.keys():
-                constantTensorOffset = self.outerMemoryScheduler.getConstantTensorOffset(ctxt, memoryLevel)
+                constantTensorOffset = self.outerMemoryScheduler.getConstantTensorOffset(
+                    ctxt, memoryLevel, defaultMemoryLevelName)
                 if memoryLevel == self.memoryHierarchy._defaultMemoryLevel.name:
                     memoryMap[memoryLevel][-1] = self.minimalloc(
                         memoryMap[memoryLevel][-1], ctxt, None,
@@ -2021,8 +2023,10 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         log.info(f"  {'Level':<14} {'Capacity (bytes)':>10} {'Total':>10} (    Static + Dynamic   ) (Usage )")
         log.info("  " + "-" * 78)
 
+        defaultMemoryLevelName = self.tiler.memoryHierarchy._defaultMemoryLevel.name
         for level, dynamicSize in self.worstCaseBufferSize.items():
-            staticSize = self.tiler.outerMemoryScheduler.getConstantTensorOffset(self.ctxt, level)
+            staticSize = self.tiler.outerMemoryScheduler.getConstantTensorOffset(
+                self.ctxt, level, defaultMemoryLevelName)
             capacity = self.tiler.memoryHierarchy.memoryLevels[level].size
             total = staticSize + dynamicSize
 

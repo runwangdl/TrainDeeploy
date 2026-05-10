@@ -13,7 +13,7 @@ import numpy as np
 from ortools.constraint_solver.pywrapcp import IntVar
 
 from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.LoweringOptimizationPasses import _permute
-from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, TransientBuffer
+from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, TransientBuffer, VariableBuffer, _ReferenceBuffer
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy
 from Deeploy.TilingExtension.MemoryConstraints import PatternMemoryConstraints, TensorMemoryConstraint
 from Deeploy.TilingExtension.TilerModel import TilerModel
@@ -430,11 +430,37 @@ class MemoryScheduler():
 
         return tensorLifetimeMap
 
-    def getConstantTensorOffset(self, ctxt: NetworkContext, memoryLevel: str):
+    def getConstantTensorOffset(self, ctxt: NetworkContext, memoryLevel: str,
+                                 defaultMemoryLevel: Optional[str] = None):
+        # Bytes occupied at this level by buffers that the arena does not manage:
+        #   - ConstantBuffers in globalObjects pinned here (model weights / I/O)
+        #   - Standalone-promoted VariableBuffers in localObjects (only when
+        #     defaultMemoryLevel is supplied AND memoryLevel != defaultMemoryLevel;
+        #     those activations have been explicitly moved off the default level by
+        #     PromoteTensorsToL2 and are excluded from the minimalloc input by
+        #     TilerExtension._tileNetwork).  Their static C declarations occupy
+        #     this level for the whole program, so minimalloc must subtract them
+        #     from the arena budget; otherwise arena placements physically collide
+        #     with the standalone region.
+        #     The defaultMemoryLevel guard prevents double-counting in non-promoted
+        #     runs where activations naturally live at memoryLevel == defaultLevel
+        #     and are arena-managed.
         constantTensorSize = 0
         for buffer in ctxt.globalObjects.values():
             if not "MEMORYARENA" in buffer.name and isinstance(buffer,
                                                                ConstantBuffer) and buffer._memoryLevel == memoryLevel:
+                constantTensorSize += np.prod(buffer.shape) * buffer._type.referencedType.typeWidth // 8
+
+        if defaultMemoryLevel is not None and memoryLevel != defaultMemoryLevel:
+            for buffer in ctxt.localObjects.values():
+                if not isinstance(buffer, VariableBuffer):
+                    continue
+                if isinstance(buffer, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                if "MEMORYARENA" in buffer.name:
+                    continue
+                if getattr(buffer, "_memoryLevel", None) != memoryLevel:
+                    continue
                 constantTensorSize += np.prod(buffer.shape) * buffer._type.referencedType.typeWidth // 8
 
         return int(constantTensorSize)
