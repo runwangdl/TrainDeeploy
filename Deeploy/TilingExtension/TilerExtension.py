@@ -205,8 +205,8 @@ class Tiler():
                     return False  # internal allocator scratch
                 return True
 
-            promotedConsts = []  # (name, size) -- weights, always-alive is correct
-            promotedVars = []    # (name, size, lifetime) -- activations; lifetime may be None
+            promotedConsts = []   # (name, size) -- weights, always-alive is correct
+            promotedVars = []     # (name, size, lifetime, addrSpace) -- activations
             for buf in ctxt.globalObjects.values():
                 if not isinstance(buf, ConstantBuffer) or isinstance(buf, _ReferenceBuffer):
                     continue
@@ -224,7 +224,9 @@ class Tiler():
                     continue
                 sz = _bufBytes(buf)
                 if sz > 0:
-                    promotedVars.append((buf.name, sz, getattr(buf, '_lifetime', None)))
+                    promotedVars.append((buf.name, sz,
+                                         getattr(buf, '_lifetime', None),
+                                         getattr(buf, '_addrSpace', None)))
 
             constantBuffersOffset = 0
             _maxLifetime = len(memoryMap[memoryLevel.name])
@@ -243,31 +245,49 @@ class Tiler():
                                **addTraceConfig))
                 constantBuffersOffset += sz
 
-            # Promoted activations -- prefer windowed draw using buf._lifetime so the
-            # plot reflects when the buffer is actually live. PR #19 currently leaves
-            # _lifetime = None for standalone-promoted activations (MemoryScheduler
-            # skips them), which is over-conservative -- we flag those with a dashed
-            # outline so the visualization makes the missing lifetime tracking visible.
+            # Promoted activations. Three rendering modes:
+            #   - With both _lifetime AND _addrSpace (packed by minimalloc):
+            #     draw the lifetime window at the addrSpace y-range. Buffers
+            #     whose lifetimes don't overlap will share y-positions, so the
+            #     plot shows the real packed footprint (e.g. 21 activations
+            #     packed into 164 KB instead of stacking up to 570 KB).
+            #   - With _lifetime only (lifetime tracked but no pack offset):
+            #     stack sequentially at the lifetime window. Should be rare.
+            #   - With neither: full-width gold-dashed, flags missing tracking.
+            poolBase = constantBuffersOffset
+            poolPeak = 0
+            stackedFallbackOffset = poolBase  # only advances for non-packed
             varsWithoutLifetime = 0
-            for name, sz, lt in promotedVars:
+            for name, sz, lt, addrSpace in promotedVars:
                 if lt is None:
-                    # No lifetime info: draw full-width but dashed to flag.
                     x = [-0.5, -0.5, _maxLifetime + 0.5, _maxLifetime + 0.5]
                     line = dict(width = 2, dash = 'dash')
                     fillcolor = 'gold'
                     text = f"{name} (no lifetime tracked -- treated as always-alive)"
+                    y_lo = stackedFallbackOffset
+                    y_hi = stackedFallbackOffset + sz
+                    stackedFallbackOffset = y_hi
                     varsWithoutLifetime += 1
+                elif addrSpace is not None:
+                    x = [lt[0] - 0.5, lt[0] - 0.5, lt[1] + 0.5, lt[1] + 0.5]
+                    line = dict(width = 2)
+                    fillcolor = 'orange'
+                    text = f"{name} (pool offset {addrSpace[0]}-{addrSpace[1]})"
+                    y_lo = poolBase + addrSpace[0]
+                    y_hi = poolBase + addrSpace[1]
+                    poolPeak = max(poolPeak, addrSpace[1])
                 else:
+                    # Lifetime known but no pack offset; stack on top of the pool.
                     x = [lt[0] - 0.5, lt[0] - 0.5, lt[1] + 0.5, lt[1] + 0.5]
                     line = dict(width = 2)
                     fillcolor = 'orange'
                     text = name
+                    y_lo = stackedFallbackOffset
+                    y_hi = stackedFallbackOffset + sz
+                    stackedFallbackOffset = y_hi
                 fig.add_trace(
                     go.Scatter(x = x,
-                               y = [
-                                   constantBuffersOffset, constantBuffersOffset + sz,
-                                   constantBuffersOffset + sz, constantBuffersOffset
-                               ],
+                               y = [y_lo, y_hi, y_hi, y_lo],
                                name = name,
                                text = text,
                                fill = "toself",
@@ -275,7 +295,8 @@ class Tiler():
                                mode = "lines",
                                line = line,
                                fillcolor = fillcolor))
-                constantBuffersOffset += sz
+            # Arena boxes start above whichever pool/fallback ended highest.
+            constantBuffersOffset = max(poolBase + poolPeak, stackedFallbackOffset)
 
             for memoryMapStep in memoryMap[memoryLevel.name]:
                 for buffer in memoryMapStep:
@@ -301,17 +322,21 @@ class Tiler():
                                    **addTraceConfig))
 
             sumConst = sum(s for _, s in promotedConsts)
-            sumVar = sum(s for _, s, _ in promotedVars)
-            sumTotal = sumConst + sumVar
+            sumVarRaw = sum(s for _, s, _, _ in promotedVars)
+            # Real var L2 cost = pool peak (packed) + sum of any unpacked stacks
+            packedVarFootprint = poolPeak + (stackedFallbackOffset - poolBase)
+            sumTotal = sumConst + packedVarFootprint
             pct = (sumTotal / memoryLevel.size * 100) if memoryLevel.size else 0.0
             flag = (f" &middot; <span style='color:darkorange'>"
                     f"{varsWithoutLifetime} var(s) drawn dashed: no _lifetime tracked"
                     f"</span>") if varsWithoutLifetime else ""
+            packedNote = (f"  (pool peak={poolPeak:,} B, sum-if-unpacked={sumVarRaw:,} B, "
+                          f"saved={sumVarRaw - poolPeak:,} B by lifetime overlap)") if poolPeak else ""
             title = (f"Memory Allocation - {memoryLevel.name}"
-                     f"<br><sub>standalone (lightblue=const, orange=var w/lifetime, gold-dashed=var no-lifetime): "
+                     f"<br><sub>standalone (lightblue=const, orange=var w/lifetime+addr, gold-dashed=var no-lifetime): "
                      f"{sumTotal:,} B / {memoryLevel.size:,} B = {pct:.1f}%  "
                      f"&middot;  const={len(promotedConsts)} ({sumConst:,} B), "
-                     f"var={len(promotedVars)} ({sumVar:,} B){flag}</sub>")
+                     f"var={len(promotedVars)} ({packedVarFootprint:,} B physical){packedNote}{flag}</sub>")
 
             fig.update_xaxes(title_text = "Lifetime")
             fig.update_yaxes(title_text = "Address Space (Bytes)")
