@@ -39,7 +39,16 @@ GEMMMRedmuleMapper = NodeMapper(GEMMRedmuleParser(noBiasHoisting = False), Redmu
 
 RedmuleMapping = {
     'MatMul': MatMulLayer([MatMulRedmuleMapper]),
-    'Conv': ConvLayer([Conv2DRedmuleMapper]),
+    # 'Conv' is intentionally not mapped here: the Redmule ConvTemplate
+    # references the kernel symbol Conv2d_Im2Col_fp32_fp32_fp32_HWC_8_Redmule,
+    # which is *declared* by the template but never *defined* in any source
+    # file under TargetLibraries/.  Letting Conv fall through to the next
+    # engine (PULPClusterEngine, which has a working
+    # PULP_Conv2d_Im2Col_fp32_fp32_fp32_HWC implementation) keeps the
+    # Siracusa+RedMulE link step from failing on undefined symbols.  When
+    # a real RedMulE-accelerated Conv kernel lands, restore the mapping:
+    #
+    #     'Conv': ConvLayer([Conv2DRedmuleMapper]),
     'Gemm': GEMMLayer([GEMMMRedmuleMapper]),
 }
 
