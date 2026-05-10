@@ -505,6 +505,28 @@ class MemoryScheduler():
                     continue
                 if getattr(buffer, "_memoryLevel", None) != memoryLevel:
                     continue
+                # Skip activations that have already been packed into a shared
+                # pool; the pool buffer itself contributes its packed_peak via
+                # the globalObjects scan below, so counting them again here would
+                # double-charge the promoted footprint.
+                if getattr(buffer, "_packedIntoPool", None) is not None:
+                    continue
+                constantTensorSize += np.prod(buffer.shape) * buffer._type.referencedType.typeWidth // 8
+
+            # Pool buffers (PROMOTED_POOL_<level>) are added to globalObjects but
+            # they are VariableBuffers, not ConstantBuffers, so the first loop
+            # missed them. Count them here -- their shape encodes the packed_peak
+            # bytes that the level dedicates to the promoted pool.
+            poolNamePrefix = "PROMOTED_POOL_"
+            for buffer in ctxt.globalObjects.values():
+                if not isinstance(buffer, VariableBuffer):
+                    continue
+                if isinstance(buffer, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                if not buffer.name.startswith(poolNamePrefix):
+                    continue
+                if getattr(buffer, "_memoryLevel", None) != memoryLevel:
+                    continue
                 constantTensorSize += np.prod(buffer.shape) * buffer._type.referencedType.typeWidth // 8
 
         return int(constantTensorSize)

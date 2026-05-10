@@ -343,6 +343,94 @@ class Tiler():
         with open(memoryAllocPlotPath, "w", encoding = "utf-8") as f:
             f.write(outputHtml)
 
+    def _packPromotedActivationsIntoPool(self, ctxt: NetworkContext) -> NetworkContext:
+        """Pack standalone-promoted VariableBuffers (activations) into a shared
+        per-level pool whose offsets respect their non-overlapping lifetimes.
+
+        Without this pass, each promoted activation gets its own pi_l2_malloc
+        call and lives at L2 for the whole program -- a 'forever-alive'
+        treatment that's correct for ConstantBuffers (weights) but wastes L2 for
+        activations that are only live for a few schedule steps. This method
+        runs minimalloc on the (lifetime, size) tuples of all promoted
+        activations at each non-default level, creates a single pool buffer
+        sized to the resulting packed peak, and overrides each activation's
+        allocTemplate to point into the pool at its assigned offset.
+
+        Requires _lifetime to be populated on each candidate (done by
+        MemoryScheduler.computePromotedActivationLifetimes earlier in tile()).
+        Buffers without a lifetime are skipped (left in their pi_l2_malloc
+        forever-alive state).
+        """
+        defaultLevel = self.memoryHierarchy._defaultMemoryLevel.name
+
+        for level in self.memoryHierarchy.memoryLevels:
+            if level == defaultLevel:
+                continue
+
+            promoted = []
+            for buf in ctxt.localObjects.values():
+                if not isinstance(buf, VariableBuffer):
+                    continue
+                if isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                if getattr(buf, "_memoryLevel", None) != level:
+                    continue
+                if getattr(buf, "_lifetime", None) is None:
+                    continue
+                promoted.append(buf)
+
+            if not promoted:
+                continue
+
+            blocks = [
+                MemoryBlock(b.name, level, b._lifetime, None)
+                for b in promoted
+            ]
+            capacity = self.memoryHierarchy.memoryLevels[level].size
+
+            packed = self.minimalloc(blocks, ctxt, None, capacity, level)
+
+            packed_peak = 0
+            for blk in packed:
+                if blk._addrSpace is not None:
+                    packed_peak = max(packed_peak, blk._addrSpace[1])
+
+            if packed_peak == 0:
+                continue
+
+            poolName = f"PROMOTED_POOL_{level}"
+            poolBuf = ctxt.VariableBuffer(poolName, [packed_peak])
+            poolBuf._type = PointerClass(BasicDataTypes.int8_t)
+            ctxt.add(poolBuf, "global")
+            poolBuf._instance = poolBuf._type(poolName, ctxt)
+            poolBuf._memoryLevel = level
+            ctxt.globalObjects.move_to_end(poolBuf.name, last = False)
+
+            for blk in packed:
+                if blk._addrSpace is None:
+                    continue
+                buf = ctxt.lookup(blk.name)
+                offset = blk._addrSpace[0]
+                buf._addrSpace = blk._addrSpace
+                buf._packedIntoPool = poolName
+                buf.allocTemplate = NodeTemplate(
+                    " ${name} = (${type.typeName}) " +
+                    f"((char*){str(poolBuf._instance)} + {offset});")
+                buf.deallocTemplate = _deallocTemplate
+
+            log.info(f"  [PromotedPool] Packed {len(promoted)} activations at {level} "
+                     f"into {packed_peak} B pool '{poolName}' "
+                     f"(was {sum(self._bufferSizeFromShape(b) for b in promoted)} B if treated as forever-alive)")
+
+        return ctxt
+
+    @staticmethod
+    def _bufferSizeFromShape(buf):
+        try:
+            return int(np.prod(buf.shape)) * buf._type.referencedType.typeWidth // 8
+        except Exception:
+            return 0
+
     def _convertCtxtToStaticSchedule(self, ctxt: NetworkContext,
                                      memoryMap: Dict[str, List[List[MemoryBlock]]]) -> NetworkContext:
         """Convert network context to use static memory allocation.
@@ -2031,6 +2119,13 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
                 buf._lifetime = lt
             except Exception:
                 pass
+
+        # Pack the promoted activations (now with lifetimes) into a shared L2 pool
+        # so non-overlapping ones reuse the same physical bytes. This must happen
+        # BEFORE computeMemoryMap so the arena minimalloc inside it sees the
+        # post-pack getConstantTensorOffset (= sum(consts) + packed peak) instead
+        # of the old (= sum(consts) + sum(promoted)) over-conservative estimate.
+        self.ctxt = self.tiler._packPromotedActivationsIntoPool(self.ctxt)
 
         if tilingSolution is None and memoryMap is None:
             # JUNGVI: Currently using MiniMalloc is only supported for layer-wise execution and all tensors in the default memory level.

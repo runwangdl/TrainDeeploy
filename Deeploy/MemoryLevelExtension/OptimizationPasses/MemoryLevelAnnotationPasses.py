@@ -96,12 +96,26 @@ class PromoteTensorsToL2(SequentialPass):
         self.seed = seed
 
     def _bufferSize(self, buf: VariableBuffer) -> int:
+        # buf.size_bytes() does not exist on any Deeploy buffer class -- the
+        # original try/except always fell through to a hardcoded *4 multiplier
+        # that assumed fp32 elements. That over-counts int8 pools (e.g. an
+        # int8 PROMOTED_POOL_L2[163840] became 655 KB instead of 164 KB) and
+        # under-counts fp16/fp64. Use the actual type width.
         try:
-            return buf.size_bytes()
+            return int(math.prod(buf.shape)) * buf._type.referencedType.typeWidth // 8
         except Exception:
             return math.prod(buf.shape) * 4
 
     def apply(self, ctxt: NetworkContext, graph: gs.Graph) -> Tuple[NetworkContext, gs.Graph]:
+        # If tile() has already frozen any buffer's allocation, this is the
+        # post-tile call invoked from codeTransform. Promoting at this point
+        # would change _memoryLevel on buffers whose codegen was emitted for
+        # the old level, producing silently-corrupt output (see f8f1508).
+        # Generalise the existing per-buffer guard to a global one: when any
+        # buffer is frozen, accept zero new promotions for this whole call.
+        any_frozen = any('allocTemplate' in b.__dict__
+                         for b in {**ctxt.globalObjects, **ctxt.localObjects}.values())
+
         skip_tensors: set = set()
         for node in graph.nodes:
             if node.op in self._SKIP_OPS:
@@ -117,6 +131,13 @@ class PromoteTensorsToL2(SequentialPass):
             if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
                 continue
             if name in skip_tensors:
+                continue
+            # Mirror the activation-branch f8f1508 guard: if the buffer's
+            # tiling code has already been emitted (instance-level allocTemplate
+            # pointing at MEMORYARENA_L3 + offset), flipping _memoryLevel to L2
+            # post-hoc leaves the tiling closures writing to the wrong arena
+            # and produces silently corrupt output. Skip those.
+            if 'allocTemplate' in buf.__dict__:
                 continue
             size = self._bufferSize(buf)
             if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
@@ -178,6 +199,16 @@ class PromoteTensorsToL2(SequentialPass):
                 return False
             if "MEMORYARENA" in buf.name:
                 return False
+            # Skip activations that have been packed into a shared pool;
+            # the pool buffer itself contributes its packed_peak instead.
+            if getattr(buf, '_packedIntoPool', None) is not None:
+                return False
+            # Skip buffers that have been frozen into an arena allocation by
+            # tile() / _convertCtxtToStaticSchedule (instance-level allocTemplate
+            # attribute). They live inside MEMORYARENA_LX at a fixed offset and
+            # are accounted for via the arena, not as standalone bytes.
+            if 'allocTemplate' in buf.__dict__:
+                return False
             return getattr(buf, '_memoryLevel', None) == 'L2'
 
         already_l2 = sum(
@@ -187,6 +218,12 @@ class PromoteTensorsToL2(SequentialPass):
         )
         l2_used = already_l2
         promoted = []
+        # Refuse to promote anything once tile() has frozen allocations: the
+        # codegen for each buffer was emitted for the level it had at tile time,
+        # so flipping _memoryLevel here causes silent corruption (verified on
+        # CCT_2_32_32_128: 6 post-tile promotions yielded 10/10 errors).
+        if any_frozen:
+            candidates = []
         for name, buf, size, _ in candidates:
             if l2_used + size <= self.l2Budget:
                 buf._memoryLevel = 'L2'
