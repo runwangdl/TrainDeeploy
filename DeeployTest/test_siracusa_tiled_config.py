@@ -171,6 +171,17 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [128000],
 }
 
+# Double-buffered training models. Start narrow: only SimpleMLP until DB+alias
+# path is validated end-to-end. Expand to Autoencoder/DSCNN once stable.
+L2_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/SimpleMLP/simplemlp_train": [64000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    "Models/Training/DSCNN/dscnn_train": [128000],
+}
+
+# Empty placeholder; populate after L2 DB path is green.
+L3_DOUBLEBUFFER_TRAINING_MODELS: dict = {}
+
 # Per-model overrides for training tests.
 #
 # - num_data_inputs: required when inputs.npz has only one mini-batch (no
