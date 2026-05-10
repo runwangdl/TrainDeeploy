@@ -48,7 +48,14 @@ jobs:
       pytest-marker: "training and l3 and singlebuffer"
 
   # Training tests - L3 untiled baseline (single-tile-per-tensor; uses fake-L1
-  # shim to back the oversized L1 working buffer with FC L2)
+  # shim to back the oversized L1 working buffer with FC L2).
+  #
+  # --skipsim is intentional here: previous runs got SIGKILLed (exit 137) on
+  # ubuntu-latest's 7 GB RAM after ~8 minutes of silent execution, and we need
+  # to know whether the OOM is in compile (kernel codegen + clang) or in
+  # gvsoc.  --skipsim verifies the codegen + compile path and the fake-L1
+  # shim's link integrity; sim verification is deferred until we either move
+  # to a beefier runner or shrink the per-step memory peak.
   siracusa-training-tiled-l3-untiled:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
@@ -56,3 +63,4 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and untiled"
+      pytest-extra-args: "--skipsim"

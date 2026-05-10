@@ -17,6 +17,10 @@ name: _runner-siracusa-tiled
       pytest-marker:
         required: true
         type: string
+      pytest-extra-args:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   test-runner-siracusa-tiled:
@@ -36,5 +40,8 @@ jobs:
       - name: Run Test
         run: |
           cd DeeployTest
-          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
+          # Memory snapshot helps diagnose 137/OOM kills postmortem.
+          echo "=== free -m before pytest ==="; free -m || true
+          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}" ${{ inputs.pytest-extra-args }}
+          echo "=== free -m after pytest ==="; free -m || true
         shell: bash
