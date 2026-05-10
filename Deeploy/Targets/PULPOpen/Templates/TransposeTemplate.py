@@ -65,16 +65,27 @@ class PULPTransposeTemplate(NodeTemplate):
         fRep['accessStr'] = accessStr
         fRep['data_out_shape'] = data_out_shape
 
-        parallelDims = [idx for idx, dim in enumerate(data_out_shape) if dim >= 8]
+        # Spatial-view: perm targets the last len(perm) dims of data_in.  When
+        # data_in has been left-padded (e.g. by MatMulLayer.computeShapes
+        # broadening a shared upstream Transpose output), offset the
+        # data_in_shape lookup so dimLen_<idx> reflects the actual
+        # transposed dim rather than a leading batch placeholder.  Same
+        # for data_out_shape -- parallelDim must index within the spatial
+        # view since the per-tile for-loop count comes from len(perm).
+        dataInOffset = len(data_in_shape) - len(perm)
+        dataOutOffset = len(data_out_shape) - len(perm)
+        spatialOutShape = list(data_out_shape[dataOutOffset:])
+
+        parallelDims = [idx for idx, dim in enumerate(spatialOutShape) if dim >= 8]
         if len(parallelDims) > 0:
             parallelDim = parallelDims[0]
         else:
-            parallelDim = data_out_shape.index(max(data_out_shape))
+            parallelDim = spatialOutShape.index(max(spatialOutShape))
 
         forLoops = []
         dimLenPtrs = []
         for idx, i in enumerate(perm):
-            operatorRepresentation[f"dimLen_{idx}"] = data_in_shape[idx]
+            operatorRepresentation[f"dimLen_{idx}"] = data_in_shape[dataInOffset + idx]
             dimLenPtrs.append(f"dimLen_{idx}")
             if idx != parallelDim:
                 forLoops.append(_forLoop.generate({"i": i, "dimLenPtr": f"dimLen_{i}"}))

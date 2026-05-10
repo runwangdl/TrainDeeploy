@@ -31,7 +31,7 @@ from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.DeeployTypes import DeploymentPlatform, TopologyOptimizer
 from Deeploy.Targets.PULPOpen.Deployer import PULPDeployer
 from Deeploy.Targets.Redmule.TopologyOptimizationPasses.Passes import RedMuleAdjustWeightMemoryLayoutPass, \
-    RedMuleBiaslessGemmToMatMulPass, RedMuleGEMMTransposePass
+    RedMuleGEMMTransposePass
 
 
 class RedmuleDeployer(PULPDeployer):
@@ -51,9 +51,5 @@ class RedmuleDeployer(PULPDeployer):
 
         self.loweringOptimizer.passes += [
             RedMuleAdjustWeightMemoryLayoutPass("Redmule"),
-            # Lower bias-less Gemm (e.g. backward GradFusedMatMul nodes in CCT
-            # training) to MatMul before GEMMTransposePass touches them; the
-            # bias-required tile constraint would otherwise crash.
-            RedMuleBiaslessGemmToMatMulPass("Redmule"),
             RedMuleGEMMTransposePass("Redmule")
         ]

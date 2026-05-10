@@ -30,6 +30,8 @@ from typing import Tuple
 import numpy as np
 import onnx_graphsurgeon as gs
 
+from Deeploy.AbstractDataTypes import PointerClass
+from Deeploy.CommonExtensions.DataTypes import float32_t
 from Deeploy.DeeployTypes import NetworkContext
 from Deeploy.Targets.Generic.Parsers import MatMulParser
 
@@ -37,8 +39,11 @@ from Deeploy.Targets.Generic.Parsers import MatMulParser
 class GEMMRedmuleParser(MatMulParser):
 
     def __init__(self, noBiasHoisting = True):
+        # Order matters: super().__init__() of MatMulParser also writes
+        # self.noBiasHoisting from its own default, so call super first and
+        # then overwrite, otherwise our flag gets clobbered to True.
+        super().__init__(noBiasHoisting = noBiasHoisting)
         self.noBiasHoisting = noBiasHoisting
-        super().__init__()
 
     def parseNode(self, node: gs.Node) -> (bool):
 
@@ -85,9 +90,23 @@ class GEMMRedmuleParser(MatMulParser):
             if len(node.inputs) == 3:
                 self.operatorRepresentation['C'] = newCtxt.lookup(node.inputs[2].name).name
             elif not self.noBiasHoisting:
-                values = np.zeros((1))
+                # Hoist a zero C tensor whose shape matches the GEMM output, so
+                # the bias-required RedmuleGEMMTileConstraint and the existing
+                # 3-operand kernel template can run unchanged on bias-less
+                # Gemm nodes (e.g. backward GradFusedMatMul rewrites in CCT
+                # training graphs that emit Y = A @ B with no C).
+                outShape = node.outputs[0].shape
+                values = np.zeros(outShape, dtype = np.float32)
                 zeroTensor = gs.Constant(f'{node.name}_C_Tensor', values = values)
-                newCtxt.hoistConstant(zeroTensor)
+                newCtxt.hoistConstant(zeroTensor, _type = PointerClass(float32_t))
+                # Also wire the hoisted Constant into the gs.Node inputs so the
+                # tiler picks it up via its `node.inputs + node.outputs` walk,
+                # AND register the Gemm as a user of the new buffer so the
+                # MemoryConstraintFlow's kill-set analysis (which walks
+                # `_users`) can find a consumer for it.  Without these the
+                # tiler / flow analyzer KeyError or assert on the C tensor.
+                node.inputs.append(zeroTensor)
+                newCtxt.addUser(f'{node.name}_C_Tensor', node)
                 self.operatorRepresentation['C'] = f'{node.name}_C_Tensor'
 
             self.operatorRepresentation['size'] = np.prod(newCtxt.lookup(node.inputs[0].name).shape)

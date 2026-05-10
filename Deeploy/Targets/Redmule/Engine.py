@@ -35,7 +35,7 @@ from Deeploy.Targets.Redmule.Tiler import RedmuleConvTilingReadyBindings, Redmul
 
 MatMulRedmuleMapper = NodeMapper(MatMulParser(), RedmuleMatMulTilingReadyBindings)
 Conv2DRedmuleMapper = NodeMapper(PULPFPConv2DParser(), RedmuleConvTilingReadyBindings)
-GEMMMRedmuleMapper = NodeMapper(GEMMRedmuleParser(), RedmuleGEMMTilingReadyBindings)
+GEMMMRedmuleMapper = NodeMapper(GEMMRedmuleParser(noBiasHoisting = False), RedmuleGEMMTilingReadyBindings)
 
 RedmuleMapping = {
     'MatMul': MatMulLayer([MatMulRedmuleMapper]),
