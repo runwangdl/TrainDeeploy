@@ -430,6 +430,50 @@ class MemoryScheduler():
 
         return tensorLifetimeMap
 
+    @staticmethod
+    def computePromotedActivationLifetimes(ctxt: NetworkContext, schedule,
+                                            defaultMemoryLevel: str) -> Dict[str, Tuple[int, int]]:
+        """Compute (lower, upper) lifetimes for standalone-promoted VariableBuffers
+        across the flattened schedule.
+
+        A buffer counts as "standalone-promoted" iff:
+          - it is a VariableBuffer (excluding ConstantBuffer / TransientBuffer / _ReferenceBuffer)
+          - its _memoryLevel is set and is not the hierarchy's default level
+
+        These are the buffers that PromoteTensorsToL2 has moved to L2; PR #19 leaves
+        their lifetime unset so they were treated as forever-alive in codegen and viz.
+        Returning a real lifetime here is the foundation for compacting them into a
+        shared L2 pool by non-overlapping reuse.
+        """
+        flat_steps = []
+        for pattern in schedule:
+            for node in pattern:
+                flat_steps.append(node)
+
+        lifetimes: Dict[str, Tuple[int, int]] = {}
+        for stepIdx, node in enumerate(flat_steps):
+            for tensor in list(node.inputs) + list(node.outputs):
+                if tensor is None:
+                    continue
+                try:
+                    buf = ctxt.lookup(tensor.name)
+                except Exception:
+                    continue
+                if not isinstance(buf, VariableBuffer):
+                    continue
+                if isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                lvl = getattr(buf, '_memoryLevel', None)
+                if lvl is None or lvl == defaultMemoryLevel:
+                    continue
+                name = buf.name
+                if name in lifetimes:
+                    lo, _ = lifetimes[name]
+                    lifetimes[name] = (lo, stepIdx)
+                else:
+                    lifetimes[name] = (stepIdx, stepIdx)
+        return lifetimes
+
     def getConstantTensorOffset(self, ctxt: NetworkContext, memoryLevel: str,
                                  defaultMemoryLevel: Optional[str] = None):
         # Bytes occupied at this level by buffers that the arena does not manage:

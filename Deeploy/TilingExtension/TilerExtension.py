@@ -2018,6 +2018,20 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
 
         schedule = self.scheduler(self.graph)
 
+        # Populate _lifetime on standalone-promoted activations so they no longer
+        # appear "always alive" downstream. This drives the visualization (orange
+        # windowed instead of gold-dashed) and is the prerequisite for any later
+        # pass that compacts the promoted pool by non-overlapping reuse.
+        defaultLevel = self.Platform.memoryHierarchy._defaultMemoryLevel.name
+        promotedLifetimes = MemoryScheduler.computePromotedActivationLifetimes(
+            self.ctxt, schedule, defaultLevel)
+        for name, lt in promotedLifetimes.items():
+            try:
+                buf = self.ctxt.lookup(name)
+                buf._lifetime = lt
+            except Exception:
+                pass
+
         if tilingSolution is None and memoryMap is None:
             # JUNGVI: Currently using MiniMalloc is only supported for layer-wise execution and all tensors in the default memory level.
             if self.tiler.memoryAllocStrategy == "MiniMalloc":
