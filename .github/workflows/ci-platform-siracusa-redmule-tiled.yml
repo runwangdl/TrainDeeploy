@@ -48,3 +48,11 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "kernels and doublebuffer and l2"
+
+  siracusa-redmule-training-tiled-singlebuffer-L3:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-redmule-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and singlebuffer and l3"
