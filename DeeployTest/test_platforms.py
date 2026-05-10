@@ -461,6 +461,14 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
     # DEEPLOY_L1_AS_L2 is what flips mchan_transfer_1d to memcpy in mchan_v7.h —
     # mandatory partner of the codegen sed below.
     extra_cmake = list(cmake_args) + ["-DDEEPLOY_L1_AS_L2=ON"]
+    # Optional per-fixture training-step caps.  Some untiled-L3 models hit FC
+    # L2 heap limits when testinputs.h carries 4-batch data; capping reduces
+    # the .data footprint while keeping per-step cycle measurement valid.
+    extra_gen = []
+    if "n_steps" in fixture:
+        extra_gen.append(f"--n-steps={fixture['n_steps']}")
+    if "n_accum" in fixture:
+        extra_gen.append(f"--n-accum={fixture['n_accum']}")
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -478,6 +486,7 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+        gen_args = extra_gen,
     )
 
     # Inline the test runner stages so we can sed between codegen and build.
