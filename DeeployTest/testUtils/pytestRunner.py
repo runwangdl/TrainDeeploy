@@ -188,15 +188,13 @@ def run_and_assert_test(test_name: str,
         if m:
             cycles = int(m.group(1))
 
-
     if report_metric is not None:
         labels = " ".join(f"{k}={v}" for k, v in report_metric.items())
         cycles_str = f"{cycles:,}" if cycles is not None else "n/a"
         # Always print a clearly-tagged line; pytest captures stdout but shows
         # it on failure, and `-rA` (used in CI) shows captured output for
         # passing tests too. Embed the section so log greppers can group.
-        print(f"\n[METRIC] section={metric_section!r} test={test_name} {labels} cycles={cycles_str}",
-              flush = True)
+        print(f"\n[METRIC] section={metric_section!r} test={test_name} {labels} cycles={cycles_str}", flush = True)
         # Append a Markdown table row to GITHUB_STEP_SUMMARY when running in
         # GitHub Actions; the file is auto-created and rendered as Markdown
         # in the workflow summary panel. The first row in each section also
