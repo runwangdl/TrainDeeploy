@@ -75,6 +75,9 @@ class PromoteTensorsToL2(SequentialPass):
     the other causes a cross-level alias that crashes at runtime.
     """
 
+    # _SKIP_OPS: any buffer that is an input or output of a node with one of
+    # these op types is excluded from promotion. Use this for ops whose
+    # codegen has not been validated for L2-resident I/O.
     _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity'}
 
     def __init__(self,
@@ -83,6 +86,7 @@ class PromoteTensorsToL2(SequentialPass):
                  strategy: str = 'cycle-aware',
                  includeActivations: bool = False,
                  maxBufferBytes: int = 2048,
+                 minBufferBytes: int = 0,
                  setupCycles: int = 200,
                  bandwidthBytesPerCycle: float = 4.0,
                  seed: int = 42):
@@ -91,6 +95,15 @@ class PromoteTensorsToL2(SequentialPass):
         self.strategy = strategy
         self.includeActivations = includeActivations
         self.maxBufferBytes = maxBufferBytes
+        # minBufferBytes: reject candidates smaller than this. Tiny tensors
+        # (BatchNorm scalars, bias vectors, etc.) each contribute negligible
+        # cycle savings on their own but each promotion emits its own L2<->L1
+        # staging block in the generated C code. On MobileNetV1 with cap=1MB
+        # we saw 514 buffers promoted -> 135k lines of TrainingNetwork.c and
+        # clang either OOMed or timed out in CI. A 4-8 KB floor keeps the
+        # high-value medium/large buffers in the promotion pool while pruning
+        # the long tail that bloats codegen without paying off in cycles.
+        self.minBufferBytes = minBufferBytes
         self.setupCycles = setupCycles
         self.bw = bandwidthBytesPerCycle
         self.seed = seed
@@ -165,6 +178,8 @@ class PromoteTensorsToL2(SequentialPass):
             size = self._bufferSize(buf)
             if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                 continue
+            if size < self.minBufferBytes:
+                continue
             candidates.append((name, buf, size, len(buf._users)))
 
         if self.includeActivations:
@@ -186,6 +201,8 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 size = self._bufferSize(buf)
                 if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
+                    continue
+                if size < self.minBufferBytes:
                     continue
                 candidates.append((name, buf, size, len(buf._users)))
 

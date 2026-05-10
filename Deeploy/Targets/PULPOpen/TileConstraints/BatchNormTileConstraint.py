@@ -101,7 +101,15 @@ class BatchNormInternalTileConstraint(TileConstraint):
         varReplacement, tilingSchedules = super().wrapTilingSolution(singleOutputSolution, targetMemLevel, ctxt,
                                                                      operatorRepresentation)
 
-        # Extend each schedule to include saved_mean and saved_inv_std outputs
+        # Extend each schedule to include saved_mean and saved_inv_std outputs.
+        # Per-step slicing of these secondary outputs uses the C tile of
+        # `data_out`. When `data_out` has been removed from the schedule by
+        # sanitizeTilingSchedule -- which happens when the primary output is
+        # resident at a level above targetMemLevel (e.g. PromoteTensorsToL2
+        # parked the BN output in L2 while tiling targets L1) -- the kernel
+        # writes the output directly without per-tile staging. The secondary
+        # outputs then also need no per-tile slicing, so skip the extension
+        # for that schedule.
         for secondary in ['saved_mean', 'saved_inv_std']:
             secondaryVar = operatorRepresentation.get(secondary, '')
             if not secondaryVar:
@@ -112,6 +120,8 @@ class BatchNormInternalTileConstraint(TileConstraint):
             if addr == [None]:
                 continue
             for schedule in tilingSchedules:
+                if 'data_out' not in schedule.outputBaseOffsets:
+                    continue
                 schedule.outputBaseOffsets[secondary] = addr
                 for step in schedule.outputLoadSchedule:
                     data_out_rect = step['data_out']
@@ -243,6 +253,10 @@ class WelfordReduceTileConstraint(TileConstraint):
             addr = TileConstraint.getBaseAddr(tilingSolution, targetMemLevel, secondaryVar)
             if addr != [None]:
                 for schedule in tilingSchedules:
+                    # Primary output was sanitized out (resident above target
+                    # level after promote); skip the secondary too.
+                    if 'saved_mean' not in schedule.outputBaseOffsets:
+                        continue
                     schedule.outputBaseOffsets['saved_inv_std'] = addr
                     for step in schedule.outputLoadSchedule:
                         mean_rect = step['saved_mean']
@@ -455,6 +469,8 @@ class BNGradReduceTileConstraint(TileConstraint):
             addr = TileConstraint.getBaseAddr(tilingSolution, targetMemLevel, secondaryVar)
             if addr != [None]:
                 for schedule in tilingSchedules:
+                    if 'dgamma' not in schedule.outputBaseOffsets:
+                        continue
                     schedule.outputBaseOffsets['dbeta'] = addr
                     for step in schedule.outputLoadSchedule:
                         dgamma_rect = step['dgamma']
@@ -712,10 +728,10 @@ class BatchNormalizationGradTileConstraint(TileConstraint):
             if addr == [None]:
                 continue
             for schedule in tilingSchedules:
+                if 'dX' not in schedule.outputBaseOffsets:
+                    continue
                 schedule.outputBaseOffsets[secondary] = addr
                 for step in schedule.outputLoadSchedule:
-                    if 'dX' not in step:
-                        continue
                     dX_rect = step['dX']
                     c_start = dX_rect.offset[1]
                     c_tile = dX_rect.dims[1]

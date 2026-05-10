@@ -110,6 +110,7 @@ def generateTiledOptimizerNetwork(args) -> None:
                 strategy = args.promoteToL2Strategy,
                 includeActivations = args.promoteToL2IncludeActivations,
                 maxBufferBytes = args.promoteToL2MaxBufferBytes,
+                minBufferBytes = args.promoteToL2MinBufferBytes,
             ))
     deployer = MemoryDeployerWrapper(deployer, annotation_passes)
 
@@ -207,6 +208,10 @@ if __name__ == '__main__':
                         type = int,
                         default = 2048,
                         help = 'Skip candidates larger than this; 0 = no cap')
+    parser.add_argument('--promoteToL2MinBufferBytes',
+                        type = int,
+                        default = 0,
+                        help = 'Skip candidates smaller than this; 0 = no floor.')
     parser.add_argument('--promoteToL2Headroom',
                         type = int,
                         default = 131072,

@@ -260,7 +260,7 @@ def run_training_codegen(config, script_dir: Path) -> None:
         opt_passthrough = ("--cores", "--l1", "--l2", "--defaultMemLevel", "--memAllocStrategy", "--searchStrategy",
                            "--plotMemAlloc", "--profileTiling", "--profileNodes", "--promoteToL2",
                            "--promoteToL2Strategy", "--promoteToL2IncludeActivations", "--promoteToL2MaxBufferBytes",
-                           "--promoteToL2Headroom")
+                           "--promoteToL2MinBufferBytes", "--promoteToL2Headroom")
         stage = "Tiled training"
     else:
         training_script = script_dir / "generateTrainingNetwork.py"

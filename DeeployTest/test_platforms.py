@@ -465,6 +465,11 @@ def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_te
         # MobileNetV1 backward -- become eligible candidates instead of
         # being filtered out by the conservative 2048 default.
         promote_to_l2_max_buffer_bytes = 1031072,
+        # MobileNetV1 with strategy=largest fills L2 to near-100% and only
+        # 94 KB ends up free for the tile-staging arena, which then OOMs.
+        # 200 KB headroom leaves enough room for the largest single tile
+        # (~110 KB) plus its return buffer.
+        promote_to_l2_headroom = 200000,
     )
     metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
     run_and_assert_test(test_name,
