@@ -34,7 +34,7 @@ import onnx_graphsurgeon as gs
 from testUtils.codeGenerateTraining import build_shared_buffer_maps, generateOptimizerTestNetwork
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
-from testUtils.tilingUtils import TrainingSBTiler
+from testUtils.tilingUtils import TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _mockScheduler, add_optimizer_training_dir_arg
 
 from Deeploy.AbstractDataTypes import PointerClass
@@ -102,15 +102,17 @@ def generateTiledOptimizerNetwork(args) -> None:
         AnnotateDefaultMemoryLevel(memoryHierarchy),
     ])
 
-    # 7. Wrap with SBTiler (single-buffering; optimizer is forward-only, no lifetime extension needed).
-    unique_params = f"{args.dumpdir}_L1{args.l1}_L2{args.l2}_{args.defaultMemLevel}_optimizer"
+    # 7. Wrap with tiler. SB by default; --doublebuffer switches to TrainingDBTiler.
+    unique_params = f"{args.dumpdir}_L1{args.l1}_L2{args.l2}_{args.defaultMemLevel}_optimizer_DB{args.doublebuffer}"
     testIdentifier = hashlib.md5(unique_params.encode()).hexdigest()[:16]
 
-    # TrainingSBTiler extends all input buffer lifetimes to the end of the
-    # schedule (via TrainingMemoryScheduler).  This prevents the allocator from
-    # reusing the space of a consumed input (e.g. fc1 weight) for a later
-    # output (e.g. fc2 updated weight), which would corrupt the weight buffer.
-    deployer = TilerDeployerWrapper(deployer, TrainingSBTiler, testName = testIdentifier, workDir = args.dumpdir)
+    # TrainingSBTiler/TrainingDBTiler extend all input buffer lifetimes to the
+    # end of the schedule (via TrainingMemoryScheduler).  This prevents the
+    # allocator from reusing the space of a consumed input (e.g. fc1 weight)
+    # for a later output (e.g. fc2 updated weight), which would corrupt the
+    # weight buffer.
+    tilerCls = TrainingDBTiler if args.doublebuffer else TrainingSBTiler
+    deployer = TilerDeployerWrapper(deployer, tilerCls, testName = testIdentifier, workDir = args.dumpdir)
     deployer.tiler.visualizeMemoryAlloc = args.plotMemAlloc
     deployer.tiler.memoryAllocStrategy = args.memAllocStrategy
     deployer.tiler.searchStrategy = args.searchStrategy
@@ -159,6 +161,9 @@ if __name__ == '__main__':
                         type = str,
                         default = "L2",
                         help = "Default memory level for IO buffers. Default: L2.")
+    parser.add_argument("--doublebuffer",
+                        action = "store_true",
+                        help = "Enable double buffering for tile DMA transfers (TrainingDBTiler).")
     parser.add_argument("--memAllocStrategy",
                         type = str,
                         default = "MiniMalloc",
