@@ -181,7 +181,7 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # expected to widen further with largest.
 L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
     "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True), (128000, "largest", True)],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True)],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True), (128000, "largest", True)],
     "Models/Training/CCT/cct_train": [
         (128000, "cycle-aware", True),
         (128000, "largest", True),
