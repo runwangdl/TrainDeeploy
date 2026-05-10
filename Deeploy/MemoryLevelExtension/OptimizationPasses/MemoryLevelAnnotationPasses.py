@@ -106,6 +106,30 @@ class PromoteTensorsToL2(SequentialPass):
         except Exception:
             return math.prod(buf.shape) * 4
 
+    @staticmethod
+    def _sweepLinePeak(blocks):
+        """Compute max simultaneous footprint of (size, lifetime) blocks.
+
+        Pure-Python lower bound on minimalloc's actual packed peak; we use it
+        in the greedy decision to decide if a candidate fits, leaving the
+        actual offset assignment to the tile()-time pack pass that runs
+        minimalloc for real.
+
+        blocks: iterable of (size_bytes, (lower, upper)) tuples.
+        Returns: int peak.
+        """
+        events = []
+        for sz, lt in blocks:
+            events.append((lt[0], +sz))
+            events.append((lt[1] + 1, -sz))
+        events.sort()
+        peak = live = 0
+        for _, delta in events:
+            live += delta
+            if live > peak:
+                peak = live
+        return peak
+
     def apply(self, ctxt: NetworkContext, graph: gs.Graph) -> Tuple[NetworkContext, gs.Graph]:
         # If tile() has already frozen any buffer's allocation, this is the
         # post-tile call invoked from codeTransform. Promoting at this point
@@ -216,7 +240,6 @@ class PromoteTensorsToL2(SequentialPass):
             for buf in {**ctxt.globalObjects, **ctxt.localObjects}.values()
             if _occupies_standalone_l2(buf)
         )
-        l2_used = already_l2
         promoted = []
         # Refuse to promote anything once tile() has frozen allocations: the
         # codegen for each buffer was emitted for the level it had at tile time,
@@ -224,14 +247,95 @@ class PromoteTensorsToL2(SequentialPass):
         # CCT_2_32_32_128: 6 post-tile promotions yielded 10/10 errors).
         if any_frozen:
             candidates = []
+
+        # Lifetime-aware greedy: for activations whose _lifetime is set (which
+        # happens when MemoryDeployerWrapper.bind() ran the pre-bind scheduler
+        # walk), measure peak via sweep-line so non-overlapping activations can
+        # share the same L2 bytes. Constants stay sum-counted -- they're
+        # forever-alive read-only weights, no overlap possible.
+        #
+        # Tile staging guard: an activation whose untiled size exceeds the
+        # smallest level (L1) would force tile() to L1-stage it whole and fail
+        # the L1 minimalloc; reject those upfront.
+        try:
+            level_sizes = [getattr(self, '_memoryHierarchy', None)]
+            level_sizes = []
+            from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy as _MH  # noqa
+        except Exception:
+            pass
+        l1_safety = float('inf')
+        try:
+            from Deeploy.DeeployTypes import _ReferenceBuffer as _RB  # already imported
+        except Exception:
+            pass
+        # The hierarchy isn't on `self`; pull it from ctxt indirectly. Easier:
+        # accept either ctxt.memoryHierarchy or fall back to no L1 cap.
+        for src_attr in ('memoryHierarchy', '_memoryHierarchy'):
+            mh = getattr(ctxt, src_attr, None)
+            if mh is not None and hasattr(mh, 'memoryLevels'):
+                try:
+                    l1_safety = min(lv.size for lv in mh.memoryLevels.values())
+                    break
+                except Exception:
+                    pass
+
+        const_used = 0  # bytes added to L2 by this call's const promotions
+        var_blocks = []  # (size, lifetime) for ALL vars at L2 (prior + this call)
+        # Seed var_blocks with already-promoted vars at L2 so sweep-line over
+        # the union gives the right peak.
+        for buf in ctxt.localObjects.values():
+            if not isinstance(buf, VariableBuffer):
+                continue
+            if isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                continue
+            if getattr(buf, '_memoryLevel', None) != 'L2':
+                continue
+            if 'allocTemplate' in buf.__dict__:
+                continue
+            lt = getattr(buf, '_lifetime', None)
+            if lt is None:
+                continue
+            var_blocks.append((self._bufferSize(buf), lt))
+        # Fixed bytes occupied by stuff we cannot pack: prior consts + non-
+        # lifetime-tracked prior buffers (already_l2 minus the var-sum we
+        # replace with var-peak). Prior consts stay summed; prior vars get
+        # replaced by their packed peak.
+        prior_var_sum = sum(sz for sz, _ in var_blocks)
+        fixed_prior = already_l2 - prior_var_sum  # consts + untracked
+
+        def trial_total(extra_const_bytes, vblocks):
+            return fixed_prior + const_used + extra_const_bytes + self._sweepLinePeak(vblocks)
+
         for name, buf, size, _ in candidates:
-            if l2_used + size <= self.l2Budget:
-                buf._memoryLevel = 'L2'
-                l2_used += size
-                promoted.append((name, size))
+            is_const = isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)
+            if is_const:
+                if trial_total(size, var_blocks) <= self.l2Budget:
+                    buf._memoryLevel = 'L2'
+                    const_used += size
+                    promoted.append((name, size))
+            else:
+                lt = getattr(buf, '_lifetime', None)
+                if lt is None:
+                    # No lifetime info -> can't measure overlap; charge full size
+                    if trial_total(size, var_blocks) <= self.l2Budget:
+                        buf._memoryLevel = 'L2'
+                        const_used += size  # charge as if const (forever-alive)
+                        promoted.append((name, size))
+                    continue
+                if size >= l1_safety:
+                    continue
+                new_blocks = var_blocks + [(size, lt)]
+                if trial_total(0, new_blocks) <= self.l2Budget:
+                    buf._memoryLevel = 'L2'
+                    var_blocks = new_blocks
+                    promoted.append((name, size))
+
+        final_var_peak = self._sweepLinePeak(var_blocks)
+        l2_used = fixed_prior + const_used + final_var_peak
 
         print(f"  [PromoteTensorsToL2] promoted {len(promoted)} tensors, "
-              f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, new={l2_used - already_l2}, "
+              f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, "
+              f"new_const={const_used}, var_peak={final_var_peak}, "
               f"strategy={self.strategy!r})")
 
         if l2_used > self.l2Budget:
