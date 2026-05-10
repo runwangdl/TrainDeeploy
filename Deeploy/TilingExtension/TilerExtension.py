@@ -205,8 +205,8 @@ class Tiler():
                     return False  # internal allocator scratch
                 return True
 
-            promotedConsts = []   # (name, size) -- weights, always-alive is correct
-            promotedVars = []     # (name, size, lifetime, addrSpace) -- activations
+            promotedConsts = []  # (name, size) -- weights, always-alive is correct
+            promotedVars = []  # (name, size, lifetime, addrSpace) -- activations
             for buf in ctxt.globalObjects.values():
                 if not isinstance(buf, ConstantBuffer) or isinstance(buf, _ReferenceBuffer):
                     continue
@@ -224,9 +224,8 @@ class Tiler():
                     continue
                 sz = _bufBytes(buf)
                 if sz > 0:
-                    promotedVars.append((buf.name, sz,
-                                         getattr(buf, '_lifetime', None),
-                                         getattr(buf, '_addrSpace', None)))
+                    promotedVars.append((buf.name, sz, getattr(buf, '_lifetime',
+                                                               None), getattr(buf, '_addrSpace', None)))
 
             constantBuffersOffset = 0
             _maxLifetime = len(memoryMap[memoryLevel.name])
@@ -236,8 +235,8 @@ class Tiler():
                 fig.add_trace(
                     go.Scatter(x = [-0.5, -0.5, _maxLifetime + 0.5, _maxLifetime + 0.5],
                                y = [
-                                   constantBuffersOffset, constantBuffersOffset + sz,
-                                   constantBuffersOffset + sz, constantBuffersOffset
+                                   constantBuffersOffset, constantBuffersOffset + sz, constantBuffersOffset + sz,
+                                   constantBuffersOffset
                                ],
                                name = name,
                                text = name,
@@ -407,10 +406,7 @@ class Tiler():
             if not promoted:
                 continue
 
-            blocks = [
-                MemoryBlock(b.name, level, b._lifetime, None)
-                for b in promoted
-            ]
+            blocks = [MemoryBlock(b.name, level, b._lifetime, None) for b in promoted]
             capacity = self.memoryHierarchy.memoryLevels[level].size
 
             packed = self.minimalloc(blocks, ctxt, None, capacity, level)
@@ -438,9 +434,8 @@ class Tiler():
                 offset = blk._addrSpace[0]
                 buf._addrSpace = blk._addrSpace
                 buf._packedIntoPool = poolName
-                buf.allocTemplate = NodeTemplate(
-                    " ${name} = (${type.typeName}) " +
-                    f"((char*){str(poolBuf._instance)} + {offset});")
+                buf.allocTemplate = NodeTemplate(" ${name} = (${type.typeName}) " +
+                                                 f"((char*){str(poolBuf._instance)} + {offset});")
                 buf.deallocTemplate = _deallocTemplate
 
             log.info(f"  [PromotedPool] Packed {len(promoted)} activations at {level} "
@@ -2136,8 +2131,7 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         # windowed instead of gold-dashed) and is the prerequisite for any later
         # pass that compacts the promoted pool by non-overlapping reuse.
         defaultLevel = self.Platform.memoryHierarchy._defaultMemoryLevel.name
-        promotedLifetimes = MemoryScheduler.computePromotedActivationLifetimes(
-            self.ctxt, schedule, defaultLevel)
+        promotedLifetimes = MemoryScheduler.computePromotedActivationLifetimes(self.ctxt, schedule, defaultLevel)
         for name, lt in promotedLifetimes.items():
             try:
                 buf = self.ctxt.lookup(name)
@@ -2229,8 +2223,8 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
 
         defaultMemoryLevelName = self.tiler.memoryHierarchy._defaultMemoryLevel.name
         for level, dynamicSize in self.worstCaseBufferSize.items():
-            staticSize = self.tiler.outerMemoryScheduler.getConstantTensorOffset(
-                self.ctxt, level, defaultMemoryLevelName)
+            staticSize = self.tiler.outerMemoryScheduler.getConstantTensorOffset(self.ctxt, level,
+                                                                                 defaultMemoryLevelName)
             capacity = self.tiler.memoryHierarchy.memoryLevels[level].size
             total = staticSize + dynamicSize
 

@@ -137,8 +137,7 @@ class PromoteTensorsToL2(SequentialPass):
         # the old level, producing silently-corrupt output (see f8f1508).
         # Generalise the existing per-buffer guard to a global one: when any
         # buffer is frozen, accept zero new promotions for this whole call.
-        any_frozen = any('allocTemplate' in b.__dict__
-                         for b in {**ctxt.globalObjects, **ctxt.localObjects}.values())
+        any_frozen = any('allocTemplate' in b.__dict__ for b in {**ctxt.globalObjects, **ctxt.localObjects}.values())
 
         skip_tensors: set = set()
         for node in graph.nodes:
@@ -236,10 +235,10 @@ class PromoteTensorsToL2(SequentialPass):
             return getattr(buf, '_memoryLevel', None) == 'L2'
 
         already_l2 = sum(
-            self._bufferSize(buf)
-            for buf in {**ctxt.globalObjects, **ctxt.localObjects}.values()
-            if _occupies_standalone_l2(buf)
-        )
+            self._bufferSize(buf) for buf in {
+                **ctxt.globalObjects,
+                **ctxt.localObjects
+            }.values() if _occupies_standalone_l2(buf))
         promoted = []
         # Refuse to promote anything once tile() has frozen allocations: the
         # codegen for each buffer was emitted for the level it had at tile time,

@@ -432,8 +432,7 @@ class MemoryScheduler():
         return tensorLifetimeMap
 
     @staticmethod
-    def computeAllVariableBufferLifetimes(ctxt: NetworkContext, schedule
-                                           ) -> Dict[str, Tuple[int, int]]:
+    def computeAllVariableBufferLifetimes(ctxt: NetworkContext, schedule) -> Dict[str, Tuple[int, int]]:
         """Compute (lower, upper) lifetimes for ALL VariableBuffers across the
         flattened schedule, regardless of their _memoryLevel.
 
@@ -485,7 +484,7 @@ class MemoryScheduler():
 
     @staticmethod
     def computePromotedActivationLifetimes(ctxt: NetworkContext, schedule,
-                                            defaultMemoryLevel: str) -> Dict[str, Tuple[int, int]]:
+                                           defaultMemoryLevel: str) -> Dict[str, Tuple[int, int]]:
         """Compute (lower, upper) lifetimes for standalone-promoted VariableBuffers
         across the flattened schedule.
 
@@ -536,8 +535,7 @@ class MemoryScheduler():
                     lifetimes[name] = (stepIdx, stepIdx)
         return lifetimes
 
-    def getConstantTensorOffset(self, ctxt: NetworkContext, memoryLevel: str,
-                                 defaultMemoryLevel: Optional[str] = None):
+    def getConstantTensorOffset(self, ctxt: NetworkContext, memoryLevel: str, defaultMemoryLevel: Optional[str] = None):
         # Bytes occupied at this level by buffers that the arena does not manage:
         #   - ConstantBuffers in globalObjects pinned here (model weights / I/O)
         #   - Standalone-promoted VariableBuffers in localObjects (only when
@@ -593,7 +591,9 @@ class MemoryScheduler():
 
         import os
         if os.environ.get("DEBUG_CTO"):
-            print(f"  [DEBUG getConstantTensorOffset {memoryLevel} default={defaultMemoryLevel}] = {int(constantTensorSize):,} B")
+            print(
+                f"  [DEBUG getConstantTensorOffset {memoryLevel} default={defaultMemoryLevel}] = {int(constantTensorSize):,} B"
+            )
         return int(constantTensorSize)
 
     def _scheduleMemoryConstraints(self,
