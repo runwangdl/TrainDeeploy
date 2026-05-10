@@ -206,21 +206,31 @@ L3_UNTILED_TRAINING_MODELS = {
         "l1": 64_000,
         "l2": 2_000_000,
         "fake_l1_size": 32_768,  # peak L1 working = 16388 B
+        # Sim runs in CI: 16 KB working set is tiny enough that gvsoc
+        # doesn't OOM ubuntu-latest's 16 GB.
+        "skip_sim_in_ci": False,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "l1": 64_000,
         "l2": 2_000_000,
         "fake_l1_size": 32_768,  # peak L1 working = 16384 B
+        "skip_sim_in_ci": False,
     },
     "Models/Training/ResNet8/resnet8_train": {
         "l1": 800_000,
         "l2": 2_000_000,
         "fake_l1_size": 1_048_576,  # peak L1 working = 739328 B
+        # Two prior CI runs got SIGKILLed (exit 137) at ~8 min during sim.
+        # Skip until the sim-side memory leak is debugged or we move to a
+        # bigger runner.  --skipsim still verifies codegen + compile + the
+        # fake-L1 shim's link integrity.
+        "skip_sim_in_ci": True,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "l1": 800_000,  # below 800K codegen asserts on accum_buffer DMA
         "l2": 2_000_000,
         "fake_l1_size": 786_432,  # peak L1 working = 542720 B
+        "skip_sim_in_ci": True,  # same OOM concern as ResNet8
     },
 }
 
