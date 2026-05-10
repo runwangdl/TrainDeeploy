@@ -51,18 +51,20 @@ jobs:
   #     docker-image: ${{ needs.select-env.outputs.image }}
   #     pytest-marker: "training and l3 and singlebuffer"
 
-  # Inference promote (tensor-promotion regression check, passes today
-  # and runs in ~5 min — kept on so we notice if promote changes break
-  # the inference path).
-  siracusa-tiled-l3-singlebuffer-promote:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "models and promote and l3 and singlebuffer"
+  # Inference promote temporarily disabled while debugging MobileNetV1
+  # training promote -- the inference test passes today and adds runner
+  # contention. Re-enable once MobileNetV1 is green.
+  #
+  # siracusa-tiled-l3-singlebuffer-promote:
+  #   needs: select-env
+  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
+  #   with:
+  #     runner: ${{ needs.select-env.outputs.runner }}
+  #     docker-image: ${{ needs.select-env.outputs.image }}
+  #     pytest-marker: "models and promote and l3 and singlebuffer"
 
-  # Training promote (the one currently failing on ResNet8 / MobileNetV1).
+  # Training promote -- only MobileNetV1 active right now (see
+  # test_siracusa_tiled_config.py L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE).
   siracusa-training-tiled-l3-singlebuffer-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
