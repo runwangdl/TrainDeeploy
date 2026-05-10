@@ -458,6 +458,9 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
     fixture = SIRACUSA_L3_UNTILED_TRAINING_MODELS[test_name]
     overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     effective_skipsim = skipsim or (os.environ.get("CI") == "true" and fixture.get("skip_sim_in_ci", False))
+    # DEEPLOY_L1_AS_L2 is what flips mchan_transfer_1d to memcpy in mchan_v7.h —
+    # mandatory partner of the codegen sed below.
+    extra_cmake = list(cmake_args) + ["-DDEEPLOY_L1_AS_L2=ON"]
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -465,7 +468,7 @@ def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolcha
         deeploy_test_dir = deeploy_test_dir,
         toolchain = toolchain,
         toolchain_dir = toolchain_dir,
-        cmake_args = cmake_args,
+        cmake_args = extra_cmake,
         tiling = True,
         cores = SIRACUSA_DEFAULT_CORES,
         l1 = fixture["l1"],

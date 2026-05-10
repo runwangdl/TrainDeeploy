@@ -47,6 +47,42 @@
 #define MCHAN_CMD_FLAG_BROADCAST_FINISH (1 << (MCHAN_TRANSFER_LEN_SIZE + 5))
 #define MCHAN_CMD_FLAG_2D_TRANSFER_LOCAL (1 << (MCHAN_TRANSFER_LEN_SIZE + 6))
 
+/* Untiled-L3 baseline override: when DEEPLOY_L1_AS_L2 is defined the
+ * deeploy-generated code has been sed-rewritten so its "L1" pointers
+ * actually live in FC L2.  The mchan DMA hardware ignores destination
+ * pointer addresses and unconditionally routes the `loc` parameter into
+ * cluster L1 banks via the lower bits — so a real DMA call would write
+ * garbage to L1 and leave the L2 destination empty (which is exactly
+ * the bug we observed: out-of-bound L1-bank requests + computed=0.0).
+ *
+ * Replace mchan transfers with plain memcpy.  The channel API becomes a
+ * no-op: alloc returns 0, wait/free do nothing, is_busy reports idle.
+ * Only the 1D variant is provided — none of the L3 training fixtures
+ * emit 2D transfers; if a future model does, add the equivalent loop
+ * here. */
+#ifdef DEEPLOY_L1_AS_L2
+
+#include <string.h>
+
+static inline void mchan_transfer_1d(uint32_t cmd, void *loc, void *ext) {
+  uint32_t size = cmd & ((1u << MCHAN_TRANSFER_LEN_SIZE) - 1);
+  if (cmd & MCHAN_CMD_FLAG_DIRECTION_EXT2LOC) {
+    memcpy(loc, ext, size);
+  } else {
+    memcpy(ext, loc, size);
+  }
+}
+
+static inline uint32_t mchan_channel_alloc() { return 0; }
+static inline void mchan_channel_free(uint32_t channel_id) { (void)channel_id; }
+static inline uint32_t mchan_channel_is_busy(uint32_t channel_id) {
+  (void)channel_id;
+  return 0;
+}
+static inline void mchan_channel_wait(uint32_t channel_id) { (void)channel_id; }
+
+#else
+
 static volatile uint32_t *const cmd_ptr =
     (volatile uint32_t *const)(MCHAN_BASE_ADDR + 0x0);
 static volatile uint32_t *const status_ptr =
@@ -116,5 +152,7 @@ static void mchan_channel_wait(uint32_t channel_id) {
     ;
 #endif
 }
+
+#endif /* DEEPLOY_L1_AS_L2 */
 
 #endif // __MCHAN_V7_H__

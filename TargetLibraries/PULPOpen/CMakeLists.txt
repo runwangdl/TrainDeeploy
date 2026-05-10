@@ -71,6 +71,17 @@ target_link_libraries(deeploypulp PUBLIC pulp-nn-mixed)
 target_link_libraries(deeploypulp INTERFACE pulp-sdk)
 target_sources(deeploypulp INTERFACE $<TARGET_OBJECTS:pulp-sdk>)
 
+# Untiled-L3 baseline: when ON, mchan_transfer_1d() in mchan_v7.h is replaced
+# with a memcpy implementation so the deeploy-generated DMA calls become
+# regular memory copies between L2 buffers.  Used together with the test-side
+# sed that rewrites pmsis_l1_malloc -> pi_l2_malloc and PI_L1 -> PI_L2 in the
+# generated TrainingNetwork.c so every L1-annotated buffer physically lives
+# in FC L2.
+option(DEEPLOY_L1_AS_L2 "Replace mchan_transfer_1d with memcpy (untiled-L3 baseline)" OFF)
+if(DEEPLOY_L1_AS_L2)
+  target_compile_definitions(deeploypulp PUBLIC DEEPLOY_L1_AS_L2)
+endif()
+
 set(PULP_NNX_PLATFORMS "Siracusa;Siracusa_w_neureka")
 if (platform IN_LIST PULP_NNX_PLATFORMS)
   if (platform STREQUAL "Siracusa" OR platform STREQUAL "Siracusa_w_neureka")
