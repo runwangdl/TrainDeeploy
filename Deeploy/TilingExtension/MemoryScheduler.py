@@ -431,6 +431,44 @@ class MemoryScheduler():
         return tensorLifetimeMap
 
     @staticmethod
+    def computeAllVariableBufferLifetimes(ctxt: NetworkContext, schedule
+                                           ) -> Dict[str, Tuple[int, int]]:
+        """Compute (lower, upper) lifetimes for ALL VariableBuffers across the
+        flattened schedule, regardless of their _memoryLevel.
+
+        Variant of computePromotedActivationLifetimes without the
+        non-default-level filter, so the result is usable BEFORE bind() has run
+        (i.e. before any promotion has happened, when every activation is still
+        at the default level). The pre-bind PromoteTensorsToL2 call uses this
+        to make lifetime-aware greedy decisions.
+        """
+        flat_steps = []
+        for pattern in schedule:
+            for node in pattern:
+                flat_steps.append(node)
+
+        lifetimes: Dict[str, Tuple[int, int]] = {}
+        for stepIdx, node in enumerate(flat_steps):
+            for tensor in list(node.inputs) + list(node.outputs):
+                if tensor is None:
+                    continue
+                try:
+                    buf = ctxt.lookup(tensor.name)
+                except Exception:
+                    continue
+                if not isinstance(buf, VariableBuffer):
+                    continue
+                if isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                name = buf.name
+                if name in lifetimes:
+                    lo, _ = lifetimes[name]
+                    lifetimes[name] = (lo, stepIdx)
+                else:
+                    lifetimes[name] = (stepIdx, stepIdx)
+        return lifetimes
+
+    @staticmethod
     def computePromotedActivationLifetimes(ctxt: NetworkContext, schedule,
                                             defaultMemoryLevel: str) -> Dict[str, Tuple[int, int]]:
         """Compute (lower, upper) lifetimes for standalone-promoted VariableBuffers
