@@ -216,8 +216,10 @@ def _populateLifetimesForAnnotation(deployer):
             deployer.ctxt.lookup(name)._lifetime = lt
         except Exception:
             pass
-    # Stash the schedule so tile() can reuse it later without recomputing.
-    deployer.ctxt._preBindSchedule = schedule
+    # NOTE: do NOT stash the schedule on ctxt. ctxt gets pickled by
+    # exportDeeployState() and gs.Node has circular references that exceed
+    # Python's default recursion depth during pickling. tile() will recompute
+    # its own schedule (one extra scheduler call, microseconds).
 
 
 class MemoryDeployerWrapper(NetworkDeployerWrapper, MemorySummaryMixin):

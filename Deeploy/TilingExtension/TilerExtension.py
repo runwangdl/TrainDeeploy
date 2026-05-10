@@ -2129,12 +2129,7 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         assert (tilingSolution is None and memoryMap is None) or (tilingSolution is not None and memoryMap is not None), \
             "You need to provide both the manual tilingSolution and the memoryMap to override tiling."
 
-        # Reuse the schedule that MemoryDeployerWrapper.bind() computed pre-bind
-        # for lifetime-aware annotation; falls back to a fresh scheduler call if
-        # this deployer didn't go through that path (legacy / non-wrapped case).
-        schedule = getattr(self.ctxt, '_preBindSchedule', None)
-        if schedule is None:
-            schedule = self.scheduler(self.graph)
+        schedule = self.scheduler(self.graph)
 
         # Populate _lifetime on standalone-promoted activations so they no longer
         # appear "always alive" downstream. This drives the visualization (orange
