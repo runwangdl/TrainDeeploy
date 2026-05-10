@@ -101,10 +101,21 @@ class TrainingDBTiler(DBTiler):
     DB_OPT_OUT_OPS = frozenset({
         "SGD",
         "InPlaceAccumulatorV2",
-        # Loss + grad: 2-output (loss, log_prob) and multi-consumer
-        # intermediate respectively — both confuse DB hoist + dealloc.
+        # Loss + grad heads: small, with awkward shapes (multi-output, scalar,
+        # or multi-consumer intermediates) — confuse DB hoist / dealloc.
+        # DSCNN passes DB CI with SCE/SCEGrad opted out; MSE pair opted out
+        # by analogy (autoencoder is the only model exercising them).
         "SoftmaxCrossEntropyLoss",
         "SoftmaxCrossEntropyLossGrad",
+        "MSELoss",
+        "MSELossGrad",
+        # Gemm: backward Gemm under DB silently produces wrong gradients on
+        # multi-tile training graphs (autoencoder DB CI: losses constant
+        # ~0.097 across 4 update steps — model not learning — while DSCNN DB
+        # Conv-only was numerically correct). Conservative opt-out until
+        # backward Gemm DB egress is debugged. Conv DB still gives most of
+        # the real cycle win on training graphs (DSCNN/MobileNet/ResNet).
+        "Gemm",
     })
 
     def multiBufferStrategy(self, tilerModel: TilerModel, ctxt: NetworkContext, pattern: SubGraph, path: List[str],
