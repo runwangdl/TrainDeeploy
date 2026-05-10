@@ -347,6 +347,26 @@ class PromoteTensorsToL2(SequentialPass):
               f"new_const={const_used}, var_peak={final_var_peak}, "
               f"strategy={self.strategy!r})")
 
+        # Per-buffer dump for CI diagnostic. Lists each promoted buffer's
+        # size, kind (const/var), lifetime window, and consumer node ops so we
+        # can correlate a downstream codegen/sim failure back to a specific
+        # buffer the pass chose.
+        if promoted:
+            # Build a name -> consumer-ops map from the graph.
+            consumer_ops: dict = {}
+            for node in graph.nodes:
+                for t in list(node.inputs):
+                    if t is not None:
+                        consumer_ops.setdefault(t.name, []).append(node.op)
+            print(f"  [PromoteTensorsToL2] dump (top {min(len(promoted), 40)} by size):")
+            for name, size in sorted(promoted, key = lambda x: -x[1])[:40]:
+                buf = ctxt.lookup(name)
+                kind = 'const' if isinstance(buf, ConstantBuffer) else 'var'
+                lt = getattr(buf, '_lifetime', None)
+                lt_s = f"[{lt[0]},{lt[1]}]" if lt else "-"
+                ops = ','.join(sorted(set(consumer_ops.get(name, [])))) or '-'
+                print(f"    {kind:<5} {size:>8} B  lt={lt_s:<10}  ops={ops}  name={name}")
+
         if l2_used > self.l2Budget:
             print(f"  [PromoteTensorsToL2] WARNING: standalone L2 footprint {l2_used} B "
                   f"exceeds promote budget {self.l2Budget} B by {l2_used - self.l2Budget} B. "
