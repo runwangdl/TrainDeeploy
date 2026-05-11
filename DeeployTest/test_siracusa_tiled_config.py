@@ -188,9 +188,7 @@ L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
     #     [(128000, "cycle-aware", True), (128000, "largest", True)],
     # "Models/Training/MobileNetV1/mobilenetv1_train":
     #     [(128000, "cycle-aware", True), (128000, "largest", True)],
-    "Models/Training/CCT/cct_train": [
-        (128000, "cycle-aware", True),
-    ],
+    "Models/Training/CCT/cct_train": [(128000, "cycle-aware", True),],
 }
 
 # Per-model overrides for training tests.
