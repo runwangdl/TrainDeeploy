@@ -471,7 +471,7 @@ def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_te
         # section alone (~600 KB on .text) + 1.4 MB PROMOTED_POOL + arenas
         # easily overruns. 800 KB headroom -> promote_budget = 1.2 MB,
         # leaves ~800 KB for everything else (code, stack, statics, opt).
-        promote_to_l2_headroom = 200000,
+        promote_to_l2_headroom = 500000,
     )
     metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
     run_and_assert_test(test_name,
