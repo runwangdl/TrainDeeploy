@@ -391,8 +391,8 @@ class PromoteTensorsToL2(SequentialPass):
                 for t in list(node.inputs):
                     if t is not None:
                         consumer_ops.setdefault(t.name, []).append(node.op)
-            print(f"  [PromoteTensorsToL2] dump (top {min(len(promoted), 40)} by size):")
-            for name, size in sorted(promoted, key = lambda x: -x[1])[:40]:
+            print(f"  [PromoteTensorsToL2] dump (top {len(promoted)} by size):")
+            for name, size in sorted(promoted, key = lambda x: -x[1]):
                 buf = ctxt.lookup(name)
                 kind = 'const' if isinstance(buf, ConstantBuffer) else 'var'
                 lt = getattr(buf, '_lifetime', None)

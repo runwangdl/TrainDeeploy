@@ -466,12 +466,12 @@ def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_te
         # being filtered out by the conservative 2048 default.
         promote_to_l2_max_buffer_bytes = 1031072,
         # CCT / MobileNetV1 silently hang in sim when total L2 footprint
-        # (PROMOTED_POOL + MEMORYARENA + PI_L2 statics + optimizer L2)
-        # approaches the 2 MB Siracusa L2 SRAM. pi_l2_malloc fragments +
-        # the linker also packs FC code/data into L2, so the safe usable
-        # heap is well below 2 MB. A 500 KB headroom keeps promote_budget
-        # = 1.5 MB and leaves ~500 KB for everything else.
-        promote_to_l2_headroom = 500000,
+        # exceeds ~1.9 MB (the 2 MB Siracusa L2 SRAM minus .text + stack +
+        # PI_L2 statics + the optimizer's own L2). For big CCT the code
+        # section alone (~600 KB on .text) + 1.4 MB PROMOTED_POOL + arenas
+        # easily overruns. 800 KB headroom -> promote_budget = 1.2 MB,
+        # leaves ~800 KB for everything else (code, stack, statics, opt).
+        promote_to_l2_headroom = 800000,
     )
     metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
     run_and_assert_test(test_name,
