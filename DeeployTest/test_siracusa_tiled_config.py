@@ -165,11 +165,13 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 
 # Training-enabled tiled models that need L3 spill (weights/activations don't
 # fit in L2). Same shape: test path -> list of L1 sizes (bytes).
+# TEMPORARY: only big-CCT enabled — the other 3 already have tiled cycle
+# data from earlier CI runs.  Restore the entries below before merging.
 L3_SINGLEBUFFER_TRAINING_MODELS = {
-    "Models/Training/ResNet8/resnet8_train": [128000],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
+    # "Models/Training/ResNet8/resnet8_train": [128000],
+    # "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
     "Models/Training/CCT/cct_train": [128000],
-    "Models/Training/CCT_LoRA/cct_lora_train": [128000],
+    # "Models/Training/CCT_LoRA/cct_lora_train": [128000],
 }
 
 # Untiled-L3 baseline.  Same fixtures as L3_SINGLEBUFFER_TRAINING_MODELS but
@@ -210,16 +212,15 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 L3_UNTILED_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": {
         # Big-CCT (img_size=32, embedding_dim=128, n_conv_layers=2) — peak
-        # L1 working = 524 KB > physical L1 (256 KB).  Same regime as
-        # ResNet8/MobileNet now.  --l1=200K..400K trip a codegen assert
-        # ("Keys should be the same while generating DMA transfer for
-        # tensor 'data_in'/'data_out'"); 800K is the smallest value that
-        # gets through to a clean schedule.
+        # L1 working = 524 KB > physical L1 (256 KB).  --l1=200K..400K
+        # trip a codegen assert ("Keys should be the same while generating
+        # DMA transfer for tensor 'data_in'/'data_out'"); 800K is the
+        # smallest value that gets through to a clean schedule.
         "l1": 800_000,
         "l2": 2_000_000,
-        # Cap to 1 step so testinputs.h doesn't blow .data section.
-        "n_steps": 1,
-        "n_accum": 1,
+        # Use the default training schedule (n_steps=4 / n_accum=1 from
+        # inputs.npz) so per-step cycles are computed the same way as the
+        # tiled L3 baseline (BENCH total / 4).
         "num_data_inputs": 1,
         "skip_sim_in_ci": False,
     },
