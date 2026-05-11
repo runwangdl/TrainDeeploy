@@ -46,7 +46,19 @@ class AnnotateIOMemoryLevel(SequentialPass):
         buffers += filter(lambda _buffer: isinstance(_buffer, ctxt.VariableBuffer), outputBuffers)
 
         for _buffer in buffers:
-            _buffer._memoryLevel = self.ioLevel
+            # Only assign the default IO level when the buffer has no explicit
+            # level yet. MemoryDeployerWrapper re-runs the annotation passes
+            # on every codegen phase; if PromoteTensorsToL2 ran on an earlier
+            # phase and moved this graph I/O buffer to L2, we must not
+            # un-promote it here — otherwise the second annotation pass
+            # silently undoes the promotion (observed on ResNet8 input_0,
+            # which ended up at MEMORYARENA_L3 after a successful first
+            # promote because this pass reset it back to L3 on the next
+            # phase, and the subsequent PromoteTensorsToL2 call refused to
+            # re-promote because the L2 budget was already exhausted).
+            existing = getattr(_buffer, "_memoryLevel", None)
+            if existing is None or existing == self.ioLevel:
+                _buffer._memoryLevel = self.ioLevel
 
         return ctxt, graph
 
