@@ -30,35 +30,15 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # DIAGNOSTIC MODE: only the two tensor-promotion jobs are active so
-  # iteration on the L3-promote failure isn't blocked by ~30 min of
-  # unrelated tests per push. Restore the other jobs once promote is
-  # stable on the training graphs.
-  #
-  # siracusa-training-tiled-l2-singlebuffer:
-  #   needs: select-env
-  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
-  #   with:
-  #     runner: ${{ needs.select-env.outputs.runner }}
-  #     docker-image: ${{ needs.select-env.outputs.image }}
-  #     pytest-marker: "training and l2 and singlebuffer"
-  #
-  # siracusa-training-tiled-l3-singlebuffer:
-  #   needs: select-env
-  #   uses: ./.github/workflows/_runner-siracusa-tiled.yml
-  #   with:
-  #     runner: ${{ needs.select-env.outputs.runner }}
-  #     docker-image: ${{ needs.select-env.outputs.image }}
-  #     pytest-marker: "training and l3 and singlebuffer"
-
-  # Inference promote (tensor-promotion regression check).
-  siracusa-tiled-l3-singlebuffer-promote:
+  # Training L3 singlebuffer baseline (no promote) -- needed for
+  # comparing against tensor-promote cycle deltas.
+  siracusa-training-tiled-l3-singlebuffer:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "models and promote and l3 and singlebuffer"
+      pytest-marker: "training and l3 and singlebuffer"
 
   # Training promote across ResNet8 / CCT / CCT_LoRA / MobileNetV1.
   siracusa-training-tiled-l3-singlebuffer-promote:
