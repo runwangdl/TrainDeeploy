@@ -30,17 +30,8 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # Training L3 singlebuffer baseline (no promote) -- needed for
-  # comparing against tensor-promote cycle deltas.
-  siracusa-training-tiled-l3-singlebuffer:
-    needs: select-env
-    uses: ./.github/workflows/_runner-siracusa-tiled.yml
-    with:
-      runner: ${{ needs.select-env.outputs.runner }}
-      docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l3 and singlebuffer"
-
-  # Training promote across ResNet8 / CCT / CCT_LoRA / MobileNetV1.
+  # DIAGNOSTIC: only training promote (CCT only) so we can iterate fast.
+  # Baseline disabled while debugging.
   siracusa-training-tiled-l3-singlebuffer-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
