@@ -180,7 +180,11 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # variant because cct_lora locally showed -40% with cycle-aware and is
 # expected to widen further with largest.
 L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
-    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
+    # ResNet8 disabled — promote is already validated at -27.9% vs tiled
+    # baseline (929M train_cycles / 4 steps = 232M per-step vs 321.7M tiled).
+    # No point re-running it every iteration of the headroom/cap sweep.
+    # "Models/Training/ResNet8/resnet8_train":
+    #     [(128000, "cycle-aware", True)],
     "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True),],
     "Models/Training/CCT/cct_train": [(128000, "cycle-aware", True),],
     "Models/Training/CCT_LoRA/cct_lora_train": [(128000, "cycle-aware", True),],
