@@ -115,6 +115,13 @@ def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', defau
             gen_args.append(f"--profileNodes={','.join(args.profileNodes)}")
         if getattr(args, 'plotMemAlloc', False):
             gen_args.append('--plotMemAlloc')
+        if getattr(args, 'promoteToL2', False):
+            gen_args.append('--promoteToL2')
+            gen_args.append(f'--promoteToL2Strategy={args.promoteToL2Strategy}')
+            if getattr(args, 'promoteToL2IncludeActivations', False):
+                gen_args.append('--promoteToL2IncludeActivations')
+            gen_args.append(f'--promoteToL2MaxBufferBytes={args.promoteToL2MaxBufferBytes}')
+            gen_args.append(f'--promoteToL2Headroom={args.promoteToL2Headroom}')
 
     config = DeeployTestConfig(
         test_name = test_name,
