@@ -203,11 +203,11 @@ TRAINING_MODEL_OVERRIDES = {
 # "off" strategy = no promotion (baseline for cycle comparison).
 L3_SINGLEBUFFER_PROMOTE_MODELS = {
     "Models/CCT/FP32/CCT_1_32_32_8": [
-        (64000, "off", False),
-        (64000, "cycle-aware", True),
+        (128000, "off", False),
+        (128000, "cycle-aware", True),
     ],
     "Models/MLPerf/AnomalyDetection": [
-        (64000, "off", False),
-        (64000, "cycle-aware", True),
+        (128000, "off", False),
+        (128000, "cycle-aware", True),
     ],
 }
