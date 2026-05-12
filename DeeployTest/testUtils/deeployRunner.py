@@ -175,11 +175,12 @@ class DeeployRunnerArgumentParser(argparse.ArgumentParser):
             self.add_argument('--promoteToL2',
                               action = 'store_true',
                               help = 'Promote selected L3 tensors to L2 (requires --defaultMemLevel L3)\n')
-            self.add_argument('--promoteToL2Strategy',
-                              type = str,
-                              default = 'cycle-aware',
-                              choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
-                              help = 'Promotion selection strategy. Default: cycle-aware\n')
+            self.add_argument(
+                '--promoteToL2Strategy',
+                type = str,
+                default = 'cycle-aware',
+                choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                help = 'Promotion selection strategy. Default: cycle-aware\n')
             self.add_argument('--promoteToL2Headroom',
                               type = int,
                               default = 131072,
