@@ -36,5 +36,5 @@ jobs:
       - name: Run Test
         run: |
           cd DeeployTest
-          pytest test_platforms.py -v -s -x --tb=short -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
+          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
         shell: bash

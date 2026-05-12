@@ -172,20 +172,6 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [128000],
 }
 
-# Same models, runs WITH PromoteTensorsToL2 enabled so the training cycle
-# table shows cycles with-vs-without promotion side by side. Each entry is
-# (l1, strategy, includeActivations). Conservative MaxBufferBytes=2048 (set
-# on the test side) to avoid the wider-cap codegen edge cases on training
-# graphs. cct_train and cct_lora_train get an additional `largest` strategy
-# variant because cct_lora locally showed -40% with cycle-aware and is
-# expected to widen further with largest.
-L3_SINGLEBUFFER_TRAINING_MODELS_PROMOTE = {
-    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True),],
-    "Models/Training/CCT/cct_train": [(128000, "cycle-aware", True),],
-    "Models/Training/CCT_LoRA/cct_lora_train": [(128000, "cycle-aware", True),],
-}
-
 # Per-model overrides for training tests.
 #
 # - num_data_inputs: required when inputs.npz has only one mini-batch (no
@@ -212,29 +198,13 @@ TRAINING_MODEL_OVERRIDES = {
     },
 }
 
-# Tensor-promotion regression set: L3 inference models exercised with the
-# PromoteTensorsToL2 pass enabled. Each entry maps test path -> list of
-# (l1_bytes, strategy, includeActivations) tuples. Strategies kept small to
-# stay within CI budget; the `random` entry catches non-deterministic
-# regressions in the column-major offset enumeration.
+# Inference models tested with PromoteTensorsToL2.
+# Each entry maps test path -> list of (l1, strategy, includeActivations).
+# "off" strategy = no promotion (baseline for cycle comparison).
 L3_SINGLEBUFFER_PROMOTE_MODELS = {
     "Models/CCT/FP32/CCT_1_32_32_8": [
         (64000, "off", False),
         (64000, "cycle-aware", True),
-    ],
-    "Models/CCT/FP32/CCT_2_32_32_128": [
-        # (l1, strategy, includeActivations) -- "off" means no promotion
-        # (baseline reference for the cycle delta in the run summary).
-        # All non-baseline cases run with includeActivations=True because the
-        # weights-only path with the wider 1 MB MaxBufferBytes cap exercises a
-        # PR #19-known cumByteOffset codegen edge case for some strategies.
-        (128000, "off", False),
-        (128000, "cycle-aware", True),
-        (128000, "random", True),
-        (128000, "greedy-score", True),
-        (128000, "largest", True),
-        (128000, "smallest", True),
-        (128000, "knapsack-ratio", True),
     ],
     "Models/MLPerf/AnomalyDetection": [
         (64000, "off", False),

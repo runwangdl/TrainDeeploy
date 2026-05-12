@@ -6,18 +6,12 @@
 name: CI • Siracusa
 
 "on":
-  # DIAGNOSTIC: skip siracusa-train-kernel / siracusa-training on feature
-  # branches so iteration on the L3-promote training failure isn't blocked
-  # by ~30 min of unrelated runs. Restore `branches: "**"` once promote is
-  # stable.
   push:
     branches:
-      - main
-      - devel
+      - "**"
     tags:
       - "v*.*.*"
-  # pull_request: temporarily disabled so feature-branch PRs don't
-  # re-fire siracusa-train-kernel / siracusa-training on every commit.
+  pull_request:
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
