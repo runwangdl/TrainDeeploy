@@ -459,18 +459,8 @@ def test_siracusa_tiled_training_l3_singlebuffer_promote(test_params, deeploy_te
         training_tolerance = overrides.get("tolerance"),
         promote_to_l2 = True,
         promote_to_l2_strategy = strategy,
-        promote_to_l2_include_activations = include_acts,
-        # Use the same wide cap (1031072) the inference promote test uses
-        # so big conv weights -- the actual cycle hot path on ResNet8 /
-        # MobileNetV1 backward -- become eligible candidates instead of
-        # being filtered out by the conservative 2048 default.
-        promote_to_l2_max_buffer_bytes = 1031072,
         # CCT / MobileNetV1 silently hang in sim when total L2 footprint
-        # exceeds ~1.9 MB (the 2 MB Siracusa L2 SRAM minus .text + stack +
-        # PI_L2 statics + the optimizer's own L2). For big CCT the code
-        # section alone (~600 KB on .text) + 1.4 MB PROMOTED_POOL + arenas
-        # easily overruns. 800 KB headroom -> promote_budget = 1.2 MB,
-        # leaves ~800 KB for everything else (code, stack, statics, opt).
+        # exceeds ~1.9 MB. 500 KB headroom leaves room for code + stack.
         promote_to_l2_headroom = 500000,
     )
     metric = {"strategy": strategy, "activations": "yes" if include_acts else "no", "l1": str(l1)}
@@ -533,8 +523,6 @@ def test_siracusa_tiled_promote_l3_singlebuffer(test_params, deeploy_test_dir, t
         double_buffer = False,
         promote_to_l2 = promote,
         promote_to_l2_strategy = strategy if promote else "cycle-aware",
-        promote_to_l2_include_activations = include_acts if promote else False,
-        promote_to_l2_max_buffer_bytes = 1031072 if promote else 2048,
     )
     metric = {
         "strategy": strategy,

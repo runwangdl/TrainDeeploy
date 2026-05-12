@@ -218,6 +218,10 @@ TRAINING_MODEL_OVERRIDES = {
 # stay within CI budget; the `random` entry catches non-deterministic
 # regressions in the column-major offset enumeration.
 L3_SINGLEBUFFER_PROMOTE_MODELS = {
+    "Models/CCT/FP32/CCT_1_32_32_8": [
+        (64000, "off", False),
+        (64000, "cycle-aware", True),
+    ],
     "Models/CCT/FP32/CCT_2_32_32_128": [
         # (l1, strategy, includeActivations) -- "off" means no promotion
         # (baseline reference for the cycle delta in the run summary).
@@ -231,5 +235,9 @@ L3_SINGLEBUFFER_PROMOTE_MODELS = {
         (128000, "largest", True),
         (128000, "smallest", True),
         (128000, "knapsack-ratio", True),
+    ],
+    "Models/MLPerf/AnomalyDetection": [
+        (64000, "off", False),
+        (64000, "cycle-aware", True),
     ],
 }

@@ -289,16 +289,16 @@ if __name__ == '__main__':
                         help = 'Selection strategy for PromoteTensorsToL2')
     parser.add_argument('--promoteToL2IncludeActivations',
                         action = 'store_true',
-                        help = 'Also consider VariableBuffer activations as promotion candidates')
+                        default = True,
+                        help = 'Include activations and graph I/O as promotion candidates (default: True)')
     parser.add_argument('--promoteToL2MaxBufferBytes',
                         type = int,
-                        default = 2048,
-                        help = 'Skip candidates larger than this; 0 = no cap')
+                        default = 0,
+                        help = 'Skip candidates larger than this; 0 = no cap. Default: 0')
     parser.add_argument('--promoteToL2MinBufferBytes',
                         type = int,
                         default = 0,
-                        help = 'Skip candidates smaller than this; 0 = no floor. '
-                        'Use to prune tiny BN/bias buffers that bloat codegen.')
+                        help = 'Skip candidates smaller than this; 0 = no floor')
     parser.add_argument('--promoteToL2Headroom',
                         type = int,
                         default = 131072,

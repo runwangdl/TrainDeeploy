@@ -175,19 +175,11 @@ class DeeployRunnerArgumentParser(argparse.ArgumentParser):
             self.add_argument('--promoteToL2',
                               action = 'store_true',
                               help = 'Promote selected L3 tensors to L2 (requires --defaultMemLevel L3)\n')
-            self.add_argument(
-                '--promoteToL2Strategy',
-                type = str,
-                default = 'cycle-aware',
-                choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
-                help = 'PromoteTensorsToL2 selection strategy. Default: cycle-aware\n')
-            self.add_argument('--promoteToL2IncludeActivations',
-                              action = 'store_true',
-                              help = 'Also consider VariableBuffer activations as promotion candidates\n')
-            self.add_argument('--promoteToL2MaxBufferBytes',
-                              type = int,
-                              default = 2048,
-                              help = 'Skip promotion candidates larger than this; 0 = no cap. Default: 2048\n')
+            self.add_argument('--promoteToL2Strategy',
+                              type = str,
+                              default = 'cycle-aware',
+                              choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                              help = 'Promotion selection strategy. Default: cycle-aware\n')
             self.add_argument('--promoteToL2Headroom',
                               type = int,
                               default = 131072,
@@ -270,9 +262,8 @@ def create_config_from_args(args: argparse.Namespace,
         if getattr(args, 'promoteToL2', False):
             gen_args_list.append("--promoteToL2")
             gen_args_list.append(f"--promoteToL2Strategy={args.promoteToL2Strategy}")
-            if getattr(args, 'promoteToL2IncludeActivations', False):
-                gen_args_list.append("--promoteToL2IncludeActivations")
-            gen_args_list.append(f"--promoteToL2MaxBufferBytes={args.promoteToL2MaxBufferBytes}")
+            gen_args_list.append("--promoteToL2IncludeActivations")
+            gen_args_list.append("--promoteToL2MaxBufferBytes=0")
             gen_args_list.append(f"--promoteToL2Headroom={args.promoteToL2Headroom}")
 
     if not tiling and getattr(args, 'profileUntiled', False):

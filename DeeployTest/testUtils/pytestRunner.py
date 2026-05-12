@@ -54,9 +54,6 @@ def create_test_config(
     training_tolerance: Optional[float] = None,
     promote_to_l2: bool = False,
     promote_to_l2_strategy: str = "cycle-aware",
-    promote_to_l2_include_activations: bool = False,
-    promote_to_l2_max_buffer_bytes: int = 2048,
-    promote_to_l2_min_buffer_bytes: int = 0,
     promote_to_l2_headroom: int = 131072,
     gen_args: Optional[List[str]] = None,
 ) -> DeeployTestConfig:
@@ -106,11 +103,8 @@ def create_test_config(
             assert default_mem_level == "L3", "promote_to_l2 requires default_mem_level='L3'"
             gen_args_list.append("--promoteToL2")
             gen_args_list.append(f"--promoteToL2Strategy={promote_to_l2_strategy}")
-            if promote_to_l2_include_activations:
-                gen_args_list.append("--promoteToL2IncludeActivations")
-            gen_args_list.append(f"--promoteToL2MaxBufferBytes={promote_to_l2_max_buffer_bytes}")
-            if promote_to_l2_min_buffer_bytes > 0:
-                gen_args_list.append(f"--promoteToL2MinBufferBytes={promote_to_l2_min_buffer_bytes}")
+            gen_args_list.append("--promoteToL2IncludeActivations")
+            gen_args_list.append("--promoteToL2MaxBufferBytes=0")
             gen_args_list.append(f"--promoteToL2Headroom={promote_to_l2_headroom}")
 
     if profile_untiled and not tiling and platform == "Siracusa":

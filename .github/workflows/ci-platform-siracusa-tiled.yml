@@ -11,8 +11,7 @@ name: CI • Siracusa (Tiled)
       - "**"
     tags:
       - "v*.*.*"
-  # pull_request: temporarily disabled so this workflow doesn't run twice
-  # per push (once for the push event, once for the PR sync event).
+  pull_request:
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
@@ -30,8 +29,22 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # DIAGNOSTIC: only training promote (CCT only) so we can iterate fast.
-  # Baseline disabled while debugging.
+  siracusa-training-tiled-l2-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l2 and singlebuffer"
+
+  siracusa-training-tiled-l3-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l3 and singlebuffer and not promote"
+
   siracusa-training-tiled-l3-singlebuffer-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
@@ -39,3 +52,11 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and promote and l3 and singlebuffer"
+
+  siracusa-inference-tiled-promote:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and not training"
