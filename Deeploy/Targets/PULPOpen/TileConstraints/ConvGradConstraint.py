@@ -937,9 +937,10 @@ class ConvGradWTileConstraintBase(TileConstraint):
     Subclasses override to pick which strategies apply.
     """
 
-    # Default: CinSlice only (preserves Step-2 behavior for PW + DW which
-    # inherit this default; subclasses with bigger dY override the list).
-    strategies: List = [CinSliceStrategy]
+    # Default: CinSlice first (perf for small-spatial / big-channel layers),
+    # CoutHWSlice as the always-feasible fallback. PW + DW inherit this default;
+    # ConvGradW2DTileConstraint repeats the list for clarity but adds no extras.
+    strategies: List = [CinSliceStrategy, CoutHWSliceStrategy]
 
     # ---- parser/opRep keys (override if needed) ----
     dataInKey = "data_in"  # X (forward input)
