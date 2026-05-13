@@ -432,7 +432,51 @@ class ConvGradX2DIm2ColHWTileConstraint(ConvGradXTileConstraintBase):
 
 
 class PWConvGradXTileConstraint(ConvGradXTileConstraintBase):
-    pass
+    """Pointwise (1x1) ConvGradX policy: pin HW=full, let the tiler split Cin.
+
+    For PW layers HW is the only "spatial" axis but it doesn't carry kernel
+    halo (kernel 1x1, stride 1, pad 0). The direct axpy kernel runs over
+    HW as its innermost loop, so a small HW tile (<16 elements) blows the
+    overhead-to-useful-work ratio past 50%. The tiler's default cost model
+    will happily split HW into single-pixel tiles -- this used to produce
+    the catastrophic 18- and 12-tile schedules on MobileNetV1 block_11/12
+    (Cin=Cout=256, NHW=9), where 95% of cycles went into per-tile DMA and
+    sync overhead instead of compute. Pinning HW full forces Cin to absorb
+    all of the tiling pressure; with Cin tiled the per-tile compute is a
+    full HW reduction that the inner loop amortises well.
+    """
+
+    # Only pin HW=full when the resulting dY full fits comfortably in L1
+    # alongside a Cin tile + dX tile. Early MobileNetV1 PW layers (e.g.
+    # block_0 with NHW=2304, dY full = 144 KB) violate this budget; for
+    # those we leave HW free since the direct axpy kernel handles a long
+    # HW inner loop efficiently anyway.
+    HW_PIN_BUDGET_BYTES = 24 * 1024
+
+    @classmethod
+    def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        super().addPolicyConstraint(tilerModel, parseDict, ctxt)
+
+        dyName = parseDict[cls.gradOutKey]
+        dxName = parseDict[cls.gradInKey]
+
+        dyBuf = ctxt.lookup(dyName)
+        dxBuf = ctxt.lookup(dxName)
+
+        # Estimate dY full byte size (fp32 assumed; PW is single-precision in
+        # this stack). Skip pinning when full dY exceeds the HW-pin budget.
+        N, Cout, H_y, W_y = dyBuf.shape
+        bytes_per_elem = dyBuf._type.referencedType.typeWidth // 8
+        dy_full_bytes = N * Cout * H_y * W_y * bytes_per_elem
+        if dy_full_bytes > cls.HW_PIN_BUDGET_BYTES:
+            return tilerModel
+
+        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) == dyBuf.shape[2])
+        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) == dyBuf.shape[3])
+        tilerModel.addConstraint(tilerModel.getTensorDimVar(dxName, 2) == dxBuf.shape[2])
+        tilerModel.addConstraint(tilerModel.getTensorDimVar(dxName, 3) == dxBuf.shape[3])
+
+        return tilerModel
 
 
 class DWConvGradX2DTileConstraint(ConvGradXTileConstraintBase):
