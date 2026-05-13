@@ -3,13 +3,21 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import re
 from pathlib import Path
+from typing import Any, Dict, List
 
 import coloredlogs
 import pytest
 
 from Deeploy.Logging import DEFAULT_FMT
 from Deeploy.Logging import DEFAULT_LOGGER as log
+
+# Accumulates per-test runtime cycles for the end-of-session perf summary.
+# Populated by pytest_runtest_logreport (runs on the xdist master, so this
+# is single-process even with parallel workers).
+_PERF_RESULTS: List[Dict[str, Any]] = []
+_RUNTIME_CYCLES_RE = re.compile(r"Runtime:\s*(\d+)\s*cycles")
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -158,3 +166,80 @@ def toolchain(request):
 def cmake_args(request):
     """Return additional CMake arguments."""
     return request.config.getoption("--cmake-args")
+
+
+# ---------------------------------------------------------------------------
+# Performance summary hooks
+#
+# pytest_runtest_logreport runs on the xdist master for every worker's report,
+# so we can collect per-test runtime cycles in a single process. The Markdown
+# summary is emitted to GITHUB_STEP_SUMMARY at session end so PR check pages
+# show a perf table inline.
+# ---------------------------------------------------------------------------
+
+
+def pytest_runtest_logreport(report: pytest.TestReport) -> None:
+    """Extract ``Runtime: N cycles`` from each test's captured stdout."""
+    if report.when != "call":
+        return
+    if report.outcome not in ("passed", "failed"):
+        return
+
+    blobs = []
+    cap_out = getattr(report, "capstdout", None)
+    cap_err = getattr(report, "capstderr", None)
+    if cap_out:
+        blobs.append(cap_out)
+    if cap_err:
+        blobs.append(cap_err)
+    if not blobs:
+        return
+
+    # Last match wins: test stdout often re-prints the value; final number is
+    # the authoritative runtime.
+    match = None
+    for blob in blobs:
+        for m in _RUNTIME_CYCLES_RE.finditer(blob):
+            match = m
+    if match is None:
+        return
+
+    _PERF_RESULTS.append({
+        "nodeid": report.nodeid,
+        "outcome": report.outcome,
+        "runtime_cycles": int(match.group(1)),
+    })
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # noqa: ARG001
+    """Print a terminal perf table and write GITHUB_STEP_SUMMARY Markdown."""
+    if not _PERF_RESULTS:
+        return
+
+    results = sorted(_PERF_RESULTS, key = lambda r: r["nodeid"])
+
+    terminalreporter.write_sep("=", "Performance Summary")
+    for r in results:
+        mark = "PASS" if r["outcome"] == "passed" else "FAIL"
+        terminalreporter.write_line(f"  [{mark}] {r['nodeid']:60s}  {r['runtime_cycles']:>15,} cycles")
+
+    gh_summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not gh_summary:
+        return
+
+    lines = [
+        "## Performance Summary",
+        "",
+        "| Test | Status | Runtime (cycles) |",
+        "|---|:---:|---:|",
+    ]
+    for r in results:
+        status = ":white_check_mark:" if r["outcome"] == "passed" else ":x:"
+        lines.append(f"| `{r['nodeid']}` | {status} | {r['runtime_cycles']:,} |")
+    lines.append("")
+
+    try:
+        with open(gh_summary, "a") as f:
+            f.write("\n".join(lines) + "\n")
+    except OSError as e:
+        terminalreporter.write_line(f"[perf-summary] Could not write GITHUB_STEP_SUMMARY: {e}")
