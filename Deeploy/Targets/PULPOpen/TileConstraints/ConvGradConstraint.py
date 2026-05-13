@@ -937,9 +937,13 @@ class ConvGradWTileConstraintBase(TileConstraint):
     Subclasses override to pick which strategies apply.
     """
 
-    # Default: CinSlice first (perf for small-spatial / big-channel layers),
-    # CoutHWSlice as the always-feasible fallback. PW + DW inherit this default;
-    # ConvGradW2DTileConstraint repeats the list for clarity but adds no extras.
+    # Default = CinSlice first (perf path for small-spatial / big-channel
+    # regular Conv layers), CoutHWSlice as always-feasible fallback.
+    # ``PWConvGradWTileConstraint`` and ``DWConvGradW2DTileConstraint`` override
+    # this to ``[CoutHWSliceStrategy]`` only — CinSlice's tile schedule
+    # assumes the standard dW layout [Cout, Cin/group, P, Q] and breaks for
+    # the PW (1x1) and DW ([C, 1, P, Q]) layouts (observed as L1 bank OOB
+    # at sim time when CinSlice is dispatched for these subclasses).
     strategies: List = [CinSliceStrategy, CoutHWSliceStrategy]
 
     # ---- parser/opRep keys (override if needed) ----
@@ -1156,7 +1160,12 @@ class PWConvGradWTileConstraint(ConvGradWTileConstraintBase):
     per-C_out-slice transition tracking. Until the codegen supports that,
     restricting PW to C_out-only keeps the template's per-tile memset
     correct (tiles write disjoint dW slices).
+
+    Strategy: only CoutHWSlice. CinSlice's serialize iterates dW Cin slices,
+    which is the wrong axis for PW (1x1 kernel, Cin reduction handled in
+    serialize via mm_add across Cin slabs) — sim hits L1 bank OOB.
     """
+    strategies: List = [CoutHWSliceStrategy]
 
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
@@ -1264,7 +1273,13 @@ class DWConvGradW2DTileConstraint(ConvGradWTileConstraintBase):
       - X:  [N, C, Hi, Wi]
       - dY: [N, C, Ho, Wo]   (Cout == Cin == C)
       - dW: [C, 1, P, Q]
+
+    Strategy: only CoutHWSlice. CinSlice's tile schedule iterates dW
+    Cin slices, but DW dW[1] == 1 makes that degenerate; CinSlice's
+    serialize also assumes standard [Cout, Cin, P, Q] layout — sim hits
+    L1 bank OOB if dispatched here.
     """
+    strategies: List = [CoutHWSliceStrategy]
 
     @classmethod
     def addGeometricalConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
