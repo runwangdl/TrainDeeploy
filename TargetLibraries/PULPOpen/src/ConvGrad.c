@@ -862,24 +862,28 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
   //
   // Reformulated as GEMM per Cout block:
   //   1. Build dY_col[co_size * P * Q,  Hin * Win] in ctxtBuffer
-  //   2. Transpose W[co_size, Cin, P, Q] → W_flat[Cin, co_size * P * Q] in btBuffer
+  //   2. Transpose W[co_size, Cin, P, Q] → W_flat[Cin, co_size * P * Q] in
+  //   btBuffer
   //   3. GEMM: dX[Cin, Hin*Win] += W_flat × dY_col
   //
   // Buffer sizes:
   //   ctxtBuffer: co_block * P * Q * Hin * Win * sizeof(float)
   //   btBuffer:   Cin * co_block * P * Q * sizeof(float)
   //
-  if (stride_h == 1 && stride_w == 1 && ctxtBuffer != NULL && btBuffer != NULL) {
+  if (stride_h == 1 && stride_w == 1 && ctxtBuffer != NULL &&
+      btBuffer != NULL) {
     uint32_t co_block = Cout;
     while (co_block > 1) {
-      uint32_t i2c_need = co_block * P * Q * Hin_t * Win_t * (uint32_t)sizeof(float);
-      uint32_t bt_need  = Cin * co_block * P * Q * (uint32_t)sizeof(float);
+      uint32_t i2c_need =
+          co_block * P * Q * Hin_t * Win_t * (uint32_t)sizeof(float);
+      uint32_t bt_need = Cin * co_block * P * Q * (uint32_t)sizeof(float);
       if (i2c_need <= ctxtBufferSize && bt_need <= btBufferSize)
         break;
       co_block /= 2;
     }
-    uint32_t i2c_need = co_block * P * Q * Hin_t * Win_t * (uint32_t)sizeof(float);
-    uint32_t bt_need  = Cin * co_block * P * Q * (uint32_t)sizeof(float);
+    uint32_t i2c_need =
+        co_block * P * Q * Hin_t * Win_t * (uint32_t)sizeof(float);
+    uint32_t bt_need = Cin * co_block * P * Q * (uint32_t)sizeof(float);
 
     if (i2c_need <= ctxtBufferSize && bt_need <= btBufferSize) {
       // Zero dX once (core 0 only, then barrier)
@@ -892,13 +896,15 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
       const int32_t pad_l = (int32_t)padding_x_left;
 
       for (uint32_t co_start = 0; co_start < Cout; co_start += co_block) {
-        uint32_t co_size = (co_start + co_block > Cout) ? (Cout - co_start) : co_block;
+        uint32_t co_size =
+            (co_start + co_block > Cout) ? (Cout - co_start) : co_block;
         const float *dy_blk = pGradOut + (size_t)co_start * Hout_t * Wout_t;
-        const float *w_blk  = pWeight  + (size_t)co_start * Cin * P * Q;
+        const float *w_blk = pWeight + (size_t)co_start * Cin * P * Q;
 
         // ── Step 1: Build dY_col in ctxtBuffer (all cores) ──
-        // Layout: dY_col[row, col] where row = co*P*Q + ky*Q + kx, col = h*Win+w
-        // dY_col[co*P*Q + ky*Q + kx, h*Win + w] = dY[co_start+co, h+pad-ky, w+pad-kx]
+        // Layout: dY_col[row, col] where row = co*P*Q + ky*Q + kx, col =
+        // h*Win+w dY_col[co*P*Q + ky*Q + kx, h*Win + w] = dY[co_start+co,
+        // h+pad-ky, w+pad-kx]
         //   (0 if out of bounds)
         {
           uint32_t total_rows = co_size * P * Q;
@@ -907,36 +913,38 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
           // dY_col[row, col] = dY[co, h+pad-ky, w+pad-kx]  (0 if OOB)
           // Parallel over co
           {
-          uint32_t co_chunk = (co_size + NUM_CORES - 1) / NUM_CORES;
-          uint32_t co_lo = pi_core_id() * co_chunk;
-          uint32_t co_hi = co_lo + co_chunk > co_size ? co_size : co_lo + co_chunk;
-          for (uint32_t co = co_lo; co < co_hi; ++co) {
-            const float *dy_co = dy_blk + (size_t)co * Hout_t * Wout_t;
-            for (uint32_t ky = 0; ky < P; ++ky) {
-              for (uint32_t kx = 0; kx < Q; ++kx) {
-                uint32_t row = co * P * Q + ky * Q + kx;
-                float *dst_row = ctxtBuffer + (size_t)row * total_cols;
-                for (uint32_t h = 0; h < Hin_t; ++h) {
-                  int32_t h_off = (int32_t)h + pad_t - (int32_t)ky;
-                  for (uint32_t w = 0; w < Win_t; ++w) {
-                    int32_t w_off = (int32_t)w + pad_l - (int32_t)kx;
-                    float val = 0.0f;
-                    // stride check: h_off and w_off must be divisible by stride
-                    if (h_off >= 0 && w_off >= 0 &&
-                        (h_off % (int32_t)stride_h) == 0 &&
-                        (w_off % (int32_t)stride_w) == 0) {
-                      int32_t oy = h_off / (int32_t)stride_h;
-                      int32_t ox = w_off / (int32_t)stride_w;
-                      if (oy < (int32_t)Hout_t && ox < (int32_t)Wout_t) {
-                        val = dy_co[(uint32_t)oy * Wout_t + (uint32_t)ox];
+            uint32_t co_chunk = (co_size + NUM_CORES - 1) / NUM_CORES;
+            uint32_t co_lo = pi_core_id() * co_chunk;
+            uint32_t co_hi =
+                co_lo + co_chunk > co_size ? co_size : co_lo + co_chunk;
+            for (uint32_t co = co_lo; co < co_hi; ++co) {
+              const float *dy_co = dy_blk + (size_t)co * Hout_t * Wout_t;
+              for (uint32_t ky = 0; ky < P; ++ky) {
+                for (uint32_t kx = 0; kx < Q; ++kx) {
+                  uint32_t row = co * P * Q + ky * Q + kx;
+                  float *dst_row = ctxtBuffer + (size_t)row * total_cols;
+                  for (uint32_t h = 0; h < Hin_t; ++h) {
+                    int32_t h_off = (int32_t)h + pad_t - (int32_t)ky;
+                    for (uint32_t w = 0; w < Win_t; ++w) {
+                      int32_t w_off = (int32_t)w + pad_l - (int32_t)kx;
+                      float val = 0.0f;
+                      // stride check: h_off and w_off must be divisible by
+                      // stride
+                      if (h_off >= 0 && w_off >= 0 &&
+                          (h_off % (int32_t)stride_h) == 0 &&
+                          (w_off % (int32_t)stride_w) == 0) {
+                        int32_t oy = h_off / (int32_t)stride_h;
+                        int32_t ox = w_off / (int32_t)stride_w;
+                        if (oy < (int32_t)Hout_t && ox < (int32_t)Wout_t) {
+                          val = dy_co[(uint32_t)oy * Wout_t + (uint32_t)ox];
+                        }
                       }
+                      dst_row[h * Win_t + w] = val;
                     }
-                    dst_row[h * Win_t + w] = val;
                   }
                 }
               }
             }
-          }
           } // end parallel im2col
         }
         pi_cl_team_barrier(0);
@@ -947,7 +955,8 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
           uint32_t KPQ = co_size * P * Q;
           uint32_t ci_chunk2 = (Cin + NUM_CORES - 1) / NUM_CORES;
           uint32_t ci_start = pi_core_id() * ci_chunk2;
-          uint32_t ci_end = ci_start + ci_chunk2 > Cin ? Cin : ci_start + ci_chunk2;
+          uint32_t ci_end =
+              ci_start + ci_chunk2 > Cin ? Cin : ci_start + ci_chunk2;
 
           for (uint32_t ci = ci_start; ci < ci_end; ++ci) {
             float *dst_ci = btBuffer + (size_t)ci * KPQ;
@@ -968,7 +977,8 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
           uint32_t M = Hin_t * Win_t;
           uint32_t ci_chunk3 = (Cin + NUM_CORES - 1) / NUM_CORES;
           uint32_t ci_start = pi_core_id() * ci_chunk3;
-          uint32_t ci_end = ci_start + ci_chunk3 > Cin ? Cin : ci_start + ci_chunk3;
+          uint32_t ci_end =
+              ci_start + ci_chunk3 > Cin ? Cin : ci_start + ci_chunk3;
 
           for (uint32_t ci = ci_start; ci < ci_end; ++ci) {
             const float *a_row = btBuffer + (size_t)ci * K;
@@ -985,10 +995,10 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
                 acc2 += a_val * b_row[2];
                 acc3 += a_val * b_row[3];
               }
-              c_row[m]   += acc0;
-              c_row[m+1] += acc1;
-              c_row[m+2] += acc2;
-              c_row[m+3] += acc3;
+              c_row[m] += acc0;
+              c_row[m + 1] += acc1;
+              c_row[m + 2] += acc2;
+              c_row[m + 3] += acc3;
             }
             for (; m < M; ++m) {
               float acc = 0.0f;
@@ -1020,12 +1030,15 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     const uint32_t ci_chunk = (Cin + NUM_CORES - 1u) / NUM_CORES;
     const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
     uint32_t ci_stop = ci_start + ci_chunk;
-    if (ci_stop > Cin) ci_stop = Cin;
-    if (ci_start >= ci_stop) return;
+    if (ci_stop > Cin)
+      ci_stop = Cin;
+    if (ci_start >= ci_stop)
+      return;
 
     for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
       float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-      for (uint32_t i = 0; i < Hin_t * Win_t; ++i) dx_ci[i] = 0.0f;
+      for (uint32_t i = 0; i < Hin_t * Win_t; ++i)
+        dx_ci[i] = 0.0f;
     }
 
     // Loop reorder: ci outermost (parallel), then ky/kx, then co (innermost)
@@ -1036,18 +1049,22 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
       for (int32_t ky = 0; ky < (int32_t)P; ++ky) {
         for (int32_t kx = 0; kx < (int32_t)Q; ++kx) {
           for (uint32_t ly = 0; ly < Hout_t; ++ly) {
-            const int32_t base_h = ((int32_t)offset_grad_out_h + (int32_t)ly) * sh - pad_top;
+            const int32_t base_h =
+                ((int32_t)offset_grad_out_h + (int32_t)ly) * sh - pad_top;
             const int32_t ih = base_h + ky - hx0;
-            if (ih < 0 || ih >= (int32_t)Hin_t) continue;
+            if (ih < 0 || ih >= (int32_t)Hin_t)
+              continue;
             for (uint32_t lx = 0; lx < Wout_t; ++lx) {
-              const int32_t base_w = ((int32_t)offset_grad_out_w + (int32_t)lx) * sw - pad_left;
+              const int32_t base_w =
+                  ((int32_t)offset_grad_out_w + (int32_t)lx) * sw - pad_left;
               const int32_t iw = base_w + kx - wx0;
-              if (iw < 0 || iw >= (int32_t)Win_t) continue;
+              if (iw < 0 || iw >= (int32_t)Win_t)
+                continue;
               // Inner loop over co: W and dY accessed sequentially
               float acc = 0.0f;
               for (uint32_t co = 0; co < Cout; ++co) {
-                acc += pGradOut[co * Hout_t * Wout_t + ly * Wout_t + lx]
-                     * pWeight[(co * Cin + ci) * P * Q + ky * (int32_t)Q + kx];
+                acc += pGradOut[co * Hout_t * Wout_t + ly * Wout_t + lx] *
+                       pWeight[(co * Cin + ci) * P * Q + ky * (int32_t)Q + kx];
               }
               dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] += acc;
             }

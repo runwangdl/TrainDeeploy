@@ -579,21 +579,19 @@ class GradWStrategy:
         raise NotImplementedError
 
     @classmethod
-    def add_constraints(cls, owner_cls, tilerModel: TilerModel, parseDict: Dict,
-                        ctxt: NetworkContext) -> TilerModel:
+    def add_constraints(cls, owner_cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
         raise NotImplementedError
 
     @classmethod
     def matches_solution(cls, owner_cls, tilingSolution: NodeMemoryConstraint,
-                         absoluteOutputCubes: List[AbsoluteHyperRectangle], targetMemLevel: str,
-                         ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation) -> bool:
+                         absoluteOutputCubes: List[AbsoluteHyperRectangle], targetMemLevel: str, ctxt: NetworkContext,
+                         operatorRepresentation: OperatorRepresentation) -> bool:
         raise NotImplementedError
 
     @classmethod
     def serialize(cls, owner_cls, tilingSolution: NodeMemoryConstraint,
-                  absoluteOutputCubes: List[AbsoluteHyperRectangle], targetMemLevel: str,
-                  ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation
-                  ) -> Tuple[VariableReplacementScheme, TilingSchedule]:
+                  absoluteOutputCubes: List[AbsoluteHyperRectangle], targetMemLevel: str, ctxt: NetworkContext,
+                  operatorRepresentation: OperatorRepresentation) -> Tuple[VariableReplacementScheme, TilingSchedule]:
         raise NotImplementedError
 
 
@@ -643,8 +641,8 @@ class CinSliceStrategy(GradWStrategy):
         return tilerModel
 
     @classmethod
-    def matches_solution(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel,
-                         ctxt, operatorRepresentation):
+    def matches_solution(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt,
+                         operatorRepresentation):
         # CinSlice keeps dY spatial full. Use dY tile shape from tilingSolution.
         dyName = operatorRepresentation[owner_cls.gradOutKey]
         dyFull = tuple(ctxt.lookup(dyName).shape)
@@ -655,8 +653,7 @@ class CinSliceStrategy(GradWStrategy):
         return dyShape[2] == dyFull[2] and dyShape[3] == dyFull[3]
 
     @classmethod
-    def serialize(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel,
-                  ctxt, operatorRepresentation):
+    def serialize(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation):
         owner_cls.extraSerializeChecks(ctxt, operatorRepresentation)
 
         xName = operatorRepresentation[owner_cls.dataInKey]
@@ -676,20 +673,34 @@ class CinSliceStrategy(GradWStrategy):
         pad_top, pad_bottom, pad_left, pad_right = pads
 
         addrNames = [owner_cls.dataInKey, owner_cls.gradOutKey, owner_cls.weightKey]
-        inputBaseOffsets, outputBaseOffsets = owner_cls.extractBaseAddr(
-            tilingSolution, targetMemLevel, operatorRepresentation, addrNames)
+        inputBaseOffsets, outputBaseOffsets = owner_cls.extractBaseAddr(tilingSolution, targetMemLevel,
+                                                                        operatorRepresentation, addrNames)
 
-        replacements: Dict[str, List[int]] = {k: [] for k in [
-            "dim_im_in_x", "dim_im_in_y", "dim_im_out_x", "dim_im_out_y",
-            "ch_im_in", "ch_im_out",
-            "padding_y_top", "padding_y_bottom", "padding_x_left", "padding_x_right",
-        ]}
+        replacements: Dict[str, List[int]] = {
+            k: [] for k in [
+                "dim_im_in_x",
+                "dim_im_in_y",
+                "dim_im_out_x",
+                "dim_im_out_y",
+                "ch_im_in",
+                "ch_im_out",
+                "padding_y_top",
+                "padding_y_bottom",
+                "padding_x_left",
+                "padding_x_right",
+            ]
+        }
         replacementTypes = {
-            "dim_im_in_x": PointerClass(uint16_t), "dim_im_in_y": PointerClass(uint16_t),
-            "dim_im_out_x": PointerClass(uint16_t), "dim_im_out_y": PointerClass(uint16_t),
-            "ch_im_in": PointerClass(uint16_t), "ch_im_out": PointerClass(uint16_t),
-            "padding_y_top": PointerClass(uint8_t), "padding_y_bottom": PointerClass(uint8_t),
-            "padding_x_left": PointerClass(uint8_t), "padding_x_right": PointerClass(uint8_t),
+            "dim_im_in_x": PointerClass(uint16_t),
+            "dim_im_in_y": PointerClass(uint16_t),
+            "dim_im_out_x": PointerClass(uint16_t),
+            "dim_im_out_y": PointerClass(uint16_t),
+            "ch_im_in": PointerClass(uint16_t),
+            "ch_im_out": PointerClass(uint16_t),
+            "padding_y_top": PointerClass(uint8_t),
+            "padding_y_bottom": PointerClass(uint8_t),
+            "padding_x_left": PointerClass(uint8_t),
+            "padding_x_right": PointerClass(uint8_t),
         }
 
         # Derive Cin slices from dW output cubes (cubes are dW slabs).
@@ -776,8 +787,8 @@ class CoutHWSliceStrategy(GradWStrategy):
         return tilerModel
 
     @classmethod
-    def matches_solution(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel,
-                         ctxt, operatorRepresentation):
+    def matches_solution(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt,
+                         operatorRepresentation):
         # Matches when EITHER dy spatial < full OR dw Cout < full.
         dyName = operatorRepresentation[owner_cls.gradOutKey]
         dwName = operatorRepresentation[owner_cls.weightKey]
@@ -788,12 +799,10 @@ class CoutHWSliceStrategy(GradWStrategy):
             dwShape = tilingSolution.tensorMemoryConstraints[dwName].memoryConstraints[targetMemLevel].shape
         except (KeyError, AttributeError):
             return False
-        return (dyShape[2] < dyFull[2] or dyShape[3] < dyFull[3]
-                or dwShape[0] < dwFull[0])
+        return (dyShape[2] < dyFull[2] or dyShape[3] < dyFull[3] or dwShape[0] < dwFull[0])
 
     @classmethod
-    def serialize(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel,
-                  ctxt, operatorRepresentation):
+    def serialize(cls, owner_cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation):
         owner_cls.extraSerializeChecks(ctxt, operatorRepresentation)
 
         xName = operatorRepresentation[owner_cls.dataInKey]
@@ -838,20 +847,34 @@ class CoutHWSliceStrategy(GradWStrategy):
             wo += ws
 
         addrNames = [owner_cls.dataInKey, owner_cls.gradOutKey, owner_cls.weightKey]
-        inputBaseOffsets, outputBaseOffsets = owner_cls.extractBaseAddr(
-            tilingSolution, targetMemLevel, operatorRepresentation, addrNames)
+        inputBaseOffsets, outputBaseOffsets = owner_cls.extractBaseAddr(tilingSolution, targetMemLevel,
+                                                                        operatorRepresentation, addrNames)
 
-        replacements: Dict[str, List[int]] = {k: [] for k in [
-            "dim_im_in_x", "dim_im_in_y", "dim_im_out_x", "dim_im_out_y",
-            "ch_im_in", "ch_im_out",
-            "padding_y_top", "padding_y_bottom", "padding_x_left", "padding_x_right",
-        ]}
+        replacements: Dict[str, List[int]] = {
+            k: [] for k in [
+                "dim_im_in_x",
+                "dim_im_in_y",
+                "dim_im_out_x",
+                "dim_im_out_y",
+                "ch_im_in",
+                "ch_im_out",
+                "padding_y_top",
+                "padding_y_bottom",
+                "padding_x_left",
+                "padding_x_right",
+            ]
+        }
         replacementTypes = {
-            "dim_im_in_x": PointerClass(uint16_t), "dim_im_in_y": PointerClass(uint16_t),
-            "dim_im_out_x": PointerClass(uint16_t), "dim_im_out_y": PointerClass(uint16_t),
-            "ch_im_in": PointerClass(uint16_t), "ch_im_out": PointerClass(uint16_t),
-            "padding_y_top": PointerClass(uint8_t), "padding_y_bottom": PointerClass(uint8_t),
-            "padding_x_left": PointerClass(uint8_t), "padding_x_right": PointerClass(uint8_t),
+            "dim_im_in_x": PointerClass(uint16_t),
+            "dim_im_in_y": PointerClass(uint16_t),
+            "dim_im_out_x": PointerClass(uint16_t),
+            "dim_im_out_y": PointerClass(uint16_t),
+            "ch_im_in": PointerClass(uint16_t),
+            "ch_im_out": PointerClass(uint16_t),
+            "padding_y_top": PointerClass(uint8_t),
+            "padding_y_bottom": PointerClass(uint8_t),
+            "padding_x_left": PointerClass(uint8_t),
+            "padding_x_right": PointerClass(uint8_t),
         }
 
         Cin_full = xFull[1]
@@ -894,13 +917,13 @@ class CoutHWSliceStrategy(GradWStrategy):
                         (N_tile, coSz, hoSz, woSz),
                     )
                     xTile, (tpt, tpb, tpl, tpr) = ConvGradWTileConstraintBase.computeInputTileFromGradOutTile(
-                        kernel_hw=(dwShape[2], dwShape[3]),
-                        pads=pads,
-                        strides=strides,
-                        inputCSize=Cin_full,
-                        gradOutTile=dyTile,
-                        inputFull=xFull,
-                        gradOutFull=dyFull,
+                        kernel_hw = (dwShape[2], dwShape[3]),
+                        pads = pads,
+                        strides = strides,
+                        inputCSize = Cin_full,
+                        gradOutTile = dyTile,
+                        inputFull = xFull,
+                        gradOutFull = dyFull,
                     )
 
                     replacements["dim_im_in_x"].append(xTile.dims[2])
@@ -1126,16 +1149,15 @@ class ConvGradWTileConstraintBase(TileConstraint):
         # to the first registered strategy if none matches.
         chosen = None
         for strat in cls.strategies:
-            if strat.matches_solution(cls, tilingSolution, absoluteOutputCubes,
-                                      targetMemLevel, ctxt, operatorRepresentation):
+            if strat.matches_solution(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt,
+                                      operatorRepresentation):
                 chosen = strat
                 break
         if chosen is None:
             if not cls.strategies:
                 raise RuntimeError(f"{cls.__name__}: no tiling strategy configured")
             chosen = cls.strategies[0]
-        return chosen.serialize(cls, tilingSolution, absoluteOutputCubes,
-                                targetMemLevel, ctxt, operatorRepresentation)
+        return chosen.serialize(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation)
 
 
 class ConvGradW2DTileConstraint(ConvGradWTileConstraintBase):
