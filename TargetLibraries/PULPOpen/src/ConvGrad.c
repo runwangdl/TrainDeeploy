@@ -780,42 +780,80 @@ void PULP_PWConvGradW2d_fp32_fp32_fp32_CHW(
   pulp_conv_pw_fp32_bw_param_grads_cl(&pw_args);
 }
 
+// Direct PW ConvGradX worker. Eliminates the per-call weight transpose +
+// pulp-trainlib mm: those required a Cin*Cout transient buffer in L1, which
+// for MobileNetV1 block 6-10 PW layers (Cin=Cout=128) eats 64 KB of the
+// 128 KB scratch and forces the tiler to fragment Cin/H/W into ~36 tiles.
+// Each tile then pays an L3<->L2 DMA + sync cost ~25x larger than the
+// actual compute. The direct kernel keeps the inner axpy fully contiguous
+// and parallelizes over Cin without scratch.
+typedef struct {
+  const float *pGradOut;
+  const float *pWeight;
+  float *pGradIn;
+  uint32_t C_out;
+  uint32_t C_in;
+  uint32_t HW;
+} pw_convgradx_args_t;
+
+static void pulp_pw_convgradx_fp32_worker(void *arg_) {
+  const pw_convgradx_args_t *a = (const pw_convgradx_args_t *)arg_;
+  const uint32_t Cin = a->C_in;
+  const uint32_t Cout = a->C_out;
+  const uint32_t HW = a->HW;
+  const float *__restrict__ pGradOut = a->pGradOut;
+  const float *__restrict__ pWeight = a->pWeight;
+  float *__restrict__ pGradIn = a->pGradIn;
+
+  // Each core owns a contiguous Cin range
+  const uint32_t ci_per_core = (Cin + NUM_CORES - 1u) / NUM_CORES;
+  const uint32_t ci_lo = (uint32_t)pi_core_id() * ci_per_core;
+  uint32_t ci_hi = ci_lo + ci_per_core;
+  if (ci_hi > Cin)
+    ci_hi = Cin;
+  if (ci_lo >= ci_hi)
+    return;
+
+  // Zero this core's slice of dX
+  for (uint32_t ci = ci_lo; ci < ci_hi; ++ci) {
+    float *dx_row = pGradIn + (size_t)ci * HW;
+    for (uint32_t hw = 0; hw < HW; ++hw)
+      dx_row[hw] = 0.0f;
+  }
+
+  // dX[ci, hw] = sum_co W[co, ci] * dY[co, hw]
+  // Outer co loop streams a contiguous W row (length Cin) and a contiguous
+  // dY row (length HW); inner axpy over hw stays contiguous on dX.
+  for (uint32_t co = 0; co < Cout; ++co) {
+    const float *__restrict__ w_row = pWeight + (size_t)co * Cin;
+    const float *__restrict__ dy_row = pGradOut + (size_t)co * HW;
+    for (uint32_t ci = ci_lo; ci < ci_hi; ++ci) {
+      const float w = w_row[ci];
+      float *__restrict__ dx_row = pGradIn + (size_t)ci * HW;
+      for (uint32_t hw = 0; hw < HW; ++hw)
+        dx_row[hw] += w * dy_row[hw];
+    }
+  }
+}
+
 void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
     uint32_t C_out, const float *__restrict__ pWeight, uint32_t C_in,
-    float *__restrict__ pGradIn, uint32_t H_in, uint32_t W_in,
-    float *__restrict__ pTransposeBuffer, uint32_t transposeBufferSize) {
+    float *__restrict__ pGradIn, uint32_t H_in, uint32_t W_in) {
 
-  // pulp_conv_pw_fp32_bw_input_grads_cl has a bug: it passes M=C_out, N=C_in
-  // to transpose_matrix, treating W as [C_in rows, C_out cols], but W is
-  // stored as [C_out, C_in] row-major. This works only when C_in == C_out.
-  // Fix: call transpose_matrix directly with N=C_out, M=C_in (correct dims),
-  // then call mm directly with the correctly transposed buffer.
+  // PW (1x1) has H_in == H_out and W_in == W_out at stride=1, pad=0.
+  (void)H_in;
+  (void)W_in;
 
-  memset(pGradIn, 0, sizeof(float) * (C_in * H_in * W_in));
-
-  // Step 1: Transpose W[C_out, C_in] -> pTransposeBuffer[C_in, C_out]
-  // N = C_out (rows of W), M = C_in (cols of W) -> output [M=C_in, N=C_out]
-  struct transp_args tr_args;
-  tr_args.in_matrix = (float *)pWeight;
-  tr_args.out_matrix = pTransposeBuffer;
-  tr_args.N = (int)C_out;
-  tr_args.M = (int)C_in;
-  tr_args.dim = NULL;
-  tr_args.transposed_axes = NULL;
-  tr_args.n_dim = 0;
-  pi_cl_team_fork(NUM_CORES, transpose_matrix, &tr_args);
-
-  // Step 2: GEMM: dX[C_in, H*W] = W^T[C_in, C_out] x dY[C_out, H*W]
-  struct matMul_args mm_args;
-  mm_args.A = pTransposeBuffer;  // [C_in, C_out]
-  mm_args.B = (float *)pGradOut; // [C_out, H*W]
-  mm_args.C = pGradIn;           // [C_in, H*W]
-  mm_args.N = (int)C_in;
-  mm_args.M = (int)(H_out * W_out);
-  mm_args.K = (int)C_out;
-  mm_args.trans_B = 0;
-  pi_cl_team_fork(NUM_CORES, mm, &mm_args);
+  pw_convgradx_args_t args = {
+      .pGradOut = pGradOut,
+      .pWeight = pWeight,
+      .pGradIn = pGradIn,
+      .C_out = C_out,
+      .C_in = C_in,
+      .HW = H_out * W_out,
+  };
+  pi_cl_team_fork(NUM_CORES, pulp_pw_convgradx_fp32_worker, &args);
 }
 
 // Tile-aware Im2Col-based ConvGradX kernel with offset support
