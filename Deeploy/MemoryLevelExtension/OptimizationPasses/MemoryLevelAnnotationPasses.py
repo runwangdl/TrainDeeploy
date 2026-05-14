@@ -225,6 +225,16 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 if 'allocTemplate' in buf.__dict__:
                     continue
+                # Skip single-use graph I/O (inference input_0 / output_0).
+                # InitNetwork allocates these with cl_ram_malloc -> hyperram
+                # regardless of _memoryLevel; the closure that follows assumes
+                # the buffer is in L2 and uses mchan_transfer_1d (cluster idma)
+                # which can only access L1/L2, not hyperram -> firmware polls
+                # the DMA STATUS bit forever -> silent hang.
+                # Training graph I/O (weights/grads) is multi-use and remains
+                # eligible: len(_users) >= 2.
+                if len(buf._users) <= 1:
+                    continue
                 size = self._bufferSize(buf)
                 if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                     continue
