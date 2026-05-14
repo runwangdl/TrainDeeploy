@@ -102,7 +102,7 @@ class PromoteTensorsToL2(SequentialPass):
     # one of the non-BN op paths (Conv / ConvGrad / Transpose / ReluGrad).
     # That second bug is not in scope for this fix and needs its own
     # bisection.
-    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity', 'BatchNormInternal'}
+    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity', 'BatchNormInternal', 'LayerNormalization'}
 
     def __init__(self,
                  l2Size: int,
