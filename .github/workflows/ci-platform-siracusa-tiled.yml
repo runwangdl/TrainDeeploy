@@ -46,3 +46,7 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and singlebuffer"
+      # -s makes GVSoC's per-test "Cycles" report visible in the CI log,
+      # so cct_train cycle counts on plain Siracusa can be diffed against
+      # the Siracusa+RedMulE run for an apples-to-apples speedup number.
+      pytest-flags: "-s"

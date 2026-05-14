@@ -17,6 +17,14 @@ name: _runner-siracusa-tiled
       pytest-marker:
         required: true
         type: string
+      # Extra flags injected into the pytest command (between -v and the -m
+      # marker filter).  Default empty preserves the existing sequential
+      # invocation; callers that want simulator stdout (e.g. GVSoC cycle
+      # counts) in the CI log can override with "-s" to disable capture.
+      pytest-flags:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   test-runner-siracusa-tiled:
@@ -36,5 +44,28 @@ jobs:
       - name: Run Test
         run: |
           cd DeeployTest
-          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
+          set -o pipefail
+          pytest test_platforms.py -v ${{ inputs.pytest-flags }} -m "siracusa_tiled and ${{ inputs.pytest-marker }}" 2>&1 | tee /tmp/pytest_out.log
         shell: bash
+      - name: Report cycle counts (Siracusa baseline)
+        if: always()
+        shell: bash
+        run: |
+          # Emit every BENCH line from the test stdout into the run summary so
+          # the RedMulE-side workflow can diff against these numbers for the
+          # same SHA.  Non-training jobs (kernel-only matrices) produce no
+          # BENCH lines and the step is a quiet no-op.
+          if ! grep -q '^BENCH train_cycles=' /tmp/pytest_out.log 2>/dev/null; then
+            echo "No BENCH line found (probably a kernel-only job); skipping summary."
+            exit 0
+          fi
+          echo "## Siracusa baseline training cycles" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| model (weight_sram) | train_cycles | opt_cycles |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---:|---:|" >> "$GITHUB_STEP_SUMMARY"
+          grep '^BENCH train_cycles=' /tmp/pytest_out.log | while read -r line; do
+            tc=$(echo "$line" | sed -nE 's/.*train_cycles=([0-9]+).*/\1/p')
+            oc=$(echo "$line" | sed -nE 's/.*opt_cycles=([0-9]+).*/\1/p')
+            ws=$(echo "$line" | sed -nE 's/.*weight_sram=([0-9]+).*/\1/p')
+            echo "| weight_sram=${ws} | ${tc} | ${oc} |" >> "$GITHUB_STEP_SUMMARY"
+          done

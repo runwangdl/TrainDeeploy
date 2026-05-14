@@ -24,15 +24,32 @@ class TransposeTileConstraint(TileConstraint):
         inputBufferName = parseDict['data_in']
         outputBufferName = parseDict['data_out']
 
+        inputShape = ctxt.lookup(inputBufferName).shape
+        outputShape = ctxt.lookup(outputBufferName).shape
+        perm = parseDict["perm"]
+
+        # Spatial-view interpretation of the perm: it operates on the last
+        # len(perm) dims of data_in and the last len(perm) dims of data_out.
+        # MatMulLayer.computeShapes can left-pad the rank of one side without
+        # touching the other when the same gs.Variable is shared between a
+        # broadening (MatMul) and a non-broadening (Gemm/Transpose) consumer,
+        # so the constraint indexing must offset by the per-side leading-batch
+        # depth rather than assume rank == len(perm) == rank_other.  When all
+        # ranks already match, offsets are 0 and behavior is unchanged.
+        inputOffset = len(inputShape) - len(perm)
+        outputOffset = len(outputShape) - len(perm)
+        assert inputOffset >= 0 and outputOffset >= 0, (f"Transpose perm {perm} is longer than tensor ranks "
+                                                        f"data_in={inputShape}, data_out={outputShape}")
+
         # Add I/O dimensions to the model as variables
         for bufferName in [inputBufferName, outputBufferName]:
             tilerModel.addTensorDimToModel(ctxt, bufferName)
 
-        # Map output dims to inputs dims
-        for idx, perm_idx in enumerate(parseDict["perm"]):
+        # Map output spatial dims to input spatial dims via perm.
+        for idx, perm_idx in enumerate(perm):
             tilerModel.addConstraint(
-                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = idx) == tilerModel.getTensorDimVar(
-                    tensorName = inputBufferName, dimIdx = perm_idx))
+                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = outputOffset + idx) ==
+                tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = inputOffset + perm_idx))
 
         return tilerModel
 
@@ -50,7 +67,10 @@ class TransposeTileConstraint(TileConstraint):
         replacementTypes = {}
         replacements: Dict[str, List[int]] = {}
 
-        numDims = len(ctxt.lookup(operatorRepresentation['data_in']).shape)
+        # Match the spatial-view interpretation in addGeometricalConstraint:
+        # only the last len(perm) dims of data_in are actually transposed,
+        # so emit exactly len(perm) dimLen_<i> replacement variables.
+        numDims = len(operatorRepresentation['perm'])
 
         for dim in range(numDims):
             replacementTypes[f"dimLen_{dim}"] = PointerClass(uint16_t)

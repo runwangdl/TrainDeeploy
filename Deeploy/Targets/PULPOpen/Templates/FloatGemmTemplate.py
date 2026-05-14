@@ -8,6 +8,8 @@ from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import float32_t
 from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation
 
+float32_tPtr = PointerClass(float32_t)
+
 
 class PULPFloatGEMMTemplate(NodeTemplate):
 

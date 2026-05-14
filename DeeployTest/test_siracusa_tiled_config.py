@@ -20,6 +20,10 @@ L2_SINGLEBUFFER_KERNELS = {
     "Kernels/FP32/Conv/Regular_2D_NoBias": [1600],
     "Kernels/FP32/Conv/Regular_2D_ZeroValuedBias": [6600],
     "Kernels/FP32/GEMM/Regular": [8000],
+    # PW ConvGrad baselines so the RedMulE-side speedup table has matching
+    # PULP numbers to diff against in the CI summary.
+    "Kernels/FP32/ConvGradW_PW": [8000],
+    "Kernels/FP32/ConvGradX_PW_block_11": [8000],
     "Kernels/FP32/MatMul": [2000],
     "Kernels/FP32/MaxPool/Regular_2D": [2000],
     "Kernels/FP32/Mul": [2000],
