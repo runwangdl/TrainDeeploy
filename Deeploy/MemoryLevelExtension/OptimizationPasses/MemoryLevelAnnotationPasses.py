@@ -78,7 +78,31 @@ class PromoteTensorsToL2(SequentialPass):
     # _SKIP_OPS: any buffer that is an input or output of a node with one of
     # these op types is excluded from promotion. Use this for ops whose
     # codegen has not been validated for L2-resident I/O.
-    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity'}
+    #
+    # BatchNormInternal: training-mode BN has 3 outputs (data_out + saved_mean +
+    # saved_inv_std). Deeploy's wrapTilingSolution asserts single output, so the
+    # PULP tile constraint passes a single-output solution and grafts the
+    # secondaries onto the schedule afterwards. That graft assumes the primary
+    # has a per-tile data_out rectangle to slice the secondaries against, which
+    # is only true while the primary's home is the default level (L3). Once
+    # PromoteTensorsToL2 moves the primary to L2, the L2-target wrap sanitizes
+    # data_out away (TilerExtension._annotateAddressSpaces deliberately leaves
+    # the home-level addrSpace blank) and the workaround silently drops the
+    # secondary -- the BN closure_L3 then never copies saved_mean / saved_inv
+    # _std back to their L3 homes, BN backward reads stale L3 contents, and on
+    # MobileNetV1 the simulated cluster deadlocks inside the BN backward fork
+    # (verified via gvsoc --trace=insn ring trace: pe1-7 stuck at p.elw,
+    # pe6/7 at the cluster_fork return-to-wait path for node_71).
+    #
+    # Excluding the whole BN node from promotion sidesteps that deadlock and
+    # is the conservative fix until the multi-output tile path is rewritten.
+    # NOTE: it does not, on its own, restore MobileNetV1 to 0/4 errors --
+    # promote-with-BN-excluded still gives 3/4 errors with a small drift that
+    # starts at the first backward pass, indicating a separate promote bug in
+    # one of the non-BN op paths (Conv / ConvGrad / Transpose / ReluGrad).
+    # That second bug is not in scope for this fix and needs its own
+    # bisection.
+    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity', 'BatchNormInternal'}
 
     def __init__(self,
                  l2Size: int,
