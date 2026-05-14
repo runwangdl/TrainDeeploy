@@ -23,6 +23,13 @@ if(gvsoc_simulation)
 	add_compile_definitions(GVSOC_SIMULATION)
 endif()
 
+# When ON, gvsoc's stderr (which is where --trace=... output goes) is piped
+# through scripts/ring_tee.py so the trace files rotate inside a fixed disk
+# budget instead of growing to tens of GB.  See add_gvsoc_emulation below.
+OPTION(GVSOC_RING_TRACE "Pipe gvsoc stderr through a rotating ring buffer" OFF)
+set(GVSOC_RING_TRACE_SIZE "500M" CACHE STRING "Per-file size for ring_tee rotation (e.g. 500M, 1G)")
+set(GVSOC_RING_TRACE_KEEP "3"    CACHE STRING "Number of rotating trace files to keep")
+
 #########################
 ##  Utility Functions  ##
 #########################
@@ -92,13 +99,34 @@ macro(add_gvsoc_emulation name target)
 	make_directory(${GVSOC_WORKDIR})
 	set(GVSOC_EXECUTABLE "${GVSOC_INSTALL_DIR}/bin/gvsoc")
 	set(GVSOC_BINARY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${name}")
-	add_custom_target(gvsoc_${name}
-		DEPENDS ${name}
-		WORKING_DIRECTORY ${GVSOC_WORKDIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/*.bin ${GVSOC_WORKDIR}/ || true
-		COMMAND ${GVSOC_EXECUTABLE} --target=${target} --binary ${GVSOC_BINARY} --work-dir=${GVSOC_WORKDIR} ${GVSOC_EXTRA_FLAGS} image flash run
-		COMMENT "Simulating deeploytest ${name} with gvsoc for the target ${target}"
-		POST_BUILD
-		USES_TERMINAL
-	)
+	if(GVSOC_RING_TRACE)
+		# Pipe gvsoc's stderr (where --trace events land) through ring_tee.py.
+		# We use bash process substitution so stdout still flows to the
+		# terminal untouched — only the trace stream gets capped.
+		set(_ring_tee "${CMAKE_SOURCE_DIR}/scripts/ring_tee.py")
+		string(REPLACE ";" " " _extra_flags_str "${GVSOC_EXTRA_FLAGS}")
+		set(_gvsoc_cmd
+			"'${GVSOC_EXECUTABLE}' --target=${target} --binary '${GVSOC_BINARY}' --work-dir='${GVSOC_WORKDIR}' ${_extra_flags_str} image flash run "
+			"2> >(python3 '${_ring_tee}' --prefix '${GVSOC_WORKDIR}/gv_trace' --size ${GVSOC_RING_TRACE_SIZE} --keep ${GVSOC_RING_TRACE_KEEP} >&2)")
+		string(CONCAT _gvsoc_cmd_str ${_gvsoc_cmd})
+		add_custom_target(gvsoc_${name}
+			DEPENDS ${name}
+			WORKING_DIRECTORY ${GVSOC_WORKDIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/*.bin ${GVSOC_WORKDIR}/ || true
+			COMMAND bash -c "${_gvsoc_cmd_str}"
+			COMMENT "Simulating ${name} with gvsoc (ring trace: ${GVSOC_RING_TRACE_KEEP} x ${GVSOC_RING_TRACE_SIZE} at ${GVSOC_WORKDIR}/gv_trace.*)"
+			POST_BUILD
+			USES_TERMINAL
+		)
+	else()
+		add_custom_target(gvsoc_${name}
+			DEPENDS ${name}
+			WORKING_DIRECTORY ${GVSOC_WORKDIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/*.bin ${GVSOC_WORKDIR}/ || true
+			COMMAND ${GVSOC_EXECUTABLE} --target=${target} --binary ${GVSOC_BINARY} --work-dir=${GVSOC_WORKDIR} ${GVSOC_EXTRA_FLAGS} image flash run
+			COMMENT "Simulating deeploytest ${name} with gvsoc for the target ${target}"
+			POST_BUILD
+			USES_TERMINAL
+		)
+	endif()
 endmacro()
