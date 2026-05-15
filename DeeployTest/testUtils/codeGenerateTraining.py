@@ -503,7 +503,8 @@ def build_shared_buffer_maps(train_onnx_path: str, opt_onnx_model) -> Tuple[Dict
     return shared_input_map, shared_output_map
 
 
-def _patch_shared_buffers(retStr: str, shared_input_map: Dict[int, int], shared_output_map: Dict[int, int]) -> str:
+def _patch_shared_buffers(retStr: str, shared_input_map: Dict[int, int], shared_output_map: Dict[int, int],
+                          train_c_source: str = "") -> str:
     """Redirect optimizer I/O buffers to Training's already-allocated buffers.
 
     Must be called AFTER the _TRAIN_PREFIX → _OPT_PREFIX substitution so that
@@ -558,12 +559,25 @@ def _patch_shared_buffers(retStr: str, shared_input_map: Dict[int, int], shared_
     _arena_pat = re.compile(r'(DeeployOptNetwork_(input|output)_(\d+))\s*=\s*\([^)]+\s*\*\s*\)'
                             r'\s*\(\s*\(char\s*\*\)\s*DeeployOptNetwork_MEMORYARENA_L\w+\s*\+\s*\d+\s*\)\s*;')
 
+    def _is_train_l2(train_idx: int) -> bool:
+        """Check if training input_N was allocated with pi_l2_malloc (promoted).
+        If so, sharing the pointer would send an L2 address to the optimizer's
+        closure_L3 pi_cl_ram_copy_2d → HyperRAM OOB."""
+        if not train_c_source:
+            return False
+        pat = rf'{_TRAIN_PREFIX}input_{train_idx}\s*=\s*\([^)]+\)\s*pi_l2_malloc\b'
+        return bool(re.search(pat, train_c_source))
+
     def _make_replacement(symbol: str, kind: str, idx: int) -> Optional[str]:
         if kind == "input" and idx in shared_input_map:
             train_idx = shared_input_map[idx]
+            if _is_train_l2(train_idx):
+                return None  # Don't share: training buffer at L2, optimizer expects L3
             return f'{symbol} = (float32_t *){_TRAIN_PREFIX}input_{train_idx};  /* shared with TrainingNetwork */'
         if kind == "output" and idx in shared_output_map:
             train_idx = shared_output_map[idx]
+            if _is_train_l2(train_idx):
+                return None
             return f'{symbol} = (float32_t *){_TRAIN_PREFIX}input_{train_idx};  /* in-place, shared with TrainingNetwork */'
         return None
 
@@ -887,7 +901,8 @@ void InitOptimizerNetwork(__attribute__((unused)) uint32_t core_id, __attribute_
     # Prefix substitution
     retStr = retStr.replace(_TRAIN_PREFIX, _OPT_PREFIX)
     # Replace malloc calls for shared weight/grad buffers with Training pointers
-    retStr = _patch_shared_buffers(retStr, shared_input_map or {}, shared_output_map or {})
+    retStr = _patch_shared_buffers(retStr, shared_input_map or {}, shared_output_map or {},
+                                   train_c_source = train_c_source or "")
     # Redirect optimizer L1/L2 arena mallocs to reuse training arenas
     if train_c_source:
         retStr = _patch_shared_arenas(retStr, train_c_source)
