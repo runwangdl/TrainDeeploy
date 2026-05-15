@@ -41,6 +41,7 @@ from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACU
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_PROMOTE_MODELS as SIRACUSA_L3_SINGLEBUFFER_PROMOTE_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
+from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS
 from test_siracusa_tiled_config import TRAINING_MODEL_OVERRIDES as SIRACUSA_TRAINING_MODEL_OVERRIDES
 from test_snitch_config import DEFAULT_NUM_CORES as SNITCH_DEFAULT_NUM_CORES
 from test_snitch_config import KERNEL_TESTS as SNITCH_KERNEL_TESTS
@@ -411,6 +412,43 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.promote
+@pytest.mark.training
+@pytest.mark.siracusa_tiled
+@pytest.mark.l3
+@pytest.mark.singlebuffer
+@pytest.mark.parametrize(
+    "test_params",
+    _generate_promote_test_params(SIRACUSA_L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS),
+    ids = _promote_param_id,
+)
+def test_siracusa_tiled_training_promote_l3_singlebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir,
+                                                         cmake_args, skipgen, skipsim) -> None:
+    """L3 training + PromoteTensorsToL2 regression (MobileNetV1 + CCT)."""
+    test_name, l1, strategy, include_acts, promote = test_params
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = cmake_args,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = l1,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+        promote_to_l2 = promote,
+        promote_to_l2_strategy = strategy if promote else "cycle-aware",
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 

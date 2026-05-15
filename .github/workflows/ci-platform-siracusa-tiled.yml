@@ -55,3 +55,12 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "promote and not training"
+
+  # Training L3 + PromoteTensorsToL2 regression (MobileNetV1 + CCT)
+  siracusa-training-tiled-promote:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and training"

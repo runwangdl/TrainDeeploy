@@ -198,6 +198,20 @@ TRAINING_MODEL_OVERRIDES = {
     },
 }
 
+# Training models tested with PromoteTensorsToL2.
+# Same shape as the inference promote dict: test path -> list of
+# (l1, strategy, includeActivations). "off" = baseline (no promotion).
+L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/MobileNetV1/mobilenetv1_train": [
+        (128000, "off", False),
+        (128000, "cycle-aware", True),
+    ],
+    "Models/Training/CCT/cct_train": [
+        (128000, "off", False),
+        (128000, "cycle-aware", True),
+    ],
+}
+
 # Inference models tested with PromoteTensorsToL2.
 # Each entry maps test path -> list of (l1, strategy, includeActivations).
 # "off" strategy = no promotion (baseline for cycle comparison).
