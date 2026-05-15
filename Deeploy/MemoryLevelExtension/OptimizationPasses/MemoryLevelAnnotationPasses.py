@@ -46,6 +46,17 @@ class AnnotateIOMemoryLevel(SequentialPass):
         buffers += filter(lambda _buffer: isinstance(_buffer, ctxt.VariableBuffer), outputBuffers)
 
         for _buffer in buffers:
+            # Don't override a buffer that PromoteTensorsToL2 has already
+            # moved to a non-default level. The annotation pipeline runs
+            # multiple times (pre-bind, post-bind, codeTransform); on the
+            # second/third invocation AnnotateIOMemoryLevel would reset
+            # promoted graph I/O back to ioLevel (L3), but tiling codegen
+            # from the first invocation already assumed L2 — the mismatch
+            # causes InitTrainingNetwork to cl_ram_malloc (L3) while the
+            # closure uses mchan (L1↔L2 only) → DMA hang.
+            current = getattr(_buffer, '_memoryLevel', None)
+            if current is not None and current != self.ioLevel:
+                continue
             _buffer._memoryLevel = self.ioLevel
 
         return ctxt, graph
@@ -102,7 +113,9 @@ class PromoteTensorsToL2(SequentialPass):
     # one of the non-BN op paths (Conv / ConvGrad / Transpose / ReluGrad).
     # That second bug is not in scope for this fix and needs its own
     # bisection.
-    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity', 'BatchNormInternal', 'LayerNormalization'}
+    _SKIP_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity',
+                  'BatchNormInternal', 'BatchNormalizationGrad',
+                  'LayerNormalization', 'LayerNormalizationGrad'}
 
     def __init__(self,
                  l2Size: int,
@@ -260,6 +273,12 @@ class PromoteTensorsToL2(SequentialPass):
                 if len(buf._users) <= 1:
                     continue
                 size = self._bufferSize(buf)
+                # Skip tiny graph I/O (step counters, reset flags, 1-element
+                # scalars). These are training-loop control variables, not
+                # weight tensors — promoting them wastes L2 and may confuse
+                # the optimizer harness which shares pointers across networks.
+                if size < 8:
+                    continue
                 if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                     continue
                 if size < self.minBufferBytes:
