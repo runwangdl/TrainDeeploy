@@ -249,7 +249,7 @@ class PromoteTensorsToL2(SequentialPass):
             # weight-and-grad tensors account for ~950 KB of L3 use. The Siracusa
             # training harness's l3_aware_copy() / IS_L2() helpers already handle
             # an L2-resident graph I/O destination correctly, so we can promote them.
-            for name, buf in ctxt.globalObjects.items():
+            for name, buf in []:  # Disabled: graph I/O promote causes OOB on CCT training
                 if not isinstance(buf, VariableBuffer):
                     continue
                 if isinstance(buf, (ConstantBuffer, _ReferenceBuffer)):
