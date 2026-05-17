@@ -45,7 +45,7 @@ jobs:
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l3 and singlebuffer"
+      pytest-marker: "training and l3 and singlebuffer and not promote"
 
   # Inference L3 + PromoteTensorsToL2 regression
   siracusa-inference-tiled-promote:
