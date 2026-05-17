@@ -34,6 +34,7 @@ def parse_size(s):
 
 
 class RingTee:
+
     def __init__(self, prefix, size, keep, passthrough, heartbeat):
         self.prefix = prefix
         self.size = size
@@ -97,20 +98,18 @@ class RingTee:
         except Exception as e:
             sys.stderr.write("[ring_tee] snapshot failed: %s\n" % e)
 
-    def _hb(self, force=False):
+    def _hb(self, force = False):
         now = time.monotonic()
         if not force and now - self.last_hb < self.heartbeat:
             return
         self.last_hb = now
-        sys.stderr.write(
-            "[ring_tee] +%4ds total=%dMB file=%d fill=%dMB/%dMB\n" % (
-                int(now - self.start),
-                self.total_bytes >> 20,
-                self.idx % self.keep,
-                self.bytes_in_file >> 20,
-                self.size >> 20,
-            )
-        )
+        sys.stderr.write("[ring_tee] +%4ds total=%dMB file=%d fill=%dMB/%dMB\n" % (
+            int(now - self.start),
+            self.total_bytes >> 20,
+            self.idx % self.keep,
+            self.bytes_in_file >> 20,
+            self.size >> 20,
+        ))
         sys.stderr.flush()
 
     def run(self):
@@ -144,29 +143,27 @@ class RingTee:
                 self.fh.close()
             except Exception:
                 pass
-            self._hb(force=True)
-            sys.stderr.write("[ring_tee] done, total=%dMB across %d file(s)\n" % (
-                self.total_bytes >> 20, min(self.idx + 1, self.keep)))
+            self._hb(force = True)
+            sys.stderr.write("[ring_tee] done, total=%dMB across %d file(s)\n" %
+                             (self.total_bytes >> 20, min(self.idx + 1, self.keep)))
             sys.stderr.flush()
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--prefix', required=True,
-                    help='Output prefix; writes <prefix>.0 .. <prefix>.{keep-1}')
-    ap.add_argument('--size', default='500M',
-                    help='Per-file size (default 500M). Suffixes K/M/G.')
-    ap.add_argument('--keep', type=int, default=3,
-                    help='Number of rotating files to keep (default 3)')
-    ap.add_argument('--passthrough', action='store_true',
-                    help='Also echo stdin to stdout (default: silent on stdout)')
-    ap.add_argument('--heartbeat', type=float, default=5.0,
-                    help='Heartbeat to stderr every N seconds (default 5)')
+    ap = argparse.ArgumentParser(description = __doc__, formatter_class = argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('--prefix', required = True, help = 'Output prefix; writes <prefix>.0 .. <prefix>.{keep-1}')
+    ap.add_argument('--size', default = '500M', help = 'Per-file size (default 500M). Suffixes K/M/G.')
+    ap.add_argument('--keep', type = int, default = 3, help = 'Number of rotating files to keep (default 3)')
+    ap.add_argument('--passthrough',
+                    action = 'store_true',
+                    help = 'Also echo stdin to stdout (default: silent on stdout)')
+    ap.add_argument('--heartbeat',
+                    type = float,
+                    default = 5.0,
+                    help = 'Heartbeat to stderr every N seconds (default 5)')
     args = ap.parse_args()
-    os.makedirs(os.path.dirname(os.path.abspath(args.prefix)) or '.', exist_ok=True)
-    RingTee(args.prefix, parse_size(args.size), args.keep,
-            args.passthrough, args.heartbeat).run()
+    os.makedirs(os.path.dirname(os.path.abspath(args.prefix)) or '.', exist_ok = True)
+    RingTee(args.prefix, parse_size(args.size), args.keep, args.passthrough, args.heartbeat).run()
 
 
 if __name__ == '__main__':
