@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import os
+
 import pytest
 # Import platform-specific test configurations
 from test_chimera_config import KERNEL_TESTS as CHIMERA_KERNEL_TESTS
@@ -40,6 +42,7 @@ from test_siracusa_tiled_config import L2_DOUBLEBUFFER_KERNELS, L2_DOUBLEBUFFER_
 from test_siracusa_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L2_SINGLEBUFFER_TRAINING_MODELS
 from test_siracusa_tiled_config import L3_DOUBLEBUFFER_MODELS, L3_SINGLEBUFFER_MODELS
 from test_siracusa_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as SIRACUSA_L3_SINGLEBUFFER_TRAINING_MODELS
+from test_siracusa_tiled_config import L3_UNTILED_TRAINING_MODELS as SIRACUSA_L3_UNTILED_TRAINING_MODELS
 from test_siracusa_tiled_config import TRAINING_MODEL_OVERRIDES as SIRACUSA_TRAINING_MODEL_OVERRIDES
 from test_snitch_config import DEFAULT_NUM_CORES as SNITCH_DEFAULT_NUM_CORES
 from test_snitch_config import KERNEL_TESTS as SNITCH_KERNEL_TESTS
@@ -330,6 +333,9 @@ def test_siracusa_train_kernels(test_name, deeploy_test_dir, toolchain, toolchai
 @pytest.mark.training
 @pytest.mark.parametrize("test_name", SIRACUSA_TRAINING_TESTS, ids = SIRACUSA_TRAINING_TESTS)
 def test_siracusa_training(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen, skipsim) -> None:
+    # Reuse the tiled overrides table — same models, same tolerance / data-input
+    # quirks regardless of whether tiling is on.
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     config = create_test_config(
         test_name = test_name,
         platform = "Siracusa",
@@ -341,6 +347,8 @@ def test_siracusa_training(test_name, deeploy_test_dir, toolchain, toolchain_dir
         tiling = False,
         cores = SIRACUSA_DEFAULT_CORES,
         training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
@@ -411,6 +419,97 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.siracusa_tiled
+@pytest.mark.training
+@pytest.mark.untiled
+@pytest.mark.l3
+@pytest.mark.parametrize(
+    "test_name",
+    list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
+    ids = list(SIRACUSA_L3_UNTILED_TRAINING_MODELS.keys()),
+)
+def test_siracusa_tiled_training_l3_untiled(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen,
+                                            skipsim) -> None:
+    """Untiled-L3 baseline.
+
+    SBTiler picks single-tile-per-tensor schedules (--l1 inflated above the
+    op working set so no spatial split happens).  The generated C is one
+    kernel call per op with integral L3↔L2 DMA wrappers.
+
+    To make the L1 staging buffer physically live in FC L2 (so cycles
+    represent "kernel actually accessing L2"), we post-process the
+    generated TrainingNetwork.c / OptimizerNetwork.c after codegen but
+    before cmake build:
+
+        pmsis_l1_malloc -> pi_l2_malloc
+        PI_L1           -> PI_L2
+
+    Every L1-annotated buffer ends up in FC L2.  Cluster cores access L2
+    via the fabric (~7x slower than real L1) — that's the deliberate
+    semantics of "untiled L2-resident".  No fake-L1 shim, no linker wrap,
+    no SDK pollution.
+    """
+    from pathlib import Path
+
+    from testUtils.core.execution import build_binary, configure_cmake, generate_network, run_simulation
+
+    fixture = SIRACUSA_L3_UNTILED_TRAINING_MODELS[test_name]
+    overrides = SIRACUSA_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    effective_skipsim = skipsim or (os.environ.get("CI") == "true" and fixture.get("skip_sim_in_ci", False))
+    # DEEPLOY_L1_AS_L2 is what flips mchan_transfer_1d to memcpy in mchan_v7.h —
+    # mandatory partner of the codegen sed below.
+    extra_cmake = list(cmake_args) + ["-DDEEPLOY_L1_AS_L2=ON"]
+    # Optional per-fixture training-step caps.  Some untiled-L3 models hit FC
+    # L2 heap limits when testinputs.h carries 4-batch data; capping reduces
+    # the .data footprint while keeping per-step cycle measurement valid.
+    extra_gen = []
+    if "n_steps" in fixture:
+        extra_gen.append(f"--n-steps={fixture['n_steps']}")
+    if "n_accum" in fixture:
+        extra_gen.append(f"--n-accum={fixture['n_accum']}")
+    # Per-fixture num_data_inputs override (lets a fixture force the value
+    # the model overrides don't set globally — needed when a multi-input
+    # model triggers a code-path bug only with NUM_DATA_INPUTS > 1).
+    fixture_num_data = fixture.get("num_data_inputs", overrides.get("num_data_inputs"))
+    config = create_test_config(
+        test_name = test_name,
+        platform = "Siracusa",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = extra_cmake,
+        tiling = True,
+        cores = SIRACUSA_DEFAULT_CORES,
+        l1 = fixture["l1"],
+        l2 = fixture["l2"],
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = fixture_num_data,
+        training_tolerance = overrides.get("tolerance"),
+        gen_args = extra_gen,
+    )
+
+    # Inline the test runner stages so we can sed between codegen and build.
+    generate_network(config, skip = skipgen)
+    for c_name in ("TrainingNetwork.c", "OptimizerNetwork.c"):
+        c_path = Path(config.gen_dir) / c_name
+        if not c_path.exists():
+            continue
+        text = c_path.read_text()
+        text = text.replace("pmsis_l1_malloc", "pi_l2_malloc")
+        text = text.replace("PI_L1 ", "PI_L2 ")
+        c_path.write_text(text)
+    configure_cmake(config)
+    build_binary(config)
+    result = run_simulation(config, skip = effective_skipsim)
+    assert result.success, (f"Test {test_name} failed with {result.error_count} errors out of "
+                            f"{result.total_count}\nOutput:\n{result.stdout}")
+    if result.error_count >= 0:
+        assert result.error_count == 0, (f"Found {result.error_count} errors out of {result.total_count} tests")
 
 
 @pytest.mark.siracusa_tiled

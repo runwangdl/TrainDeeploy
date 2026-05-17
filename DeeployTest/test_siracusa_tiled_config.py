@@ -165,11 +165,87 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 
 # Training-enabled tiled models that need L3 spill (weights/activations don't
 # fit in L2). Same shape: test path -> list of L1 sizes (bytes).
+# TEMPORARY: only big-CCT enabled — the other 3 already have tiled cycle
+# data from earlier CI runs.  Restore the entries below before merging.
 L3_SINGLEBUFFER_TRAINING_MODELS = {
-    "Models/Training/ResNet8/resnet8_train": [128000],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
+    # "Models/Training/ResNet8/resnet8_train": [128000],
+    # "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
     "Models/Training/CCT/cct_train": [128000],
-    "Models/Training/CCT_LoRA/cct_lora_train": [128000],
+    # "Models/Training/CCT_LoRA/cct_lora_train": [128000],
+}
+
+# Untiled-L3 baseline.  Same fixtures as L3_SINGLEBUFFER_TRAINING_MODELS but
+# the L1 budget is inflated so the SBTiler picks single-tile-per-tensor
+# schedules (numTiles == 1 on every dim) — semantically untiled per op, but
+# still uses the tile-codegen DMA wrappers because cluster cores cannot deref
+# HyperRAM directly. The L1 working buffer ends up larger than physical
+# Siracusa L1 (256 KB), so the deeploy_fake_l1 shim redirects pi_cl_l1_malloc
+# into an FC-L2 arena via -Wl,--wrap; size cap = DEEPLOY_FAKE_L1_SIZE (set
+# per-fixture below to fit the model's peak L1 working set with headroom).
+#
+# Maps test_name -> dict with:
+#   l1: planner-side L1 size (forces single-tile schedules)
+#   l2: planner-side L2 size
+#   fake_l1_size: physical bytes for the FC-L2 arena backing pi_cl_l1_malloc
+#
+# fake_l1_size baselining method: spike with --l1=4_000_000 → read off
+# MEMORYARENA_L1 size from generated TrainingNetwork.c → round up.
+# Untiled-L3 baseline — single-tile-per-tensor schedules for every L3
+# training model so the user can read off "untiled L3 latency" alongside
+# the existing tiled-L3 cycles.
+#
+# Each fixture goes through the same SBTiler infrastructure as the L3
+# singlebuffer tests, with --l1 inflated to the smallest value that
+# yields the minimal-tile shape (one kernel call per op + integral
+# L3↔L2 DMA, no spatial split).
+#
+# After codegen, the test post-processes TrainingNetwork.c /
+# OptimizerNetwork.c to swap pmsis_l1_malloc → pi_l2_malloc and
+# PI_L1 → PI_L2, so every L1-annotated buffer physically lives in
+# FC L2.  Cluster cores access these via the fabric (~7x slower than
+# real L1) — that's the deliberate semantics of "untiled L2-resident".
+#
+# skip_sim_in_ci: True for fixtures where gvsoc has historically OOMed
+# during the long single-tile loop.  CI still verifies codegen +
+# compile + link in that case; sim is deferred to a manual local run
+# or a beefier runner.
+L3_UNTILED_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": {
+        # Big-CCT (img_size=32, embedding_dim=128, n_conv_layers=2) — peak
+        # L1 working = 524 KB > physical L1 (256 KB).  --l1=200K..400K
+        # trip a codegen assert ("Keys should be the same while generating
+        # DMA transfer for tensor 'data_in'/'data_out'"); 800K is the
+        # smallest value that gets through to a clean schedule.
+        "l1": 800_000,
+        "l2": 2_000_000,
+        # Use the default training schedule (n_steps=4 / n_accum=1 from
+        # inputs.npz) so per-step cycles are computed the same way as the
+        # tiled L3 baseline (BENCH total / 4).
+        "num_data_inputs": 1,
+        "skip_sim_in_ci": False,
+    },
+    # Other 3 fixtures (CCT_LoRA, ResNet8, MobileNetV1) temporarily
+    # disabled so this CI run isolates the big-CCT untiled measurement.
+    # Restore the entries below before merging.
+    #
+    # "Models/Training/CCT_LoRA/cct_lora_train": {
+    #     "l1": 64_000,
+    #     "l2": 2_000_000,
+    #     "skip_sim_in_ci": False,
+    # },
+    # "Models/Training/ResNet8/resnet8_train": {
+    #     "l1": 800_000,
+    #     "l2": 2_000_000,
+    #     "skip_sim_in_ci": False,
+    # },
+    # "Models/Training/MobileNetV1/mobilenetv1_train": {
+    #     "l1": 800_000,
+    #     "l2": 2_000_000,
+    #     "n_steps": 1,
+    #     "n_accum": 1,
+    #     "num_data_inputs": 1,
+    #     "skip_sim_in_ci": False,
+    # },
 }
 
 # Per-model overrides for training tests.

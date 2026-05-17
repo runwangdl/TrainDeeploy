@@ -87,6 +87,8 @@ def pytest_configure(config: pytest.Config) -> None:
         "markers", "train_kernel: mark test as a training-related single-op kernel test (grad / loss / optimizer)")
     config.addinivalue_line("markers", "singlebuffer: mark test as single-buffer configuration")
     config.addinivalue_line("markers", "doublebuffer: mark test as double-buffer configuration")
+    config.addinivalue_line(
+        "markers", "untiled: mark test as untiled-baseline (single-tile-per-tensor schedule via fake-L1 shim)")
     config.addinivalue_line("markers", "l2: mark test as L2 default memory level")
     config.addinivalue_line("markers", "l3: mark test as L3 default memory level")
     config.addinivalue_line("markers", "wmem: mark test as using Neureka weight memory")

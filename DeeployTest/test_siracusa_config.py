@@ -113,6 +113,18 @@ TRAIN_KERNEL_TESTS = [
 # Training-enabled models (use deeployTrainingRunner / testMVPTraining pipeline).
 # Each entry is the path to a `<model>_train` directory; the matching
 # `<model>_optimizer` directory must live next to it.
+#
+# Untiled-L3 baseline scope:
+#   The untiled path emits one pi_l2_malloc per buffer; the SUM of these calls
+#   must fit in the Siracusa FC-L2 heap (~1 MB usable after BSS/stack). Models
+#   below have a verified untiled L2 footprint within that ceiling:
+#     - SimpleMLP        ~0.05 MB
+#     - CCT_LoRA         ~0.4  MB
+#     - CCT              ~0.7  MB
+#   ResNet8 (~9.3 MB) and MobileNetV1 (~17 MB) need an L2-heap override that
+#   lives in a separate task — they stay tiled-only for now.
 TRAINING_TESTS = [
     "Models/Training/SimpleMLP/simplemlp_train",
+    "Models/Training/CCT/cct_train",
+    "Models/Training/CCT_LoRA/cct_lora_train",
 ]

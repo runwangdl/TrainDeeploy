@@ -17,6 +17,10 @@ name: _runner-siracusa-tiled
       pytest-marker:
         required: true
         type: string
+      pytest-extra-args:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   test-runner-siracusa-tiled:
@@ -36,5 +40,24 @@ jobs:
       - name: Run Test
         run: |
           cd DeeployTest
-          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}"
+          # Memory snapshot helps diagnose 137/OOM kills postmortem.
+          echo "=== free -m before pytest ==="; free -m || true
+          pytest test_platforms.py -v -m "siracusa_tiled and ${{ inputs.pytest-marker }}" ${{ inputs.pytest-extra-args }}
+          echo "=== free -m after pytest ==="; free -m || true
         shell: bash
+      - name: Build footprint summary
+        if: always()
+        env:
+          FOOTPRINT_SUMMARY_LABEL: ${{ inputs.pytest-marker }}
+        run: |
+          cd DeeployTest
+          python3 ../scripts/ci_footprint_summary.py TEST_SIRACUSA || true
+        shell: bash
+      - name: Upload sim out.txt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-out-${{ inputs.pytest-marker }}
+          path: DeeployTest/out.txt
+          if-no-files-found: ignore
+          retention-days: 7
