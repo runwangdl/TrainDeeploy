@@ -1192,6 +1192,6 @@ def test_siracusa_tiled_training_promote_l3_singlebuffer(test_params, deeploy_te
         training_tolerance = overrides.get("tolerance"),
         promote_to_l2 = promote,
         promote_to_l2_strategy = strategy if promote else "cycle-aware",
-        promote_to_l2_headroom = 450000,
+        promote_to_l2_headroom = 200000,
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)

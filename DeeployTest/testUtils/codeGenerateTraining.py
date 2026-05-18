@@ -127,7 +127,7 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 paddingElements = (pad_bytes * 8 + typeWidth - 1) // typeWidth
                 list_str += ", " + ", ".join("0" for _ in range(paddingElements))
 
-            retStr += f"{typeName} {buf_name}[] = {{{list_str}}};\n"
+            retStr += f'__attribute__((section(".weightmem_sram"))) {typeName} {buf_name}[] = {{{list_str}}};\n'
 
         # Emit the row pointer array for this mini-batch
         row_name = f"testDataRow{mb}"
