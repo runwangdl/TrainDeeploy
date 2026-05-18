@@ -331,11 +331,24 @@ class PromoteTensorsToL2(SequentialPass):
                 return False
             return getattr(buf, '_memoryLevel', None) == 'L2'
 
-        already_l2 = sum(
-            self._bufferSize(buf) for buf in {
-                **ctxt.globalObjects,
-                **ctxt.localObjects
-            }.values() if _occupies_standalone_l2(buf))
+        # Split already_l2 into const (sum) and var (sweep-line peak).
+        # Before tile() runs, _packedIntoPool isn't set, so promoted vars
+        # are still standalone. Using raw sum vastly overestimates the L2
+        # footprint (~4MB on MobileNetV1 vs ~783KB packed peak), causing
+        # the budget check to reject valid promotions and minimalloc to
+        # overlap MEMORYARENA_L2 with the promotion pool.
+        _already_const = 0
+        _already_var_blocks = []
+        for buf in {**ctxt.globalObjects, **ctxt.localObjects}.values():
+            if not _occupies_standalone_l2(buf):
+                continue
+            sz = self._bufferSize(buf)
+            lt = getattr(buf, '_lifetime', None)
+            if lt is not None and not isinstance(buf, ConstantBuffer):
+                _already_var_blocks.append((sz, lt))
+            else:
+                _already_const += sz
+        already_l2 = _already_const + self._sweepLinePeak(_already_var_blocks)
         promoted = []
         # Refuse to promote anything once tile() has frozen allocations: the
         # codegen for each buffer was emitted for the level it had at tile time,
@@ -392,12 +405,10 @@ class PromoteTensorsToL2(SequentialPass):
             if lt is None:
                 continue
             var_blocks.append((self._bufferSize(buf), lt))
-        # Fixed bytes occupied by stuff we cannot pack: prior consts + non-
-        # lifetime-tracked prior buffers (already_l2 minus the var-sum we
-        # replace with var-peak). Prior consts stay summed; prior vars get
-        # replaced by their packed peak.
-        prior_var_sum = sum(sz for sz, _ in var_blocks)
-        fixed_prior = already_l2 - prior_var_sum  # consts + untracked
+        # Fixed bytes: the const portion of already_l2. The var portion is
+        # tracked via var_blocks (sweep-line), so fixed_prior must NOT
+        # subtract the raw var sum (already_l2 uses sweep peak for vars).
+        fixed_prior = _already_const
 
         def trial_total(extra_const_bytes, vblocks):
             return fixed_prior + const_used + extra_const_bytes + self._sweepLinePeak(vblocks)
