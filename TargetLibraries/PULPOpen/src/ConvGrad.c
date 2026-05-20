@@ -76,7 +76,6 @@ struct DepthWise_Conv_args {
 };
 
 void pulp_conv_pw_fp32_bw_param_grads_cl(void *PointWise_Conv_args);
-void pulp_conv_pw_fp32_bw_input_grads_cl(void *PointWise_Conv_args);
 
 struct PointWise_Conv_args {
   struct blob *input;
@@ -90,30 +89,6 @@ struct PointWise_Conv_args {
   int opt_matmul_type_ig;
   int HWC;
 };
-
-// Minimal declarations for direct transpose + GEMM in PWConvGradX
-struct transp_args {
-  float *in_matrix;
-  float *out_matrix;
-  int N;
-  int M;
-  int *dim;
-  int *transposed_axes;
-  int n_dim;
-};
-
-struct matMul_args {
-  float *__restrict__ A;
-  float *__restrict__ B;
-  float *__restrict__ C;
-  int N;
-  int M;
-  int K;
-  int trans_B;
-};
-
-void transpose_matrix(void *void_args);
-void mm(void *void_args);
 
 void PULP_ConvGradW2d_fp32_fp32_fp32_CHW(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
@@ -729,13 +704,6 @@ void PULP_PWConvGradW2d_fp32_fp32_fp32_CHW(
   pulp_conv_pw_fp32_bw_param_grads_cl(&pw_args);
 }
 
-// Direct PW ConvGradX worker. Eliminates the per-call weight transpose +
-// pulp-trainlib mm: those required a Cin*Cout transient buffer in L1, which
-// for MobileNetV1 block 6-10 PW layers (Cin=Cout=128) eats 64 KB of the
-// 128 KB scratch and forces the tiler to fragment Cin/H/W into ~36 tiles.
-// Each tile then pays an L3<->L2 DMA + sync cost ~25x larger than the
-// actual compute. The direct kernel keeps the inner axpy fully contiguous
-// and parallelizes over Cin without scratch.
 typedef struct {
   const float *pGradOut;
   const float *pWeight;
@@ -745,7 +713,7 @@ typedef struct {
   uint32_t HW;
 } pw_convgradx_args_t;
 
-static void pulp_pw_convgradx_fp32_worker(void *arg_) {
+static void PULP_PWConvGradX2d_worker(void *arg_) {
   const pw_convgradx_args_t *a = (const pw_convgradx_args_t *)arg_;
   const uint32_t Cin = a->C_in;
   const uint32_t Cout = a->C_out;
@@ -802,7 +770,7 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
       .C_in = C_in,
       .HW = H_out * W_out,
   };
-  pi_cl_team_fork(NUM_CORES, pulp_pw_convgradx_fp32_worker, &args);
+  pi_cl_team_fork(NUM_CORES, PULP_PWConvGradX2d_worker, &args);
 }
 
 // Tile-aware Im2Col-based ConvGradX kernel with offset support
@@ -1062,9 +1030,6 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
   }
 }
 
-// Tile-aware DW ConvGradX using pulp-trainlib gather kernel (register
-// accumulation, single write per dX pixel).  Drop-in replacement for
-// PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_tiled with identical signature.
 void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
     const float *__restrict__ pGradOut,
     uint32_t dim_im_out_x, // H_out (tile)
@@ -1140,12 +1105,3 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
   pulp_conv_dw_fp32_bw_input_grads_tiled_cl(&dw_args);
 }
 
-
-// OLD scatter-based DW ConvGradX — DELETED.
-// Replaced by PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled above,
-// which uses the trainlib gather kernel (register accumulation, single
-// write per dX pixel) via ClusterTransformer binding.
-//
-// The old kernel used a scatter pattern (co outer, dX written C_out times),
-// while the trainlib kernel uses gather (dX pixel outer, temp register
-// accumulates all contributions, written once).
