@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#include "ConvGrad_internal.h"
+#include "DeeployPULPMath.h"
+#include "pmsis.h"
 
 // ============================================================================
 // Depthwise Convolution Gradient Kernels
