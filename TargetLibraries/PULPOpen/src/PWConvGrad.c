@@ -130,3 +130,4 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
       .HW = H_out * W_out,
   };
   pi_cl_team_fork(NUM_CORES, pw_kernel_input_grad, &args);
+}
