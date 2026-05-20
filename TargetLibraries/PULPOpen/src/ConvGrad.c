@@ -1,4 +1,3 @@
-
 /*
  * SPDX-FileCopyrightText: 2023 ETH Zurich and University of Bologna
  *
@@ -9,7 +8,8 @@
 #include "pmsis.h"
 
 // ============================================================================
-// Minimal pulp-trainlib interface - avoiding pulp_train_defines.h conflicts
+// pulp-trainlib interface structs (local forward declarations to avoid
+// pulling in pulp_train_defines.h which conflicts with Deeploy headers)
 // ============================================================================
 
 struct blob {
@@ -21,6 +21,7 @@ struct blob {
   int C;
 };
 
+// --- Regular Conv2D (pulp-trainlib) ---
 void pulp_conv2d_fp32_bw_param_grads_cl(void *Conv2D_args);
 void pulp_conv2d_fp32_bw_input_grads_cl(void *Conv2D_args);
 
@@ -29,66 +30,39 @@ struct Conv2D_args {
   struct blob *coeff;
   struct blob *bias;
   struct blob *output;
-  int Lpad;
-  int Rpad;
-  int Upad;
-  int Dpad;
-  int stride_h;
-  int stride_w;
-  float *i2c_buffer;
-  float *bt_buffer;
-  int skip_wg_grad;
-  int skip_in_grad;
-  int HWC;
-  int opt_matmul_type_fw;
-  int opt_matmul_type_wg;
-  int opt_matmul_type_ig;
-  int USE_BIASES;
-  int USE_IM2COL;
-  int USE_DMA_IM2COL;
+  int Lpad;  int Rpad;  int Upad;  int Dpad;
+  int stride_h;  int stride_w;
+  float *i2c_buffer;  float *bt_buffer;
+  int skip_wg_grad;  int skip_in_grad;  int HWC;
+  int opt_matmul_type_fw;  int opt_matmul_type_wg;  int opt_matmul_type_ig;
+  int USE_BIASES;  int USE_IM2COL;  int USE_DMA_IM2COL;
 };
 
-void pulp_conv_dw_fp32_bw_input_grads_tiled_cl(void *DepthWise_Conv_args);
+// --- Depthwise Conv (pulp-trainlib) ---
 void pulp_conv_dw_fp32_bw_param_grads_cl(void *DepthWise_Conv_args);
+void pulp_conv_dw_fp32_bw_input_grads_tiled_cl(void *DepthWise_Conv_args);
 
 struct DepthWise_Conv_args {
-  struct blob *input;
-  struct blob *coeff;
-  struct blob *output;
-
-  int stride_h;
-  int stride_w;
-
-  int Lpad;
-  int Rpad;
-  int Upad;
-  int Dpad;
-
-  int skip_wg_grad;
-  int skip_in_grad;
-
-  int HWC;
-
-  int offset_in_h;
-  int offset_in_w;
-  int offset_out_h;
-  int offset_out_w;
+  struct blob *input;  struct blob *coeff;  struct blob *output;
+  int stride_h;  int stride_w;
+  int Lpad;  int Rpad;  int Upad;  int Dpad;
+  int skip_wg_grad;  int skip_in_grad;  int HWC;
+  int offset_in_h;  int offset_in_w;  int offset_out_h;  int offset_out_w;
 };
 
+// --- Pointwise Conv (pulp-trainlib, GradW only) ---
 void pulp_conv_pw_fp32_bw_param_grads_cl(void *PointWise_Conv_args);
 
 struct PointWise_Conv_args {
-  struct blob *input;
-  struct blob *coeff;
-  struct blob *output;
+  struct blob *input;  struct blob *coeff;  struct blob *output;
   float *transpose_buffer;
-  int skip_wg_grad;
-  int skip_in_grad;
-  int opt_matmul_type_fw;
-  int opt_matmul_type_wg;
-  int opt_matmul_type_ig;
-  int HWC;
+  int skip_wg_grad;  int skip_in_grad;  int HWC;
+  int opt_matmul_type_fw;  int opt_matmul_type_wg;  int opt_matmul_type_ig;
 };
+
+// ============================================================================
+// Utility
+// ============================================================================
 
 void PULP_ConvGradW2d_fp32_fp32_fp32_CHW(
     const float *__restrict__ pGradOut, uint32_t H_out, uint32_t W_out,
