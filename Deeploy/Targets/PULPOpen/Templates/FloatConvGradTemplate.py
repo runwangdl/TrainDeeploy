@@ -322,13 +322,13 @@ for (uint32_t n=0; n<${batch}; ++n) {
 """)
 
 referenceDWConvGradX2DTiledTemplate = NodeTemplate("""
-// 2D FP DW ConvGradX (dX) CHW tiled (Name: ${nodeName}, Op: ${nodeOp})
+// 2D FP DW ConvGradX (dX) CHW tiled — trainlib gather kernel (Name: ${nodeName}, Op: ${nodeOp})
 ${grad_out_type.typeName}  ref_${grad_out} = ${grad_out};   // dY
 ${weight_type.typeName}   ref_${weight}  = ${weight};    // W
 ${grad_in_type.typeName}  ref_${grad_in}_out = ${grad_in};  // dX
 
 for (uint32_t n=0; n<${batch}; ++n) {
-    PULP_DWConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_tiled(
+    PULP_DWConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_trainlib_tiled(
         ref_${grad_out},
         ${dim_im_out_x}, ${dim_im_out_y}, ${ch_im_out},
         ref_${weight},

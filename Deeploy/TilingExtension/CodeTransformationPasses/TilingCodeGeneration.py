@@ -187,20 +187,23 @@ class TilingCodeGeneration(CodeTransformationPass, IntrospectiveCodeTransformati
 
         if isFinalMemoryLevel:
             minimizedTransfers = []
+            consistent = True
             for rect in transfers:
                 paddedRect = HyperRectangle(padOffset(rect.offset, commonRank), padShape(rect.dims, commonRank))
                 minRect, newMinOuterShape = minimizeRectangle(paddedRect, outerShape)
                 if minOuterShape is None:
                     minOuterShape = newMinOuterShape
-                else:
-                    if minOuterShape != newMinOuterShape:
-                        rectStr = "\n".join(str(trans) for trans in transfers[:transfers.index(rect)])
-                        raise RuntimeError(f"""Currently support a single minimal outer shape.
-Old minOuterShape: {minOuterShape} vs. new minOuterShape {newMinOuterShape}.
-New minOuterShape produced by outerDims: {outerShape} and rect: {rect}.
-Old minOuterShape produced by outerDims: {outerShape} and rects:
-{rectStr}""")
+                elif minOuterShape != newMinOuterShape:
+                    consistent = False
+                    break
                 minimizedTransfers.append(minRect)
+
+            if not consistent:
+                # Edge tiles may minimize to a different rank than full tiles.
+                # Fall back to flat 1-D representation so all tiles share one
+                # common outer shape.
+                minimizedTransfers = [HyperRectangle((0,), (int(np.prod(rect.dims)),)) for rect in transfers]
+                minOuterShape = (int(np.prod(outerShape)),)
         else:
             minimizedTransfers = [HyperRectangle((0,), (int(np.prod(rect.dims)),)) for rect in transfers]
             minOuterShape = (int(np.prod(outerShape)),)
