@@ -713,7 +713,7 @@ typedef struct {
   uint32_t HW;
 } pw_convgradx_args_t;
 
-static void PULP_PWConvGradX2d_worker(void *arg_) {
+static void pw_kernel_input_grad(void *arg_) {
   const pw_convgradx_args_t *a = (const pw_convgradx_args_t *)arg_;
   const uint32_t Cin = a->C_in;
   const uint32_t Cout = a->C_out;
@@ -770,7 +770,7 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
       .C_in = C_in,
       .HW = H_out * W_out,
   };
-  pi_cl_team_fork(NUM_CORES, PULP_PWConvGradX2d_worker, &args);
+  pi_cl_team_fork(NUM_CORES, pw_kernel_input_grad, &args);
 }
 
 // Tile-aware Im2Col-based ConvGradX kernel with offset support
