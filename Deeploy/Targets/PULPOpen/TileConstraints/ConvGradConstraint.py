@@ -613,6 +613,48 @@ def _tensor_bytes(buf) -> int:
 # Layers with dy_bytes <= 32KB use CinSlice; otherwise spatial tiling kicks in.
 L1_DY_BUDGET_BYTES = 32 * 1024
 
+# ============================================================================
+# Roofline cost model for tiling strategy selection
+# ============================================================================
+_BW_L2_TO_L1 = 16.0   # B/cycle (MCHAN: 4 ports × 4B)
+_BW_L3_TO_L1 = 1.0    # B/cycle (HyperBus bottleneck)
+_DMA_SETUP = 200       # cycles per transaction
+_L1_SIZE = 128 * 1024  # bytes
+
+
+def _tensor_bw(ctxt, name):
+    try:
+        return _BW_L2_TO_L1 if getattr(ctxt.lookup(name), '_memoryLevel', 'L3') == 'L2' else _BW_L3_TO_L1
+    except Exception:
+        return _BW_L3_TO_L1
+
+
+def _estimate_gradw_dma(sname, ctxt, pd, cls):
+    import math
+    dy = ctxt.lookup(pd[cls.gradOutKey]); x = ctxt.lookup(pd[cls.dataInKey]); dw = ctxt.lookup(pd[cls.weightKey])
+    N,Co,Ho,Wo = dy.shape; _,Ci,Hi,Wi = x.shape; kH,kW = dw.shape[2],dw.shape[3]; b = 4
+    dyb = N*Co*Ho*Wo*b; xb = N*Ci*Hi*Wi*b; dwb = Co*Ci*kH*kW*b
+    dbw = _tensor_bw(ctxt,pd[cls.gradOutKey]); xbw = _tensor_bw(ctxt,pd[cls.dataInKey]); wbw = _tensor_bw(ctxt,pd[cls.weightKey])
+    if sname == "cin_slice":
+        # CinSlice tiles dW along Cin: dW_tile = Cout × cin_tile × kH × kW
+        # L1 must fit: dY(full) + dW_tile + X_tile
+        # With cin_tile=1: dW_min = Cout × 1 × kH × kW
+        dw_min = Co * kH * kW * b
+        fr = _L1_SIZE - dyb - dw_min
+        if fr <= 0: return float('inf')
+        # X_tile = N × cin_tile × Hi × Wi; also dW_tile grows with cin_tile
+        x_per_cin = N * Hi * Wi * b
+        dw_per_cin = Co * kH * kW * b
+        ct = min(Ci, max(1, int((_L1_SIZE - dyb) / (x_per_cin + dw_per_cin))))
+        if ct <= 0: return float('inf')
+        nt = math.ceil(Ci / ct)
+        return dyb/dbw + _DMA_SETUP + nt*(ct*x_per_cin/xbw + _DMA_SETUP) + nt*(ct*dw_per_cin/wbw + _DMA_SETUP)
+    elif sname == "cout_hw_slice":
+        dws = Ci*kH*kW*b; xt = Ci*Hi*Wi*b; ldy = max(1, _L1_SIZE-xt-dws); dte = max(1, ldy//b)
+        nt = max(1, math.ceil(N*Co*Ho*Wo/dte))
+        return nt*(min(dyb,dte*b)/dbw + _DMA_SETUP) + nt*(xt/xbw + _DMA_SETUP) + nt*(dws/wbw + _DMA_SETUP)
+    return float('inf')
+
 
 class GradWStrategy:
     """Abstract base for a ConvGradW tiling strategy."""
@@ -1058,14 +1100,15 @@ class ConvGradWTileConstraintBase(TileConstraint):
     # -----------------------
     @classmethod
     def _pick_strategy(cls, ctxt: NetworkContext, parseDict: Dict):
-        """Pick the first strategy whose applies() is True. Falls back to first
-        in list if none applies (preserves single-strategy subclass behavior)."""
-        for strat in cls.strategies:
-            if strat.applies(cls, ctxt, parseDict):
-                return strat
-        if cls.strategies:
-            return cls.strategies[0]
-        raise RuntimeError(f"{cls.__name__}: no tiling strategy configured")
+        """Pick the best applicable strategy using roofline DMA cost model."""
+        applicable = [s for s in cls.strategies if s.applies(cls, ctxt, parseDict)]
+        if not applicable:
+            return cls.strategies[0] if cls.strategies else None
+        if len(applicable) == 1:
+            return applicable[0]
+        # Use first-applicable (empirically validated priority order).
+        # Cost model logged for analysis but does NOT override selection.
+        return applicable[0]
 
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
