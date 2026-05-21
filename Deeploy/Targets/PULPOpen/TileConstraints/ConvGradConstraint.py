@@ -614,46 +614,76 @@ def _tensor_bytes(buf) -> int:
 L1_DY_BUDGET_BYTES = 32 * 1024
 
 # ============================================================================
-# Roofline cost model for tiling strategy selection
+# Roofline cost model — hardware parameters from gvsoc Siracusa config
 # ============================================================================
-_BW_L2_TO_L1 = 16.0   # B/cycle (MCHAN: 4 ports × 4B)
-_BW_L3_TO_L1 = 1.0    # B/cycle (HyperBus bottleneck)
-_DMA_SETUP = 200       # cycles per transaction
-_L1_SIZE = 128 * 1024  # bytes
+# Sources:
+#   toolchain_src/gvsoc/pulp/pulp/mchan/mchan_v7.py      — MCHAN: 4 loc ports × 4B = 16 B/cycle
+#   toolchain_src/gvsoc/pulp/pulp/chips/siracusa/soc.json — L2: 4 banks, 4 B/cycle port
+#   toolchain_src/gvsoc/core/models/devices/hyperbus/      — HyperRAM: DDR, ~1 B/cycle effective
+#   Benchmarking/training_roofline/roofline_training.py    — PE↔L1: 64 B/cycle (theoretical)
+_HW_PARAMS = {
+    'peak_flops_per_cycle': 16.0,   # 8 cores × 1 FMA/cycle (FP32)
+    'bw_l2_to_l1': 16.0,            # MCHAN: 4 local ports × 4B width
+    'bw_l3_to_l1': 1.0,             # HyperBus bottleneck (L3→L2→L1 staging)
+    'dma_setup_cycles': 200,         # per-transaction fixed cost (empirical from promotion phase-1)
+    'l1_size': 128 * 1024,           # default L1 TCDM
+    'cluster_ico_latency': 2,        # cluster interconnect latency (cycles)
+}
 
 
 def _tensor_bw(ctxt, name):
+    """Bandwidth (B/cycle) based on tensor memory level."""
     try:
-        return _BW_L2_TO_L1 if getattr(ctxt.lookup(name), '_memoryLevel', 'L3') == 'L2' else _BW_L3_TO_L1
+        return _HW_PARAMS['bw_l2_to_l1'] if getattr(ctxt.lookup(name), '_memoryLevel', 'L3') == 'L2' else _HW_PARAMS['bw_l3_to_l1']
     except Exception:
-        return _BW_L3_TO_L1
+        return _HW_PARAMS['bw_l3_to_l1']
 
 
-def _estimate_gradw_dma(sname, ctxt, pd, cls):
+def _post_solve_cost(strategy_name, num_tiles, tile_tensors, ctxt, parseDict, owner_cls):
+    """Post-solve cost estimation using ACTUAL tile sizes from solver.
+
+    Args:
+        strategy_name: "cin_slice" or "cout_hw_slice"
+        num_tiles: actual number of tiles from solver
+        tile_tensors: list of (tensor_key, tile_bytes, is_hoistable) from serialize
+        ctxt: NetworkContext (for _memoryLevel lookup)
+        parseDict: operator representation
+        owner_cls: TileConstraint class
+
+    Returns:
+        dict with {compute_cycles, dma_cycles, total_cycles, breakdown}
+    """
     import math
-    dy = ctxt.lookup(pd[cls.gradOutKey]); x = ctxt.lookup(pd[cls.dataInKey]); dw = ctxt.lookup(pd[cls.weightKey])
-    N,Co,Ho,Wo = dy.shape; _,Ci,Hi,Wi = x.shape; kH,kW = dw.shape[2],dw.shape[3]; b = 4
-    dyb = N*Co*Ho*Wo*b; xb = N*Ci*Hi*Wi*b; dwb = Co*Ci*kH*kW*b
-    dbw = _tensor_bw(ctxt,pd[cls.gradOutKey]); xbw = _tensor_bw(ctxt,pd[cls.dataInKey]); wbw = _tensor_bw(ctxt,pd[cls.weightKey])
-    if sname == "cin_slice":
-        # CinSlice tiles dW along Cin: dW_tile = Cout × cin_tile × kH × kW
-        # L1 must fit: dY(full) + dW_tile + X_tile
-        # With cin_tile=1: dW_min = Cout × 1 × kH × kW
-        dw_min = Co * kH * kW * b
-        fr = _L1_SIZE - dyb - dw_min
-        if fr <= 0: return float('inf')
-        # X_tile = N × cin_tile × Hi × Wi; also dW_tile grows with cin_tile
-        x_per_cin = N * Hi * Wi * b
-        dw_per_cin = Co * kH * kW * b
-        ct = min(Ci, max(1, int((_L1_SIZE - dyb) / (x_per_cin + dw_per_cin))))
-        if ct <= 0: return float('inf')
-        nt = math.ceil(Ci / ct)
-        return dyb/dbw + _DMA_SETUP + nt*(ct*x_per_cin/xbw + _DMA_SETUP) + nt*(ct*dw_per_cin/wbw + _DMA_SETUP)
-    elif sname == "cout_hw_slice":
-        dws = Ci*kH*kW*b; xt = Ci*Hi*Wi*b; ldy = max(1, _L1_SIZE-xt-dws); dte = max(1, ldy//b)
-        nt = max(1, math.ceil(N*Co*Ho*Wo/dte))
-        return nt*(min(dyb,dte*b)/dbw + _DMA_SETUP) + nt*(xt/xbw + _DMA_SETUP) + nt*(dws/wbw + _DMA_SETUP)
-    return float('inf')
+    dyBuf = ctxt.lookup(parseDict[owner_cls.gradOutKey])
+    N, Co, Ho, Wo = dyBuf.shape
+    xBuf = ctxt.lookup(parseDict[owner_cls.dataInKey])
+    _, Ci, Hi, Wi = xBuf.shape
+    dwBuf = ctxt.lookup(parseDict[owner_cls.weightKey])
+    kH, kW = dwBuf.shape[2], dwBuf.shape[3]
+
+    flops = 2 * N * Co * Ci * kH * kW * Ho * Wo
+    compute_cycles = flops / _HW_PARAMS['peak_flops_per_cycle']
+
+    dma_cycles = 0.0
+    breakdown = []
+    for tname, tbytes, hoistable in tile_tensors:
+        bw = _tensor_bw(ctxt, parseDict.get(tname, tname))
+        level = 'L2' if bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
+        n_xfer = 1 if hoistable else num_tiles
+        cost = n_xfer * (tbytes / bw + _HW_PARAMS['dma_setup_cycles'])
+        dma_cycles += cost
+        breakdown.append(f"{tname}({level}): {tbytes}B × {n_xfer} = {cost:.0f}cyc")
+
+    total = max(compute_cycles, dma_cycles)
+    return {
+        'compute_cycles': compute_cycles,
+        'dma_cycles': dma_cycles,
+        'total_cycles': total,
+        'bound': 'compute' if compute_cycles >= dma_cycles else 'memory',
+        'num_tiles': num_tiles,
+        'strategy': strategy_name,
+        'breakdown': breakdown,
+    }
 
 
 class GradWStrategy:
@@ -1244,7 +1274,48 @@ class ConvGradWTileConstraintBase(TileConstraint):
             if not cls.strategies:
                 raise RuntimeError(f"{cls.__name__}: no tiling strategy configured")
             chosen = cls.strategies[0]
-        return chosen.serialize(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation)
+
+        result = chosen.serialize(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation)
+
+        # ── Post-solve cost estimation using actual tile sizes ──
+        try:
+            num_tiles = len(absoluteOutputCubes)
+            bpe = 4  # FP32
+            dyName = operatorRepresentation[cls.gradOutKey]
+            xName = operatorRepresentation[cls.dataInKey]
+            dwName = operatorRepresentation[cls.weightKey]
+
+            # Get actual tile shapes from solver solution
+            dy_tile = tilingSolution.tensorMemoryConstraints[dyName].memoryConstraints[targetMemLevel].shape
+            x_tile = tilingSolution.tensorMemoryConstraints[xName].memoryConstraints[targetMemLevel].shape
+            dw_tile = tilingSolution.tensorMemoryConstraints[dwName].memoryConstraints[targetMemLevel].shape
+
+            import math
+            dy_tile_bytes = math.prod(dy_tile) * bpe
+            x_tile_bytes = math.prod(x_tile) * bpe
+            dw_tile_bytes = math.prod(dw_tile) * bpe
+
+            # Determine hoistability: dY is hoistable in CinSlice (full across tiles)
+            dyFull = tuple(ctxt.lookup(dyName).shape)
+            dy_hoistable = (tuple(dy_tile) == dyFull)
+
+            tile_tensors = [
+                (cls.gradOutKey, dy_tile_bytes, dy_hoistable),
+                (cls.dataInKey, x_tile_bytes, False),
+                (cls.weightKey, dw_tile_bytes, False),
+            ]
+            cost = _post_solve_cost(chosen.name, num_tiles, tile_tensors, ctxt, operatorRepresentation, cls)
+            node = operatorRepresentation.get('nodeName', '?')
+            print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
+                  f"compute={cost['compute_cycles']:.0f} dma={cost['dma_cycles']:.0f} "
+                  f"total={cost['total_cycles']:.0f} ({cost['bound']}-bound) "
+                  f"dy_tile={list(dy_tile)} x_tile={list(x_tile)} dw_tile={list(dw_tile)}")
+            for line in cost['breakdown']:
+                print(f"  {line}")
+        except Exception as e:
+            pass  # cost estimation is best-effort
+
+        return result
 
 
 class ConvGradW2DTileConstraint(ConvGradWTileConstraintBase):
