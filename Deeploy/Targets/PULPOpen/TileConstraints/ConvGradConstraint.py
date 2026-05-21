@@ -140,6 +140,10 @@ class ConvGradXTileConstraintBase(TileConstraint):
                     tilerModel.addConstraint(
                         tilerModel.getTensorDimVar(wName, 1) >= cin_min)
             # else: flops too low relative to bytes, can't hit AI target → no constraint
+
+            # Note: spatial minimum constraints were considered but cause regression
+            # on layers where the solver needs spatial freedom (layer1 with stride=2).
+            # The Cin constraint above is sufficient for large-W layers (layer3).
         except Exception:
             pass  # best-effort; don't block tiling on cost model failure
 
