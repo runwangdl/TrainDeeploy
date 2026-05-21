@@ -148,11 +148,15 @@ void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
   pulp_conv2d_fp32_bw_param_grads_cl(&conv_args);
 }
 
+
 // ============================================================================
-// Regular Conv — Naive tiled ConvGradX via trainlib (ClusterTransformer)
+// Regular Conv — Scatter-add tiled ConvGradX (ForkTransformer)
+// dX[ci,ih,iw] += dY[co,oh,ow] * W[co,ci,ky,kx]
+//   where ih = oh*s + ky - pad (forward index relation, no kernel flip)
+// Parallel over Cin — each core owns a dX slice, no write conflict.
 // ============================================================================
 
-void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
+void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
     const float *__restrict__ pGradOut,
     uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
     const float *__restrict__ pWeight, uint32_t ch_im_in,
@@ -164,47 +168,76 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
     uint32_t padding_y_top, uint32_t padding_y_bottom,
     uint16_t offset_grad_in_h, uint16_t offset_grad_in_w,
     uint16_t offset_grad_out_h, uint16_t offset_grad_out_w) {
+  (void)padding_x_right;
+  (void)padding_y_bottom;
 
-  struct blob input_blob = {0};
-  struct blob coeff_blob = {0};
-  struct blob output_blob = {0};
+  const uint32_t Hout_t = dim_im_out_x;
+  const uint32_t Wout_t = dim_im_out_y;
+  const uint32_t Hin_t = dim_im_in_x;
+  const uint32_t Win_t = dim_im_in_y;
+  const uint32_t Cout = ch_im_out;
+  const uint32_t Cin = ch_im_in;
+  const uint32_t P = dim_kernel_x;
+  const uint32_t Q = dim_kernel_y;
+  const int32_t pad_top = (int32_t)padding_x_left;
+  const int32_t pad_left = (int32_t)padding_y_top;
+  const int32_t sh = (int32_t)stride_h;
+  const int32_t sw = (int32_t)stride_w;
+  const int32_t hx0 = (int32_t)offset_grad_in_h;
+  const int32_t wx0 = (int32_t)offset_grad_in_w;
+  const int32_t hx1 = hx0 + (int32_t)Hin_t - 1;
+  const int32_t wx1 = wx0 + (int32_t)Win_t - 1;
 
-  input_blob.diff = (float *)pGradIn;
-  input_blob.W = (int)dim_im_in_y;
-  input_blob.H = (int)dim_im_in_x;
-  input_blob.C = (int)ch_im_in;
+  // Parallel over Cin — each core owns exclusive dX[ci_start..ci_stop]
+  const int core_id = pi_core_id();
+  const uint32_t ci_chunk = (Cin + NUM_CORES - 1u) / NUM_CORES;
+  const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
+  uint32_t ci_stop = ci_start + ci_chunk;
+  if (ci_stop > Cin) ci_stop = Cin;
+  if (ci_start >= ci_stop) return;
 
-  coeff_blob.data = (float *)pWeight;
-  coeff_blob.W = (int)dim_kernel_y;
-  coeff_blob.H = (int)dim_kernel_x;
-  coeff_blob.C = (int)ch_im_out;
+  // Zero dX for this core's Cin range
+  for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
+    float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
+    for (uint32_t i = 0; i < Hin_t * Win_t; ++i)
+      dx_ci[i] = 0.0f;
+  }
 
-  output_blob.diff = (float *)pGradOut;
-  output_blob.W = (int)dim_im_out_y;
-  output_blob.H = (int)dim_im_out_x;
-  output_blob.C = (int)ch_im_out;
+  // Scatter: for each dY pixel, distribute to all dX positions it touches
+  for (uint32_t co = 0; co < Cout; ++co) {
+    const float *dy_co = pGradOut + (size_t)co * Hout_t * Wout_t;
+    for (uint32_t ly = 0; ly < Hout_t; ++ly) {
+      const int32_t oy = (int32_t)offset_grad_out_h + (int32_t)ly;
+      const int32_t base_h = oy * sh - pad_top;
+      for (uint32_t lx = 0; lx < Wout_t; ++lx) {
+        const int32_t ox = (int32_t)offset_grad_out_w + (int32_t)lx;
+        const int32_t base_w = ox * sw - pad_left;
+        const float dy_val = dy_co[ly * Wout_t + lx];
 
-  struct Conv2D_args conv_args;
-  memset(&conv_args, 0, sizeof(conv_args));
+        // Prune kernel range to dX tile bounds
+        int32_t ky_min = max_i32(0, hx0 - base_h);
+        int32_t ky_max = min_i32((int32_t)P - 1, hx1 - base_h);
+        if (ky_min > ky_max) continue;
+        int32_t kx_min = max_i32(0, wx0 - base_w);
+        int32_t kx_max = min_i32((int32_t)Q - 1, wx1 - base_w);
+        if (kx_min > kx_max) continue;
 
-  conv_args.input = &input_blob;
-  conv_args.coeff = &coeff_blob;
-  conv_args.output = &output_blob;
-
-  conv_args.Upad = (int)padding_x_left;   // pad_top
-  conv_args.Dpad = (int)padding_x_right;  // pad_bottom
-  conv_args.Lpad = (int)padding_y_top;    // pad_left
-  conv_args.Rpad = (int)padding_y_bottom; // pad_right
-  conv_args.stride_h = (int)stride_h;
-  conv_args.stride_w = (int)stride_w;
-
-  conv_args.offset_in_h  = (int)offset_grad_in_h;
-  conv_args.offset_in_w  = (int)offset_grad_in_w;
-  conv_args.offset_out_h = (int)offset_grad_out_h;
-  conv_args.offset_out_w = (int)offset_grad_out_w;
-
-  // Dispatch calls pi_cl_team_fork internally — binding uses ClusterTransformer.
-  pulp_conv2d_fp32_bw_input_grads_tiled_cl(&conv_args);
+        for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
+          float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
+          const float *w_co_ci = pWeight +
+              (((size_t)co * Cin + ci) * P * Q);
+          for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
+            const int32_t ih = (base_h + ky) - hx0;
+            for (int32_t kx = kx_min; kx <= kx_max; ++kx) {
+              const int32_t iw = (base_w + kx) - wx0;
+              dx_ci[(uint32_t)ih * Win_t + (uint32_t)iw] +=
+                  dy_val * w_co_ci[ky * Q + kx];
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 // ============================================================================

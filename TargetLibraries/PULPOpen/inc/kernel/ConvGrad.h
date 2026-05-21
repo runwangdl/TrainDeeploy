@@ -91,8 +91,8 @@ void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
 // Regular (Dense) Conv — GradX
 // ============================================================================
 
-// Tiled naive: trainlib gather kernel with tile offsets (ClusterTransformer)
-void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
+// Tiled scatter-add ConvGradX with tile offsets (ForkTransformer)
+void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
     const float *__restrict__ pGradOut,
     uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
     const float *__restrict__ pWeight, uint32_t ch_im_in,
