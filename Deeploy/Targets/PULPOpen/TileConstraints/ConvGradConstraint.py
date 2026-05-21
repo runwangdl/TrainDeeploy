@@ -64,35 +64,84 @@ class ConvGradXTileConstraintBase(TileConstraint):
     # -----------------------
     # 2) Policy constraints
     # -----------------------
+    # Minimum arithmetic intensity target for ConvGradX tiles.
+    # Below this AI, the tile is severely memory-bound and DMA dominates.
+    _AI_MIN_TARGET = 4.0
+
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
         """
-        Default policy:
-          - keep full Cout on dY (Cout is the reduction axis in dX = sum_co dY * W)
-          - allow C_in tiling on dX and W[1] in lockstep (Cin is the output axis
-            of ConvGradX: each C_in slice of dX is independent and reads the
-            corresponding C_in slice of W). For a regular conv (group=1) the
-            existing geometrical constraint already pins dxName[1] == wName[1],
-            so dropping the policy full-pins lets them tile together. For DW
-            the geometrical constraint pins dxName[1] == 1 * group, which keeps
-            dxName[1] full (depthwise channel tiling handled separately).
+        Cost-model-aware policy for ConvGradX tiling:
+          - keep full Cout on dY (reduction axis)
           - weight kernel dims (kH, kW) stay full
-          - allow spatial tiling on dX
+          - Cin allowed to tile (lockstep with dX)
+          - **NEW**: minimum Cin tile size derived from roofline AI target,
+            ensuring each tile has enough compute to amortize DMA cost.
         """
         dyName = parseDict[cls.gradOutKey]
+        dxName = parseDict[cls.gradInKey]
         wName = parseDict[cls.weightKey]
 
         dyBuf = ctxt.lookup(dyName)
+        dxBuf = ctxt.lookup(dxName)
         wBuf = ctxt.lookup(wName)
 
         # Cout full on dY (reduction axis for ConvGradX)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == dyBuf.shape[1])
 
-        # Weight: C_out full (matches Cout reduction axis), kH/kW full
-        # Cin (wName.dim[1]) allowed to tile in lockstep with dxName.dim[1]
+        # Weight: C_out full, kH/kW full; Cin free to tile
         tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 0) == wBuf.shape[0])
         tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 2) == wBuf.shape[2])
         tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 3) == wBuf.shape[3])
+
+        # ── Cost-model: minimum Cin tile for AI target ──
+        # For ConvGradX, per-tile:
+        #   FLOPs = 2 × Cout × cin_t × kH × kW × Ho_t × Wo_t
+        #   bytes ≈ (Cout × Ho_t × Wo_t + cin_t × Hi_t × Wi_t + Cout × cin_t × kH × kW) × 4
+        # At minimum (spatial full, only Cin tiled):
+        #   FLOPs = 2 × Cout × cin_t × K × Ho × Wo
+        #   bytes ≈ (dY_full + W_tile + dX_tile) = dY + Cout×cin_t×K×4 + cin_t×Hi×Wi×4
+        #   AI = FLOPs / bytes
+        #   Solve for cin_t such that AI >= AI_MIN_TARGET
+        try:
+            Cout = wBuf.shape[0]
+            Cin = wBuf.shape[1]  # Cin per group
+            kH, kW = wBuf.shape[2], wBuf.shape[3]
+            K = kH * kW
+            N, _, Ho, Wo = dyBuf.shape
+            _, _, Hi, Wi = dxBuf.shape
+            bpe = 4
+
+            # dY is full (Cout pinned): dY_bytes = N × Cout × Ho × Wo × 4
+            dy_bytes = N * Cout * Ho * Wo * bpe
+            # Per cin_t: W_tile_bytes = Cout × cin_t × K × 4
+            #            dX_tile_bytes = N × cin_t × Hi × Wi × 4
+            # tile_flops = 2 × N × Cout × cin_t × K × Ho × Wo
+            # AI = tile_flops / (dy_bytes + W_tile + dX_tile)
+            #    = 2 × N × Cout × cin_t × K × Ho × Wo / (dy_bytes + cin_t × (Cout×K + N×Hi×Wi) × 4)
+            #
+            # For AI >= AI_MIN: solve for cin_t
+            #   2×N×Cout×cin_t×K×Ho×Wo >= AI_MIN × (dy_bytes + cin_t × per_cin_bytes)
+            #   cin_t × (2×N×Cout×K×Ho×Wo - AI_MIN × per_cin_bytes) >= AI_MIN × dy_bytes
+            per_cin_bytes = (Cout * K + N * Hi * Wi) * bpe
+            flops_per_cin = 2 * N * Cout * K * Ho * Wo
+            numerator = cls._AI_MIN_TARGET * dy_bytes
+            denominator = flops_per_cin - cls._AI_MIN_TARGET * per_cin_bytes
+
+            if denominator > 0:
+                cin_min = max(1, int(numerator / denominator) + 1)
+                cin_min = min(cin_min, Cin)  # don't exceed full
+
+                # Check feasibility: W_tile + dY + minimal dX must fit L1
+                l1 = _HW_PARAMS['l1_size']
+                w_tile_min = Cout * cin_min * K * bpe
+                dx_tile_min = N * cin_min * 1 * 1 * bpe  # minimal 1×1 spatial
+                if dy_bytes + w_tile_min + dx_tile_min <= l1 and cin_min > 1:
+                    tilerModel.addConstraint(
+                        tilerModel.getTensorDimVar(wName, 1) >= cin_min)
+            # else: flops too low relative to bytes, can't hit AI target → no constraint
+        except Exception:
+            pass  # best-effort; don't block tiling on cost model failure
 
         return tilerModel
 
@@ -415,6 +464,80 @@ class ConvGradXTileConstraintBase(TileConstraint):
 
         tilingSchedule = TilingSchedule(inputBaseOffsets, outputBaseOffsets, inputLoadSchedule, outputLoadSchedule)
         variableReplacementSchedule = VariableReplacementScheme(replacements, replacementTypes)
+
+        # ── Post-solve roofline cost estimation for ConvGradX ──
+        try:
+            import math
+            num_tiles = len(absoluteOutputCubes)
+            bpe = 4
+            peak = _HW_PARAMS['peak_flops_per_cycle']
+            setup = _HW_PARAMS['dma_setup_cycles']
+
+            # Use first tile's shapes as representative
+            dx_tile_shape = absoluteOutputCubes[0].rectangle.dims  # (N, Cin_t, Hi_t, Wi_t)
+            dy_tile_shape = inputDyCubes[0].dims if inputDyCubes else dyFull
+            w_bytes = math.prod(wShape) * bpe
+            dx_tile_bytes = math.prod(dx_tile_shape) * bpe
+            dy_tile_bytes = math.prod(dy_tile_shape) * bpe
+
+            # ConvGradX FLOPs per tile: 2 × N × Cout × Cin_tile × kH × kW × Hi_tile × Wi_tile
+            N_t = dx_tile_shape[0] if len(dx_tile_shape) > 0 else 1
+            Ci_t = dx_tile_shape[1] if len(dx_tile_shape) > 1 else 1
+            Hi_t = dx_tile_shape[2] if len(dx_tile_shape) > 2 else 1
+            Wi_t = dx_tile_shape[3] if len(dx_tile_shape) > 3 else 1
+            Cout = dyFull[1]
+            tile_flops = 2.0 * N_t * Cout * Ci_t * P * Q * Hi_t * Wi_t
+
+            # W is typically full (not tiled) → hoistable if same every tile
+            w_bw = _tensor_bw(ctxt, varW)
+            dy_bw = _tensor_bw(ctxt, varDY)
+            dx_bw = _tensor_bw(ctxt, varDX)
+
+            # W hoistable if not tiled (same across all tiles)
+            w_hoistable = not weight_in_solution or (
+                len(inputWCubes) > 1 and all(
+                    c.offset == inputWCubes[0].offset and c.dims == inputWCubes[0].dims
+                    for c in inputWCubes[1:])) if inputWCubes else True
+
+            # Per-tile DMA (SB serial)
+            tile_dma = dy_tile_bytes / dy_bw + setup + dx_tile_bytes / dx_bw + setup
+            if not w_hoistable:
+                tile_dma += w_bytes / w_bw + setup
+            hoisted_dma = 0.0
+            if w_hoistable:
+                hoisted_dma = w_bytes / w_bw + setup
+
+            # Per-tile bytes for AI calculation (data that moves per tile)
+            tile_bytes = dy_tile_bytes + dx_tile_bytes
+            if not w_hoistable:
+                tile_bytes += w_bytes
+
+            tile_AI = tile_flops / tile_bytes if tile_bytes > 0 else float('inf')
+            min_bw = min(dy_bw, dx_bw)
+            if not w_hoistable:
+                min_bw = min(min_bw, w_bw)
+            tile_attainable = min(peak, tile_AI * min_bw)
+            tile_compute = tile_flops / tile_attainable if tile_attainable > 0 else 0
+
+            total_cycles = hoisted_dma + num_tiles * (tile_dma + tile_compute)
+            total_flops = 2.0 * dxFull[0] * Cout * dxFull[1] * P * Q * dxFull[2] * dxFull[3]
+            ideal = total_flops / peak
+
+            node = operatorRepresentation.get('nodeName', '?')
+            w_level = 'L2' if w_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
+            dy_level = 'L2' if dy_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
+            print(f"[TileCost:GradX] {node}: tiles={num_tiles} "
+                  f"AI={tile_AI:.2f} attainable={tile_attainable:.1f}F/cyc "
+                  f"({'compute' if tile_compute >= tile_dma else 'memory'}-bound) "
+                  f"overhead={total_cycles/ideal:.2f}x "
+                  f"tile_compute={tile_compute:.0f} tile_dma={tile_dma:.0f} "
+                  f"total={total_cycles:.0f} ideal={ideal:.0f} "
+                  f"dx_tile={list(dx_tile_shape)} dy_tile={list(dy_tile_shape)} "
+                  f"W={list(wShape)}({w_level},{'hoist' if w_hoistable else 'per-tile'}) "
+                  f"dY({dy_level})")
+        except Exception:
+            pass
+
         return variableReplacementSchedule, tilingSchedule
 
 
