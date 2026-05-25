@@ -141,6 +141,17 @@ class ConvGradXTileConstraintBase(TileConstraint):
                         tilerModel.getTensorDimVar(wName, 1) >= cin_min)
             # else: flops too low relative to bytes, can't hit AI target → no constraint
 
+            # ── W tile size cap: W_tile must not exceed L1/2 ──
+            # When W is large (e.g. 147KB > L1), the solver may allocate most
+            # of L1 to W_tile, leaving tiny spatial tiles (5×1) → many tiles.
+            # Cap W_tile to L1/2 so dY+dX get adequate space for larger spatial tiles.
+            w_per_cin = Cout * K * bpe  # bytes per Cin channel in W
+            max_cin_for_w = max(1, (l1 // 2) // w_per_cin)
+            max_cin_for_w = min(max_cin_for_w, Cin)
+            if max_cin_for_w < Cin:
+                tilerModel.addConstraint(
+                    tilerModel.getTensorDimVar(wName, 1) <= max_cin_for_w)
+
             # Note: spatial minimum constraints were considered but cause regression
             # on layers where the solver needs spatial freedom (layer1 with stride=2).
             # The Cin constraint above is sufficient for large-W layers (layer3).
