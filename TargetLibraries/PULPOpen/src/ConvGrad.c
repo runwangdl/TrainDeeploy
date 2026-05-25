@@ -148,7 +148,6 @@ void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
   pulp_conv2d_fp32_bw_param_grads_cl(&conv_args);
 }
 
-
 // ============================================================================
 // Regular Conv — Scatter-add tiled ConvGradX (ForkTransformer)
 // dX[ci,ih,iw] += dY[co,oh,ow] * W[co,ci,ky,kx]
@@ -157,17 +156,15 @@ void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
 // ============================================================================
 
 void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
-    const float *__restrict__ pGradOut,
-    uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
-    const float *__restrict__ pWeight, uint32_t ch_im_in,
-    uint32_t dim_kernel_x, uint32_t dim_kernel_y,
-    uint32_t stride_h, uint32_t stride_w,
-    float *__restrict__ pGradIn,
-    uint32_t dim_im_in_x, uint32_t dim_im_in_y,
-    uint32_t padding_x_left, uint32_t padding_x_right,
-    uint32_t padding_y_top, uint32_t padding_y_bottom,
-    uint16_t offset_grad_in_h, uint16_t offset_grad_in_w,
-    uint16_t offset_grad_out_h, uint16_t offset_grad_out_w) {
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_x_left, uint32_t padding_x_right, uint32_t padding_y_top,
+    uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w) {
   (void)padding_x_right;
   (void)padding_y_bottom;
 
@@ -193,8 +190,10 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
   const uint32_t ci_chunk = (Cin + NUM_CORES - 1u) / NUM_CORES;
   const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
   uint32_t ci_stop = ci_start + ci_chunk;
-  if (ci_stop > Cin) ci_stop = Cin;
-  if (ci_start >= ci_stop) return;
+  if (ci_stop > Cin)
+    ci_stop = Cin;
+  if (ci_start >= ci_stop)
+    return;
 
   // Zero dX for this core's Cin range
   for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
@@ -217,15 +216,16 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
         // Prune kernel range to dX tile bounds
         int32_t ky_min = max_i32(0, hx0 - base_h);
         int32_t ky_max = min_i32((int32_t)P - 1, hx1 - base_h);
-        if (ky_min > ky_max) continue;
+        if (ky_min > ky_max)
+          continue;
         int32_t kx_min = max_i32(0, wx0 - base_w);
         int32_t kx_max = min_i32((int32_t)Q - 1, wx1 - base_w);
-        if (kx_min > kx_max) continue;
+        if (kx_min > kx_max)
+          continue;
 
         for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
           float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
-          const float *w_co_ci = pWeight +
-              (((size_t)co * Cin + ci) * P * Q);
+          const float *w_co_ci = pWeight + (((size_t)co * Cin + ci) * P * Q);
           for (int32_t ky = ky_min; ky <= ky_max; ++ky) {
             const int32_t ih = (base_h + ky) - hx0;
             for (int32_t kx = kx_min; kx <= kx_max; ++kx) {

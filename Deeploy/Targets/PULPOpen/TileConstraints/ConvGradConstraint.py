@@ -137,8 +137,7 @@ class ConvGradXTileConstraintBase(TileConstraint):
                 w_tile_min = Cout * cin_min * K * bpe
                 dx_tile_min = N * cin_min * 1 * 1 * bpe  # minimal 1×1 spatial
                 if dy_bytes + w_tile_min + dx_tile_min <= l1 and cin_min > 1:
-                    tilerModel.addConstraint(
-                        tilerModel.getTensorDimVar(wName, 1) >= cin_min)
+                    tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 1) >= cin_min)
             # else: flops too low relative to bytes, can't hit AI target → no constraint
 
             # ── W tile size cap: W_tile should not exceed L1/2 ──
@@ -151,8 +150,7 @@ class ConvGradXTileConstraintBase(TileConstraint):
             max_cin_for_w = min(max_cin_for_w, Cin)
             effective_cin_min = cin_min if (denominator > 0 and cin_min > 1) else 1
             if max_cin_for_w >= effective_cin_min and max_cin_for_w < Cin:
-                tilerModel.addConstraint(
-                    tilerModel.getTensorDimVar(wName, 1) <= max_cin_for_w)
+                tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 1) <= max_cin_for_w)
 
             # Note: spatial minimum constraints were considered but cause regression
             # on layers where the solver needs spatial freedom (layer1 with stride=2).
@@ -511,10 +509,9 @@ class ConvGradXTileConstraintBase(TileConstraint):
             dx_bw = _tensor_bw(ctxt, varDX)
 
             # W hoistable if not tiled (same across all tiles)
-            w_hoistable = not weight_in_solution or (
-                len(inputWCubes) > 1 and all(
-                    c.offset == inputWCubes[0].offset and c.dims == inputWCubes[0].dims
-                    for c in inputWCubes[1:])) if inputWCubes else True
+            w_hoistable = not weight_in_solution or (len(inputWCubes) > 1 and all(
+                c.offset == inputWCubes[0].offset and c.dims == inputWCubes[0].dims
+                for c in inputWCubes[1:])) if inputWCubes else True
 
             # Per-tile DMA (SB serial)
             tile_dma = dy_tile_bytes / dy_bw + setup + dx_tile_bytes / dx_bw + setup
@@ -761,19 +758,20 @@ L1_DY_BUDGET_BYTES = 32 * 1024
 #   L3→L2: HyperBus 1 byte/periph_clock_cycle @ 50 MHz = 1 B/cycle
 #   L3→L1: L3→L2(1 B/cycle)→L1(16 B/cycle), bottleneck = L3→L2 = 1 B/cycle
 _HW_PARAMS = {
-    'peak_flops_per_cycle': 16.0,   # 8 cores × 1 FMA/cycle (FP32)
-    'bw_l2_to_l1': 16.0,            # MCHAN: 4 local ports × 4B width
-    'bw_l3_to_l1': 1.0,             # HyperBus: 1 B/periph_cycle @ 50 MHz
-    'dma_setup_cycles': 200,         # per-transaction fixed cost (empirical)
-    'l1_size': 128 * 1024,           # default L1 TCDM
-    'cluster_ico_latency': 2,        # cluster interconnect latency (cycles)
+    'peak_flops_per_cycle': 16.0,  # 8 cores × 1 FMA/cycle (FP32)
+    'bw_l2_to_l1': 16.0,  # MCHAN: 4 local ports × 4B width
+    'bw_l3_to_l1': 1.0,  # HyperBus: 1 B/periph_cycle @ 50 MHz
+    'dma_setup_cycles': 200,  # per-transaction fixed cost (empirical)
+    'l1_size': 128 * 1024,  # default L1 TCDM
+    'cluster_ico_latency': 2,  # cluster interconnect latency (cycles)
 }
 
 
 def _tensor_bw(ctxt, name):
     """Bandwidth (B/cycle) based on tensor memory level."""
     try:
-        return _HW_PARAMS['bw_l2_to_l1'] if getattr(ctxt.lookup(name), '_memoryLevel', 'L3') == 'L2' else _HW_PARAMS['bw_l3_to_l1']
+        return _HW_PARAMS['bw_l2_to_l1'] if getattr(ctxt.lookup(name), '_memoryLevel',
+                                                    'L3') == 'L2' else _HW_PARAMS['bw_l3_to_l1']
     except Exception:
         return _HW_PARAMS['bw_l3_to_l1']
 
@@ -793,7 +791,6 @@ def _post_solve_cost(strategy_name, num_tiles, tile_tensors, tile_shapes, ctxt, 
     Args:
         tile_shapes: dict {tensor_key: tile_shape_tuple} from solver
     """
-    import math
     peak = _HW_PARAMS['peak_flops_per_cycle']
     setup = _HW_PARAMS['dma_setup_cycles']
 
@@ -1479,7 +1476,8 @@ class ConvGradWTileConstraintBase(TileConstraint):
                 raise RuntimeError(f"{cls.__name__}: no tiling strategy configured")
             chosen = cls.strategies[0]
 
-        result = chosen.serialize(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt, operatorRepresentation)
+        result = chosen.serialize(cls, tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt,
+                                  operatorRepresentation)
 
         # ── Post-solve roofline cost estimation using actual tile sizes ──
         try:
@@ -1511,8 +1509,8 @@ class ConvGradWTileConstraintBase(TileConstraint):
                 cls.dataInKey: tuple(x_tile),
                 cls.weightKey: tuple(dw_tile),
             }
-            cost = _post_solve_cost(chosen.name, num_tiles, tile_tensors, tile_shapes,
-                                    ctxt, operatorRepresentation, cls)
+            cost = _post_solve_cost(chosen.name, num_tiles, tile_tensors, tile_shapes, ctxt, operatorRepresentation,
+                                    cls)
             node = operatorRepresentation.get('nodeName', '?')
             print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
                   f"AI={cost['tile_AI']:.2f} attainable={cost['tile_attainable_perf']:.1f}F/cyc "

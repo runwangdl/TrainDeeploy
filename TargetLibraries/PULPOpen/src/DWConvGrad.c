@@ -78,9 +78,7 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
     uint32_t ch_im_in,     // C_in (full)
     uint32_t dim_kernel_x, // P (kernel H)
     uint32_t dim_kernel_y, // Q (kernel W)
-    uint32_t stride_h,
-    uint32_t stride_w,
-    float *__restrict__ pGradIn,
+    uint32_t stride_h, uint32_t stride_w, float *__restrict__ pGradIn,
     uint32_t dim_im_in_x,      // H_in (tile)
     uint32_t dim_im_in_y,      // W_in (tile)
     uint32_t padding_x_left,   // pad_top  (ONNX global)
@@ -125,13 +123,13 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
   dw_args.stride_h = (int)stride_h;
   dw_args.stride_w = (int)stride_w;
 
-  dw_args.Lpad = (int)padding_y_top;   // pad_left
+  dw_args.Lpad = (int)padding_y_top;    // pad_left
   dw_args.Rpad = (int)padding_y_bottom; // pad_right
-  dw_args.Upad = (int)padding_x_left;  // pad_top
-  dw_args.Dpad = (int)padding_x_right; // pad_bottom
+  dw_args.Upad = (int)padding_x_left;   // pad_top
+  dw_args.Dpad = (int)padding_x_right;  // pad_bottom
 
-  dw_args.offset_in_h  = (int)offset_grad_in_h;
-  dw_args.offset_in_w  = (int)offset_grad_in_w;
+  dw_args.offset_in_h = (int)offset_grad_in_h;
+  dw_args.offset_in_w = (int)offset_grad_in_w;
   dw_args.offset_out_h = (int)offset_grad_out_h;
   dw_args.offset_out_w = (int)offset_grad_out_w;
 
@@ -143,4 +141,3 @@ void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
   // the binding uses ClusterTransformer (master core only).
   pulp_conv_dw_fp32_bw_input_grads_tiled_cl(&dw_args);
 }
-

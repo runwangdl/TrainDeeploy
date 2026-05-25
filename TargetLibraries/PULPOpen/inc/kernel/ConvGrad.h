@@ -29,28 +29,59 @@ struct Conv2D_args {
   struct blob *coeff;
   struct blob *bias;
   struct blob *output;
-  int Lpad;  int Rpad;  int Upad;  int Dpad;
-  int stride_h;  int stride_w;
-  float *i2c_buffer;  float *bt_buffer;
-  int skip_wg_grad;  int skip_in_grad;  int HWC;
-  int opt_matmul_type_fw;  int opt_matmul_type_wg;  int opt_matmul_type_ig;
-  int USE_BIASES;  int USE_IM2COL;  int USE_DMA_IM2COL;
-  int offset_in_h;  int offset_in_w;  int offset_out_h;  int offset_out_w;
+  int Lpad;
+  int Rpad;
+  int Upad;
+  int Dpad;
+  int stride_h;
+  int stride_w;
+  float *i2c_buffer;
+  float *bt_buffer;
+  int skip_wg_grad;
+  int skip_in_grad;
+  int HWC;
+  int opt_matmul_type_fw;
+  int opt_matmul_type_wg;
+  int opt_matmul_type_ig;
+  int USE_BIASES;
+  int USE_IM2COL;
+  int USE_DMA_IM2COL;
+  int offset_in_h;
+  int offset_in_w;
+  int offset_out_h;
+  int offset_out_w;
 };
 
 struct DepthWise_Conv_args {
-  struct blob *input;  struct blob *coeff;  struct blob *output;
-  int stride_h;  int stride_w;
-  int Lpad;  int Rpad;  int Upad;  int Dpad;
-  int skip_wg_grad;  int skip_in_grad;  int HWC;
-  int offset_in_h;  int offset_in_w;  int offset_out_h;  int offset_out_w;
+  struct blob *input;
+  struct blob *coeff;
+  struct blob *output;
+  int stride_h;
+  int stride_w;
+  int Lpad;
+  int Rpad;
+  int Upad;
+  int Dpad;
+  int skip_wg_grad;
+  int skip_in_grad;
+  int HWC;
+  int offset_in_h;
+  int offset_in_w;
+  int offset_out_h;
+  int offset_out_w;
 };
 
 struct PointWise_Conv_args {
-  struct blob *input;  struct blob *coeff;  struct blob *output;
+  struct blob *input;
+  struct blob *coeff;
+  struct blob *output;
   float *transpose_buffer;
-  int skip_wg_grad;  int skip_in_grad;  int HWC;
-  int opt_matmul_type_fw;  int opt_matmul_type_wg;  int opt_matmul_type_ig;
+  int skip_wg_grad;
+  int skip_in_grad;
+  int HWC;
+  int opt_matmul_type_fw;
+  int opt_matmul_type_wg;
+  int opt_matmul_type_ig;
 };
 
 // pulp-trainlib dispatch functions
@@ -93,33 +124,29 @@ void PULP_ConvGradW2d_fp32_fp32_fp32_CHW_Im2Col(
 
 // Tiled scatter-add ConvGradX with tile offsets (ForkTransformer)
 void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
-    const float *__restrict__ pGradOut,
-    uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
-    const float *__restrict__ pWeight, uint32_t ch_im_in,
-    uint32_t dim_kernel_x, uint32_t dim_kernel_y,
-    uint32_t stride_h, uint32_t stride_w,
-    float *__restrict__ pGradIn,
-    uint32_t dim_im_in_x, uint32_t dim_im_in_y,
-    uint32_t padding_x_left, uint32_t padding_x_right,
-    uint32_t padding_y_top, uint32_t padding_y_bottom,
-    uint16_t offset_grad_in_h, uint16_t offset_grad_in_w,
-    uint16_t offset_grad_out_h, uint16_t offset_grad_out_w);
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_x_left, uint32_t padding_x_right, uint32_t padding_y_top,
+    uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w);
 
 // Tiled im2col+GEMM with co_block (ForkTransformer)
 void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
-    const float *__restrict__ pGradOut,
-    uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
-    const float *__restrict__ pWeight, uint32_t ch_im_in,
-    uint32_t dim_kernel_x, uint32_t dim_kernel_y,
-    uint32_t stride_h, uint32_t stride_w,
-    float *__restrict__ pGradIn,
-    uint32_t dim_im_in_x, uint32_t dim_im_in_y,
-    uint32_t padding_y_top, uint32_t padding_y_bottom,
-    uint32_t padding_x_left, uint32_t padding_x_right,
-    uint16_t offset_grad_in_h, uint16_t offset_grad_in_w,
-    uint16_t offset_grad_out_h, uint16_t offset_grad_out_w,
-    float *__restrict__ ctxtBuffer, uint32_t ctxtBufferSize,
-    float *__restrict__ btBuffer, uint32_t btBufferSize);
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_y_top, uint32_t padding_y_bottom, uint32_t padding_x_left,
+    uint32_t padding_x_right, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w, float *__restrict__ ctxtBuffer,
+    uint32_t ctxtBufferSize, float *__restrict__ btBuffer,
+    uint32_t btBufferSize);
 
 // ============================================================================
 // Depthwise Conv — GradW (ClusterTransformer)
@@ -137,17 +164,15 @@ void PULP_DWConvGradW2d_fp32_fp32_fp32_CHW(
 // ============================================================================
 
 void PULP_DWConvGradX2d_fp32_fp32_fp32_CHW_trainlib_tiled(
-    const float *__restrict__ pGradOut,
-    uint32_t dim_im_out_x, uint32_t dim_im_out_y, uint32_t ch_im_out,
-    const float *__restrict__ pWeight, uint32_t ch_im_in,
-    uint32_t dim_kernel_x, uint32_t dim_kernel_y,
-    uint32_t stride_h, uint32_t stride_w,
-    float *__restrict__ pGradIn,
-    uint32_t dim_im_in_x, uint32_t dim_im_in_y,
-    uint32_t padding_x_left, uint32_t padding_x_right,
-    uint32_t padding_y_top, uint32_t padding_y_bottom,
-    uint16_t offset_grad_in_h, uint16_t offset_grad_in_w,
-    uint16_t offset_grad_out_h, uint16_t offset_grad_out_w);
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_x_left, uint32_t padding_x_right, uint32_t padding_y_top,
+    uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w);
 
 // ============================================================================
 // Pointwise Conv — GradW (ClusterTransformer)
