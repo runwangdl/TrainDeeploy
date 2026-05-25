@@ -41,7 +41,16 @@ docs/_build
 DeeployTest/TestFiles/
 DeeployTest/Tests/**/*.txt
 DeeployTest/**/BUILD/*
-DeeployTest/TEST_*/*
+DeeployTest/TEST_*/
+DeeployTest/CMakeCache.txt
+DeeployTest/CMakeFiles/
+DeeployTest/Makefile
+DeeployTest/cmake_install.cmake
+DeeployTest/lib/
+DeeployTest/bin/
+DeeployTest/TargetLibraries/
+DeeployTest/DeeployTest/
+DeeployTest/build_*/
 DeeployTest/deeployStates*/*
 DeeployTest/DeeployState*
 DeeployTest/testUtils/graphDebug.py
