@@ -25,22 +25,9 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
             self, ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation,
             transferSchedule: List[Dict[str, HyperRectangle]], tensorMemoryConstraintDict: Dict[str,
                                                                                                 TensorMemoryConstraint],
-            tileIdxVar: str, direction: DmaDirection,
-            hoistable_tensors: Set[str] = None) -> Tuple[NetworkContext, List[CodeSnippet], Set[Future],
-                                                          List[CodeSnippet], Set[Future]]:
-        """Generate DMA transfer calls for all tensors in the schedule.
-
-        Returns:
-            (ctxt, perTileCallStack, perTileFutures, hoistedCallStack, hoistedFutures)
-            hoistedCallStack contains DMA calls for tensors in hoistable_tensors
-            (should be emitted once before the tile loop).
-        """
+            tileIdxVar: str, direction: DmaDirection) -> Tuple[NetworkContext, List[CodeSnippet], Set[Future]]:
         callStack: List[CodeSnippet] = []
-        hoistedCallStack: List[CodeSnippet] = []
         futures: Set[Future] = set()
-        hoistedFutures: Set[Future] = set()
-        if hoistable_tensors is None:
-            hoistable_tensors = set()
 
         # Pre-scan: compute combined outer-loop tile counts across all tensors so
         # each Scenario-B tensor can determine its period_before (how many outer
@@ -252,56 +239,25 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
 
             future = self.dma.getFuture(tensorName, direction)
 
-            # Route to hoisted or per-tile list
-            is_hoisted = tensorName in hoistable_tensors
-            target_stack = hoistedCallStack if is_hoisted else callStack
-            target_futures = hoistedFutures if is_hoisted else futures
-
             # Allocate a future for this transfer
-            if future not in target_futures:
-                target_stack.append(future.alloc())
+            if future not in futures:
+                callStack.append(future.alloc())
 
-            if is_hoisted:
-                # Generate a single (non-tiled) DMA for the first rectangle only
-                try:
-                    target_stack.extend(
-                        self._generateDmaTransferCalls(ctxt, tensorName, rectangles[:1], tileIdxVar, localBuffer,
-                                                       externalBufferRef, direction, future))
-                except AssertionError as e:
-                    raise AssertionError(f"{e} while generating hoisted DMA for tensor '{tensorName}'") from e
-            else:
-                try:
-                    target_stack.extend(
-                        self._generateDmaTransferCalls(ctxt, tensorName, rectangles, tileIdxVar, localBuffer,
-                                                       externalBufferRef, direction, future))
-                except AssertionError as e:
-                    raise AssertionError(f"{e} while generating DMA transfer for tensor '{tensorName}'") from e
+            try:
+                callStack.extend(
+                    self._generateDmaTransferCalls(ctxt, tensorName, rectangles, tileIdxVar, localBuffer,
+                                                   externalBufferRef, direction, future))
+            except AssertionError as e:
+                raise AssertionError(f"{e} while generating DMA transfer for tensor '{tensorName}'") from e
 
-                referenceUpdate = self._generateExternalReferenceUpdate(ctxt, tensorName, rectangles, tileIdxVar,
-                                                                        externalBufferRef)
-                if referenceUpdate is not None:
-                    target_stack.append(referenceUpdate)
+            referenceUpdate = self._generateExternalReferenceUpdate(ctxt, tensorName, rectangles, tileIdxVar,
+                                                                    externalBufferRef)
+            if referenceUpdate is not None:
+                callStack.append(referenceUpdate)
 
-            target_futures.add(future)
+            futures.add(future)
 
-        return ctxt, callStack, futures, hoistedCallStack, hoistedFutures
-
-    @staticmethod
-    def _detectHoistableTensors(transferSchedule: List[Dict[str, HyperRectangle]]) -> Set[str]:
-        """Detect tensors whose HyperRectangle is identical across all tile iterations.
-        These can be loaded once before the tile loop instead of every iteration."""
-        from Deeploy.TilingExtension.CodeTransformationPasses.TilingHoistingMixIn import dictOfArrays
-        hoistable: Set[str] = set()
-        if len(transferSchedule) <= 1:
-            return hoistable
-        for tensorName, rectangles in dictOfArrays(transferSchedule).items():
-            rects = list(rectangles)
-            if len(rects) <= 1:
-                continue
-            first = rects[0]
-            if all(r.offset == first.offset and r.dims == first.dims for r in rects[1:]):
-                hoistable.add(tensorName)
-        return hoistable
+        return ctxt, callStack, futures
 
     def _tilingLoop(self, ctxt: NetworkContext, executionBlock: ExecutionBlock,
                     nodeMemoryConstraint: NodeMemoryConstraint, tilingSchedule: TilingSchedule,
@@ -310,26 +266,20 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
 
         # Single Buffering Tiling Loop Strategy
         # ===================================
-        # - 0) Hoist DMA for tensors that don't change across tiles
         # - 1) Initialize all futures
         # - 2) for TILING_I in numTiles:
-        #   - 2.1) Input data transfer for current tile (skip hoisted)
+        #   - 2.1) Input data transfer for current tile (see "4.2) Input Data Transfers")
         #   - 2.2) Process current tile
-        #   - 2.3) Output data transfer for current tile (skip hoisted)
+        #   - 2.3) Output data transfer for current tile (see "4.4) Output Data Transfers")
         # - 3) Deinitialize all futures
-
-        # 0) Detect hoistable input tensors (identical HyperRectangle across all tiles)
-        hoistableIngress = self._detectHoistableTensors(tilingSchedule.inputLoadSchedule)
 
         # 2) for TILING_I in numTiles:
         openLoopStatements = [CodeSnippet(self._openTileLoopTemplate, {**operatorRepresentation})]
 
-        # 2.2) Input data transfer — single call splits into per-tile + hoisted
-        ctxt, ingressDMAStatements, ingressFutures, hoistedIngressDMA, hoistedIngressFutures = \
-            self._generateTransferScheduleCalls(
-                ctxt, operatorRepresentation, tilingSchedule.inputLoadSchedule,
-                nodeMemoryConstraint.inputTensorMemoryConstraints, "TILING_I", "ExternalToLocal",
-                hoistable_tensors=hoistableIngress)
+        # 2.2) Input data transfer for current tile
+        ctxt, ingressDMAStatements, ingressFutures = self._generateTransferScheduleCalls(
+            ctxt, operatorRepresentation, tilingSchedule.inputLoadSchedule,
+            nodeMemoryConstraint.inputTensorMemoryConstraints, "TILING_I", "ExternalToLocal")
 
         ingressDMAStatements = [CodeSnippet(self._lineComment, {"comment": "Transfer input tiles"})
                                ] + ingressDMAStatements
@@ -337,7 +287,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
         ingressDMAStatements += [future.wait() for future in ingressFutures]
 
         # 2.4) Output data transfer for current tile
-        ctxt, egressDMAStatements, egressFutures, _, _ = self._generateTransferScheduleCalls(
+        ctxt, egressDMAStatements, egressFutures = self._generateTransferScheduleCalls(
             ctxt, operatorRepresentation, tilingSchedule.outputLoadSchedule,
             nodeMemoryConstraint.outputTensorMemoryConstraints, "TILING_I", "LocalToExternal")
         egressDMAStatements = [CodeSnippet(self._lineComment, {"comment": "Transfer output tiles"})
@@ -345,20 +295,13 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
         egressDMAStatements += [CodeSnippet(self._lineComment, {"comment": "Wait for output tiles"})]
         egressDMAStatements += [future.wait() for future in egressFutures]
 
-        # 1) Initialize all futures (including hoisted)
-        allFutures = ingressFutures | egressFutures | hoistedIngressFutures
+        # 1) Initialize all futures
         setupStatements = [CodeSnippet(self._lineComment, {"comment": "Initialize DMA futures"})]
-        setupStatements.extend([f.init() for f in allFutures])
-
-        # Add hoisted DMA transfers before the loop (loaded once, reused across all tiles)
-        if hoistedIngressDMA:
-            setupStatements += [CodeSnippet(self._lineComment, {"comment": "Hoisted DMA: tensors unchanged across tiles"})]
-            setupStatements += hoistedIngressDMA
-            setupStatements += [future.wait() for future in hoistedIngressFutures]
+        setupStatements.extend([f.init() for f in ingressFutures | egressFutures])
 
         # 3) Deinitialize all futures
         teardownStatements = [CodeSnippet(self._lineComment, {"comment": "Deinitialize DMA futures"})]
-        teardownStatements.extend([f.deinit() for f in allFutures])
+        teardownStatements.extend([f.deinit() for f in ingressFutures | egressFutures])
 
         closeLoopStatements = [CodeSnippet(self._closeTileLoopTemplate, {**operatorRepresentation})]
 
