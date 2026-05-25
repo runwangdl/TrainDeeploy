@@ -28,11 +28,25 @@ class TransposeTileConstraint(TileConstraint):
         for bufferName in [inputBufferName, outputBufferName]:
             tilerModel.addTensorDimToModel(ctxt, bufferName)
 
-        # Map output dims to inputs dims
-        for idx, perm_idx in enumerate(parseDict["perm"]):
+        inputShape = ctxt.lookup(inputBufferName).shape
+        outputShape = ctxt.lookup(outputBufferName).shape
+        perm = parseDict["perm"]
+
+        # When output has extra leading batch dims compared to input
+        # (e.g. weight Transpose [K,N] -> [1,N,K] injected by MatMulLayer),
+        # the perm only covers the spatial (last len(perm)) dims of the output.
+        # Pin the extra leading output dims to their full size (they are batch=1)
+        # and apply the perm constraints with shifted output indices.
+        numExtra = len(outputShape) - len(perm)
+
+        for i in range(numExtra):
             tilerModel.addConstraint(
-                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = idx) == tilerModel.getTensorDimVar(
-                    tensorName = inputBufferName, dimIdx = perm_idx))
+                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = i) == outputShape[i])
+
+        for idx, perm_idx in enumerate(perm):
+            tilerModel.addConstraint(
+                tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = numExtra + idx) ==
+                tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = perm_idx))
 
         return tilerModel
 
