@@ -52,6 +52,23 @@ class InPlaceAccumulatorV2TileConstraint(BOPTileConstraint):
         return tilerModel
 
     @classmethod
+    def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        """Pin dim 1 full for 2D tensors → tile only along dim 0 → fewer tiles.
+
+        InPlaceAccumulatorV2 is elementwise (acc += grad), each element
+        independent. Without this, the solver produces 256+ tiny tiles
+        where 91% of time is DMA overhead.
+        """
+        accumName = parseDict[cls.dataIn1Name]
+        shape = ctxt.lookup(accumName).shape
+
+        if not isinstance(shape, int) and len(shape) == 2:
+            dim1Var = tilerModel.getTensorDimVar(accumName, 1)
+            tilerModel.addConstraint(dim1Var == shape[1])
+
+        return tilerModel
+
+    @classmethod
     def serializeTilingSolution(
             cls, tilingSolution: NodeMemoryConstraint, absoluteOutputCubes: List[AbsoluteHyperRectangle],
             targetMemLevel: str, ctxt: NetworkContext,
