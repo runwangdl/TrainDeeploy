@@ -121,6 +121,8 @@ def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', defau
             gen_args.append('--promoteToL2IncludeActivations')
             gen_args.append('--promoteToL2MaxBufferBytes=0')
             gen_args.append(f'--promoteToL2Headroom={args.promoteToL2Headroom}')
+        if getattr(args, 'doublebuffer', False):
+            gen_args.append('--doublebuffer')
 
     config = DeeployTestConfig(
         test_name = test_name,

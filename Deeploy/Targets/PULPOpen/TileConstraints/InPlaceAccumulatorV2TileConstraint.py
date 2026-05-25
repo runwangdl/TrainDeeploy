@@ -15,6 +15,13 @@ from Deeploy.TilingExtension.TilerModel import PerformanceHint, TilerModel
 from Deeploy.TilingExtension.TilingCodegen import AbsoluteHyperRectangle, HyperRectangle, TilingSchedule, \
     VariableReplacementScheme
 
+# Per-pattern L1 (TCDM) budget in bytes. Each TileConstraint pattern is solved
+# independently, so this budget only has to cover this op's live tiles:
+#   accum_tile + gradient_tile + lazy_reset (4 bytes).
+# Set this to the *usable* TCDM size for the accumulator pattern. If this op
+# shares L1 with other live buffers, keep a margin (e.g. multiply by 0.8).
+L1_BUDGET_BYTES = 128000
+
 
 class InPlaceAccumulatorV2TileConstraint(TileConstraint):
     """Tile constraint for InPlaceAccumulatorV2.
@@ -25,6 +32,12 @@ class InPlaceAccumulatorV2TileConstraint(TileConstraint):
 
     accum_buffer and gradient have the same shape; lazy_reset_grad is a
     scalar (1 element) and is pinned full.
+
+    InPlaceAccumulatorV2 is elementwise (acc += grad): every element is
+    independent, so tiling only adds DMA overhead and the sole objective is
+    to minimize the tile count (largest possible tile). The DMA engine
+    supports 1D and 2D transfers, which is exploited by the greedy pinning
+    policy in addPolicyConstraint.
     """
 
     dataIn1Name = 'accum_buffer'
@@ -44,23 +57,34 @@ class InPlaceAccumulatorV2TileConstraint(TileConstraint):
         accumShape = ctxt.lookup(accumName).shape
         dims = [accumShape] if isinstance(accumShape, int) else accumShape
 
-        # Tie gradient and output to accumulator (same shape, same tiling)
+        outShape = ctxt.lookup(outName).shape
+        outDims = [outShape] if isinstance(outShape, int) else outShape
+
+        # Tie gradient to accumulator (same shape, same tiling).
+        # Only tie data_out if it has the same shape as accum — data_out may be
+        # a scalar [1] indicator (not the actual accumulated result), in which
+        # case tying would force accum dim == 1 and block full-pinning.
+        tieOutput = (len(dims) == len(outDims) and all(a == b for a, b in zip(dims, outDims)))
+
         for dim in range(len(dims)):
             accumDimVar = tilerModel.getTensorDimVar(tensorName = accumName, dimIdx = dim)
             gradDimVar = tilerModel.getTensorDimVar(tensorName = gradName, dimIdx = dim)
-            outDimVar = tilerModel.getTensorDimVar(tensorName = outName, dimIdx = dim)
 
             tilerModel.addConstraint(accumDimVar == gradDimVar)
-            tilerModel.addConstraint(accumDimVar == outDimVar)
 
-        # Force spatial dims (index >= 2) to full size so that minimizeRectangle
-        # can collapse them and DMA tiles stay rank ≤ 2.
-        if len(dims) > 2:
-            for dimIdx in range(2, len(dims)):
-                dimVar = tilerModel.getTensorDimVar(tensorName = accumName, dimIdx = dimIdx)
-                tilerModel.addConstraint(dimVar == dims[dimIdx])
+            if tieOutput:
+                outDimVar = tilerModel.getTensorDimVar(tensorName = outName, dimIdx = dim)
+                tilerModel.addConstraint(accumDimVar == outDimVar)
 
-        # lazy_reset_grad is a scalar flag — pin full size so it is not tiled.
+        # If data_out is scalar and not tied, pin it full (like lazy_reset_grad).
+        if not tieOutput:
+            for idx, d in enumerate(outDims):
+                outDimVar = tilerModel.getTensorDimVar(tensorName = outName, dimIdx = idx)
+                tilerModel.addConstraint(outDimVar == d)
+
+
+
+        # lazy_reset_grad is a scalar flag — pin full so it is never tiled.
         lazyResetName = parseDict['lazy_reset_grad']
         tilerModel.addTensorDimToModel(ctxt, lazyResetName)
         lazyShape = ctxt.lookup(lazyResetName).shape
@@ -73,27 +97,24 @@ class InPlaceAccumulatorV2TileConstraint(TileConstraint):
 
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
-        """Pin dims to minimize tile count for InPlaceAccumulatorV2.
+        """Pin all accumulator dims full via PerformanceHint.
 
-        Only pin dim1 for 2D tensors. 1D tensors cannot be pinned because
-        their gradient is shared with upstream patterns (e.g. ReduceSum)
-        that need to tile along dim0.
+        InPlaceAccumulatorV2 is elementwise — fewer tiles = less DMA overhead.
+        Inner dims get higher priority so they are pinned first and dropped
+        last if memory pressure requires tiling.
         """
         accumName = parseDict[cls.dataIn1Name]
-        shape = ctxt.lookup(accumName).shape
+        accumBuf = ctxt.lookup(accumName)
+        shape = accumBuf.shape
 
+        # Normalize 1D int shape to a list
         if isinstance(shape, int):
-            return tilerModel
+            shape = [shape]
 
-        if len(shape) == 1:
-            # 1D bias vectors (e.g. [128] = 512 bytes) — try to pin full.
-            # Use PerformanceHint so this is skipped if L1 budget is too tight.
-            dim0Var = tilerModel.getTensorDimVar(accumName, 0)
-            tilerModel.addConstraint(dim0Var == shape[0], strategy = PerformanceHint(priority = 1))
-        elif len(shape) == 2:
-            # 2D weight grads (e.g. [128, 128]) — pin dim1, tile along dim0
-            dim1Var = tilerModel.getTensorDimVar(accumName, 1)
-            tilerModel.addConstraint(dim1Var == shape[1])
+        for dimIdx in range(len(shape) - 1, -1, -1):
+            dimVar = tilerModel.getTensorDimVar(accumName, dimIdx)
+            priority = 1000 + (len(shape) - dimIdx)
+            tilerModel.addConstraint(dimVar == shape[dimIdx], strategy = PerformanceHint(priority = priority))
 
         return tilerModel
 
