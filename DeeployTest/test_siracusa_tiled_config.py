@@ -187,12 +187,13 @@ L2_DOUBLEBUFFER_TRAINING_MODELS = {
 }
 
 # L3 DB training: only DB the L3↔L2 hop (TrainingDBOnlyL3Tiler) so the L2
-# staging budget doesn't double. CCT/CCT_LoRA left out — their backward
-# alias graph still trips MemoryAllocation _live tracking even with our
-# opt-out blacklist (a separate follow-up).
+# staging budget doesn't double.
+# NOTE: ResNet8/MobileNetV1 excluded — their ConvGrad weight tiling produces
+# strided 2D DMA (stride≠length) which triggers a gvsoc UDMA hyper_v3
+# transfer_splitter tran_id leak.  CCT works because all its L3 DMA
+# transfers are contiguous (stride==length).
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
-    "Models/Training/ResNet8/resnet8_train": [128000],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
+    "Models/Training/CCT/cct_train": [128000],
 }
 
 # Per-model overrides for training tests.

@@ -97,16 +97,11 @@ class TrainingDBTiler(DBTiler):
     DB_OPT_OUT_OPS = frozenset({
         # In-place alias outputs (output is _alias'd to an input). DB's
         # per-tensor multibuffer hoist would split the alias across two L1
-        # slots and break in-place semantics. Note: InPlaceAccumulatorV2
-        # also has the lazy_reset_grad scalar, but we keep it explicit
-        # because the alias semantics are the primary concern.
+        # slots and break in-place semantics.
         "SGD",
-        "InPlaceAccumulatorV2",
         # SoftmaxCrossEntropyLossGrad's output_grad is consumed by 2 backward
         # Gemms (multi-consumer intermediate) — DB's per-consumer hoist
         # inflates _users and breaks MemoryAllocation _live tracking.
-        # Tracked separately; needs a real fix in the DB pass / _users
-        # accounting rather than an opt-out.
         "SoftmaxCrossEntropyLossGrad",
     })
 
@@ -128,10 +123,18 @@ class TrainingDBTiler(DBTiler):
         # cause of the "autoencoder weights frozen" symptom previously
         # mis-attributed to Gemm: MSELoss's scalar `loss` output triggered
         # this degenerate case.
+        #
+        # Exception: InPlaceAccumulatorV2's lazy_reset_grad is a control
+        # flag pinned full by TileConstraint — it won't trigger mixed
+        # coefficients because its multiBufferCoefficient is forced to 1
+        # via _isScalarBuffer in the base Tiler class.
         for node in pattern:
+            is_inplace_acc = node.op == "InPlaceAccumulatorV2"
             for tensor in list(node.inputs) + list(node.outputs):
                 tname = tensor.name
                 if ctxt.is_buffer(tname) and _isScalarBuffer(ctxt, tname):
+                    if is_inplace_acc and "lazy_reset_grad" in tname:
+                        continue  # Skip: pinned scalar flag, not a data tensor
                     return 1
         return super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
 
@@ -149,4 +152,12 @@ class TrainingDBOnlyL3Tiler(TrainingDBTiler):
                             hop: str, tensorName: str) -> Union[int, IntVar]:
         if hop == "L1":
             return 1
-        return super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
+        # InPlaceAccumulatorV2: force coefficient=2 for ALL tensors in the
+        # pattern (including the scalar lazy_reset_grad) so DB pass sees
+        # uniform coefficients and can apply. The scalar flag is pinned full
+        # by TileConstraint so doubling its slot (4→8 bytes) is harmless.
+        for node in pattern:
+            if node.op == "InPlaceAccumulatorV2":
+                return 2
+        result = super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
+        return result

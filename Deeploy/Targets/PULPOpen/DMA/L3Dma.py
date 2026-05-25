@@ -62,4 +62,5 @@ class L3Dma(AsyncDma):
 
 
 # LMACAN: It's a hack because the driver is now working correctly
-l3DmaHack = BlockingDmaFromAsyncDmaAdapter(L3Dma())
+#l3DmaHack = BlockingDmaFromAsyncDmaAdapter(L3Dma())
+l3DmaHack = L3Dma()
