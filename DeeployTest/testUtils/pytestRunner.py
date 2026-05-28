@@ -75,7 +75,7 @@ def create_test_config(
 
     gen_args_list = list(gen_args) if gen_args else []
 
-    if cores is not None and platform in ["Siracusa", "Siracusa_w_neureka"]:
+    if cores is not None and platform in ["Siracusa", "Siracusa_w_neureka", "GAP9"]:
         gen_args_list.append(f"--cores={cores}")
 
     if tiling:

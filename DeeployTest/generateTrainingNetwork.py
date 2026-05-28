@@ -20,6 +20,7 @@ from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import float32_t, uint8_t
 from Deeploy.DeeployTypes import _NoVerbosity
 from Deeploy.Logging import DEFAULT_LOGGER as log
+from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 
 
@@ -61,7 +62,7 @@ def generateTrainingNetwork(args):
     log.debug(f"Platform: {platform} (sign: {signProp})")
 
     # Set cores on cluster engines (same pattern as generateNetwork.py)
-    clusters = [engine for engine in platform.engines if isinstance(engine, PULPClusterEngine)]
+    clusters = [engine for engine in platform.engines if isinstance(engine, (PULPClusterEngine, GAP9ClusterEngine))]
     for cluster in clusters:
         cluster.n_cores = args.cores
 

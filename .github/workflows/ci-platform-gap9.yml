@@ -6,9 +6,14 @@
 name: CI • GAP9
 
 "on":
-  # Auto-trigger disabled in TrainDeeploy fork: GAP9 has no training
-  # pytest jobs yet (only kernels / models). Re-enable by restoring
-  # the push: / pull_request: blocks once a training marker is wired in.
+  push:
+    branches:
+      - main
+      - devel
+  pull_request:
+    branches:
+      - main
+      - devel
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
@@ -42,3 +47,19 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "models"
+
+  gap9-train-kernel:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "train_kernel"
+
+  gap9-training:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training"
