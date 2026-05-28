@@ -11,13 +11,18 @@ from test_cortexm_config import MODEL_TESTS as CORTEXM_MODEL_TESTS
 from test_gap9_config import DEFAULT_NUM_CORES as GAP9_DEFAULT_NUM_CORES
 from test_gap9_config import KERNEL_TESTS as GAP9_KERNEL_TESTS
 from test_gap9_config import MODEL_TESTS as GAP9_MODEL_TESTS
+from test_gap9_config import TRAIN_KERNEL_TESTS as GAP9_TRAIN_KERNEL_TESTS
+from test_gap9_config import TRAINING_TESTS as GAP9_TRAINING_TESTS
 from test_gap9_tiled_config import DEFAULT_CORES as GAP9_TILED_DEFAULT_CORES
 from test_gap9_tiled_config import L2_DOUBLEBUFFER_KERNELS as GAP9_L2_DOUBLEBUFFER_KERNELS
 from test_gap9_tiled_config import L2_DOUBLEBUFFER_MODELS as GAP9_L2_DOUBLEBUFFER_MODELS
 from test_gap9_tiled_config import L2_SINGLEBUFFER_KERNELS as GAP9_L2_SINGLEBUFFER_KERNELS
 from test_gap9_tiled_config import L2_SINGLEBUFFER_MODELS as GAP9_L2_SINGLEBUFFER_MODELS
+from test_gap9_tiled_config import L2_SINGLEBUFFER_TRAINING_MODELS as GAP9_L2_SINGLEBUFFER_TRAINING_MODELS
 from test_gap9_tiled_config import L3_DOUBLEBUFFER_MODELS as GAP9_L3_DOUBLEBUFFER_MODELS
 from test_gap9_tiled_config import L3_SINGLEBUFFER_MODELS as GAP9_L3_SINGLEBUFFER_MODELS
+from test_gap9_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as GAP9_L3_SINGLEBUFFER_TRAINING_MODELS
+from test_gap9_tiled_config import TRAINING_MODEL_OVERRIDES as GAP9_TRAINING_MODEL_OVERRIDES
 from test_generic_config import KERNEL_TESTS as GENERIC_KERNEL_TESTS
 from test_generic_config import MODEL_TESTS as GENERIC_MODEL_TESTS
 from test_mempool_config import DEFAULT_NUM_THREADS as MEMPOOL_DEFAULT_NUM_THREADS
@@ -1193,5 +1198,116 @@ def test_siracusa_tiled_training_promote_l3_singlebuffer(test_params, deeploy_te
         promote_to_l2 = promote,
         promote_to_l2_strategy = strategy if promote else "cycle-aware",
         promote_to_l2_headroom = 200000,
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9
+@pytest.mark.train_kernel
+@pytest.mark.parametrize("test_name", GAP9_TRAIN_KERNEL_TESTS, ids = GAP9_TRAIN_KERNEL_TESTS)
+def test_gap9_train_kernels(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen,
+                            skipsim) -> None:
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_DEFAULT_NUM_CORES}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = False,
+        cores = GAP9_DEFAULT_NUM_CORES,
+        training = True,
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9
+@pytest.mark.training
+@pytest.mark.parametrize("test_name", GAP9_TRAINING_TESTS, ids = GAP9_TRAINING_TESTS)
+def test_gap9_training(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen, skipsim) -> None:
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_DEFAULT_NUM_CORES}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = False,
+        cores = GAP9_DEFAULT_NUM_CORES,
+        training = True,
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9_tiled
+@pytest.mark.training
+@pytest.mark.singlebuffer
+@pytest.mark.l2
+@pytest.mark.parametrize(
+    "test_params",
+    generate_test_params(GAP9_L2_SINGLEBUFFER_TRAINING_MODELS, "L2-singlebuffer-training"),
+    ids = param_id,
+)
+def test_gap9_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
+                                             skipgen, skipsim) -> None:
+    test_name, l1, _config_name = test_params
+    overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = True,
+        cores = GAP9_TILED_DEFAULT_CORES,
+        l1 = l1,
+        l2 = 1024000,
+        default_mem_level = "L2",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9_tiled
+@pytest.mark.training
+@pytest.mark.singlebuffer
+@pytest.mark.l3
+@pytest.mark.parametrize(
+    "test_params",
+    generate_test_params(GAP9_L3_SINGLEBUFFER_TRAINING_MODELS, "L3-singlebuffer-training"),
+    ids = param_id,
+)
+def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args,
+                                             skipgen, skipsim) -> None:
+    test_name, l1, _config_name = test_params
+    overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = True,
+        cores = GAP9_TILED_DEFAULT_CORES,
+        l1 = l1,
+        l2 = 1024000,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)

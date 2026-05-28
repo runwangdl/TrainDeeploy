@@ -84,3 +84,29 @@ L3_DOUBLEBUFFER_MODELS = {
     "Models/miniMobileNet": [60000, 24000, 12000, 6000],
     "Models/miniMobileNetv2": [60000, 32000, 24000, 16000],
 }
+
+# Training models — GAP9 L2 size is 1 MB (DEFAULT_L2 = 1024000).
+# L2 models: Autoencoder and DSCNN fit within 1 MB L2.
+L2_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/SimpleMLP/simplemlp_train": [64000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+}
+
+# L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
+L3_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
+    "Models/Training/CCT/cct_train": [128000],
+    "Models/Training/CCT_LoRA/cct_lora_train": [128000],
+}
+
+TRAINING_MODEL_OVERRIDES = {
+    "Models/Training/CCT/cct_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+    },
+    "Models/Training/CCT_LoRA/cct_lora_train": {
+        "num_data_inputs": 1,
+    },
+}

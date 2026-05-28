@@ -45,6 +45,7 @@ from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLev
 from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import MemoryDeployerWrapper
 from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateDefaultMemoryLevel, \
     AnnotateIOMemoryLevel, PromoteTensorsToL2
+from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
 
@@ -64,7 +65,7 @@ def generateTiledOptimizerNetwork(args) -> None:
     platform, signProp = mapPlatform(args.platform)
     log.debug(f"Platform: {platform} (sign: {signProp})")
 
-    clusters = [e for e in platform.engines if isinstance(e, PULPClusterEngine)]
+    clusters = [e for e in platform.engines if isinstance(e, (PULPClusterEngine, GAP9ClusterEngine))]
     for cluster in clusters:
         cluster.n_cores = args.cores
 
