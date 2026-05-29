@@ -29,6 +29,37 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
         callStack: List[CodeSnippet] = []
         futures: Set[Future] = set()
 
+        # Pre-scan: compute combined outer-loop tile counts across all tensors so
+        # each Scenario-B tensor can determine its period_before (how many outer
+        # iterations elapse before its own tiling dimension advances) without
+        # relying on the sqrt heuristic, which fails when M_fast == M_slow.
+        import math as _math
+        _combined_ends: list = []
+        for _tName, _rects_list in dictOfArrays(transferSchedule).items():
+            try:
+                _lBuf = ctxt.lookup(operatorRepresentation[_tName])
+            except Exception:
+                continue
+            if not isinstance(_lBuf, _ReferenceBuffer):
+                continue
+            _eBuf = ctxt.lookup(_lBuf._referenceName)
+            if isinstance(_eBuf, _ReferenceBuffer):
+                continue
+            _bshape = _eBuf.shape
+            _br = len(_bshape)
+            _rects0 = list(_rects_list)
+            if not _rects0:
+                continue
+            _td = _rects0[0].dims[-_br:]
+            if len(_td) < _br:
+                continue
+            _te = [_math.ceil(_bshape[d] / _td[d]) for d in range(_br)]
+            if not _combined_ends:
+                _combined_ends = list(_te)
+            else:
+                for d in range(min(_br, len(_combined_ends))):
+                    _combined_ends[d] = max(_combined_ends[d], _te[d])
+
         for tensorName, rectangles in dictOfArrays(transferSchedule).items():
             localBuffer = ctxt.lookup(operatorRepresentation[tensorName])
             assert localBuffer._memoryLevel == self.localMemory
@@ -91,10 +122,17 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                         num_rects = len(original_rectangles)
                         M = len(base_offsets)
                         N = num_rects
-                        # Determine fast vs slow tensor for 2D tiling:
-                        # slow tensor has M^2 > N (outer-loop dim), use repeat pattern;
-                        # fast tensor has M^2 <= N (inner-loop dim), use cycle pattern.
-                        if M * M > N:
+                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
+                        if len(nontrivial) == 1 and _combined_ends:
+                            d_tile = nontrivial[0]
+                            period_before = 1
+                            for _d in range(d_tile):
+                                period_before *= _combined_ends[_d]
+                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
+                        elif N <= M:
+                            # Fewer outer tiles than unique buffer windows: take one-to-one.
+                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
+                        elif M * M > N:
                             cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
                         else:
                             cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
@@ -160,7 +198,16 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                         num_rects = len(original_rectangles)
                         M = len(base_offsets)
                         N = num_rects
-                        if M * M > N:
+                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
+                        if len(nontrivial) == 1 and _combined_ends:
+                            d_tile = nontrivial[0]
+                            period_before = 1
+                            for _d in range(d_tile):
+                                period_before *= _combined_ends[_d]
+                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
+                        elif N <= M:
+                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
+                        elif M * M > N:
                             cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
                         else:
                             cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
