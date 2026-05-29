@@ -160,8 +160,14 @@ static void l3_aware_copy(void *dst, const void *src, uint32_t bytes) {
 static void run_optimizer_step(void) {
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
   /* --- Step A: copy current weights + grad acc → optimizer input buffers ---
-   * Skipped when codegen has shared the buffers (pointer equality test). */
-  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+   * Skipped when codegen has shared the buffers (pointer equality test).
+   * The optimizer only has slots for weights that have an SGD node, which can
+   * be fewer than the training graph's weight count (e.g. frozen params); cap
+   * the loop by the optimizer input array (2 inputs — weight+grad — per slot)
+   * so we never index past DeeployOptNetwork_inputs[]. */
+  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS &&
+                        (2u * wi + 1u) < DeeployOptNetwork_num_inputs;
+       wi++) {
     uint32_t train_w_idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
     uint32_t train_g_idx = (uint32_t)TRAINING_GRAD_BUF_START_IDX + wi;
     uint32_t opt_w_in = 2u * wi;
@@ -190,7 +196,9 @@ static void run_optimizer_step(void) {
   /* --- Step C: copy weight_updated back to training network's weight buffers
    * --- Skipped when codegen has shared the output buffer with the training
    * input. */
-  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS &&
+                        wi < DeeployOptNetwork_num_outputs;
+       wi++) {
     uint32_t train_w_idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
     uint32_t opt_w_out = wi;
 

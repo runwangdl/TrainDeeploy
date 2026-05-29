@@ -306,13 +306,15 @@ GAP9SoftmaxGradBindings = [
 
 GAP9SoftmaxCrossEntropyLossBindings = [
     NodeBinding(
-        SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),
+        SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)],
+                                       [PointerClass(float32_t), PointerClass(float32_t)]),
         SoftmaxCrossEntropyLossTemplate.referenceTemplate, GAP9Transformer) for type in IntegerDataTypes
 ]
 
 GAP9SoftmaxCrossEntropyLossGradBindings = [
     NodeBinding(
-        SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),
+        SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)],
+                                       [PointerClass(float32_t), PointerClass(float32_t)]),
         SoftmaxCrossEntropyLossTemplate.referenceGradientTemplate, GAP9Transformer) for type in IntegerDataTypes
 ]
 
@@ -376,13 +378,22 @@ GAP9ReluBinding = NodeBinding(ReluChecker([PointerClass(float32_t)], [PointerCla
 
 GAP9LayernormBinding = NodeBinding(
     LayerNormChecker(
+        # inputs: data_in (X), weight (scale/gamma), bias (beta)
         [PointerClass(float32_t), PointerClass(float32_t),
-         PointerClass(float32_t)], [PointerClass(float32_t)]), FloatLayernormTemplate.referenceTemplate,
+         PointerClass(float32_t)],
+        # outputs: data_out (Y), mean stash, inv_std_dev stash
+        [PointerClass(float32_t), PointerClass(float32_t),
+         PointerClass(float32_t)]),
+    FloatLayernormTemplate.referenceTemplate,
     GAP9Transformer)
 
 GAP9FloatGELUBinding = NodeBinding(
     GELUChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
     FloatGELUTemplate.referenceTemplate, GAP9Transformer)
+
+GAP9FloatGELUGradBinding = NodeBinding(
+    GELUChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+    FloatGELUTemplate.referenceGradTemplate, GAP9Transformer)
 
 GAP9GatherBindings = [
     NodeBinding(GatherChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),

@@ -41,4 +41,13 @@
 // Now include the mchan.h header with all configurations set
 #include "mchan.h"
 
+// GAP9 MCHAN v7 exposes 16 hardware channels (ids 0..15). The generated
+// DMA code (MchanDma.py template) guards channel waits with
+// `channel <= MCHAN_CHANNEL_ID_MAX`, but GAP9's mchan.h does not define this
+// macro (only PULPOpen's mchan_v6/v7.h do). Define it here so the generated
+// TrainingNetwork.c compiles.
+#ifndef MCHAN_CHANNEL_ID_MAX
+#define MCHAN_CHANNEL_ID_MAX (15)
+#endif
+
 #endif // _DEEPLOY_MCHAN_H

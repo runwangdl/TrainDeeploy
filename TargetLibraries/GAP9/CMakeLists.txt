@@ -31,6 +31,30 @@ target_compile_options(deeploygap9 PRIVATE
 
 target_link_libraries(deeploygap9 PUBLIC pmsis)
 
+# Add pulp-trainlib integration (used by ConvGrad family), mirroring PULPOpen.
+target_include_directories(deeploygap9 PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/include
+)
+
+# Add necessary pulp-trainlib sources for ConvGradW / ConvGradX
+file(GLOB PULP_TRAINLIB_CONV_SOURCES
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c"
+  "${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c"
+)
+target_sources(deeploygap9 PRIVATE ${PULP_TRAINLIB_CONV_SOURCES})
+
+# Fix compilation issues with pulp-trainlib sources
+# Undefine USE_DMA and define float16alt to avoid conflicts
+set_source_files_properties(${PULP_TRAINLIB_CONV_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS "-UUSE_DMA -Dfloat16alt=float -Wno-error -Wno-strict-aliasing -Wno-unused-variable -Wno-unused-function -Wno-sign-compare"
+)
+
 #RW: Link PULP-NN
 #RW: Set PULP-NN version and bitwidth for pulp-nn-mixed
 set(PULPNNVERSION XPULPV2)
