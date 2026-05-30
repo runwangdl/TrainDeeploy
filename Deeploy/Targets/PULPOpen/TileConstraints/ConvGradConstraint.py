@@ -158,6 +158,29 @@ class ConvGradXTileConstraintBase(TileConstraint):
         except Exception:
             pass  # best-effort; don't block tiling on cost model failure
 
+        # RW: For strided convs, force the dX spatial tile size to be a multiple
+        # of the stride. A 1x1 stride-s conv samples only every s-th input
+        # position, so an input column/row whose index is not a multiple of s
+        # receives NO output-gradient contribution. If the tiler isolates such a
+        # column into its own tile (e.g. a width-1 tile under tight L1), the
+        # inverse-conv dY halo for that tile is empty -> computeDyCubeFromDxTile
+        # raises (generation) or the kernel writes past its tile (runtime L1 OOB
+        # at update 1). Constraining the dX spatial tile to a multiple of the
+        # stride guarantees every tile spans a full stride period (both sampled
+        # and unsampled positions), so the halo is never empty. Only applied for
+        # stride > 1, so stride-1 layers keep full spatial freedom.
+        try:
+            dxName = parseDict[cls.gradInKey]
+            sh, sw = tuple(parseDict.get("strides", [1, 1]))
+            if sh > 1:
+                tilerModel.addTileSizeDivisibleConstraint(parseDict, "dim_im_in_x",
+                                                          tilerModel.getTensorDimVar(dxName, 2), sh)
+            if sw > 1:
+                tilerModel.addTileSizeDivisibleConstraint(parseDict, "dim_im_in_y",
+                                                          tilerModel.getTensorDimVar(dxName, 3), sw)
+        except Exception:
+            pass  # best-effort; don't block tiling if keys/strides unavailable
+
         return tilerModel
 
     # -----------------------------------

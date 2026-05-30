@@ -59,9 +59,23 @@
 #include "testinputs.h"
 #include "testoutputs.h"
 
-/* Helper: true when ptr is in L2 (CPU-accessible); false when in L3 (external
- * RAM) */
-#define IS_L2(ptr) ((uint32_t)(ptr) >= 0x10000000u)
+/* Helper: true when ptr is CPU-directly-accessible (L1 TCDM or L2), false when
+ * in L3 (external HyperRAM).
+ *
+ * GAP9 address map:
+ *   L1  TCDM     : 0x1000_0000 .. 0x1002_0000
+ *   L2  (priv+shared): 0x1C00_0000 .. 0x1C19_0000
+ *   L3  HyperRAM : external alloc space, observed 0x8000_0000 .. 0xBFFF_FFFF
+ *
+ * The previous test `ptr >= 0x10000000` wrongly classified HyperRAM/L3
+ * addresses (0x8.._0xb..) as CPU-accessible, so l3_aware_copy() did a raw
+ * memcpy on an L3 pointer → FC "Invalid fetch" crash. Test the real on-chip
+ * windows instead. */
+#define IS_L1(ptr)                                                             \
+  ((uint32_t)(ptr) >= 0x10000000u && (uint32_t)(ptr) < 0x10040000u)
+#define IS_L2(ptr)                                                             \
+  (((uint32_t)(ptr) >= 0x1C000000u && (uint32_t)(ptr) < 0x1C200000u) ||        \
+   IS_L1(ptr))
 
 /* -------------------------------------------------------------------------
  * Compile-time defaults — override via CMake target_compile_definitions
@@ -327,9 +341,15 @@ int main(void) {
    * Copy initial weights into network input buffers.
    * (InitTrainingNetwork only malloc's them; testInitWeights[] holds
    *  the actual starting values from inputs.npz.)
+   *
+   * Skipped when TRAINING_SKIP_INITWEIGHT_COPY is defined: on GAP9 the
+   * generated InitTrainingNetwork already loads every L3-resident weight from
+   * its N.hex file at boot, so this copy (and the testInitWeights[] arrays it
+   * reads) is redundant and would needlessly double the on-chip footprint.
    * ------------------------------------------------------------------ */
 
-#if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
+#if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0) && \
+    !defined(TRAINING_SKIP_INITWEIGHT_COPY)
   for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
     uint32_t idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
     l3_aware_copy(DeeployNetwork_inputs[idx], testInitWeights[wi],
