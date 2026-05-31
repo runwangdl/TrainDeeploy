@@ -96,6 +96,23 @@
 /* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task */
 #define SLAVESTACKSIZE 3800
 
+/* RW: Place the cluster slave stacks in L2 instead of L1 TCDM. The GAP9 SDK
+ * only pi_cl_l1_malloc's the slave stacks when task->stacks == NULL (see
+ * __pi_cluster_task_set_stack in the SDK cluster driver); by handing it our own
+ * buffer we make it skip that L1 allocation, freeing ~30KB of L1 (8 cores x
+ * 3800B) for the Deeploy tile arena. Sized for the worst case (9 cores). This
+ * is what lets conv-heavy nets (ResNet8/MobileNetV1) whose L1 working set
+ * exceeds the stack-reduced L1 budget fit. Static array -> .bss -> L2_shared.
+ */
+#define CLUSTER_MAX_CORES 9
+static uint8_t cluster_slave_stacks[SLAVESTACKSIZE * CLUSTER_MAX_CORES]
+    __attribute__((aligned(16)));
+#define SET_SLAVE_STACK(task)                                                  \
+  do {                                                                         \
+    (task).slave_stack_size = SLAVESTACKSIZE;                                  \
+    (task).stacks = cluster_slave_stacks;                                      \
+  } while (0)
+
 /* -------------------------------------------------------------------------
  * Cluster device
  * ---------------------------------------------------------------------- */
@@ -204,7 +221,7 @@ static void run_optimizer_step(void) {
   /* --- Step B: run optimizer kernel on cluster --- */
   struct pi_cluster_task opt_task;
   pi_cluster_task(&opt_task, RunOptimizerNetworkWrapper, NULL);
-  opt_task.slave_stack_size = SLAVESTACKSIZE;
+  SET_SLAVE_STACK(opt_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &opt_task);
 
   /* --- Step C: copy weight_updated back to training network's weight buffers
@@ -301,7 +318,7 @@ int main(void) {
 
   printf("Initializing TrainingNetwork...\r\n");
   pi_cluster_task(&cluster_task, InitTrainingNetworkWrapper, NULL);
-  cluster_task.slave_stack_size = SLAVESTACKSIZE;
+  SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
 
   /* ------------------------------------------------------------------
@@ -332,7 +349,7 @@ int main(void) {
 
   printf("Initializing OptimizerNetwork...\r\n");
   pi_cluster_task(&cluster_task, InitOptimizerNetworkWrapper, NULL);
-  cluster_task.slave_stack_size = SLAVESTACKSIZE;
+  SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
 
   uint32_t reset_idx = DeeployNetwork_num_inputs - 1;
@@ -391,7 +408,7 @@ int main(void) {
 
       /* ③ Forward + backward + InPlaceAccumulatorV2. */
       pi_cluster_task(&cluster_task, RunTrainingNetworkWrapper, NULL);
-      cluster_task.slave_stack_size = SLAVESTACKSIZE;
+      SET_SLAVE_STACK(cluster_task);
       pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
 
       /* ④ Store loss — use memcpy to avoid float registers on FC (no FPU). */
@@ -425,7 +442,7 @@ int main(void) {
       .err_count = &loss_err_count,
   };
   pi_cluster_task(&cluster_task, CompareLossesOnCluster, &loss_cmp_args);
-  cluster_task.slave_stack_size = SLAVESTACKSIZE;
+  SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
   printf("Errors: %u out of %u\r\n", (unsigned)loss_err_count,
          (unsigned)total_loss_checks);

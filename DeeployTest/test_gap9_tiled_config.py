@@ -95,9 +95,9 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 
 # L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
 L3_SINGLEBUFFER_TRAINING_MODELS = {
-    "Models/Training/ResNet8/resnet8_train": [84000],
+    "Models/Training/ResNet8/resnet8_train": [80000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [84000],
-    "Models/Training/CCT/cct_train": [40000],
+    "Models/Training/CCT/cct_train": [56000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
 
