@@ -63,3 +63,11 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training"
+
+  gap9-training-tiled-l3-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and singlebuffer and l3"
