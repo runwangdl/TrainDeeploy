@@ -384,6 +384,7 @@ def test_siracusa_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, 
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
@@ -418,6 +419,7 @@ def test_siracusa_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, 
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
@@ -1278,6 +1280,7 @@ def test_gap9_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, tool
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
@@ -1313,5 +1316,6 @@ def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, tool
         training = True,
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)

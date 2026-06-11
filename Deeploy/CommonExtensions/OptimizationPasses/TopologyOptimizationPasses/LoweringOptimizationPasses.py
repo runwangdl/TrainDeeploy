@@ -222,6 +222,13 @@ class TransposeMatmulInputsPass(ReplaceSequentialPatternPass):
 def _NCHWtoNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_first: bool = True):
     node = next(iter((match.nodes_map.values())))
 
+    # RW: nodes tagged keep_channels_first (by PULPConvKeepCHWPass for the GAP9
+    # channels-first conv path) must NOT be transposed — they run channels-first
+    # natively. The tag is only ever set by that GAP9 pass, so this is inert for
+    # every other target/network.
+    if node.attrs.get("keep_channels_first", False):
+        return graph
+
     channels_first = node.attrs.get("channels_first", True)
     if (channels_first != default_channels_first):
         tensorIn = node.inputs[0]

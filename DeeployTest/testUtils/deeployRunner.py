@@ -273,6 +273,9 @@ def create_config_from_args(args: argparse.Namespace,
     if getattr(args, 'profileMicrobenchmark', False):
         gen_args_list.append("--profileMicrobenchmark")
 
+    if getattr(args, 'convChannelsFirst', False):
+        gen_args_list.append("--convChannelsFirst")
+
     config = DeeployTestConfig(
         test_name = test_name,
         test_dir = test_dir_abs,

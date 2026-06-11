@@ -85,6 +85,8 @@ struct PointWise_Conv_args {
 };
 
 // pulp-trainlib dispatch functions
+void pulp_conv2d_fp32_fw_cl(void *Conv2D_args);
+void pulp_conv_dw_fp32_fw_cl(void *DepthWise_Conv_args);
 void pulp_conv2d_fp32_bw_param_grads_cl(void *Conv2D_args);
 void pulp_conv2d_fp32_bw_input_grads_cl(void *Conv2D_args);
 void pulp_conv2d_fp32_bw_input_grads_tiled_cl(void *Conv2D_args);

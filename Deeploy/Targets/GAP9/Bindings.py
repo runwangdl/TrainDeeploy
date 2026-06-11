@@ -209,6 +209,26 @@ GAP9FloatDWConv2DBindings = [
         GAP9Transformer) for float_type in FloatDataTypes
 ]
 
+# RW: channels-first (NCHW) forward conv bindings. These call the trainlib
+# *_CHW forward kernels (pulp_conv2d_fp32_fw_cl / pulp_conv_dw_fp32_fw_cl),
+# which fork internally on the cluster (master-core dispatch), so they bind via
+# GAP9ClusterTransformer like the ConvGrad forward-style kernels — NOT the
+# per-core GAP9Transformer used by the HWC kernels.
+GAP9FloatConv2DCHWBindings = [
+    NodeBinding(
+        ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]),
+        FloatConvTemplate.reference2DIm2ColTemplate_CHW, GAP9ClusterTransformer)
+]
+
+GAP9FloatDWConv2DCHWBindings = [
+    NodeBinding(
+        ConvChecker(
+            [PointerClass(float_type), PointerClass(float_type),
+             PointerClass(float_type)], [PointerClass(float_type)]),
+        FloatConvTemplate.referenceDW2DIm2ColTemplate_CHW, GAP9ClusterTransformer) for float_type in FloatDataTypes
+]
+
 GAP9RQSMatrixVecBindings = [
     NodeBinding(
         PULPLinearChecker([PointerClass(type1),
@@ -497,8 +517,8 @@ GAP9InPlaceAccumulatorV2Bindings = [
     NodeBinding(
         InPlaceAccumulatorV2Checker(
             [PointerClass(float32_t), PointerClass(float32_t),
-             PointerClass(uint8_t)], [PointerClass(float32_t)]), FloatInPlaceAccumulatorV2Template.referenceTemplate,
-        GAP9Transformer)
+             PointerClass(uint8_t)], [PointerClass(float32_t)]), FloatInPlaceAccumulatorV2Template.singleCoreTemplate,
+        GAP9ClusterTransformer)
 ]
 
 GAP9LayernormGradBinding = NodeBinding(

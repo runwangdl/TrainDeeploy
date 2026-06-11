@@ -104,6 +104,7 @@ def mapDeployer(platform: DeploymentPlatform,
                 name: Optional[str] = None,
                 default_channels_first: Optional[bool] = None,
                 deeployStateDir: Optional[str] = None,
+                conv_channels_first: bool = False,
                 inputOffsets: Optional[Dict[str, int]] = None) -> NetworkDeployer:
 
     if scheduler is None:
@@ -222,7 +223,8 @@ def mapDeployer(platform: DeploymentPlatform,
                                 scheduler,
                                 name = name,
                                 default_channels_first = default_channels_first,
-                                deeployStateDir = deeployStateDir)
+                                deeployStateDir = deeployStateDir,
+                                conv_channels_first = conv_channels_first)
 
     elif isinstance(platform, (PULPPlatform, MemoryPULPPlatform, MemoryPULPPlatformWrapper)):
 

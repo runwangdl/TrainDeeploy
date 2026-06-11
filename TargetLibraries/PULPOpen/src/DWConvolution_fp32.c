@@ -8,6 +8,69 @@
 #include "pmsis.h"
 #include <math.h>
 
+// RW: CHW depthwise forward conv via pulp-trainlib (HWC=0). Mirrors DWConvGrad.c.
+// Keeps activations channels-first so no NCHW->NHWC transpose is needed. DW has
+// no bias in trainlib (MobileNet folds bias into the following BatchNorm), and
+// no im2col buffer is needed. Forward kernel ignores tile offsets, so each tile
+// must be self-contained with correct per-tile padding (the tile constraint).
+void PULP_DW_Conv2d_Im2Col_fp32_fp32_fp32_CHW(
+    const float32_t *__restrict__ pSrcA, uint32_t H, uint32_t W, uint32_t C,
+    const float32_t *__restrict__ pSrcB, uint32_t F_total, uint32_t P,
+    uint32_t Q, uint32_t SP, uint32_t SQ,
+    const float32_t *__restrict__ pSrcBias, const bool has_bias,
+    float32_t *__restrict__ pDstC, uint32_t pad_top, uint32_t pad_bottom,
+    uint32_t pad_left, uint32_t pad_right,
+    float32_t *__restrict__ pContextBuffer) {
+
+  (void)pSrcBias;
+  (void)has_bias;
+  (void)pContextBuffer;
+
+  uint32_t H_out = (H + pad_top + pad_bottom - P) / SP + 1;
+  uint32_t W_out = (W + pad_left + pad_right - Q) / SQ + 1;
+
+  struct blob input_blob = {0};
+  struct blob coeff_blob = {0};
+  struct blob output_blob = {0};
+
+  input_blob.data = (float *)pSrcA;
+  input_blob.diff = NULL;
+  input_blob.W = (int)W;
+  input_blob.H = (int)H;
+  input_blob.C = (int)C;
+  input_blob.dim = (int)(C * H * W);
+
+  coeff_blob.data = (float *)pSrcB;
+  coeff_blob.diff = NULL;
+  coeff_blob.W = (int)Q;
+  coeff_blob.H = (int)P;
+  coeff_blob.C = (int)F_total;
+  coeff_blob.dim = (int)(F_total * P * Q);
+
+  output_blob.data = pDstC;
+  output_blob.diff = NULL;
+  output_blob.W = (int)W_out;
+  output_blob.H = (int)H_out;
+  output_blob.C = (int)F_total;
+  output_blob.dim = (int)(F_total * H_out * W_out);
+
+  struct DepthWise_Conv_args dw_args = {0};
+  dw_args.input = &input_blob;
+  dw_args.coeff = &coeff_blob;
+  dw_args.output = &output_blob;
+  dw_args.stride_h = (int)SP;
+  dw_args.stride_w = (int)SQ;
+  dw_args.Lpad = (int)pad_left;
+  dw_args.Rpad = (int)pad_right;
+  dw_args.Upad = (int)pad_top;
+  dw_args.Dpad = (int)pad_bottom;
+  dw_args.skip_wg_grad = 1;
+  dw_args.skip_in_grad = 1;
+  dw_args.HWC = 0;
+
+  pulp_conv_dw_fp32_fw_cl(&dw_args);
+}
+
 void PULP_DW_Conv2d_Im2Col_fp32_fp32_fp32_HWC(
     const float32_t *__restrict__ pSrcA, uint32_t H, uint32_t W, uint32_t C,
     const float32_t *__restrict__ pSrcB, uint32_t F_total, uint32_t P,

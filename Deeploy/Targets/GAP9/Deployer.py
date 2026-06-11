@@ -15,9 +15,12 @@ import onnx_graphsurgeon as gs
 
 from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.CommonExtensions.NetworkDeployers.SignPropDeployer import SignPropDeployer
+from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.LoweringOptimizationPasses import \
+    PULPNCHWtoNHWCPass
 from Deeploy.DeeployTypes import ConstantBuffer, DeploymentPlatform, NodeTemplate, TopologyOptimizer, VariableBuffer
 from Deeploy.Targets.GAP9.Bindings import GAP9ClusterTransformer, GAP9SimpleTransformer, GAP9Transformer
 from Deeploy.Targets.PULPOpen.Deployer import PULPDeployer
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import PULPConvKeepCHWPass
 
 # GAP9-specific L3 RAM allocation and loading templates
 _GAP9L3AllocTemplate = NodeTemplate("""
@@ -51,6 +54,7 @@ class GAP9Deployer(PULPDeployer):
                  name: str = 'DeeployNetwork',
                  default_channels_first = False,
                  deeployStateDir: str = "DeeployStateDir",
+                 conv_channels_first: bool = False,
                  inputOffsets = {}):
         super().__init__(graph,
                          deploymentPlatform,
@@ -66,6 +70,19 @@ class GAP9Deployer(PULPDeployer):
         self.Transformer = GAP9Transformer
         self.ClusterTransformer = GAP9ClusterTransformer
         self.SimpleTransformer = GAP9SimpleTransformer
+
+        # RW: channels-first forward conv. When enabled, tag every forward Conv
+        # with keep_channels_first (PULPConvKeepCHWPass) *before* PULPNCHWtoNHWCPass
+        # runs. Tagged convs skip the NCHW->NHWC transpose and bind to the *_CHW
+        # kernels (their CHW mappers sit ahead of the HWC ones, gated by the tag),
+        # so conv activations stay channels-first end-to-end — removing the stem /
+        # per-conv transpose pairs that set MobileNetV1's L1 tiling floor.
+        self.conv_channels_first = conv_channels_first
+        if conv_channels_first:
+            passes = self.loweringOptimizer.passes
+            insertIdx = next(
+                (i for i, p in enumerate(passes) if isinstance(p, PULPNCHWtoNHWCPass)), len(passes))
+            passes.insert(insertIdx, PULPConvKeepCHWPass())
 
     def generateBufferAllocationCode(self) -> str:
         retStr = SignPropDeployer.generateBufferAllocationCode(self)

@@ -183,6 +183,46 @@ class PULPFPDWConv2DParser(Conv2DParser):
         return ctxt, False
 
 
+# RW: channels-first (NCHW) forward conv parsers. Used by the GAP9 CHW conv
+# mappers, which sit ahead of the HWC mappers in the 'Conv' mapping list. These
+# parsers only accept a node tagged with attr "keep_channels_first" (set by
+# PULPConvKeepCHWPass when the deployer runs with conv_channels_first=True);
+# every other conv node makes parseNode return False and falls through to the
+# HWC mapper, so non-CHW networks are completely unaffected.
+#
+# The transpose-skipping pass keeps the conv activations physically NCHW, so the
+# dim indexing must be channels-first regardless of the deployer's
+# default_channels_first (which is NHWC/False for GAP9). We therefore force
+# channels_first=True into the base parseNodeCtxt, matching the kept NCHW tensor
+# shapes and the OIHW weight layout consumed by the *_CHW kernels.
+class PULPFPConv2DCHWParser(PULPFPConv2DParser):
+
+    def parseNode(self, node: gs.Node) -> (bool):
+        if not bool(node.attrs.get("keep_channels_first", False)):
+            return False
+        return super().parseNode(node)
+
+    def parseNodeCtxt(self,
+                      ctxt: NetworkContext,
+                      node: gs.Node,
+                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:
+        return super().parseNodeCtxt(ctxt, node, channels_first = True)
+
+
+class PULPFPDWConv2DCHWParser(PULPFPDWConv2DParser):
+
+    def parseNode(self, node: gs.Node) -> (bool):
+        if not bool(node.attrs.get("keep_channels_first", False)):
+            return False
+        return super().parseNode(node)
+
+    def parseNodeCtxt(self,
+                      ctxt: NetworkContext,
+                      node: gs.Node,
+                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:
+        return super().parseNodeCtxt(ctxt, node, channels_first = True)
+
+
 class PULPDWConv1DParser(RQSConv1DParser):
 
     def __init__(self, noBiasHoisting = True):

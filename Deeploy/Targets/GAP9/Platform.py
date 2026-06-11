@@ -13,8 +13,9 @@ from Deeploy.Targets.GAP9.Templates import AllocateTemplate, FreeTemplate
 # Import GAP9-specific tiler bindings
 from Deeploy.Targets.GAP9.Tiler import GAP9AddTilingReadyBindings, GAP9AveragePoolGrad2DTilingReadyBindings, \
     GAP9BatchNormalizationGradTilingReadyBindings, GAP9BatchNormInternalTilingReadyBindings, \
-    GAP9ConcatTilingReadyBindings, GAP9Conv2DTilingReadyBindings, GAP9ConvGradBTilingReadyBindings, \
-    GAP9ConvGradW2DTilingReadyBindings, GAP9ConvGradX2DTilingReadyBindings, GAP9DWConv2DTilingReadyBindings, \
+    GAP9ConcatTilingReadyBindings, GAP9Conv2DCHWTilingReadyBindings, GAP9Conv2DTilingReadyBindings, \
+    GAP9ConvGradBTilingReadyBindings, GAP9ConvGradW2DTilingReadyBindings, GAP9ConvGradX2DTilingReadyBindings, \
+    GAP9DWConv2DCHWTilingReadyBindings, GAP9DWConv2DTilingReadyBindings, \
     GAP9DWConvGradW2DTilingReadyBindings, GAP9DWConvGradX2DTilingReadyBindings, GAP9FlattenTilingReadyBindings, \
     GAP9FPGELUGradTilingReadyBindings, GAP9FPGELUTilingReadyBindings, GAP9FPGEMMTilingReadyBindings, \
     GAP9GatherTilingReadyBindings, GAP9GlobalAveragePool2DTilingReadyBindings, \
@@ -55,7 +56,8 @@ from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBi
 from Deeploy.Targets.PULPOpen.Layers import PULPRQSConvLayer, PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
     PULPConvGradX2DParser, PULPDWConv1DParser, PULPDWConv2DParser, PULPDWConvGradW2DParser, PULPDWConvGradX2DParser, \
-    PULPFPConv2DParser, PULPFPDWConv2DParser, PULPGEMMParser, PULPMatrixVecParser, PULPPWConvGradW2DParser, \
+    PULPFPConv2DCHWParser, PULPFPConv2DParser, PULPFPDWConv2DCHWParser, PULPFPDWConv2DParser, PULPGEMMParser, \
+    PULPMatrixVecParser, PULPPWConvGradW2DParser, \
     PULPPWConvGradX2DParser, PULPTallGEMMParser
 
 # Create GAP9-specific NodeMappers
@@ -81,6 +83,11 @@ GAP9_RQGELU_int8_Mapper = NodeMapper(RQSiGELUParser(), GAP9iRQSGELUTilingReadyBi
 GAP9_Conv1DMapper = NodeMapper(PULPConv1DParser(), PULPRQSConv1DBindings)
 GAP9_DWConv1DMapper = NodeMapper(PULPDWConv1DParser(), [PULPDWConv1DBinding])
 GAP9_FPConv2DMapper = NodeMapper(PULPFPConv2DParser(), GAP9Conv2DTilingReadyBindings)
+# Channels-first (NCHW) forward conv mappers. Their parsers only accept Conv nodes
+# tagged keep_channels_first (PULPConvKeepCHWPass), so they are placed ahead of the
+# HWC mappers in the 'Conv' mapping and untagged convs fall through to the HWC path.
+GAP9_FPConv2DCHWMapper = NodeMapper(PULPFPConv2DCHWParser(), GAP9Conv2DCHWTilingReadyBindings)
+GAP9_FPDWConv2DCHWMapper = NodeMapper(PULPFPDWConv2DCHWParser(), GAP9DWConv2DCHWTilingReadyBindings)
 GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2DTilingReadyBindings)
 GAP9_FPDWConv2DMapper = NodeMapper(PULPFPDWConv2DParser(), GAP9DWConv2DTilingReadyBindings)
 GAP9_DWConv2DMapper = NodeMapper(PULPDWConv2DParser(), GAP9RQSDWConv2DTilingReadyBindings)
@@ -133,7 +140,9 @@ GAP9_LayerNormGradMapper = NodeMapper(LayerNormGradParser(), GAP9LayernormGradTi
 # GAP9-specific mapping using ClDma
 GAP9Mapping = {
     'Conv':
-        ConvLayer([GAP9_FPConv2DMapper, GAP9_FPDWConv2DMapper]),
+        ConvLayer([
+            GAP9_FPConv2DCHWMapper, GAP9_FPDWConv2DCHWMapper, GAP9_FPConv2DMapper, GAP9_FPDWConv2DMapper
+        ]),
     'RequantizedConv':
         PULPRQSConvLayer([GAP9_Conv2DMapper, GAP9_DWConv2DMapper, GAP9_Conv1DMapper, GAP9_DWConv1DMapper]),
     'RequantizedGemm':

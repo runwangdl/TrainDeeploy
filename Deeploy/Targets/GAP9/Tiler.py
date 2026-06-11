@@ -14,7 +14,8 @@ import copy
 
 from Deeploy.Targets.GAP9.Bindings import GAP9AddBindings, GAP9AveragePoolGrad2DBindings, \
     GAP9BatchNormalizationGradBindings, GAP9BatchNormInternalBindings, GAP9ConcatBindings, GAP9FloatConv2DBindings, \
-    GAP9FloatConvGradBBindings, GAP9FloatConvGradW2DBindings, GAP9FloatConvGradX2DBindings, GAP9FloatDWConv2DBindings, \
+    GAP9FloatConv2DCHWBindings, GAP9FloatConvGradBBindings, GAP9FloatConvGradW2DBindings, \
+    GAP9FloatConvGradX2DBindings, GAP9FloatDWConv2DBindings, GAP9FloatDWConv2DCHWBindings, \
     GAP9FloatDWConvGradW2DBindings, GAP9FloatDWConvGradX2DBindings, GAP9FloatGELUBinding, GAP9FloatGELUGradBinding, \
     GAP9FloatGEMMBindings, GAP9FloatPWConvGradW2DBindings, GAP9FloatPWConvGradX2DBindings, GAP9GatherBindings, \
     GAP9GlobalAveragePool2DBindings, GAP9GlobalAveragePoolGrad2DBindings, GAP9iHardswishBindings, \
@@ -41,8 +42,10 @@ from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import Bat
 from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import ConvGradBTileConstraint, \
     ConvGradW2DTileConstraint, ConvGradX2DIm2ColHWTileConstraint, DWConvGradW2DTileConstraint, \
     DWConvGradX2DTileConstraint, PWConvGradWTileConstraint, PWConvGradXTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint, RQConv2DTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint, \
+    Conv2DTileConstraintCHW, RQConv2DTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.DWConvTileConstraint import DWConv2DTileConstraint, \
+    DWConv2DTileConstraintCHW, \
     RQDWConv2DTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.GatherTileConstraint import GatherTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.GEMMTileConstraint import FloatGEMMTileConstraint, GEMMTileConstraint
@@ -77,6 +80,13 @@ GAP9Conv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9Float
 
 GAP9DWConv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConv2DBindings,
                                                           tileConstraint = DWConv2DTileConstraint())
+
+# Channels-first (NCHW) forward conv tiling-ready bindings (CHW kernels + NCHW tile constraints)
+GAP9Conv2DCHWTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatConv2DCHWBindings,
+                                                           tileConstraint = Conv2DTileConstraintCHW())
+
+GAP9DWConv2DCHWTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConv2DCHWBindings,
+                                                             tileConstraint = DWConv2DTileConstraintCHW())
 
 GAP9RQSGEMMTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9RQSGEMMBindings,
                                                          tileConstraint = GEMMTileConstraint())
