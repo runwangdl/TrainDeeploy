@@ -113,6 +113,7 @@ def generateTiledTrainingNetwork(args) -> None:
                            name = "DeeployTrainingNetwork",
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
+                           conv_channels_first = args.convChannelsFirst,
                            scheduler = _mockScheduler)
 
     # 7. Set up memory hierarchy.
@@ -304,6 +305,9 @@ if __name__ == '__main__':
                         type = int,
                         default = 131072,
                         help = 'Bytes reserved in L2 for tile staging')
+    parser.add_argument('--convChannelsFirst',
+                        action = 'store_true',
+                        help = 'Use channels-first forward convolutions (no NCHW<->NHWC transpose).')
     parser.set_defaults(shouldFail = False)
     args = parser.parse_args()
 

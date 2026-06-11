@@ -29,9 +29,17 @@ class _ArgStructAllocateTemplate(NodeTemplate):
         self.bufferName = bufferName
 
 
+# NOTE: the argument struct is declared `static` (off-stack) and then assigned
+# via a compound literal. On GAP9 the closure/fork-args struct is passed by
+# pointer to pi_cl_team_fork; while the worker PEs dereference that pointer over
+# the cluster interconnect, the calling core's fork-runtime stack usage can
+# clobber the struct if it lives on the stack (observed as a 0x01010001 garbage
+# pointer read at the first forked node). Placing it in static storage keeps it
+# off the reused stack region. Safe: networks run single-threaded and each
+# struct is fully re-initialized before use, and forks are barrier-synchronized.
 _stackAllocateTemplate = partial(
     _ArgStructAllocateTemplate,
-    templateStr = "${structDict.typeName} ${name} = (${structDict.typeName}) ${str(structDict)};")
+    templateStr = "static ${structDict.typeName} ${name}; ${name} = (${structDict.typeName}) ${str(structDict)};")
 
 
 class ArgumentStructGeneration(CodeTransformationPass, IntrospectiveCodeTransformationMixIn):

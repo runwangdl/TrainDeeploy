@@ -128,7 +128,7 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 paddingElements = (pad_bytes * 8 + typeWidth - 1) // typeWidth
                 list_str += ", " + ", ".join("0" for _ in range(paddingElements))
 
-            retStr += f'__attribute__((section(".weightmem_sram"))) {typeName} {buf_name}[] = {{{list_str}}};\n'
+            retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
 
         # Emit the row pointer array for this mini-batch
         row_name = f"testDataRow{mb}"
@@ -188,7 +188,7 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
             #      with weights baked into the binary via WEIGHTMEM_SRAM,
             #      gvsoc loads them in one shot with the program image and
             #      ResNet8/MobileNetV1 sim finishes in ~1 min.
-            retStr += f'{typeName} {buf_name}[] __attribute__((section(".weightmem_sram"))) = {{{list_str}}};\n'
+            retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
         retStr += f"void* testInitWeights[{len(weight_entries)}] = {{{', '.join(f'(void*){e}' for e in weight_entries)}}};\n"
 
     return retStr
@@ -388,11 +388,6 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
 
     os.makedirs(dumpdir, exist_ok = True)
 
-    # On GAP9 the generated InitTrainingNetwork already loads every L3-resident
-    # weight from its N.hex file at boot, so re-emitting the weights into
-    # `.weightmem_sram` (and copying them again in the harness) is redundant and
-    # overflows GAP9's 1.5 MB L2_shared on larger models. Suppress that second
-    # copy for GAP9; other platforms keep the weightmem path.
     _platform_name = type(deployer.Platform).__name__
     _emit_init_weights = "GAP9" not in _platform_name
 

@@ -63,8 +63,13 @@ set(PULPNNBITWIDTH 32)
 # Option to use prebuilt pulp-nn library (default: ON for faster builds)
 option(USE_PREBUILT_PULPNN "Use prebuilt pulp-nn-mixed librar with 8 cores" ON)
 
-# Check if NUM_CORES matches prebuilt library requirement
-if(USE_PREBUILT_PULPNN AND NOT NUM_CORES EQUAL 8)
+# Check if NUM_CORES matches prebuilt library requirement.
+# FORCE_PREBUILT_PULPNN keeps the 8-core prebuilt even at other core counts:
+# safe for pure-FP32 (training) networks that never call the integer pulp-nn
+# kernels, and it sidesteps the source build (which needs GAP9-v2 integer SIMD
+# builtins absent from this LLVM).
+option(FORCE_PREBUILT_PULPNN "Keep prebuilt pulp-nn even when NUM_CORES!=8" OFF)
+if(USE_PREBUILT_PULPNN AND NOT NUM_CORES EQUAL 8 AND NOT FORCE_PREBUILT_PULPNN)
   message(WARNING "[Deeploy GAP9] Prebuilt pulp-nn library is compiled for 8 cores, but NUM_CORES=${NUM_CORES}.")
   message(WARNING "[Deeploy GAP9] Disabling prebuilt library and building from source instead.")
   set(USE_PREBUILT_PULPNN OFF)

@@ -575,15 +575,15 @@ class ConvGradXTileConstraintBase(TileConstraint):
             node = operatorRepresentation.get('nodeName', '?')
             w_level = 'L2' if w_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
             dy_level = 'L2' if dy_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
-            print(f"[TileCost:GradX] {node}: tiles={num_tiles} "
-                  f"AI={tile_AI:.2f} attainable={tile_attainable:.1f}F/cyc "
-                  f"({'compute' if tile_compute >= tile_dma else 'memory'}-bound) "
-                  f"overhead={total_cycles/ideal:.2f}x "
-                  f"tile_compute={tile_compute:.0f} tile_dma={tile_dma:.0f} "
-                  f"total={total_cycles:.0f} ideal={ideal:.0f} "
-                  f"dx_tile={list(dx_tile_shape)} dy_tile={list(dy_tile_shape)} "
-                  f"W={list(wShape)}({w_level},{'hoist' if w_hoistable else 'per-tile'}) "
-                  f"dY({dy_level})")
+            # print(f"[TileCost:GradX] {node}: tiles={num_tiles} "
+            #       f"AI={tile_AI:.2f} attainable={tile_attainable:.1f}F/cyc "
+            #       f"({'compute' if tile_compute >= tile_dma else 'memory'}-bound) "
+            #       f"overhead={total_cycles/ideal:.2f}x "
+            #       f"tile_compute={tile_compute:.0f} tile_dma={tile_dma:.0f} "
+            #       f"total={total_cycles:.0f} ideal={ideal:.0f} "
+            #       f"dx_tile={list(dx_tile_shape)} dy_tile={list(dy_tile_shape)} "
+            #       f"W={list(wShape)}({w_level},{'hoist' if w_hoistable else 'per-tile'}) "
+            #       f"dY({dy_level})")
         except Exception:
             pass
 
@@ -1578,13 +1578,13 @@ class ConvGradWTileConstraintBase(TileConstraint):
             cost = _post_solve_cost(chosen.name, num_tiles, tile_tensors, tile_shapes, ctxt, operatorRepresentation,
                                     cls)
             node = operatorRepresentation.get('nodeName', '?')
-            print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
-                  f"AI={cost['tile_AI']:.2f} attainable={cost['tile_attainable_perf']:.1f}F/cyc "
-                  f"({cost['bound']}-bound) overhead={cost['overhead']:.2f}x "
-                  f"tile_compute={cost['tile_compute_cycles']:.0f} tile_dma={cost['tile_dma_cycles']:.0f} "
-                  f"total={cost['total_cycles']:.0f} ideal={cost['ideal_cycles']:.0f}")
-            for line in cost['breakdown']:
-                print(line)
+            # print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
+            #       f"AI={cost['tile_AI']:.2f} attainable={cost['tile_attainable_perf']:.1f}F/cyc "
+            #       f"({cost['bound']}-bound) overhead={cost['overhead']:.2f}x "
+            #       f"tile_compute={cost['tile_compute_cycles']:.0f} tile_dma={cost['tile_dma_cycles']:.0f} "
+            #       f"total={cost['total_cycles']:.0f} ideal={cost['ideal_cycles']:.0f}")
+            # for line in cost['breakdown']:
+            #     print(line)
         except Exception as e:
             pass  # cost estimation is best-effort
 
