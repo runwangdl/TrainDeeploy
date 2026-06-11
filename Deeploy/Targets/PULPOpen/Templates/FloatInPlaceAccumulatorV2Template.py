@@ -66,3 +66,15 @@ if (${lazy_reset_grad}[0]) {
     }
 }
 """)
+
+# Single-core variant: full range on the calling core (no pi_core_id chunking).
+# Bound on GAP9 with the non-fork transformer: dense back-to-back accumulator
+# forks lock up the GVSoC EU dispatch unit; accumulation is cheap & elementwise.
+singleCoreTemplate = _PULPInPlaceAccumulatorV2Template("""
+// InPlaceAccumulatorV2 single-core (Name: ${nodeName}, Op: ${nodeOp})
+if (${lazy_reset_grad}[0]) {
+    for (int32_t i = 0; i < (int32_t)${size}; i++) ${accum_buffer}[i] = ${gradient}[i];
+} else {
+    for (int32_t i = 0; i < (int32_t)${size}; i++) ${accum_buffer}[i] += ${gradient}[i];
+}
+""")

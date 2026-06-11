@@ -21,6 +21,7 @@ class GAP9L3DmaFuture(Future):
     _waitTemplate = NodeTemplate("""
     if (${name}.size != 0) {
         pi_cl_ram_copy_wait(&${name});
+        ${name}.size = 0;
     }""")
 
 

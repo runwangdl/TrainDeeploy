@@ -301,6 +301,21 @@ int main(void) {
   struct pi_cluster_conf conf;
   pi_cluster_conf_init(&conf);
   conf.id = 0;
+  /* RW: The cluster-controller (CC / master core) stack lives at the bottom of
+   * L1 (gap9 cluster.c carves cc_stack = l1_base + cc_stack_size, growing DOWN
+   * toward the L1 base). The SDK default PI_CL_CC_STACK_SIZE is only 0x800
+   * (2048B) -- far too small for Deeploy's nested L3->L2->L1 tiling-closure call
+   * chain plus the forward-conv wrapper. With the default it overflows below the
+   * L1 base: before the per-tile DMA tables were moved to L2 the overflow landed
+   * in the L1 preload .data, silently clobbering an OptimizerNetwork DMA `cmd`
+   * table entry -> garbage mchan command -> mchan_transfer_wait hangs; after the
+   * tables moved to L2 it ran off the bottom of L1 -> pe8 LSU invalid write at
+   * ~L1_base-0x20 in pulp_conv2d_fp32_fw_cl. The pmsis pi_cluster_task path
+   * takes the size from conf.cc_stack_size (NOT the AutoTiler-only
+   * CONFIG_CL_MASTER_CORE_STACK_SIZE kconfig). Measured need ~3KB; give generous
+   * headroom -- L1 has room now that the slave stacks and the tile control
+   * tables both live in L2. */
+  conf.cc_stack_size = 16384;
   pi_open_from_conf(&cluster_dev, &conf);
   if (pi_cluster_open(&cluster_dev))
     return -1;

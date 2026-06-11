@@ -455,8 +455,15 @@ GAP9FloatDWConvGradW2DBindings = [
 ]
 
 GAP9FloatDWConvGradX2DBindings = [
+    # RW: must be GAP9ClusterTransformer (master-only closure), NOT GAP9Transformer.
+    # referenceDWConvGradX2DTiledTemplate calls PULP_DWConvGradX2d..._tiled which does
+    # pi_cl_team_fork INTERNALLY. With a ForkClosure (GAP9Transformer) the closure is
+    # itself forked to all cores -> nested pi_cl_team_fork -> the single-level cluster EU
+    # dispatch desyncs, a worker reads a stale dispatch entry and jumps to garbage
+    # (manifested as the node_64/block-10 DW ConvGradX crash). DWConvGradW2D above
+    # correctly uses GAP9ClusterTransformer for the same reason.
     NodeBinding(ConvChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
-                FloatConvGradTemplate.referenceDWConvGradX2DTiledTemplate, GAP9Transformer)
+                FloatConvGradTemplate.referenceDWConvGradX2DTiledTemplate, GAP9ClusterTransformer)
 ]
 
 GAP9FloatPWConvGradW2DBindings = [
