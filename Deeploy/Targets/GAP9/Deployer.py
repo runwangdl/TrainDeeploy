@@ -80,8 +80,7 @@ class GAP9Deployer(PULPDeployer):
         self.conv_channels_first = conv_channels_first
         if conv_channels_first:
             passes = self.loweringOptimizer.passes
-            insertIdx = next(
-                (i for i, p in enumerate(passes) if isinstance(p, PULPNCHWtoNHWCPass)), len(passes))
+            insertIdx = next((i for i, p in enumerate(passes) if isinstance(p, PULPNCHWtoNHWCPass)), len(passes))
             passes.insert(insertIdx, PULPConvKeepCHWPass())
 
     def generateBufferAllocationCode(self) -> str:

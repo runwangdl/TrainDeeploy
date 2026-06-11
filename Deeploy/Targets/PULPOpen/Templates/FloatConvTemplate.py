@@ -127,6 +127,7 @@ for (uint32_t n=0; n<${batch}; ++n) {
 }
 """)
 
+
 class PULP2DFloatConvIm2ColTemplateCHW(NodeTemplate):
     # CHW regular conv: the pulp-trainlib CHW im2row writes the FULL im2col
     # matrix (ch_im_in * Hk * Wk * H_out * W_out), unlike the HWC kernel which
@@ -140,10 +141,10 @@ class PULP2DFloatConvIm2ColTemplateCHW(NodeTemplate):
     def computeTransientBuffersSize(
             ctxt: NetworkContext,
             operatorRepresentation: OperatorRepresentation) -> List[Tuple[str, Union[int, IntVar]]]:
-        im2col_dim = (operatorRepresentation["weight_type"].typeWidth //
-                      8) * operatorRepresentation['ch_im_in'] * operatorRepresentation[
-                          'dim_kernel_x'] * operatorRepresentation['dim_kernel_y'] * operatorRepresentation[
-                              'dim_im_out_x'] * operatorRepresentation['dim_im_out_y']
+        im2col_dim = (
+            operatorRepresentation["weight_type"].typeWidth //
+            8) * operatorRepresentation['ch_im_in'] * operatorRepresentation['dim_kernel_x'] * operatorRepresentation[
+                'dim_kernel_y'] * operatorRepresentation['dim_im_out_x'] * operatorRepresentation['dim_im_out_y']
         im2col_name = operatorRepresentation['nodeName'] + "_buffer"
         return [(im2col_name, im2col_dim)]
 

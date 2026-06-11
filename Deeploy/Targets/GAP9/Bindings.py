@@ -225,8 +225,8 @@ GAP9FloatDWConv2DCHWBindings = [
     NodeBinding(
         ConvChecker(
             [PointerClass(float_type), PointerClass(float_type),
-             PointerClass(float_type)], [PointerClass(float_type)]),
-        FloatConvTemplate.referenceDW2DIm2ColTemplate_CHW, GAP9ClusterTransformer) for float_type in FloatDataTypes
+             PointerClass(float_type)], [PointerClass(float_type)]), FloatConvTemplate.referenceDW2DIm2ColTemplate_CHW,
+        GAP9ClusterTransformer) for float_type in FloatDataTypes
 ]
 
 GAP9RQSMatrixVecBindings = [

@@ -8,11 +8,12 @@
 #include "pmsis.h"
 #include <math.h>
 
-// RW: CHW depthwise forward conv via pulp-trainlib (HWC=0). Mirrors DWConvGrad.c.
-// Keeps activations channels-first so no NCHW->NHWC transpose is needed. DW has
-// no bias in trainlib (MobileNet folds bias into the following BatchNorm), and
-// no im2col buffer is needed. Forward kernel ignores tile offsets, so each tile
-// must be self-contained with correct per-tile padding (the tile constraint).
+// RW: CHW depthwise forward conv via pulp-trainlib (HWC=0). Mirrors
+// DWConvGrad.c. Keeps activations channels-first so no NCHW->NHWC transpose is
+// needed. DW has no bias in trainlib (MobileNet folds bias into the following
+// BatchNorm), and no im2col buffer is needed. Forward kernel ignores tile
+// offsets, so each tile must be self-contained with correct per-tile padding
+// (the tile constraint).
 void PULP_DW_Conv2d_Im2Col_fp32_fp32_fp32_CHW(
     const float32_t *__restrict__ pSrcA, uint32_t H, uint32_t W, uint32_t C,
     const float32_t *__restrict__ pSrcB, uint32_t F_total, uint32_t P,
