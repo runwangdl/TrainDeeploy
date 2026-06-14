@@ -101,7 +101,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
-    "Models/Training/CCT/cct_train": [98000],
+    "Models/Training/CCT/cct_train": [122000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
 
@@ -116,6 +116,7 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
         "tolerance": 5e-3,
+        "cc_stack": 4096,  # frees L1 for arena -> coarser tokenizer-conv tiling
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,
