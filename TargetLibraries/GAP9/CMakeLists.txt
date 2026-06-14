@@ -40,6 +40,12 @@ set(_KERNEL_O3_FILES
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/DWConvolution_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/ConvGrad.c  # backward dX/dW: ~70% of training cycles
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/DWConvGrad.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/PWConvGrad.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Gemm.c       # transformer (CCT) fwd+bwd Gemm
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Matmul.c     # attention matmul
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Layernorm.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Softmax.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/GELU.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c
