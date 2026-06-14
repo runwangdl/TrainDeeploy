@@ -1299,6 +1299,12 @@ def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, tool
     test_name, l1, _config_name = test_params
     overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    # Per-model CC/master-stack size (carved from L1). Deep nets (MobileNetV1) need
+    # a larger CC stack for the nested L3->L2->L1 closure chain; conv-light nets can
+    # shrink it to free L1 for the tiling arena.
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
