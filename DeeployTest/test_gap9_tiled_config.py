@@ -101,7 +101,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
-    "Models/Training/CCT/cct_train": [90000],
+    "Models/Training/CCT/cct_train": [98000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
 
