@@ -100,7 +100,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 # pool. MobileNetV1 runs channels-first (CHW kernels, no NCHW<->NHWC transpose).
 L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [100000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [90000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
@@ -111,7 +111,7 @@ TRAINING_MODEL_OVERRIDES = {
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
-        "cc_stack": 16384,  # deep net -> needs a large CC stack
+        "cc_stack": 8192,  # -O3 cut the CC-stack need from 16384; frees L1 for a bigger arena
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
