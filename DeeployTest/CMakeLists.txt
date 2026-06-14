@@ -99,11 +99,17 @@ elseif(platform STREQUAL GAP9)
   endif()
 
   # Waive warnings in generated code
+  # RW: --profileTiling instrumentation emits machine-generated patterns that trip
+  # several GCC -Werror classes (maybe-uninitialized on "..._measurements$" timing
+  # vars, old-style-declaration from "static" not leading, ...). These are
+  # generated, not hand-written, so demote ALL warnings to non-fatal for the
+  # network objects via -Wno-error (warnings still print; no effect on the SDK or
+  # on non-profiling builds, which simply produce no such warnings).
   if(TRAINING)
-    target_compile_options(training_network PRIVATE -Wno-pointer-sign -Wno-sign-compare)
-    target_compile_options(optimizer_network PRIVATE -Wno-pointer-sign -Wno-sign-compare)
+    target_compile_options(training_network PRIVATE -Wno-pointer-sign -Wno-sign-compare -Wno-error)
+    target_compile_options(optimizer_network PRIVATE -Wno-pointer-sign -Wno-sign-compare -Wno-error)
   else()
-    target_compile_options(network PRIVATE -Wno-pointer-sign -Wno-sign-compare)
+    target_compile_options(network PRIVATE -Wno-pointer-sign -Wno-sign-compare -Wno-error)
   endif()
 
   add_subdirectory(Platforms/GAP9)

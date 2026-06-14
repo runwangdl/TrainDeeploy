@@ -315,7 +315,10 @@ int main(void) {
    * conf.cc_stack_size (NOT the AutoTiler-only CONFIG_CL_MASTER_CORE_STACK_SIZE
    * kconfig). Measured need ~3KB; give generous headroom -- L1 has room now
    * that the slave stacks and the tile control tables both live in L2. */
-  conf.cc_stack_size = 16384;
+#ifndef CC_STACK_SIZE
+#define CC_STACK_SIZE 8192
+#endif
+  conf.cc_stack_size = CC_STACK_SIZE;
   pi_open_from_conf(&cluster_dev, &conf);
   if (pi_cluster_open(&cluster_dev))
     return -1;

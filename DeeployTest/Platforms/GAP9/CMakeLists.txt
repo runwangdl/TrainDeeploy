@@ -50,6 +50,10 @@ if(POWER_MEASUREMENT)
   target_compile_definitions(${ProjectId} PRIVATE POWER_MEASUREMENT)
 endif()
 
+if(CC_STACK_SIZE)
+  target_compile_definitions(${ProjectId} PRIVATE CC_STACK_SIZE=${CC_STACK_SIZE})
+endif()
+
 # RW: Waive sign comparison warnings from pulp_nn_utils.h
 target_compile_options(${NETWORK_LIB} PRIVATE
     -Wno-sign-compare

@@ -444,9 +444,16 @@ GAP9FloatConvGradW2DBindings = [
                 FloatConvGradTemplate.referenceConvGradW2DIm2ColTemplate, GAP9ClusterTransformer)
 ]
 
+# RW: Use the scatter ConvGradX kernel (like Siracusa/PULPOpen), NOT the Im2Col one.
+# The Im2Col variant materialises a P*Q-expanded im2col buffer
+# (4 * Hout*Wout * Cout * P*Q -> 576 KB for the 32x32 early layers, ~4.5x L1),
+# forcing it to tile into hundreds of tiny strips (layer1 -> 384 tiles) that never
+# use the L1 budget, capping the usable arena and tripping a tile-geometry OOB at
+# higher --l1. The scatter kernel computes dX in place (no im2col), tiles into 1-3
+# blocks, and uses L1 efficiently -- the reason Siracusa is ~1.8x faster here.
 GAP9FloatConvGradX2DBindings = [
     NodeBinding(ConvChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
-                FloatConvGradTemplate.referenceConvGradX2DIm2ColTiledTemplate, GAP9Transformer)
+                FloatConvGradTemplate.referenceConvGradX2DTemplate, GAP9Transformer)
 ]
 
 GAP9FloatDWConvGradW2DBindings = [
