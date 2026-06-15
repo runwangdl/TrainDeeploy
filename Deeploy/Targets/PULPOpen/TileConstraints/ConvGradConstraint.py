@@ -1664,20 +1664,39 @@ class PWConvGradWTileConstraint(ConvGradWTileConstraintBase):
     """
     strategies: List = [CoutHWSliceStrategy]
 
+    # Small-dW PW convs: let CoutHWSliceStrategy force Cout-full (its dW<=64KB
+    # branch). With Cout pinned full there is no Cout tiling, so allowing H/W to
+    # tile is the SAFE "HW-only" case (single memset + mm_add accumulation) — not
+    # the unimplemented mixed Cout+HW case. This lets the (full-Cin) activation X
+    # tile spatially so it fits L1 (e.g. MCUNet conv2d_2 X=[16,48,48]=147KB).
+    coutHWSlice_force_cout_full = True
+
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
         super().addPolicyConstraint(tilerModel, parseDict, ctxt)
 
         xName = parseDict[cls.dataInKey]
         dyName = parseDict[cls.gradOutKey]
+        dwName = parseDict[cls.weightKey]
 
         xBuf = ctxt.lookup(xName)
         dyBuf = ctxt.lookup(dyName)
+        dwBuf = ctxt.lookup(dwName)
 
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) == dyBuf.shape[2])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) == dyBuf.shape[3])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 2) == xBuf.shape[2])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 3) == xBuf.shape[3])
+        dwBytes = 1
+        for _d in dwBuf.shape:
+            dwBytes *= int(_d)
+        dwBytes *= 4
+
+        # Large dW (e.g. MobileNetV1 block_11 PW, dW~128KB): forcing Cout-full would
+        # blow L1 and force the broken Cout+HW mixed case, so keep the original
+        # full-spatial (Cout-only) restriction. Small dW: Cout-full (from the flag
+        # above) + free H/W → spatial tiling, which is what makes MCUNet feasible.
+        if dwBytes > 65536:
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) == dyBuf.shape[2])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) == dyBuf.shape[3])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 2) == xBuf.shape[2])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 3) == xBuf.shape[3])
 
         return tilerModel
 
