@@ -5,6 +5,8 @@
 import math
 from typing import List, Mapping, Optional, Sequence, Tuple, Type, TypeVar, Union
 
+import numpy as np
+
 import Deeploy.CommonExtensions.DataTypes as BasicDataTypes
 from Deeploy.AbstractDataTypes import BaseType, PointerClass, VoidType
 from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, NodeTemplate, OperatorRepresentation, VariableBuffer, \
@@ -52,6 +54,10 @@ class TilingHoistingMixIn:
                      name: str,
                      values: List[int],
                      override_type: Optional[Type[BaseType]] = None) -> ConstantBuffer:
+        # RW: coerce numpy integers (e.g. Slice byte offsets derived from int64
+        # ONNX index constants) to python int — they are valid integer table
+        # values; the assert only needs to guard against genuine non-integers.
+        values = [int(v) if isinstance(v, np.integer) else v for v in values]
         assert all(isinstance(value, int) for value in values)
         cb = ctxt.ConstantBuffer(self.prefix + name, [len(values)], values)
         ctxt.add(cb, 'global')
