@@ -105,6 +105,7 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
     "Models/Training/SleepConViT/sleepconvit_train": [122000],
     "Models/Training/TSDR/tsdr_train": [122000],
+    "Models/Training/MCUNet/mcunet_train": [116000],
 }
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
