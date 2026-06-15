@@ -479,6 +479,13 @@ PULPTransposeBindings = [
 PULPConcatBindings = [
     NodeBinding(ConcatChecker([PointerClass(type), PointerClass(type)], [PointerClass(type)]),
                 ConcatTemplate.referenceTemplate, ClusterTransformer) for type in IntegerDataTypes
+] + [
+    # RW: float Concat (the reference template is byte-wise memcpy, dtype-agnostic).
+    # Needed for FP32 models with channel/seq concat — e.g. SleepConViT's ConvStem
+    # branch concat and the cls-token prepend. Without it, Concat has no float
+    # binding and graph mapping fails ("no adequate mapping for ConcatLayer").
+    NodeBinding(ConcatChecker([PointerClass(type), PointerClass(type)], [PointerClass(type)]),
+                ConcatTemplate.referenceTemplate, ClusterTransformer) for type in FloatDataTypes
 ]
 
 PULPiRMSNormBindings = [

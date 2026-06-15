@@ -23,7 +23,7 @@ from Deeploy.Targets.GAP9.Bindings import GAP9AddBindings, GAP9AveragePoolGrad2D
     GAP9LayernormGradBinding, GAP9MatMulBindings, GAP9MaxPool2DBindings, GAP9MSELossBindings, GAP9MSELossGradBindings, \
     GAP9MulBindings, GAP9ReduceSumBindings, GAP9ReluBinding, GAP9ReluGradBinding, GAP9ReshapeBindings, \
     GAP9RQAddBindings, GAP9RQSBindings, GAP9RQSConv2DBindings, GAP9RQSDWConv2DBindings, GAP9RQSGEMMBindings, \
-    GAP9RQSiHardswishBindings, GAP9RQSMatrixVecBindings, GAP9RQSTallGEMMBindings, GAP9SGDBindings, \
+    GAP9RQSiHardswishBindings, GAP9RQSMatrixVecBindings, GAP9RQSTallGEMMBindings, GAP9SGDBindings, GAP9SliceBindings, \
     GAP9SoftmaxBindings, GAP9SoftmaxCrossEntropyLossBindings, GAP9SoftmaxCrossEntropyLossGradBindings, \
     GAP9SoftmaxGradBindings, GAP9TransposeBindings, GAP9UniformRQSBindings
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
@@ -63,6 +63,7 @@ from Deeploy.Targets.PULPOpen.TileConstraints.MSELossTileConstraint import MSELo
 from Deeploy.Targets.PULPOpen.TileConstraints.ReduceSumTileConstraint import ReduceSumTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.RequantShiftTileConstraint import RequantShiftTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.SGDTileConstraint import ReluGradTileConstraint, SGDTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.SliceConstraint import SliceTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.SoftmaxCrossEntropyTileConstraint import \
     SoftmaxCrossEntropyGradTileConstraint, SoftmaxCrossEntropyTileConstraint
 from Deeploy.TilingExtension.TilerExtension import TilingReadyNodeBindings
@@ -136,6 +137,12 @@ GAP9SoftmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9Soft
 
 GAP9ConcatTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9ConcatBindings,
                                                         tileConstraint = ConcatTileConstraint())
+
+# RW: tiling-ready Slice using GAP9 bindings (GAP9 transformer -> GAP9 mchan DMA)
+# + SliceTileConstraint. Reusing PULPSliceTilingReadyBindings emits PULP mchan
+# calls (mchan_channel_alloc/transfer_1d/wait/free) that don't link on GAP9.
+GAP9SliceTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9SliceBindings,
+                                                       tileConstraint = SliceTileConstraint())
 
 GAP9iRMSNormTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9iRMSNormBindings,
                                                           tileConstraint = iRMSNormTileConstraint())
