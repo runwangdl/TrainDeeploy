@@ -135,4 +135,10 @@ TRAINING_MODEL_OVERRIDES = {
         "cc_stack": 4096,  # spectrogram transformer; same profile as SleepConViT
         "conv_channels_first": True,  # CHW patch-embed conv (no NCHW<->NHWC transpose)
     },
+    "Models/Training/MCUNet/mcunet_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 8192,  # MnasNet-style; deep DW/PW chain needs a larger CC stack
+        "conv_channels_first": True,  # CHW convs; NHWC-transpose tiling is infeasible
+    },
 }
