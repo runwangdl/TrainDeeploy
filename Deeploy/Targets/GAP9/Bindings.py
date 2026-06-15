@@ -384,6 +384,11 @@ GAP9TransposeBindings = [
 GAP9ConcatBindings = [
     NodeBinding(ConcatChecker([PointerClass(type), PointerClass(type)], [PointerClass(type)]),
                 ConcatTemplate.referenceTemplate, GAP9ClusterTransformer) for type in IntegerDataTypes
+] + [
+    # RW: float Concat (byte-wise memcpy template, dtype-agnostic). Needed for
+    # FP32 models with Concat (e.g. SleepConViT ConvStem + cls-token prepend).
+    NodeBinding(ConcatChecker([PointerClass(type), PointerClass(type)], [PointerClass(type)]),
+                ConcatTemplate.referenceTemplate, GAP9ClusterTransformer) for type in FloatDataTypes
 ]
 
 GAP9iRMSNormBindings = [

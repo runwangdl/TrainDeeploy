@@ -49,7 +49,7 @@ class SliceTileConstraint(TileConstraint):
                 # For sliced axes, constrain to minimal input dimension
                 # based on the output dimension and the slicing step
                 axIndex = list(sliceAxes).index(idx)
-                axStep = sliceSteps[axIndex]
+                axStep = int(sliceSteps[axIndex])  # RW: coerce to int — OR-tools IntExpr * float is unsupported
 
                 tilerModel.addConstraint(inputDimensionVar == ((outputDimensionVar - 1) * axStep + 1))
             else:

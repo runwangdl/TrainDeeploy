@@ -27,7 +27,7 @@ from Deeploy.Targets.GAP9.Tiler import GAP9AddTilingReadyBindings, GAP9AveragePo
     GAP9ReluTilingReadyBindings, GAP9RQAddTilingReadyBindings, GAP9RQSConv2DTilingReadyBindings, \
     GAP9RQSDWConv2DTilingReadyBindings, GAP9RQSGEMMTilingReadyBindings, GAP9RQSiHardswishTilingReadyBindings, \
     GAP9RQSMatrixVecTilingReadyBindings, GAP9RQSTallGEMMTilingReadyBindings, GAP9RQSTilingReadyBindings, \
-    GAP9SGDTilingReadyBindings, GAP9SoftmaxCrossEntropyGradTilingReadyBindings, \
+    GAP9SGDTilingReadyBindings, GAP9SliceTilingReadyBindings, GAP9SoftmaxCrossEntropyGradTilingReadyBindings, \
     GAP9SoftmaxCrossEntropyTilingReadyBindings, GAP9SoftmaxGradTilingReadyBindings, GAP9SoftmaxTilingReadyBindings, \
     GAP9TransposeTilingReadyBindings, GAP9UniformRQSTilingReadyBindings
 from Deeploy.Targets.Generic.Bindings import BasicGEMMBindings, BasicPad1DBindings, BasicPad2DBindings, \
@@ -51,7 +51,7 @@ from Deeploy.Targets.Generic.Parsers import AddParser, AveragePool2DParser, Batc
     UnsqueezeParser, iHardswishParser, iRMSNormParser, iSoftmaxParser
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBindings, PULPDMASliceBindings, \
-    PULPDWConv1DBinding, PULPReduceMeanBindings, PULPRQSConv1DBindings, PULPSliceBindings
+    PULPDWConv1DBinding, PULPReduceMeanBindings, PULPRQSConv1DBindings
 from Deeploy.Targets.PULPOpen.Layers import PULPRQSConvLayer, PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
     PULPConvGradX2DParser, PULPDWConv1DParser, PULPDWConv2DParser, PULPDWConvGradW2DParser, PULPDWConvGradX2DParser, \
@@ -101,7 +101,7 @@ GAP9_SoftmaxGradMapper = NodeMapper(SoftmaxGradParser(), GAP9SoftmaxGradTilingRe
 GAP9_Softmax_int8_Mapper = NodeMapper(iSoftmaxParser(), GAP9SoftmaxTilingReadyBindings)
 GAP9_ConcatMapper = NodeMapper(ConcatParser(), GAP9ConcatTilingReadyBindings)
 GAP9_DMASliceMapper = NodeMapper(SliceParser(), PULPDMASliceBindings)
-GAP9_SliceMapper = NodeMapper(SliceParser(), PULPSliceBindings)
+GAP9_SliceMapper = NodeMapper(SliceParser(), GAP9SliceTilingReadyBindings)
 GAP9_iRMSNormMapper = NodeMapper(iRMSNormParser(), GAP9iRMSNormTilingReadyBindings)
 GAP9_iHardswishMapper = NodeMapper(iHardswishParser(), GAP9iHardswishTilingReadyBindings)
 GAP9_RQSiHardswishMapper = NodeMapper(RQSiHardswishParser(), GAP9RQSiHardswishTilingReadyBindings)
