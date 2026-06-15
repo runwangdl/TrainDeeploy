@@ -239,6 +239,19 @@ def create_config_from_args(args: argparse.Namespace,
         gen_args_list.append("--input-offset-map")
         gen_args_list.extend(args.input_offset_map)
 
+    # Forward the core count to the untiled code generator (generateNetwork.py),
+    # which defaults to --cores=1. It sizes per-core scratch buffers (e.g. the
+    # conv im2col buffer = n_cores * ch_im_in * Hk * Wk) for a single core, but
+    # the build sets -DNUM_CORES from args.cores and the kernel forks over all
+    # those cores, each writing its own scratch region -> cores 1..N-1 write past
+    # the under-sized buffer and corrupt the L2 heap (crashes on real inputs,
+    # survives on small random ones). The tiled generator (testMVP.py) already
+    # sizes for the right core count, so only the untiled path needs this.
+    if not tiling:
+        _cores = getattr(args, 'cores', None) or getattr(args, 'num_cores', None)
+        if _cores:
+            gen_args_list.append(f"--cores={_cores}")
+
     if tiling:
         if hasattr(args, 'defaultMemLevel') and args.defaultMemLevel:
             gen_args_list.append(f"--defaultMemLevel={args.defaultMemLevel}")
@@ -272,6 +285,9 @@ def create_config_from_args(args: argparse.Namespace,
 
     if getattr(args, 'profileMicrobenchmark', False):
         gen_args_list.append("--profileMicrobenchmark")
+
+    if getattr(args, 'convChannelsFirst', False):
+        gen_args_list.append("--convChannelsFirst")
 
     config = DeeployTestConfig(
         test_name = test_name,

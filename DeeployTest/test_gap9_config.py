@@ -25,3 +25,26 @@ MODEL_TESTS = [
     "Models/MLPerf/ImageClassification",
     "Models/MLPerf/AnomalyDetection",
 ]
+
+# Training-related single-op kernel tests (grad / loss / optimizer).
+# Mirrors the Siracusa TRAIN_KERNEL_TESTS; same test fixtures are shared.
+TRAIN_KERNEL_TESTS = [
+    "Kernels/FP32/ConvGrad",
+    "Kernels/FP32/ConvGradW_DW",
+    "Kernels/FP32/ConvGradW_PW",
+    "Kernels/FP32/ConvGradX_DW",
+    "Kernels/FP32/ConvGradX_PW",
+    "Kernels/FP32/AveragePoolGrad",
+    "Kernels/FP32/GlobalAveragePoolGrad",
+    "Kernels/FP32/BatchNormInternal",
+    "Kernels/FP32/BatchNormalizationGrad",
+    "Kernels/FP32/LayerNormGrad",
+    "Kernels/FP32/MSELoss",
+    "Kernels/FP32/MSELossGrad",
+    "Kernels/FP32/ReluGrad",
+    "Kernels/FP32/Softmax/CrossEntropyGrad",
+]
+
+TRAINING_TESTS = [
+    "Models/Training/SimpleMLP/simplemlp_train",
+]

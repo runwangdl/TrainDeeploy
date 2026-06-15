@@ -69,8 +69,13 @@ class ProfilingPrototypeMixIn(ABC):
     ${measurements}[${tileIdxVar}] = getCycles();
     """)
 
+    # RW: 'static' moves the per-node profiling measurement arrays off the CC/master
+    # stack (carved from L1) into .bss (-> L2). With a large --l1 arena there is almost
+    # no L1 headroom left for the CC stack, so keeping these here would overflow it; the
+    # arrays are written/printed master-side and sequentially per node, so a single
+    # static instance is correct. Lets --profileTiling run at the full L1 arena size.
     _measurementArrayDeclaration = NodeTemplate("""
-    uint32_t ${measurements}[${totalNumTiles}];
+    static uint32_t ${measurements}[${totalNumTiles}];
     """)
 
     _stringDeclaration = NodeTemplate("""

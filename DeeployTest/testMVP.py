@@ -93,7 +93,8 @@ def setupDeployer(graph: gs.Graph, memoryHierarchy: MemoryHierarchy, defaultTarg
                            inputTypes,
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
-                           scheduler = _mockScheduler)
+                           scheduler = _mockScheduler,
+                           conv_channels_first = getattr(args, "convChannelsFirst", False))
 
     # Make the deployer engine-color-aware
     if args.platform == "Siracusa_w_neureka":
@@ -180,6 +181,10 @@ if __name__ == '__main__':
                         default = False,
                         help = 'Adds EXPERIMENTAL support for strided convolutions on N-EUREKA\n')
     parser.add_argument('--doublebuffer', action = 'store_true')
+    parser.add_argument('--convChannelsFirst',
+                        action = 'store_true',
+                        default = False,
+                        help = 'Keep forward convs channels-first (NCHW) and bind to the *_CHW kernels (GAP9).')
     parser.add_argument('--l1',
                         metavar = 'l1',
                         dest = 'l1',

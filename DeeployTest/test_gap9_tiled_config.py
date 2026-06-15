@@ -84,3 +84,41 @@ L3_DOUBLEBUFFER_MODELS = {
     "Models/miniMobileNet": [60000, 24000, 12000, 6000],
     "Models/miniMobileNetv2": [60000, 32000, 24000, 16000],
 }
+
+# Training models — GAP9 L2 size is 1 MB (DEFAULT_L2 = 1024000).
+# L2 models: Autoencoder and DSCNN fit within 1 MB L2.
+L2_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/SimpleMLP/simplemlp_train": [64000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+}
+
+# L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
+# L1 budgets are the validated best-performing values with the scatter ConvGradX
+# binding + -O3 kernels (see TargetLibraries/GAP9/CMakeLists.txt). Per-model
+# cc_stack (TRAINING_MODEL_OVERRIDES) keeps arena+cc_stack within the ~127 KB L1
+# pool. MobileNetV1 runs channels-first (CHW kernels, no NCHW<->NHWC transpose).
+L3_SINGLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/ResNet8/resnet8_train": [122000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
+    "Models/Training/CCT/cct_train": [122000],
+    "Models/Training/CCT_LoRA/cct_lora_train": [40000],
+}
+
+TRAINING_MODEL_OVERRIDES = {
+    "Models/Training/ResNet8/resnet8_train": {
+        "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
+    },
+    "Models/Training/MobileNetV1/mobilenetv1_train": {
+        "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
+        "cc_stack": 8192,  # -O3 cut the CC-stack need from 16384; frees L1 for a bigger arena
+    },
+    "Models/Training/CCT/cct_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 4096,  # frees L1 for arena -> coarser tokenizer-conv tiling
+    },
+    "Models/Training/CCT_LoRA/cct_lora_train": {
+        "num_data_inputs": 1,
+    },
+}

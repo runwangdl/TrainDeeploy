@@ -9,7 +9,7 @@ from ortools.constraint_solver.pywrapcp import IntVar
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import uint8_t, uint16_t
 from Deeploy.DeeployTypes import NetworkContext, OperatorRepresentation
-from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint, Conv2DTileConstraintCHW
 from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint
 from Deeploy.TilingExtension.TileConstraint import TileConstraint
 from Deeploy.TilingExtension.TilerModel import PerformanceHint, TilerModel
@@ -249,6 +249,29 @@ class DWConv2DTileConstraint(Conv2DTileConstraint):
 
         inputChannelVar = tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = 3)
         outputChannelVar = tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = 3)
+
+        tilerModel.addConstraint((inputChannelVar == parseDict['ch_im_in']))
+        tilerModel.addConstraint((outputChannelVar == parseDict['ch_im_out']))
+
+        return tilerModel
+
+
+class DWConv2DTileConstraintCHW(Conv2DTileConstraintCHW):
+    """Channels-first (NCHW) depthwise Conv2D tiling. Mirrors DWConv2DTileConstraint
+    but pins channels on the NCHW channel axis (dim 1). Keeps full channels (DW
+    kernel does not yet support channel tiling) and tiles spatially."""
+
+    @staticmethod
+    def addPolicyConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        # Inherit from CHW Conv2D policy constraints
+        tilerModel = Conv2DTileConstraintCHW.addPolicyConstraint(tilerModel, parseDict, ctxt)
+
+        # Pin in/out channels (NCHW channel axis = dim 1); DW keeps full channels.
+        inputBufferName = parseDict['data_in']
+        outputBufferName = parseDict['data_out']
+
+        inputChannelVar = tilerModel.getTensorDimVar(tensorName = inputBufferName, dimIdx = 1)
+        outputChannelVar = tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = 1)
 
         tilerModel.addConstraint((inputChannelVar == parseDict['ch_im_in']))
         tilerModel.addConstraint((outputChannelVar == parseDict['ch_im_out']))

@@ -34,7 +34,8 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                                      num_grad_inputs: int = 0,
                                      learning_rate: float = 0.001,
                                      init_weights: List[np.ndarray] = None,
-                                     data_size: int = None) -> str:
+                                     data_size: int = None,
+                                     emit_init_weights: bool = True) -> str:
     """Generate testinputs.h for training tests.
 
     Parameters
@@ -127,7 +128,15 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 paddingElements = (pad_bytes * 8 + typeWidth - 1) // typeWidth
                 list_str += ", " + ", ".join("0" for _ in range(paddingElements))
 
-            retStr += f'__attribute__((section(".weightmem_sram"))) {typeName} {buf_name}[] = {{{list_str}}};\n'
+            # Place the per-mini-batch test data in WEIGHTMEM_SRAM (Siracusa
+            # linker, ~4 MB) — same reason as the init weights below: `.l2_data`
+            # is only ~1.94 MB and the data + weights overflow it at link time.
+            # Only platforms that emit init weights (Siracusa) have this section;
+            # GAP9 (emit_init_weights=False) hex-loads instead, so keep default.
+            if emit_init_weights:
+                retStr += f'__attribute__((section(".weightmem_sram"))) {typeName} {buf_name}[] = {{{list_str}}};\n'
+            else:
+                retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
 
         # Emit the row pointer array for this mini-batch
         row_name = f"testDataRow{mb}"
@@ -138,7 +147,18 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
     retStr += f"void** testDataVector[{effective_data_size}] = {{{', '.join(f'testDataRow{mb}' for mb in range(effective_data_size))}}};\n"
 
     # Emit initial weight arrays (one per weight input, indices num_data..grad_buf_start_idx-1).
-    if init_weights:
+    #
+    # On platforms whose harness already loads every L3-resident weight from the
+    # generated N.hex files at boot (e.g. GAP9 via load_file_to_ram), baking the
+    # same weights a *second* time into the binary's `.weightmem_sram` section is
+    # pure redundancy: it doubles the on-chip footprint (overflowing GAP9's
+    # 1.5 MB L2_shared for larger models) and forces an extra harness copy.
+    # `emit_init_weights=False` suppresses that second copy; the harness then
+    # relies on the hex load (a TRAINING_SKIP_INITWEIGHT_COPY define is emitted
+    # so it skips the redundant l3_aware_copy).
+    if init_weights and not emit_init_weights:
+        retStr += "\n#define TRAINING_SKIP_INITWEIGHT_COPY 1\n"
+    if init_weights and emit_init_weights:
         retStr += "\n"
         weight_entries = []
         num_data = len(all_mb_data[0]) if all_mb_data else 0
@@ -376,6 +396,9 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
 
     os.makedirs(dumpdir, exist_ok = True)
 
+    _platform_name = type(deployer.Platform).__name__
+    _emit_init_weights = "GAP9" not in _platform_name
+
     # testinputs.h
     testInputStr = generateTrainingTestInputsHeader(deployer,
                                                     all_mb_data,
@@ -385,7 +408,8 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
                                                     num_grad_inputs,
                                                     learning_rate,
                                                     init_weights = init_weights,
-                                                    data_size = data_size)
+                                                    data_size = data_size,
+                                                    emit_init_weights = _emit_init_weights)
     with open(f'{dumpdir}/testinputs.h', 'w') as f:
         f.write(testInputStr)
 
@@ -686,7 +710,8 @@ def _patch_shared_arenas(retStr: str, train_c_source: str) -> str:
             continue
 
         opt_sym = f'DeeployOptNetwork_MEMORYARENA_{level}'
-        opt_malloc_pat = re.compile(rf'({re.escape(opt_sym)})\s*=\s*\([^)]+\)\s*\w+\(sizeof\([^)]+\)\s*\*\s*\d+\)\s*;')
+        opt_malloc_pat = re.compile(
+            rf'({re.escape(opt_sym)})\s*=\s*\([^)]+\)\s*\w+\((?:[^;]*?,\s*)?sizeof\([^)]+\)\s*\*\s*\d+\)\s*;')
         if not opt_malloc_pat.search(retStr):
             continue
 
@@ -729,7 +754,7 @@ def _ensure_training_l1_capacity(dumpdir: str, train_c_source: str, opt_alloc_co
         (Possibly updated) TrainingNetwork.c source string.
     """
     m_opt = re.search(
-        r'DeeployOptNetwork_MEMORYARENA_L1\s*=\s*\([^)]+\)\s*pmsis_l1_malloc\(sizeof\([^)]+\)\s*\*\s*(\d+)\)',
+        r'DeeployOptNetwork_MEMORYARENA_L1\s*=\s*\([^)]+\)\s*\w+_l1_malloc\((?:[^;]*?,\s*)?sizeof\([^)]+\)\s*\*\s*(\d+)\)',
         opt_alloc_code,
     )
     if not m_opt:
@@ -738,7 +763,7 @@ def _ensure_training_l1_capacity(dumpdir: str, train_c_source: str, opt_alloc_co
     opt_l1 = int(m_opt.group(1))
 
     m_train = re.search(
-        r'(DeeployNetwork_MEMORYARENA_L1\s*=\s*\([^)]+\)\s*pmsis_l1_malloc\(sizeof\([^)]+\)\s*\*\s*)(\d+)(\))',
+        r'(DeeployNetwork_MEMORYARENA_L1\s*=\s*\([^)]+\)\s*\w+_l1_malloc\((?:[^;]*?,\s*)?sizeof\([^)]+\)\s*\*\s*)(\d+)(\))',
         train_c_source,
     )
     if not m_train:

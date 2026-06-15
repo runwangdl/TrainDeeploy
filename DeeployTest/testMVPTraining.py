@@ -26,6 +26,7 @@ from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLev
 from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import MemoryDeployerWrapper
 from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateDefaultMemoryLevel, \
     AnnotateIOMemoryLevel, PromoteTensorsToL2
+from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
 
@@ -56,7 +57,7 @@ def generateTiledTrainingNetwork(args) -> None:
     platform, signProp = mapPlatform(args.platform)
     log.debug(f"Platform: {platform} (sign: {signProp})")
 
-    clusters = [engine for engine in platform.engines if isinstance(engine, PULPClusterEngine)]
+    clusters = [engine for engine in platform.engines if isinstance(engine, (PULPClusterEngine, GAP9ClusterEngine))]
     for cluster in clusters:
         cluster.n_cores = args.cores
 
@@ -112,6 +113,7 @@ def generateTiledTrainingNetwork(args) -> None:
                            name = "DeeployTrainingNetwork",
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
+                           conv_channels_first = args.convChannelsFirst,
                            scheduler = _mockScheduler)
 
     # 7. Set up memory hierarchy.
@@ -303,6 +305,9 @@ if __name__ == '__main__':
                         type = int,
                         default = 131072,
                         help = 'Bytes reserved in L2 for tile staging')
+    parser.add_argument('--convChannelsFirst',
+                        action = 'store_true',
+                        help = 'Use channels-first forward convolutions (no NCHW<->NHWC transpose).')
     parser.set_defaults(shouldFail = False)
     args = parser.parse_args()
 

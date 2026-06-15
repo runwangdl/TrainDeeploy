@@ -9,7 +9,34 @@ import numpy as np
 import onnx_graphsurgeon as gs
 
 from Deeploy.CommonExtensions.OptimizationPasses.Matchers import BranchingMatcher, Match
-from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import ReplaceSequentialPatternPass, contextagnostic
+from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import Pass, ReplaceSequentialPatternPass, contextagnostic
+
+
+@contextagnostic
+class PULPConvKeepCHWPass(Pass):
+    """Tag every forward Conv node with attr ``keep_channels_first = True``.
+
+    Used by the GAP9 channels-first conv path (deployer ``conv_channels_first=True``).
+    The tag has two effects, both gated entirely by the tag so non-CHW networks
+    are untouched:
+
+      1. ``_NCHWtoNHWC_fun`` early-returns on tagged nodes, so NO NCHW->NHWC
+         transpose is inserted around the conv — its activations stay channels-first
+         (native ONNX NCHW), which removes the L1-floor-setting stem transpose and
+         the per-conv input/output transpose pair.
+      2. The CHW conv mappers (which sit ahead of the HWC mappers in the 'Conv'
+         mapping) only accept tagged nodes, so tagged convs bind to the *_CHW
+         kernels + NCHW tile constraints while every other conv falls through to
+         the unchanged HWC path.
+
+    Must run BEFORE PULPNCHWtoNHWCPass. No-op on graphs with no Conv nodes.
+    """
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        for node in graph.nodes:
+            if node.op == "Conv":
+                node.attrs["keep_channels_first"] = True
+        return graph
 
 
 def _squash_transpose_add_fun(graph: gs.Graph, match: Match, name: str):

@@ -1,3 +1,5 @@
+from Deeploy.Targets.PULPOpen.TileConstraints.GeluTileConstraint import GeluGradTileConstraint
+
 # SPDX-FileCopyrightText: 2025 ETH Zurich and University of Bologna
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -10,10 +12,16 @@ instead of the low-level MCHAN API.
 
 import copy
 
-from Deeploy.Targets.GAP9.Bindings import GAP9AddBindings, GAP9ConcatBindings, GAP9FloatConv2DBindings, \
-    GAP9FloatDWConv2DBindings, GAP9FloatGELUBinding, GAP9FloatGEMMBindings, GAP9GatherBindings, \
-    GAP9iHardswishBindings, GAP9iRMSNormBindings, GAP9iRQSGELUBindings, GAP9LayernormBinding, GAP9MatMulBindings, \
-    GAP9MaxPool2DBindings, GAP9MulBindings, GAP9ReduceSumBindings, GAP9ReluBinding, GAP9ReshapeBindings, \
+from Deeploy.Targets.GAP9.Bindings import GAP9AddBindings, GAP9AveragePoolGrad2DBindings, \
+    GAP9BatchNormalizationGradBindings, GAP9BatchNormInternalBindings, GAP9ConcatBindings, GAP9FloatConv2DBindings, \
+    GAP9FloatConv2DCHWBindings, GAP9FloatConvGradBBindings, GAP9FloatConvGradW2DBindings, \
+    GAP9FloatConvGradX2DBindings, GAP9FloatDWConv2DBindings, GAP9FloatDWConv2DCHWBindings, \
+    GAP9FloatDWConvGradW2DBindings, GAP9FloatDWConvGradX2DBindings, GAP9FloatGELUBinding, GAP9FloatGELUGradBinding, \
+    GAP9FloatGEMMBindings, GAP9FloatPWConvGradW2DBindings, GAP9FloatPWConvGradX2DBindings, GAP9GatherBindings, \
+    GAP9GlobalAveragePool2DBindings, GAP9GlobalAveragePoolGrad2DBindings, GAP9iHardswishBindings, \
+    GAP9InPlaceAccumulatorV2Bindings, GAP9iRMSNormBindings, GAP9iRQSGELUBindings, GAP9LayernormBinding, \
+    GAP9LayernormGradBinding, GAP9MatMulBindings, GAP9MaxPool2DBindings, GAP9MSELossBindings, GAP9MSELossGradBindings, \
+    GAP9MulBindings, GAP9ReduceSumBindings, GAP9ReluBinding, GAP9ReluGradBinding, GAP9ReshapeBindings, \
     GAP9RQAddBindings, GAP9RQSBindings, GAP9RQSConv2DBindings, GAP9RQSDWConv2DBindings, GAP9RQSGEMMBindings, \
     GAP9RQSiHardswishBindings, GAP9RQSMatrixVecBindings, GAP9RQSTallGEMMBindings, GAP9SGDBindings, \
     GAP9SoftmaxBindings, GAP9SoftmaxCrossEntropyLossBindings, GAP9SoftmaxCrossEntropyLossGradBindings, \
@@ -28,18 +36,33 @@ from Deeploy.Targets.Generic.TileConstraints.RQSiGELUTileConstraint import RQSiG
 from Deeploy.Targets.Generic.TileConstraints.RQSiHardswishTileConstraint import RQSiHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import TransposeTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTileConstraint
-from Deeploy.Targets.Generic.TileConstraints.UntiledTileConstraint import UntiledTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint, RQConv2DTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.AveragePoolTileConstraint import AveragePoolCTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import BatchNormalizationGradTileConstraint, \
+    BatchNormInternalTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import ConvGradBTileConstraint, \
+    ConvGradW2DTileConstraint, ConvGradX2DIm2ColHWTileConstraint, DWConvGradW2DTileConstraint, \
+    DWConvGradX2DTileConstraint, PWConvGradWTileConstraint, PWConvGradXTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.ConvTileConstraint import Conv2DTileConstraint, Conv2DTileConstraintCHW, \
+    RQConv2DTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.DWConvTileConstraint import DWConv2DTileConstraint, \
-    RQDWConv2DTileConstraint
+    DWConv2DTileConstraintCHW, RQDWConv2DTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.GatherTileConstraint import GatherTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.GEMMTileConstraint import FloatGEMMTileConstraint, GEMMTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.iSoftmaxTileConstraint import iSoftmaxTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.LayernormTileConstraint import LayernormTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.GlobalAveragePoolTileConstraint import \
+    GlobalAveragePoolGradTileConstraint, GlobalAveragePoolTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.InPlaceAccumulatorV2TileConstraint import \
+    InPlaceAccumulatorV2TileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.iSoftmaxTileConstraint import SoftmaxGradTileConstraint, \
+    iSoftmaxTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.LayernormTileConstraint import LayernormGradTileConstraint, \
+    LayernormTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MatMulTileConstraint import MatMulTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.MSELossTileConstraint import MSELossGradTileConstraint, \
+    MSELossTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.ReduceSumTileConstraint import ReduceSumTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.RequantShiftTileConstraint import RequantShiftTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.SGDTileConstraint import SGDTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.SGDTileConstraint import ReluGradTileConstraint, SGDTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.SoftmaxCrossEntropyTileConstraint import \
     SoftmaxCrossEntropyGradTileConstraint, SoftmaxCrossEntropyTileConstraint
 from Deeploy.TilingExtension.TilerExtension import TilingReadyNodeBindings
@@ -56,6 +79,13 @@ GAP9Conv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9Float
 
 GAP9DWConv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConv2DBindings,
                                                           tileConstraint = DWConv2DTileConstraint())
+
+# Channels-first (NCHW) forward conv tiling-ready bindings (CHW kernels + NCHW tile constraints)
+GAP9Conv2DCHWTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatConv2DCHWBindings,
+                                                           tileConstraint = Conv2DTileConstraintCHW())
+
+GAP9DWConv2DCHWTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConv2DCHWBindings,
+                                                             tileConstraint = DWConv2DTileConstraintCHW())
 
 GAP9RQSGEMMTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9RQSGEMMBindings,
                                                          tileConstraint = GEMMTileConstraint())
@@ -125,6 +155,9 @@ GAP9LayernormTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9L
 GAP9FPGELUTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9FloatGELUBinding],
                                                         tileConstraint = UnaryTileConstraint())
 
+GAP9FPGELUGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9FloatGELUGradBinding],
+                                                            tileConstraint = GeluGradTileConstraint())
+
 GAP9GatherTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9GatherBindings,
                                                         tileConstraint = GatherTileConstraint())
 
@@ -135,10 +168,62 @@ GAP9SoftmaxCrossEntropyGradTilingReadyBindings = TilingReadyNodeBindings(
     nodeBindings = GAP9SoftmaxCrossEntropyLossGradBindings, tileConstraint = SoftmaxCrossEntropyGradTileConstraint())
 
 GAP9SoftmaxGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9SoftmaxGradBindings,
-                                                             tileConstraint = UntiledTileConstraint())
+                                                             tileConstraint = SoftmaxGradTileConstraint())
 
 GAP9ReduceSumTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9ReduceSumBindings,
-                                                           tileConstraint = UntiledTileConstraint())
+                                                           tileConstraint = ReduceSumTileConstraint())
 
 GAP9SGDTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9SGDBindings,
                                                      tileConstraint = SGDTileConstraint())
+
+# Training op tiling-ready bindings
+GAP9ConvGradX2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatConvGradX2DBindings,
+                                                             tileConstraint = ConvGradX2DIm2ColHWTileConstraint())
+
+GAP9ConvGradW2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatConvGradW2DBindings,
+                                                             tileConstraint = ConvGradW2DTileConstraint())
+
+GAP9DWConvGradX2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConvGradX2DBindings,
+                                                               tileConstraint = DWConvGradX2DTileConstraint())
+
+GAP9DWConvGradW2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatDWConvGradW2DBindings,
+                                                               tileConstraint = DWConvGradW2DTileConstraint())
+
+GAP9PWConvGradX2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatPWConvGradX2DBindings,
+                                                               tileConstraint = PWConvGradXTileConstraint())
+
+GAP9PWConvGradW2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatPWConvGradW2DBindings,
+                                                               tileConstraint = PWConvGradWTileConstraint())
+
+GAP9ConvGradBTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9FloatConvGradBBindings,
+                                                           tileConstraint = ConvGradBTileConstraint())
+
+GAP9AveragePoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9AveragePoolGrad2DBindings,
+                                                                   tileConstraint = AveragePoolCTileConstraint())
+
+GAP9GlobalAveragePool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9GlobalAveragePool2DBindings,
+                                                                     tileConstraint = GlobalAveragePoolTileConstraint())
+
+GAP9GlobalAveragePoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(
+    nodeBindings = GAP9GlobalAveragePoolGrad2DBindings, tileConstraint = GlobalAveragePoolGradTileConstraint())
+
+GAP9BatchNormInternalTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9BatchNormInternalBindings,
+                                                                   tileConstraint = BatchNormInternalTileConstraint())
+
+GAP9BatchNormalizationGradTilingReadyBindings = TilingReadyNodeBindings(
+    nodeBindings = GAP9BatchNormalizationGradBindings, tileConstraint = BatchNormalizationGradTileConstraint())
+
+GAP9MSELossTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MSELossBindings,
+                                                         tileConstraint = MSELossTileConstraint())
+
+GAP9MSELossGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MSELossGradBindings,
+                                                             tileConstraint = MSELossGradTileConstraint())
+
+GAP9ReluGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9ReluGradBinding],
+                                                          tileConstraint = ReluGradTileConstraint())
+
+GAP9InPlaceAccumulatorV2TilingReadyBindings = TilingReadyNodeBindings(
+    nodeBindings = GAP9InPlaceAccumulatorV2Bindings, tileConstraint = InPlaceAccumulatorV2TileConstraint())
+
+GAP9LayernormGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9LayernormGradBinding],
+                                                               tileConstraint = LayernormGradTileConstraint())

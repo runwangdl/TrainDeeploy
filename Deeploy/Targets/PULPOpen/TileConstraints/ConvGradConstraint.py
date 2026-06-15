@@ -128,28 +128,40 @@ class ConvGradXTileConstraintBase(TileConstraint):
             numerator = cls._AI_MIN_TARGET * dy_bytes
             denominator = flops_per_cin - cls._AI_MIN_TARGET * per_cin_bytes
 
+            l1 = _HW_PARAMS['l1_size']
+
+            # ── W tile size cap: W_tile should not exceed L1/2 ──
+            # When W is large (e.g. 147KB > L1), the solver may allocate most
+            # of L1 to W_tile, leaving tiny spatial tiles (5×1) → many tiles.
+            # Cap W_tile to L1/2 so dY+dX get adequate space for larger spatial tiles.
+            w_per_cin = Cout * K * bpe  # bytes per Cin channel in W
+            max_cin_for_w = max(1, (l1 // 2) // w_per_cin)
+            max_cin_for_w = min(max_cin_for_w, Cin)
+
             if denominator > 0:
                 cin_min = max(1, int(numerator / denominator) + 1)
                 cin_min = min(cin_min, Cin)  # don't exceed full
+                # Feasibility must win over the AI perf target: never *force* a
+                # Cin tile larger than what keeps the weight tile within L1/2.
+                # Otherwise large-Cout pointwise layers (e.g. MobileNetV1
+                # block_11 PW, Cout=256) get cin_min≈101 → a 103KB weight tile →
+                # L1 floor ≈116KB, which exceeds the GAP9 usable L1 heap (≈109KB)
+                # and makes the whole network untileable. Cin is NOT a reduction
+                # axis for dX (each Cin channel is independent: dX[ci]=Σ_co
+                # W[co,ci]·dY[co]), so clamping the Cin tile is always correct —
+                # it only trades a little arithmetic intensity for feasibility.
+                cin_min = min(cin_min, max_cin_for_w)
 
                 # Check feasibility: W_tile + dY + minimal dX must fit L1
-                l1 = _HW_PARAMS['l1_size']
                 w_tile_min = Cout * cin_min * K * bpe
                 dx_tile_min = N * cin_min * 1 * 1 * bpe  # minimal 1×1 spatial
                 if dy_bytes + w_tile_min + dx_tile_min <= l1 and cin_min > 1:
                     tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 1) >= cin_min)
             # else: flops too low relative to bytes, can't hit AI target → no constraint
 
-            # ── W tile size cap: W_tile should not exceed L1/2 ──
-            # When W is large (e.g. 147KB > L1), the solver may allocate most
-            # of L1 to W_tile, leaving tiny spatial tiles (5×1) → many tiles.
-            # Cap W_tile to L1/2 so dY+dX get adequate space for larger spatial tiles.
-            # Only apply when feasible (max_cin >= cin_min from AI constraint).
-            w_per_cin = Cout * K * bpe  # bytes per Cin channel in W
-            max_cin_for_w = max(1, (l1 // 2) // w_per_cin)
-            max_cin_for_w = min(max_cin_for_w, Cin)
-            effective_cin_min = cin_min if (denominator > 0 and cin_min > 1) else 1
-            if max_cin_for_w >= effective_cin_min and max_cin_for_w < Cin:
+            # Always bound the weight tile to L1/2 (feasibility), independent of
+            # whether the AI minimum applied above.
+            if max_cin_for_w < Cin:
                 tilerModel.addConstraint(tilerModel.getTensorDimVar(wName, 1) <= max_cin_for_w)
 
             # Note: spatial minimum constraints were considered but cause regression
@@ -157,6 +169,29 @@ class ConvGradXTileConstraintBase(TileConstraint):
             # The Cin constraint above is sufficient for large-W layers (layer3).
         except Exception:
             pass  # best-effort; don't block tiling on cost model failure
+
+        # RW: For strided convs, force the dX spatial tile size to be a multiple
+        # of the stride. A 1x1 stride-s conv samples only every s-th input
+        # position, so an input column/row whose index is not a multiple of s
+        # receives NO output-gradient contribution. If the tiler isolates such a
+        # column into its own tile (e.g. a width-1 tile under tight L1), the
+        # inverse-conv dY halo for that tile is empty -> computeDyCubeFromDxTile
+        # raises (generation) or the kernel writes past its tile (runtime L1 OOB
+        # at update 1). Constraining the dX spatial tile to a multiple of the
+        # stride guarantees every tile spans a full stride period (both sampled
+        # and unsampled positions), so the halo is never empty. Only applied for
+        # stride > 1, so stride-1 layers keep full spatial freedom.
+        try:
+            dxName = parseDict[cls.gradInKey]
+            sh, sw = tuple(parseDict.get("strides", [1, 1]))
+            if sh > 1:
+                tilerModel.addTileSizeDivisibleConstraint(parseDict, "dim_im_in_x",
+                                                          tilerModel.getTensorDimVar(dxName, 2), sh)
+            if sw > 1:
+                tilerModel.addTileSizeDivisibleConstraint(parseDict, "dim_im_in_y",
+                                                          tilerModel.getTensorDimVar(dxName, 3), sw)
+        except Exception:
+            pass  # best-effort; don't block tiling if keys/strides unavailable
 
         return tilerModel
 
@@ -540,15 +575,15 @@ class ConvGradXTileConstraintBase(TileConstraint):
             node = operatorRepresentation.get('nodeName', '?')
             w_level = 'L2' if w_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
             dy_level = 'L2' if dy_bw == _HW_PARAMS['bw_l2_to_l1'] else 'L3'
-            print(f"[TileCost:GradX] {node}: tiles={num_tiles} "
-                  f"AI={tile_AI:.2f} attainable={tile_attainable:.1f}F/cyc "
-                  f"({'compute' if tile_compute >= tile_dma else 'memory'}-bound) "
-                  f"overhead={total_cycles/ideal:.2f}x "
-                  f"tile_compute={tile_compute:.0f} tile_dma={tile_dma:.0f} "
-                  f"total={total_cycles:.0f} ideal={ideal:.0f} "
-                  f"dx_tile={list(dx_tile_shape)} dy_tile={list(dy_tile_shape)} "
-                  f"W={list(wShape)}({w_level},{'hoist' if w_hoistable else 'per-tile'}) "
-                  f"dY({dy_level})")
+            # print(f"[TileCost:GradX] {node}: tiles={num_tiles} "
+            #       f"AI={tile_AI:.2f} attainable={tile_attainable:.1f}F/cyc "
+            #       f"({'compute' if tile_compute >= tile_dma else 'memory'}-bound) "
+            #       f"overhead={total_cycles/ideal:.2f}x "
+            #       f"tile_compute={tile_compute:.0f} tile_dma={tile_dma:.0f} "
+            #       f"total={total_cycles:.0f} ideal={ideal:.0f} "
+            #       f"dx_tile={list(dx_tile_shape)} dy_tile={list(dy_tile_shape)} "
+            #       f"W={list(wShape)}({w_level},{'hoist' if w_hoistable else 'per-tile'}) "
+            #       f"dY({dy_level})")
         except Exception:
             pass
 
@@ -1097,9 +1132,57 @@ class CoutHWSliceStrategy(GradWStrategy):
         for d in range(1, len(dwBuf.shape)):
             tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, d) == dwBuf.shape[d])
 
+        # ── Forbid simultaneous Cout + H/W tiling for regular ConvGradW ──
+        # dW of a Cout slab is a spatial REDUCTION accumulated across that slab's
+        # H/W tiles. The template zeroes dW once per slab and lets the H/W tiles
+        # add their partials. When BOTH Cout and H/W tile, the per-slab dW does
+        # NOT reliably persist/accumulate across the slab's H/W tiles under the
+        # single-buffer schedule, so only the last H/W partial survives → wrong
+        # dW → loss drift (Siracusa ResNet8 layer1: dY 16×32×32 = 64KB > CinSlice
+        # budget → falls here; the spatial-link otherwise lets the solver tile
+        # Cout *and* W). Forcing Cout full keeps a single slab (the validated
+        # memset-once-then-accumulate path) while the spatial-link still tiles
+        # H/W into a few large strips (so GAP9's large-stem feasibility holds).
+        # DW/PW ConvGradW genuinely need Cout tiling (per-channel layout) and do
+        # not hit this combination in practice, so they opt out via the flag.
+        if getattr(owner_cls, "coutHWSlice_force_cout_full", False):
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == dwBuf.shape[0])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, 0) == dwBuf.shape[0])
+
         # dY tile spatial dims >= 1 (tiler picks)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) >= 1)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) >= 1)
+
+        # ── X ↔ dY spatial link (boundary-aware forward-conv relation) ──
+        # Without this the model has NO relation between the X (input) spatial
+        # tile and the dY (output-gradient) spatial tile — only channel/batch
+        # are linked in addGeometricalConstraint. The solver is then free to
+        # pick a degenerate 1×1 dY tile with an independently-sized (tiny) X
+        # tile; for large-spatial regular ConvGradW (e.g. MobileNetV1 stem,
+        # dY 8×48×48, X 3×96×96) this yields a per-element schedule (48·48·8 =
+        # 18432 tiles) whose per-tile PI_L1 metadata (~190KB) overflows L1 at
+        # link time. Mirroring Conv2DTileConstraintCHW's geometrical relation
+        # ties the X tile to exactly the dY tile's input halo (with the
+        # full-tile padding indicator), so the model accounts for the real X
+        # cost and `random-max` maximizes dY (X grows in lockstep, filling L1)
+        # → a few large H/W strips. CinSlice keeps spatial full so the relation
+        # holds trivially there; this is added only on the HW-slicing path.
+        try:
+            pads = parseDict["pads"]
+            strides = parseDict["strides"]
+            dil = parseDict.get("dilations", [1, 1])
+            kH, kW = dwBuf.shape[2], dwBuf.shape[3]
+            fullXH, fullXW = xBuf.shape[2], xBuf.shape[3]
+            xH = tilerModel.getTensorDimVar(xName, 2)
+            xW = tilerModel.getTensorDimVar(xName, 3)
+            dyH = tilerModel.getTensorDimVar(dyName, 2)
+            dyW = tilerModel.getTensorDimVar(dyName, 3)
+            effXH = xH + ((pads[0] + pads[2]) * (xH == fullXH)) - ((kH - 1) * (xH != fullXH))
+            effXW = xW + ((pads[1] + pads[3]) * (xW == fullXW)) - ((kW - 1) * (xW != fullXW))
+            tilerModel.addConstraint(dyH == (effXH - dil[0] * (kH - 1) - 1) // strides[0] + 1)
+            tilerModel.addConstraint(dyW == (effXW - dil[1] * (kW - 1) - 1) // strides[1] + 1)
+        except Exception:
+            pass  # best-effort; never block tiling on the spatial-link cost model
 
         return tilerModel
 
@@ -1512,13 +1595,13 @@ class ConvGradWTileConstraintBase(TileConstraint):
             cost = _post_solve_cost(chosen.name, num_tiles, tile_tensors, tile_shapes, ctxt, operatorRepresentation,
                                     cls)
             node = operatorRepresentation.get('nodeName', '?')
-            print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
-                  f"AI={cost['tile_AI']:.2f} attainable={cost['tile_attainable_perf']:.1f}F/cyc "
-                  f"({cost['bound']}-bound) overhead={cost['overhead']:.2f}x "
-                  f"tile_compute={cost['tile_compute_cycles']:.0f} tile_dma={cost['tile_dma_cycles']:.0f} "
-                  f"total={cost['total_cycles']:.0f} ideal={cost['ideal_cycles']:.0f}")
-            for line in cost['breakdown']:
-                print(line)
+            # print(f"[TileCost] {node}: strategy={cost['strategy']} tiles={cost['num_tiles']} "
+            #       f"AI={cost['tile_AI']:.2f} attainable={cost['tile_attainable_perf']:.1f}F/cyc "
+            #       f"({cost['bound']}-bound) overhead={cost['overhead']:.2f}x "
+            #       f"tile_compute={cost['tile_compute_cycles']:.0f} tile_dma={cost['tile_dma_cycles']:.0f} "
+            #       f"total={cost['total_cycles']:.0f} ideal={cost['ideal_cycles']:.0f}")
+            # for line in cost['breakdown']:
+            #     print(line)
         except Exception as e:
             pass  # cost estimation is best-effort
 
@@ -1533,6 +1616,12 @@ class ConvGradW2DTileConstraint(ConvGradWTileConstraintBase):
     (e.g. MobileNetV1 stem: dY = 16x96x96 = 576KB; tiler picks Cout/HW split).
     """
     strategies: List = [CinSliceStrategy, CoutHWSliceStrategy]
+
+    # When CoutHWSlice handles a regular conv, keep Cout full so dW stays a
+    # single spatial-reduction slab (memset-once + mm_add accumulation).
+    # Forbidding the Cout+HW combination is what fixes the Siracusa CI dW drift;
+    # the spatial link still tiles H/W into strips for feasibility.
+    coutHWSlice_force_cout_full = True
 
 
 class PWConvGradWTileConstraint(ConvGradWTileConstraintBase):

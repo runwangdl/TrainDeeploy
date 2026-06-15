@@ -20,7 +20,8 @@ from Deeploy.TilingExtension.CodeTransformationPasses.TilingHoistingMixIn import
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingPrototypes import PrototypeTilingMixIn
 from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint, TensorMemoryConstraint
 from Deeploy.TilingExtension.TilingCodegen import HyperRectangle, TilingSchedule, VariableReplacementScheme, \
-    calculateFlatOffset, minimizeRectangle, minimizeVariableReplacement, padOffset, padShape, stridesFromShape
+    alignRectangleToReference, calculateFlatOffset, minimizeRectangle, minimizeVariableReplacement, padShape, \
+    stridesFromShape
 
 T = TypeVar('T')
 
@@ -189,7 +190,7 @@ class TilingCodeGeneration(CodeTransformationPass, IntrospectiveCodeTransformati
             minimizedTransfers = []
             consistent = True
             for rect in transfers:
-                paddedRect = HyperRectangle(padOffset(rect.offset, commonRank), padShape(rect.dims, commonRank))
+                paddedRect = alignRectangleToReference(rect, commonRank, outerShape)
                 minRect, newMinOuterShape = minimizeRectangle(paddedRect, outerShape)
                 if minOuterShape is None:
                     minOuterShape = newMinOuterShape

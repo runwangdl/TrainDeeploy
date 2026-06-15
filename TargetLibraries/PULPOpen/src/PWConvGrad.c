@@ -121,7 +121,13 @@ void PULP_PWConvGradX2d_fp32_fp32_fp32_CHW(
   (void)H_in;
   (void)W_in;
 
-  pw_convgradx_args_t args = {
+  // RW: keep the fork-args struct off the controller's stack. The GAP9
+  // pi_cl_team_fork dispatch can clobber a stack-resident args struct
+  // (frame-layout-dependent), corrupting a pointer field before the worker
+  // cores read it (observed: pGradIn read as garbage -> wild write). Static
+  // storage is safe because cluster forks run one-at-a-time (barrier).
+  static pw_convgradx_args_t args;
+  args = (pw_convgradx_args_t){
       .pGradOut = pGradOut,
       .pWeight = pWeight,
       .pGradIn = pGradIn,

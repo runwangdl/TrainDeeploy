@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import itertools
 from dataclasses import dataclass
 from typing import Dict, Generator, List, Sequence, Tuple, Type
 
@@ -626,6 +627,50 @@ def padOffset(offset: Tuple[int, ...], rank: int) -> Tuple[int, ...]:
     ret = tuple([0] * (rank - len(offset))) + offset
     assert len(ret) == rank
     return ret
+
+
+def alignRectangleToReference(rect: HyperRectangle, rank: int, referenceShape: Tuple[int, ...]) -> HyperRectangle:
+    """
+    Expand a lower-rank HyperRectangle to ``rank`` dims so it aligns with
+    ``referenceShape``.
+
+    The default is prepend-padding (``padOffset``/``padShape``), which assumes the
+    missing dims are leading (e.g. squeezed batch dims). That misaligns when the
+    squeezed dim is instead a *trailing* size-1 dim of the reference (e.g. LayerNorm
+    statistics shaped ``[1, N, 1]`` whose tile rect arrives rank-2 as ``[1, N]``):
+    prepending pushes the N-axis offset into the trailing size-1 axis, producing an
+    out-of-bounds offset (and wrong addressing).
+
+    Prepend-padding is kept whenever it is in bounds (so every currently working
+    case is byte-identical); only when prepend is out of bounds does this search for
+    an insertion of the missing size-1 dims at the reference's size-1 positions that
+    keeps all offsets in bounds.
+    """
+    R = len(rect.dims)
+    if R >= rank:
+        return rect
+
+    prepended = HyperRectangle(padOffset(rect.offset, rank), padShape(rect.dims, rank))
+    if all(o + d <= s for o, d, s in zip(prepended.offset, prepended.dims, referenceShape)):
+        return prepended
+
+    onePositions = [i for i, s in enumerate(referenceShape) if s == 1]
+    for posSet in itertools.combinations(onePositions, rank - R):
+        dims: List[int] = []
+        offset: List[int] = []
+        ri = 0
+        for i in range(rank):
+            if i in posSet:
+                dims.append(1)
+                offset.append(0)
+            else:
+                dims.append(rect.dims[ri])
+                offset.append(rect.offset[ri])
+                ri += 1
+        if ri == R and all(o + d <= s for o, d, s in zip(offset, dims, referenceShape)):
+            return HyperRectangle(tuple(offset), tuple(dims))
+
+    return prepended
 
 
 def padStride(stride: Tuple[int, ...], rank: int, paddingStride: int) -> Tuple[int, ...]:

@@ -129,7 +129,12 @@ def generateNetwork(args):
 
     _DEEPLOYSTATEDIR = os.path.join(args.dumpdir, "deeployStates")
 
-    deployer = mapDeployer(platform, graph, inputTypes, deeployStateDir = _DEEPLOYSTATEDIR, inputOffsets = inputOffsets)
+    deployer = mapDeployer(platform,
+                           graph,
+                           inputTypes,
+                           deeployStateDir = _DEEPLOYSTATEDIR,
+                           inputOffsets = inputOffsets,
+                           conv_channels_first = getattr(args, "convChannelsFirst", False))
 
     log.debug(f"Deployer: {deployer}")
 
@@ -193,6 +198,10 @@ if __name__ == '__main__':
                         'If not specified, offsets are set to 0. '
                         'Example: --input-offset-map input_0=0 input_1=128 ...')
     parser.add_argument('--shouldFail', action = 'store_true')
+    parser.add_argument('--convChannelsFirst',
+                        action = 'store_true',
+                        default = False,
+                        help = 'Keep forward convs channels-first (NCHW) and bind the *_CHW kernels (GAP9).')
     parser.add_argument(
         "--cores",
         type = int,

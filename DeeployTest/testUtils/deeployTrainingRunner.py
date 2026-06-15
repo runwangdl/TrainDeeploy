@@ -23,7 +23,10 @@ from .core.paths import get_test_paths
 from .deeployRunner import DeeployRunnerArgumentParser, print_colored_result, print_configuration
 
 
-def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', default_simulator: str = 'gvsoc'):
+def main(tiling_enabled: bool = False,
+         default_platform: str = 'Siracusa',
+         default_simulator: str = 'gvsoc',
+         parser_setup_callback = None):
     """
     Build parser, parse args, create DeeployTestConfig, and run the training test.
 
@@ -35,6 +38,10 @@ def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', defau
         Platform used when -p is not given on the command line.
     default_simulator:
         Simulator used when -s is not given on the command line.
+    parser_setup_callback:
+        Optional callback to add platform-specific arguments to the parser
+        before parsing (receives the parser). GAP9 uses this to add
+        ``--convChannelsFirst`` (channels-first forward convs for MobileNetV1).
     """
 
     parser = DeeployRunnerArgumentParser(tiling_arguments = tiling_enabled, platform_required = False)
@@ -73,6 +80,10 @@ def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', defau
         default = None,
         help = 'Absolute loss tolerance for pass/fail comparison (default: auto from generateTrainingNetwork.py)\n')
 
+    # Platform-specific arguments (e.g. GAP9's --convChannelsFirst).
+    if parser_setup_callback is not None:
+        parser_setup_callback(parser)
+
     args = parser.parse_args()
 
     platform = default_platform
@@ -97,6 +108,8 @@ def main(tiling_enabled: bool = False, default_platform: str = 'Siracusa', defau
         gen_args.extend(['--input-type-map'] + list(args.input_type_map))
     if args.input_offset_map:
         gen_args.extend(['--input-offset-map'] + list(args.input_offset_map))
+    if getattr(args, 'convChannelsFirst', False):
+        gen_args.append('--convChannelsFirst')
 
     if tiling_enabled:
         if getattr(args, 'defaultMemLevel', None):
