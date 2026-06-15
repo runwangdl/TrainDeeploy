@@ -1132,6 +1132,23 @@ class CoutHWSliceStrategy(GradWStrategy):
         for d in range(1, len(dwBuf.shape)):
             tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, d) == dwBuf.shape[d])
 
+        # ── Forbid simultaneous Cout + H/W tiling for regular ConvGradW ──
+        # dW of a Cout slab is a spatial REDUCTION accumulated across that slab's
+        # H/W tiles. The template zeroes dW once per slab and lets the H/W tiles
+        # add their partials. When BOTH Cout and H/W tile, the per-slab dW does
+        # NOT reliably persist/accumulate across the slab's H/W tiles under the
+        # single-buffer schedule, so only the last H/W partial survives → wrong
+        # dW → loss drift (Siracusa ResNet8 layer1: dY 16×32×32 = 64KB > CinSlice
+        # budget → falls here; the spatial-link otherwise lets the solver tile
+        # Cout *and* W). Forcing Cout full keeps a single slab (the validated
+        # memset-once-then-accumulate path) while the spatial-link still tiles
+        # H/W into a few large strips (so GAP9's large-stem feasibility holds).
+        # DW/PW ConvGradW genuinely need Cout tiling (per-channel layout) and do
+        # not hit this combination in practice, so they opt out via the flag.
+        if getattr(owner_cls, "coutHWSlice_force_cout_full", False):
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == dwBuf.shape[0])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, 0) == dwBuf.shape[0])
+
         # dY tile spatial dims >= 1 (tiler picks)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) >= 1)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) >= 1)
@@ -1599,6 +1616,12 @@ class ConvGradW2DTileConstraint(ConvGradWTileConstraintBase):
     (e.g. MobileNetV1 stem: dY = 16x96x96 = 576KB; tiler picks Cout/HW split).
     """
     strategies: List = [CinSliceStrategy, CoutHWSliceStrategy]
+
+    # When CoutHWSlice handles a regular conv, keep Cout full so dW stays a
+    # single spatial-reduction slab (memset-once + mm_add accumulation).
+    # Forbidding the Cout+HW combination is what fixes the Siracusa CI dW drift;
+    # the spatial link still tiles H/W into strips for feasibility.
+    coutHWSlice_force_cout_full = True
 
 
 class PWConvGradWTileConstraint(ConvGradWTileConstraintBase):

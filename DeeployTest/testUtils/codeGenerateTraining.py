@@ -128,7 +128,15 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 paddingElements = (pad_bytes * 8 + typeWidth - 1) // typeWidth
                 list_str += ", " + ", ".join("0" for _ in range(paddingElements))
 
-            retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
+            # Place the per-mini-batch test data in WEIGHTMEM_SRAM (Siracusa
+            # linker, ~4 MB) — same reason as the init weights below: `.l2_data`
+            # is only ~1.94 MB and the data + weights overflow it at link time.
+            # Only platforms that emit init weights (Siracusa) have this section;
+            # GAP9 (emit_init_weights=False) hex-loads instead, so keep default.
+            if emit_init_weights:
+                retStr += f'__attribute__((section(".weightmem_sram"))) {typeName} {buf_name}[] = {{{list_str}}};\n'
+            else:
+                retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
 
         # Emit the row pointer array for this mini-batch
         row_name = f"testDataRow{mb}"
@@ -188,7 +196,7 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
             #      with weights baked into the binary via WEIGHTMEM_SRAM,
             #      gvsoc loads them in one shot with the program image and
             #      ResNet8/MobileNetV1 sim finishes in ~1 min.
-            retStr += f'{typeName} {buf_name}[] = {{{list_str}}};\n'
+            retStr += f'{typeName} {buf_name}[] __attribute__((section(".weightmem_sram"))) = {{{list_str}}};\n'
         retStr += f"void* testInitWeights[{len(weight_entries)}] = {{{', '.join(f'(void*){e}' for e in weight_entries)}}};\n"
 
     return retStr
