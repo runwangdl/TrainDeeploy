@@ -227,6 +227,3 @@ def run_and_assert_test(test_name: str,
 
     if result.error_count >= 0:
         assert result.error_count == 0, (f"Found {result.error_count} errors out of {result.total_count} tests")
-
-    if metric_section:
-        _emit_training_cycle_row(test_name, config, result.stdout, metric_section)

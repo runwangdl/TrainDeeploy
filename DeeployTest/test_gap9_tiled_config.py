@@ -105,6 +105,27 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
 
+# L3 double-buffered training. Only the L3<->L2 hop is double-buffered
+# (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double. CCT only:
+# same rationale as Siracusa — ResNet8/MobileNetV1 ConvGrad weight tiling emits
+# strided 2D DMA the gvsoc UDMA model mishandles under DB; CCT's L3 transfers
+# are contiguous. Add more once that path is fixed.
+L3_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": [122000],
+}
+
+# Training + PromoteTensorsToL2 (singlebuffer). test path ->
+# list of (l1, strategy, includeActivations). CCT only for now.
+L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
+}
+
+# Training + PromoteTensorsToL2 + double-buffering combined. CCT only
+# (it is the sole L3_DOUBLEBUFFER_TRAINING model).
+L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
+}
+
 TRAINING_MODEL_OVERRIDES = {
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
@@ -116,7 +137,12 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
         "tolerance": 5e-3,
-        "cc_stack": 4096,  # frees L1 for arena -> coarser tokenizer-conv tiling
+        # 8192 (not 4096): promote+DB deepens the CC closure chain and DB doubles
+        # L1 arena pressure. cc_stack=4096 -> CC master stack overflows into the
+        # RTOS event list -> os_evt_release deadlock at init. cc_stack=16384 ->
+        # arena(122000)+stack > TCDM(131072) -> overlap -> wild-pointer crash.
+        # 8192: 122000+8192=130192 < 131072 -> fits AND stack deep enough.
+        "cc_stack": 8192,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,

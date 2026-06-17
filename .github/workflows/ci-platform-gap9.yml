@@ -71,3 +71,30 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-markers: "gap9_tiled and training and singlebuffer and l3"
+
+  # L3 double-buffered training (CCT) — promote+DB handled by its own job below
+  gap9-training-tiled-l3-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and doublebuffer and l3 and not promote"
+
+  # L3 training + PromoteTensorsToL2, singlebuffer (CCT)
+  gap9-training-tiled-promote-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and promote and training and singlebuffer"
+
+  # L3 training + PromoteTensorsToL2 + double-buffering combined (CCT)
+  gap9-training-tiled-promote-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and promote and training and doublebuffer"

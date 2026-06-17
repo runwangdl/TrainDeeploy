@@ -68,3 +68,9 @@ CHANGELOG_GEN.md
 .cache/
 
 CLAUDE.md
+# Local build/run artifacts (this session)
+build_logs/
+.gap9_ccache/
+.gap9_pyenv/
+activate_traindeeploy_convgradw.sh
+run_gap9_in_container.sh

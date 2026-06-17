@@ -58,14 +58,14 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and singlebuffer and not promote"
 
-  # Training tests - L3 doublebuffer
+  # Training tests - L3 doublebuffer (promote+DB handled by its own job below)
   siracusa-training-tiled-l3-doublebuffer:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l3 and doublebuffer"
+      pytest-marker: "training and l3 and doublebuffer and not promote"
 
   # Inference L3 + PromoteTensorsToL2 regression
   siracusa-inference-tiled-promote:
@@ -76,11 +76,20 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "promote and not training"
 
-  # Training L3 + PromoteTensorsToL2 regression (MobileNetV1 + CCT)
+  # Training L3 + PromoteTensorsToL2 regression, singlebuffer (ResNet8 + MobileNetV1 + CCT)
   siracusa-training-tiled-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "promote and training"
+      pytest-marker: "promote and training and singlebuffer"
+
+  # Training L3 + PromoteTensorsToL2 + double-buffering combined (CCT only)
+  siracusa-training-tiled-promote-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and training and doublebuffer"

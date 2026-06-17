@@ -227,6 +227,15 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
 }
 
+# Training models tested with PromoteTensorsToL2 AND double-buffering together.
+# Only CCT: it is the sole model in L3_DOUBLEBUFFER_TRAINING_MODELS (ResNet8 /
+# MobileNetV1 hit the gvsoc UDMA strided-DMA bug under L3 DB), so it is also the
+# only model where promote+DB can be exercised end-to-end. Add more once the
+# strided-DMA path is fixed.
+L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
+}
+
 # Inference models tested with PromoteTensorsToL2.
 # Each entry maps test path -> list of (l1, strategy, includeActivations).
 # "off" strategy = no promotion (baseline for cycle comparison).
