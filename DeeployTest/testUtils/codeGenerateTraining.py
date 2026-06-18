@@ -346,12 +346,44 @@ void InitTrainingNetwork(){
 void InitTrainingNetwork(__attribute__((unused)) uint32_t core_id, __attribute__((unused)) uint32_t numThreads){
 """
     retStr += deployer.generateEngineInitializationCode()
-    retStr += deployer.generateBufferAllocationCode()
+    retStr += _hoistL2AllocsBeforeL3(deployer.generateBufferAllocationCode())
     retStr += """
 }
 """
 
     return retStr
+
+
+def _hoistL2AllocsBeforeL3(allocCode: str) -> str:
+    """Group all pi_l2_malloc allocations before the first cl_ram_malloc.
+
+    On GAP9, InitTrainingNetwork runs on the cluster controller (CC). cl_ram_malloc
+    delegates an allocation task to the FC (pi_cl_ram_alloc -> pi_cl_send_task_to_fc);
+    pi_l2_malloc runs the pulp-os L2 allocator (pos_alloc) directly on the CC. The two
+    share the L2 allocator's freelist, so a pi_l2_malloc interleaved *after* a delegated
+    cl_ram_malloc races the FC and corrupts the freelist -> the FC then crashes/spins in
+    os_evt_release (verified via pe8/insn ring-trace: the crash is pos_alloc reached from
+    pi_l2_malloc right after a cl_ram_malloc). Tensor promotion exposes this by adding the
+    PROMOTED_POOL_L2 pi_l2_malloc into the interleaved region, which is why ResNet8
+    promote/promote+DB hung at init while non-promote (fewer L2 allocs) survived.
+
+    Hoisting every pi_l2_malloc above the first cl_ram_malloc makes the CC do all L2
+    allocations while the FC is still idle, then only delegated L3 allocs afterwards -> no
+    concurrent freelist access. Only fires when both alloc kinds are present (GAP9 L3
+    training); a pure reorder of independent allocations, so it is semantically a no-op
+    everywhere else.
+    """
+    if 'cl_ram_malloc' not in allocCode or 'pi_l2_malloc' not in allocCode:
+        return allocCode
+    lines = allocCode.split('\n')
+    l2 = [ln for ln in lines if 'pi_l2_malloc(' in ln and ln.rstrip().endswith(';')]
+    if not l2:
+        return allocCode
+    rest = [ln for ln in lines if not ('pi_l2_malloc(' in ln and ln.rstrip().endswith(';'))]
+    # find first cl_ram_malloc in `rest` and splice the L2 allocs right before it
+    idx = next((i for i, ln in enumerate(rest) if 'cl_ram_malloc(' in ln), 0)
+    out = rest[:idx] + ['  // [GAP9 FC/CC pos_alloc race fix] all pi_l2_malloc before cl_ram_malloc'] + l2 + rest[idx:]
+    return '\n'.join(out)
 
 
 def generateTrainingTestNetwork(deployer: NetworkDeployer,

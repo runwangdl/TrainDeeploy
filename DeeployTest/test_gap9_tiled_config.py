@@ -121,24 +121,30 @@ L3_DOUBLEBUFFER_TRAINING_MODELS = {
 }
 
 # Training + PromoteTensorsToL2 (singlebuffer). test path ->
-# list of (l1, strategy, includeActivations). CCT only for now.
+# list of (l1, strategy, includeActivations).
+# ResNet8 uses "smallest" (cycle-aware promotes 0 tensors for ResNet8 — its
+# heuristic finds no positive-cycle-benefit candidate). Both pass thanks to the
+# InitNetwork pi_l2_malloc-before-cl_ram_malloc hoist (see codeGenerateTraining
+# _hoistL2AllocsBeforeL3): without it, promotion's PROMOTED_POOL_L2 pi_l2_malloc
+# interleaved with the FC-delegated cl_ram_malloc loop races the pulp-os L2
+# allocator freelist -> FC os_evt_release corruption at init.
 L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
+    "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
 }
 
-# Training + PromoteTensorsToL2 + double-buffering combined. CCT only.
-# Strategy is "cycle-aware", NOT "smallest": "smallest" promotes ~138 KB of
-# const tensors (vs cycle-aware's ~40 KB), which deepens the init-time setup so
-# the CC master stack high-water overflows the razor-thin L1 margin (arena
-# 122000 + cc_stack 8192 = 130192, only ~864 B free) -> corrupts the RTOS event
-# list -> os_evt_release deadlock at "Initializing TrainingNetwork" (CI job
-# never completes). cycle-aware promotes fewer consts -> init fits -> CCT
-# promote+DB passes at ~336M/4-step.
-# ResNet8 promote+DB on GAP9 did not complete within a 25-min build+sim budget
-# (heavier promote+DB codegen, possible hang) — left out pending investigation.
-# Plain ResNet8 DB (L3_DOUBLEBUFFER_TRAINING_MODELS) passes at ~196M/step.
+# Training + PromoteTensorsToL2 + double-buffering combined.
+# Both CCT and ResNet8 pass thanks to the InitNetwork pi_l2_malloc-before-
+# cl_ram_malloc hoist (codeGenerateTraining._hoistL2AllocsBeforeL3), which fixes
+# the FC/CC pulp-os L2-allocator freelist race that previously corrupted the FC
+# RTOS event list -> os_evt_release deadlock at init (this is why ResNet8
+# promote+DB "never completed" and why CCT smallest used to hang). Per-model
+# strategy: CCT cycle-aware (~336M/4-step), ResNet8 smallest (~247.6M/4-step;
+# cycle-aware promotes 0 for ResNet8). headroom 700000 (set in the test) leaves
+# enough L2 for the doubled DB staging buffers.
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
+    "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
 }
 
 TRAINING_MODEL_OVERRIDES = {
