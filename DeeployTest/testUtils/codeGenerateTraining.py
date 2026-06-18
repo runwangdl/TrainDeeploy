@@ -35,7 +35,9 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                                      learning_rate: float = 0.001,
                                      init_weights: List[np.ndarray] = None,
                                      data_size: int = None,
-                                     emit_init_weights: bool = True) -> str:
+                                     emit_init_weights: bool = True,
+                                     testdata_to_l3: bool = False,
+                                     hex_dir: str = None) -> str:
     """Generate testinputs.h for training tests.
 
     Parameters
@@ -82,6 +84,14 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
     retStr += f"#define TRAINING_LEARNING_RATE {learning_rate:.10g}f\n"
     retStr += "\n"
 
+    # When testdata_to_l3 is set (GAP9, large inputs): don't bake the per-mini-batch
+    # arrays into L2 .data. Instead emit L3 pointers filled at runtime from hex files
+    # (written separately into the gen hex/ dir, auto-added to the readfs) by a
+    # cluster-side LoadTestDataL3() loader. The harness feeds inputs via l3_aware_copy
+    # which handles an L3 source, so no harness data path change is needed. This frees
+    # the baked test images out of L2 (MobileNetV1: 4x108KB = 432KB) for promotion.
+    _l3_loader_lines: List[str] = []
+
     # Emit per-mini-batch buffer arrays — only effective_data_size unique rows.
     # all_mb_data must contain exactly effective_data_size rows.
     for mb in range(effective_data_size):
@@ -114,6 +124,28 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
             buf_name = f"testData_mb{mb}_buf{buf_idx}"
             row_entries.append(buf_name)
 
+            if testdata_to_l3:
+                # L3-resident: emit a pointer filled at runtime from the hex file;
+                # skip baking the array into L2 .data entirely.
+                total_bytes = (values.size * typeWidth) // 8
+                nbytes = total_bytes + ((-total_bytes) % 4)  # word-aligned, matches hex
+                retStr += f'void *{buf_name} = 0;\n'
+                _l3_loader_lines.append(f'  {buf_name} = cl_ram_malloc({nbytes}); '
+                                        f'load_file_to_ram({buf_name}, "{buf_name}.hex");')
+                if hex_dir is not None:
+                    _npdt = {
+                        'float32_t': np.float32,
+                        'int64_t': np.int64,
+                        'uint8_t': np.uint8,
+                        'int32_t': np.int32
+                    }.get(typeName, np.float32)
+                    raw = values.astype(_npdt).tobytes()
+                    raw = raw + b'\x00' * (nbytes - len(raw))  # word-align pad, matches cl_ram_malloc size
+                    os.makedirs(hex_dir, exist_ok = True)
+                    with open(os.path.join(hex_dir, f'{buf_name}.hex'), 'wb') as _hf:
+                        _hf.write(raw)
+                continue
+
             # Format values
             if typeName == 'float32_t':
                 list_str = ", ".join(
@@ -140,11 +172,28 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
 
         # Emit the row pointer array for this mini-batch
         row_name = f"testDataRow{mb}"
-        retStr += f"void* {row_name}[] = {{{', '.join(f'(void*){e}' for e in row_entries)}}};\n"
+        if testdata_to_l3:
+            # Pointers are filled at runtime (cl_ram_malloc), so the row can't be
+            # statically initialised with their values — declare it and fill it in
+            # the loader after the mallocs. (testDataVector below stays constant:
+            # it holds the row-array addresses, which are compile-time constants.)
+            retStr += f"void* {row_name}[{len(row_entries)}];\n"
+            for _bi, _e in enumerate(row_entries):
+                _l3_loader_lines.append(f"  {row_name}[{_bi}] = {_e};")
+        else:
+            retStr += f"void* {row_name}[] = {{{', '.join(f'(void*){e}' for e in row_entries)}}};\n"
         retStr += "\n"
 
     # Emit the top-level vector of row pointers (only unique samples; C harness cycles via modulo).
     retStr += f"void** testDataVector[{effective_data_size}] = {{{', '.join(f'testDataRow{mb}' for mb in range(effective_data_size))}}};\n"
+
+    if testdata_to_l3 and _l3_loader_lines:
+        # Cluster-side loader: cl_ram_malloc + load_file_to_ram run on the cluster
+        # controller (pi_cl_ram_alloc / pi_cl_fs_read are cluster-delegated). The
+        # harness dispatches LoadTestDataL3 to the cluster (guarded by the define
+        # below) after InitTrainingNetwork. Frees the test images out of L2.
+        retStr += "\n#define TRAINING_TESTDATA_L3 1\n"
+        retStr += "void LoadTestDataL3(void) {\n" + "\n".join(_l3_loader_lines) + "\n}\n"
 
     # Emit initial weight arrays (one per weight input, indices num_data..grad_buf_start_idx-1).
     #
@@ -346,12 +395,44 @@ void InitTrainingNetwork(){
 void InitTrainingNetwork(__attribute__((unused)) uint32_t core_id, __attribute__((unused)) uint32_t numThreads){
 """
     retStr += deployer.generateEngineInitializationCode()
-    retStr += deployer.generateBufferAllocationCode()
+    retStr += _hoistL2AllocsBeforeL3(deployer.generateBufferAllocationCode())
     retStr += """
 }
 """
 
     return retStr
+
+
+def _hoistL2AllocsBeforeL3(allocCode: str) -> str:
+    """Group all pi_l2_malloc allocations before the first cl_ram_malloc.
+
+    On GAP9, InitTrainingNetwork runs on the cluster controller (CC). cl_ram_malloc
+    delegates an allocation task to the FC (pi_cl_ram_alloc -> pi_cl_send_task_to_fc);
+    pi_l2_malloc runs the pulp-os L2 allocator (pos_alloc) directly on the CC. The two
+    share the L2 allocator's freelist, so a pi_l2_malloc interleaved *after* a delegated
+    cl_ram_malloc races the FC and corrupts the freelist -> the FC then crashes/spins in
+    os_evt_release (verified via pe8/insn ring-trace: the crash is pos_alloc reached from
+    pi_l2_malloc right after a cl_ram_malloc). Tensor promotion exposes this by adding the
+    PROMOTED_POOL_L2 pi_l2_malloc into the interleaved region, which is why ResNet8
+    promote/promote+DB hung at init while non-promote (fewer L2 allocs) survived.
+
+    Hoisting every pi_l2_malloc above the first cl_ram_malloc makes the CC do all L2
+    allocations while the FC is still idle, then only delegated L3 allocs afterwards -> no
+    concurrent freelist access. Only fires when both alloc kinds are present (GAP9 L3
+    training); a pure reorder of independent allocations, so it is semantically a no-op
+    everywhere else.
+    """
+    if 'cl_ram_malloc' not in allocCode or 'pi_l2_malloc' not in allocCode:
+        return allocCode
+    lines = allocCode.split('\n')
+    l2 = [ln for ln in lines if 'pi_l2_malloc(' in ln and ln.rstrip().endswith(';')]
+    if not l2:
+        return allocCode
+    rest = [ln for ln in lines if not ('pi_l2_malloc(' in ln and ln.rstrip().endswith(';'))]
+    # find first cl_ram_malloc in `rest` and splice the L2 allocs right before it
+    idx = next((i for i, ln in enumerate(rest) if 'cl_ram_malloc(' in ln), 0)
+    out = rest[:idx] + ['  // [GAP9 FC/CC pos_alloc race fix] all pi_l2_malloc before cl_ram_malloc'] + l2 + rest[idx:]
+    return '\n'.join(out)
 
 
 def generateTrainingTestNetwork(deployer: NetworkDeployer,
@@ -399,6 +480,16 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
     _platform_name = type(deployer.Platform).__name__
     _emit_init_weights = "GAP9" not in _platform_name
 
+    # Move large baked test inputs out of L2 -> L3 (GAP9 only; threshold-gated so
+    # small-input nets like ResNet8/CCT keep the simple L2-baked path unchanged,
+    # zero blast radius). MobileNetV1 bakes 4x108KB=432KB into L2 .data, starving
+    # promotion; loading it from L3 (hex) frees that L2.
+    _TESTDATA_L3_THRESHOLD = 262144
+    _testdata_bytes = sum(int(a.size) * int(a.itemsize) for row in all_mb_data for a in row) if all_mb_data else 0
+    _testdata_to_l3 = (not _emit_init_weights) and (_testdata_bytes > _TESTDATA_L3_THRESHOLD)
+    if _testdata_to_l3:
+        print(f"  [testData->L3] {_testdata_bytes} B of baked test inputs moved out of L2 to L3 (hex-loaded)")
+
     # testinputs.h
     testInputStr = generateTrainingTestInputsHeader(deployer,
                                                     all_mb_data,
@@ -409,7 +500,9 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
                                                     learning_rate,
                                                     init_weights = init_weights,
                                                     data_size = data_size,
-                                                    emit_init_weights = _emit_init_weights)
+                                                    emit_init_weights = _emit_init_weights,
+                                                    testdata_to_l3 = _testdata_to_l3,
+                                                    hex_dir = os.path.join(dumpdir, 'hex'))
     with open(f'{dumpdir}/testinputs.h', 'w') as f:
         f.write(testInputStr)
 

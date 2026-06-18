@@ -159,7 +159,9 @@ L3_DOUBLEBUFFER_MODELS = {
 # L2 size is fixed by the runner at 2_000_000 to match the validated local run.
 L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    "Models/Training/Autoencoder/autoencoder_train": [128000],
+    # 32 KB variant matches the L2 DB matrix so the SB/DB join table in
+    # the workflow summary actually pairs up.
+    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
 }
 
@@ -169,6 +171,35 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [128000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
     "Models/Training/CCT/cct_train": [128000],
+}
+
+# Double-buffered training models. Start narrow: only SimpleMLP until DB+alias
+# path is validated end-to-end. Expand to Autoencoder/DSCNN once stable.
+# L2 DB at L1=128 KB → almost all ops are 1-tile (tensors fit comfortably);
+# DB pass triggers but has nothing to pipeline. Add a 32 KB autoencoder
+# variant so ~8 of 55 ops become 2-4 tiles and DB pipelining actually
+# fires. DSCNN is structurally DB-unfriendly at L2 (depthwise/pointwise
+# Conv weights are tiny, only ~1 of 97 ops multi-tiles even at L1=16 KB).
+L2_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/SimpleMLP/simplemlp_train": [64000],
+    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
+    "Models/Training/DSCNN/dscnn_train": [128000],
+}
+
+# L3 DB training: only DB the L3↔L2 hop (TrainingDBOnlyL3Tiler) so the L2
+# staging budget doesn't double.
+# ResNet8 works now that InPlaceAccumulatorV2 is routed through the blocking L3
+# DMA (BlockingForkTransformer): its conv-weight-grad accumulator emits strided
+# 2D pi_cl_ram_copy_2d that would trip the gvsoc UDMA hyper_v3 transfer_splitter
+# leak under async — blocking waits each transfer inline so it is safe.
+# MobileNetV1 DB now passes: its multi-tile Transpose (NHWC<->NCHW) and
+# ConvGradW were computed wrong under DB and are opted out of DB (see
+# tilingUtils.DB_OPT_OUT_OPS). Localized via an SB-vs-DB per-op checksum
+# node-diff; CCT/ResNet8 are unaffected by those opt-outs.
+L3_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": [128000],
+    "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
 }
 
 # Per-model overrides for training tests.
@@ -187,9 +218,21 @@ TRAINING_MODEL_OVERRIDES = {
         # The old 32-step test compounded LoRA backward drift to ~1.2e-2 at
         # step 27; 4 steps is sufficient coverage at default 1e-3 tolerance.
     },
+    # conv_channels_first: run the convs natively in NCHW. In NHWC the conv
+    # nets emit hundreds of NCHW<->NHWC Transpose ops (ResNet8 forward alone has
+    # ~647) that stream through L3 HyperRAM — cheap on GAP9's memory but ~4x the
+    # cycles on Siracusa. CHW eliminates them, bringing ResNet8/MobileNetV1 back
+    # to the expected ~80-100M cyc/step.
+    "Models/Training/ResNet8/resnet8_train": {
+        "conv_channels_first": True,
+    },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         # Pretrained MLPerf Tiny VWW checkpoint (vww_96.h5): max diff 3.1e-5
         # across all 4 steps — default 1e-3 tolerance is fine.
+        "conv_channels_first": True,
+        # Bigger promote headroom than CCT (500K): MNV1's larger activations
+        # over-commit L2 at 500K -> init crash. 900K shrinks the promoted pool.
+        "promote_headroom": 900000,
     },
 }
 
@@ -200,6 +243,18 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
     "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True),],
     "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
+}
+
+# Training models tested with PromoteTensorsToL2 AND double-buffering together.
+# CCT + ResNet8: both run end-to-end under L3 DB (ResNet8's strided
+# InPlaceAccumulatorV2 grad-accumulate is routed through the blocking L3 DMA
+# adapter, so it no longer trips the gvsoc UDMA strided-DMA deadlock).
+# MobileNetV1 is excluded for the same reason as L3_DOUBLEBUFFER_TRAINING_MODELS
+# (DB numerically wrong from forward step 0 — under investigation).
+L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
+    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True),],
 }
 
 # Inference models tested with PromoteTensorsToL2.

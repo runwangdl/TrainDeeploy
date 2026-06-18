@@ -29,14 +29,25 @@ jobs:
     with:
       docker_image_deeploy: ${{ inputs.docker_image_deeploy }}
 
-  # Training tests - L2 singlebuffer
-  siracusa-training-tiled-l2-singlebuffer:
+  # Training tests - L2 (SB + DB combined so the runner emits a single
+  # SB-vs-DB cycle comparison table to $GITHUB_STEP_SUMMARY).
+  siracusa-training-tiled-l2:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "training and l2 and singlebuffer"
+      pytest-marker: "training and l2"
+
+  # Training tests - L3 (SB + DB combined; DB uses TrainingDBOnlyL3Tiler so
+  # the L2 staging budget doesn't double).
+  siracusa-training-tiled-l3:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l2 and doublebuffer"
 
   # Training tests - L3 singlebuffer (models that spill weights/activations to L3)
   siracusa-training-tiled-l3-singlebuffer:
@@ -47,6 +58,15 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training and l3 and singlebuffer and not promote"
 
+  # Training tests - L3 doublebuffer (promote+DB handled by its own job below)
+  siracusa-training-tiled-l3-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "training and l3 and doublebuffer and not promote"
+
   # Inference L3 + PromoteTensorsToL2 regression
   siracusa-inference-tiled-promote:
     needs: select-env
@@ -56,11 +76,20 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "promote and not training"
 
-  # Training L3 + PromoteTensorsToL2 regression (MobileNetV1 + CCT)
+  # Training L3 + PromoteTensorsToL2 regression, singlebuffer (ResNet8 + MobileNetV1 + CCT)
   siracusa-training-tiled-promote:
     needs: select-env
     uses: ./.github/workflows/_runner-siracusa-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-marker: "promote and training"
+      pytest-marker: "promote and training and singlebuffer"
+
+  # Training L3 + PromoteTensorsToL2 + double-buffering combined (CCT only)
+  siracusa-training-tiled-promote-doublebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and training and doublebuffer"

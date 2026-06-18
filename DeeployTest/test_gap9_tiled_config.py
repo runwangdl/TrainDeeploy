@@ -105,6 +105,50 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
 }
 
+# L3 double-buffered training. Only the L3<->L2 hop is double-buffered
+# (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double.
+# CCT + ResNet8: ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to
+# coeff=1 (SB) by TrainingDBOnlyL3Tiler, so on GAP9 it takes the blocking
+# gap9L3DmaHack path (safe for strided 2D ConvGrad transfers) — no UDMA DB
+# deadlock. MobileNetV1: multi-tile Transpose + ConvGradW opted out of DB
+# (tilingUtils.DB_OPT_OUT_OPS, same numerical fix as Siracusa) AND its CHW
+# im2col forward conv routed through GAP9ClusterBlockingDBTransformer (blocking
+# DB hop) so its per-channel strided transfers don't crash the gvsoc UDMA model.
+L3_DOUBLEBUFFER_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": [122000],
+    "Models/Training/ResNet8/resnet8_train": [122000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
+}
+
+# Training + PromoteTensorsToL2 (singlebuffer). test path ->
+# list of (l1, strategy, includeActivations).
+# ResNet8 uses "smallest" (cycle-aware promotes 0 tensors for ResNet8 — its
+# heuristic finds no positive-cycle-benefit candidate). Both pass thanks to the
+# InitNetwork pi_l2_malloc-before-cl_ram_malloc hoist (see codeGenerateTraining
+# _hoistL2AllocsBeforeL3): without it, promotion's PROMOTED_POOL_L2 pi_l2_malloc
+# interleaved with the FC-delegated cl_ram_malloc loop races the pulp-os L2
+# allocator freelist -> FC os_evt_release corruption at init.
+L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
+    "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
+}
+
+# Training + PromoteTensorsToL2 + double-buffering combined.
+# Both CCT and ResNet8 pass thanks to the InitNetwork pi_l2_malloc-before-
+# cl_ram_malloc hoist (codeGenerateTraining._hoistL2AllocsBeforeL3), which fixes
+# the FC/CC pulp-os L2-allocator freelist race that previously corrupted the FC
+# RTOS event list -> os_evt_release deadlock at init (this is why ResNet8
+# promote+DB "never completed" and why CCT smallest used to hang). Per-model
+# strategy: CCT cycle-aware (~336M/4-step), ResNet8 smallest (~247.6M/4-step;
+# cycle-aware promotes 0 for ResNet8). headroom 700000 (set in the test) leaves
+# enough L2 for the doubled DB staging buffers.
+L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
+    "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
+}
+
 TRAINING_MODEL_OVERRIDES = {
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
@@ -112,11 +156,21 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
         "cc_stack": 8192,  # -O3 cut the CC-stack need from 16384; frees L1 for a bigger arena
+        # 700000 (was 920000): testData is now hex-loaded to L3 (not baked into L2
+        # .data, freeing ~432KB), so MNV1 can promote a larger pool (~316KB). 700000
+        # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
+        # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
+        "promote_headroom": 700000,
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
         "tolerance": 5e-3,
-        "cc_stack": 4096,  # frees L1 for arena -> coarser tokenizer-conv tiling
+        # 8192 (not 4096): promote+DB deepens the CC closure chain and DB doubles
+        # L1 arena pressure. cc_stack=4096 -> CC master stack overflows into the
+        # RTOS event list -> os_evt_release deadlock at init. cc_stack=16384 ->
+        # arena(122000)+stack > TCDM(131072) -> overlap -> wild-pointer crash.
+        # 8192: 122000+8192=130192 < 131072 -> fits AND stack deep enough.
+        "cc_stack": 8192,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,
