@@ -152,12 +152,19 @@ class TrainingDBOnlyL3Tiler(TrainingDBTiler):
                             hop: str, tensorName: str) -> Union[int, IntVar]:
         if hop == "L1":
             return 1
-        # InPlaceAccumulatorV2: force coefficient=2 for ALL tensors in the
-        # pattern (including the scalar lazy_reset_grad) so DB pass sees
-        # uniform coefficients and can apply. The scalar flag is pinned full
-        # by TileConstraint so doubling its slot (4→8 bytes) is harmless.
+        # InPlaceAccumulatorV2: force coefficient=1 (SB) for the WHOLE pattern
+        # so it takes the blocking L3 DMA path. It is an in-place op (acc +=
+        # grad on one L3 address), and for conv-weight-grad accumulators the
+        # gradient is strided 2D (from ConvGradW tiling). Double-buffering it
+        # issues an *async* strided pi_cl_ram_copy_2d, which trips the gvsoc
+        # UDMA hyper_v3 transfer_splitter tran_id leak -> pi_cl_ram_copy_wait
+        # never returns -> ResNet8/MobileNetV1 deadlock. Blocking (SB) waits
+        # each transfer inline, so the strided copy completes before the next
+        # is issued. CCT's accumulators are contiguous so it is unaffected
+        # either way; its DB win comes from the (contiguous) Transpose hops,
+        # which still double-buffer via the async dbDma.
         for node in pattern:
             if node.op == "InPlaceAccumulatorV2":
-                return 2
+                return 1
         result = super().multiBufferStrategy(tilerModel, ctxt, pattern, path, hop, tensorName)
         return result

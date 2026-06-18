@@ -61,6 +61,13 @@ class L3Dma(AsyncDma):
         return operatorRepresentation
 
 
-# LMACAN: It's a hack because the driver is now working correctly
-#l3DmaHack = BlockingDmaFromAsyncDmaAdapter(L3Dma())
+# Default L3 DMA is async: it overlaps the next-tile L3<->L2 prefetch with
+# compute, which is the whole point of DB and also speeds up SB hops. Almost
+# every op is fine with this.
 l3DmaHack = L3Dma()
+# Per-op blocking variant for ops whose strided 2D pi_cl_ram_copy_2d trips the
+# gvsoc hyper_v3 transfer_splitter tran_id leak under async (-> deadlock).
+# Used ONLY by InPlaceAccumulatorV2 (accumulates conv-weight gradients, whose
+# ConvGradW layout is strided). Routing just that op through the blocking
+# adapter keeps every other op async/fast.
+l3DmaBlocking = BlockingDmaFromAsyncDmaAdapter(L3Dma())

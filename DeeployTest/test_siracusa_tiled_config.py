@@ -188,12 +188,15 @@ L2_DOUBLEBUFFER_TRAINING_MODELS = {
 
 # L3 DB training: only DB the L3↔L2 hop (TrainingDBOnlyL3Tiler) so the L2
 # staging budget doesn't double.
-# NOTE: ResNet8/MobileNetV1 excluded — their ConvGrad weight tiling produces
-# strided 2D DMA (stride≠length) which triggers a gvsoc UDMA hyper_v3
-# transfer_splitter tran_id leak.  CCT works because all its L3 DMA
-# transfers are contiguous (stride==length).
+# ResNet8 works now that InPlaceAccumulatorV2 is routed through the blocking L3
+# DMA (BlockingForkTransformer): its conv-weight-grad accumulator emits strided
+# 2D pi_cl_ram_copy_2d that would trip the gvsoc UDMA hyper_v3 transfer_splitter
+# leak under async — blocking waits each transfer inline so it is safe.
+# NOTE: MobileNetV1 still excluded — DB is numerically wrong from forward step 0
+# (an unsuitable-for-DB kernel is being double-buffered); under investigation.
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [128000],
+    "Models/Training/ResNet8/resnet8_train": [128000],
 }
 
 # Per-model overrides for training tests.
@@ -212,9 +215,18 @@ TRAINING_MODEL_OVERRIDES = {
         # The old 32-step test compounded LoRA backward drift to ~1.2e-2 at
         # step 27; 4 steps is sufficient coverage at default 1e-3 tolerance.
     },
+    # conv_channels_first: run the convs natively in NCHW. In NHWC the conv
+    # nets emit hundreds of NCHW<->NHWC Transpose ops (ResNet8 forward alone has
+    # ~647) that stream through L3 HyperRAM — cheap on GAP9's memory but ~4x the
+    # cycles on Siracusa. CHW eliminates them, bringing ResNet8/MobileNetV1 back
+    # to the expected ~80-100M cyc/step.
+    "Models/Training/ResNet8/resnet8_train": {
+        "conv_channels_first": True,
+    },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         # Pretrained MLPerf Tiny VWW checkpoint (vww_96.h5): max diff 3.1e-5
         # across all 4 steps — default 1e-3 tolerance is fine.
+        "conv_channels_first": True,
     },
 }
 
@@ -228,12 +240,14 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 # Training models tested with PromoteTensorsToL2 AND double-buffering together.
-# Only CCT: it is the sole model in L3_DOUBLEBUFFER_TRAINING_MODELS (ResNet8 /
-# MobileNetV1 hit the gvsoc UDMA strided-DMA bug under L3 DB), so it is also the
-# only model where promote+DB can be exercised end-to-end. Add more once the
-# strided-DMA path is fixed.
+# CCT + ResNet8: both run end-to-end under L3 DB (ResNet8's strided
+# InPlaceAccumulatorV2 grad-accumulate is routed through the blocking L3 DMA
+# adapter, so it no longer trips the gvsoc UDMA strided-DMA deadlock).
+# MobileNetV1 is excluded for the same reason as L3_DOUBLEBUFFER_TRAINING_MODELS
+# (DB numerically wrong from forward step 0 — under investigation).
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
+    "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
 }
 
 # Inference models tested with PromoteTensorsToL2.
