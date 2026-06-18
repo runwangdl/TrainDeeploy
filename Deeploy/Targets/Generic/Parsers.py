@@ -142,7 +142,10 @@ class SliceParser(NodeParser):
             ctxt.hoistConstant(axesTensor)
             node.inputs.append(axesTensor)
         if len(node.inputs) <= 4:
-            values = np.ones((self.operatorRepresentation['dims']))
+            # RW: int64 (Slice steps are integers per ONNX). np.ones() defaults to
+            # float64, which poisons every int-only tiling computation downstream
+            # (SliceTileConstraint, value hoisting) -> 'IntExpr * float' / all-int asserts.
+            values = np.ones((self.operatorRepresentation['dims']), dtype = np.int64)
             stepsTensor = gs.Constant(f'{node.name}_Steps_Tensor', values = values)
             ctxt.hoistConstant(stepsTensor)
             node.inputs.append(stepsTensor)

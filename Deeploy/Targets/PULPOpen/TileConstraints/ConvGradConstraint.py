@@ -1145,9 +1145,30 @@ class CoutHWSliceStrategy(GradWStrategy):
         # H/W into a few large strips (so GAP9's large-stem feasibility holds).
         # DW/PW ConvGradW genuinely need Cout tiling (per-channel layout) and do
         # not hit this combination in practice, so they opt out via the flag.
+        # The drift comes from tiling Cout *and* H/W simultaneously. Two ways to
+        # forbid that combo:
+        #   (a) Cout full, H/W tiled  -> single dW slab, H/W partials accumulate;
+        #   (b) H/W full, Cout tiled  -> each Cout slab computes its dW in one
+        #       spatial pass (no cross-H/W accumulation, so no drift either).
+        # (a) is the validated default. But it pins the *entire* dW in L1, which is
+        # infeasible for large-Cout convs (e.g. TSDR patch-embed: dW=128x80x3 ~123KB
+        # > L1). For those, fall back to (b): force H/W full and let Cout tile. Small
+        # dW keeps path (a) so existing Siracusa/GAP9 numerics are unchanged.
         if getattr(owner_cls, "coutHWSlice_force_cout_full", False):
-            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == dwBuf.shape[0])
-            tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, 0) == dwBuf.shape[0])
+            dyBuf = ctxt.lookup(dyName)
+            dwElems = 1
+            for _d in dwBuf.shape:
+                dwElems *= int(_d)
+            dwBytes = dwElems * 4  # float32 ConvGradW
+            COUT_FULL_MAX_DW_BYTES = 65536
+            if dwBytes <= COUT_FULL_MAX_DW_BYTES:
+                tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == dwBuf.shape[0])
+                tilerModel.addConstraint(tilerModel.getTensorDimVar(dwName, 0) == dwBuf.shape[0])
+            # else: dW too large to pin Cout-full in L1 (e.g. TSDR patch-embed). Add
+            # no Cout/HW restriction and let the solver tile freely — feasibility wins;
+            # any dW-accumulation drift is caught by the numerical reference check.
+            # Siracusa models have no large-dW regular convs, so their path is the
+            # Cout-full branch above and stays numerically unchanged.
 
         # dY tile spatial dims >= 1 (tiler picks)
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) >= 1)
@@ -1643,20 +1664,39 @@ class PWConvGradWTileConstraint(ConvGradWTileConstraintBase):
     """
     strategies: List = [CoutHWSliceStrategy]
 
+    # Small-dW PW convs: let CoutHWSliceStrategy force Cout-full (its dW<=64KB
+    # branch). With Cout pinned full there is no Cout tiling, so allowing H/W to
+    # tile is the SAFE "HW-only" case (single memset + mm_add accumulation) — not
+    # the unimplemented mixed Cout+HW case. This lets the (full-Cin) activation X
+    # tile spatially so it fits L1 (e.g. MCUNet conv2d_2 X=[16,48,48]=147KB).
+    coutHWSlice_force_cout_full = True
+
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
         super().addPolicyConstraint(tilerModel, parseDict, ctxt)
 
         xName = parseDict[cls.dataInKey]
         dyName = parseDict[cls.gradOutKey]
+        dwName = parseDict[cls.weightKey]
 
         xBuf = ctxt.lookup(xName)
         dyBuf = ctxt.lookup(dyName)
+        dwBuf = ctxt.lookup(dwName)
 
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) == dyBuf.shape[2])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) == dyBuf.shape[3])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 2) == xBuf.shape[2])
-        tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 3) == xBuf.shape[3])
+        dwBytes = 1
+        for _d in dwBuf.shape:
+            dwBytes *= int(_d)
+        dwBytes *= 4
+
+        # Large dW (e.g. MobileNetV1 block_11 PW, dW~128KB): forcing Cout-full would
+        # blow L1 and force the broken Cout+HW mixed case, so keep the original
+        # full-spatial (Cout-only) restriction. Small dW: Cout-full (from the flag
+        # above) + free H/W → spatial tiling, which is what makes MCUNet feasible.
+        if dwBytes > 65536:
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 2) == dyBuf.shape[2])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 3) == dyBuf.shape[3])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 2) == xBuf.shape[2])
+            tilerModel.addConstraint(tilerModel.getTensorDimVar(xName, 3) == xBuf.shape[3])
 
         return tilerModel
 

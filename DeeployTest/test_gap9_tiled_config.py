@@ -103,6 +103,9 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
+    "Models/Training/SleepConViT/sleepconvit_train": [122000],
+    "Models/Training/TSDR/tsdr_train": [122000],
+    "Models/Training/MCUNet/mcunet_train": [116000],
 }
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
@@ -174,5 +177,22 @@ TRAINING_MODEL_OVERRIDES = {
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,
+    },
+    "Models/Training/SleepConViT/sleepconvit_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 4096,  # transformer backward; small CC stack frees L1 for the arena
+    },
+    "Models/Training/TSDR/tsdr_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 4096,  # spectrogram transformer; same profile as SleepConViT
+        "conv_channels_first": True,  # CHW patch-embed conv (no NCHW<->NHWC transpose)
+    },
+    "Models/Training/MCUNet/mcunet_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 8192,  # MnasNet-style; deep DW/PW chain needs a larger CC stack
+        "conv_channels_first": True,  # CHW convs; NHWC-transpose tiling is infeasible
     },
 }

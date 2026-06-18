@@ -125,7 +125,12 @@ class PatternMemoryConstraintFlow(GenericFlow[TensorMemLevelTuple, gs.Node]):
         intermediateTensorNames = [tensor.name for tensor in step.inputs if tensor.name not in outputTensorNames]
         for tensorName in intermediateTensorNames:
             patternUsers = [node for node in self.ctxt.lookup(tensorName)._users if node in self.patternNodeNames]
-            assert patternUsers != [], f"Tensor {tensorName} has no users in this pattern and is not an output!"
+            # RW: a constant op-parameter folded into node attrs (e.g. Slice's
+            # starts/ends/axes/steps) has no runtime users — it needs no kill-set
+            # entry. Skip instead of asserting (the assert assumed every input is
+            # a live tensor, which breaks for such folded constants).
+            if not patternUsers:
+                continue
             if step.name == patternUsers[-1]:
                 killTensorNames.append(tensorName)
 
