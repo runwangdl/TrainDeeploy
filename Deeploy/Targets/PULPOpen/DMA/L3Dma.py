@@ -61,13 +61,13 @@ class L3Dma(AsyncDma):
         return operatorRepresentation
 
 
-# Default L3 DMA is async: it overlaps the next-tile L3<->L2 prefetch with
-# compute, which is the whole point of DB and also speeds up SB hops. Almost
-# every op is fine with this.
+# async L3 DMA — used ONLY as the DB (dbDma) backend, where it overlaps the
+# next-tile L3<->L2 prefetch with compute (the source of the DB speedup). It is
+# deliberately NOT used for SB hops: SB waits on each tile before computing, so
+# async buys no overlap, only the strided-2D deferred-wait corruption/deadlock
+# risk. (Matches the PULPL3Tiling docstring and the GAP9 binding.)
 l3DmaHack = L3Dma()
-# Per-op blocking variant for ops whose strided 2D pi_cl_ram_copy_2d trips the
-# gvsoc hyper_v3 transfer_splitter tran_id leak under async (-> deadlock).
-# Used ONLY by InPlaceAccumulatorV2 (accumulates conv-weight gradients, whose
-# ConvGradW layout is strided). Routing just that op through the blocking
-# adapter keeps every other op async/fast.
+# blocking L3 DMA — the SB-hop backend (dma=). Waits each transfer inline so
+# strided 2D ConvGrad transfers complete in order: no corruption, no UDMA
+# deadlock. Matches devel's behaviour (devel used blocking for every hop).
 l3DmaBlocking = BlockingDmaFromAsyncDmaAdapter(L3Dma())

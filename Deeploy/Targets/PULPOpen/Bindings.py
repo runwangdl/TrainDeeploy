@@ -113,31 +113,7 @@ ForkTransformer = CodeTransformation([
     MemoryManagementGeneration("L1"),
     TilingVariableReplacement("L2"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    PULPL3Tiling("L3", "L2", l3DmaHack),
-    PULPProfileUntiled(),
-    ArgumentStructGeneration(),
-    L3MemoryAwareFunctionCallClosure(writeback = False),
-    MemoryManagementGeneration("L2"),
-    MemoryManagementGeneration("L3.*"),
-    MemoryManagementGeneration(),
-    PULPMicrobenchmark(),
-])
-
-# Same as ForkTransformer but with a BLOCKING L3 DMA. Used only by ops whose
-# strided 2D L3 transfers deadlock gvsoc under async (InPlaceAccumulatorV2 on
-# conv-weight gradients). Keeps that one op safe without slowing every other op.
-BlockingForkTransformer = CodeTransformation([
-    TilingVariableReplacement("L1"),
-    TilingCallClosure(writeback = False),
-    PULPSynchCoresPass(),
-    ForkClosure(writeback = False, generateStruct = True),
-    TilingVariableReplacementUpdate("L1"),
-    PULPClusterTiling("L2", "L1", MchanDma()),
-    ArgumentStructGeneration(),
-    MemoryManagementGeneration("L1"),
-    TilingVariableReplacement("L2"),
-    MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    PULPL3Tiling("L3", "L2", l3DmaBlocking),
+    PULPL3Tiling("L3", "L2", l3DmaBlocking, dbDma = l3DmaHack),
     PULPProfileUntiled(),
     ArgumentStructGeneration(),
     L3MemoryAwareFunctionCallClosure(writeback = False),
@@ -156,7 +132,7 @@ ClusterTransformer = CodeTransformation([
     MemoryManagementGeneration("L1"),
     TilingVariableReplacement("L2"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    PULPL3Tiling("L3", "L2", l3DmaHack),
+    PULPL3Tiling("L3", "L2", l3DmaBlocking, dbDma = l3DmaHack),
     PULPProfileUntiled(),
     ArgumentStructGeneration(),
     L3MemoryAwareFunctionCallClosure(writeback = False),
@@ -489,7 +465,7 @@ PULPInPlaceAccumulatorV2Bindings = [
         InPlaceAccumulatorV2Checker(
             [PointerClass(float32_t), PointerClass(float32_t),
              PointerClass(uint8_t)], [PointerClass(float32_t)]), FloatInPlaceAccumulatorV2Template.referenceTemplate,
-        BlockingForkTransformer)
+        ForkTransformer)
 ]
 
 PULPTransposeBindings = [
