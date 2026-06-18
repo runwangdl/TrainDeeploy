@@ -106,12 +106,15 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 }
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
-# (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double. CCT only:
-# same rationale as Siracusa — ResNet8/MobileNetV1 ConvGrad weight tiling emits
-# strided 2D DMA the gvsoc UDMA model mishandles under DB; CCT's L3 transfers
-# are contiguous. Add more once that path is fixed.
+# (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double.
+# CCT + ResNet8: ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to
+# coeff=1 (SB) by TrainingDBOnlyL3Tiler, so on GAP9 it takes the blocking
+# gap9L3DmaHack path (safe for strided 2D ConvGrad transfers) — no UDMA DB
+# deadlock. MobileNetV1 still excluded (DB numerically wrong from forward
+# step 0, same as Siracusa — under investigation).
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [122000],
+    "Models/Training/ResNet8/resnet8_train": [122000],
 }
 
 # Training + PromoteTensorsToL2 (singlebuffer). test path ->
@@ -120,8 +123,10 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
 }
 
-# Training + PromoteTensorsToL2 + double-buffering combined. CCT only
-# (it is the sole L3_DOUBLEBUFFER_TRAINING model).
+# Training + PromoteTensorsToL2 + double-buffering combined. CCT only.
+# ResNet8 promote+DB on GAP9 did not complete within a 25-min build+sim budget
+# (heavier promote+DB codegen, possible hang) — left out pending investigation.
+# Plain ResNet8 DB (L3_DOUBLEBUFFER_TRAINING_MODELS) passes at ~196M/step.
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
 }
