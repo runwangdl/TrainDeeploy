@@ -192,11 +192,14 @@ L2_DOUBLEBUFFER_TRAINING_MODELS = {
 # DMA (BlockingForkTransformer): its conv-weight-grad accumulator emits strided
 # 2D pi_cl_ram_copy_2d that would trip the gvsoc UDMA hyper_v3 transfer_splitter
 # leak under async — blocking waits each transfer inline so it is safe.
-# NOTE: MobileNetV1 still excluded — DB is numerically wrong from forward step 0
-# (an unsuitable-for-DB kernel is being double-buffered); under investigation.
+# MobileNetV1 DB now passes: its multi-tile Transpose (NHWC<->NCHW) and
+# ConvGradW were computed wrong under DB and are opted out of DB (see
+# tilingUtils.DB_OPT_OUT_OPS). Localized via an SB-vs-DB per-op checksum
+# node-diff; CCT/ResNet8 are unaffected by those opt-outs.
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [128000],
     "Models/Training/ResNet8/resnet8_train": [128000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
 }
 
 # Per-model overrides for training tests.

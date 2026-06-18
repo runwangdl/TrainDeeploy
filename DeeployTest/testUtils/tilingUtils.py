@@ -103,6 +103,24 @@ class TrainingDBTiler(DBTiler):
         # Gemms (multi-consumer intermediate) — DB's per-consumer hoist
         # inflates _users and breaks MemoryAllocation _live tracking.
         "SoftmaxCrossEntropyLossGrad",
+        # Transpose (forward) and ConvGradW (backward weight-gradient) are the
+        # two ops whose MULTI-TILE data rearrangement is computed wrong under L3
+        # double-buffering — found by an SB-vs-DB per-op checksum node-diff on
+        # MobileNetV1 (forward step-0 loss diverged at the first conv block; the
+        # backward error compounded over steps). Both reorder data across tiles
+        # (Transpose: NHWC<->NCHW; ConvGradW: im2col-style correlation) and the
+        # per-tile DB transfer of the remainder/edge tile reads stale data.
+        # SINGLE-TILE cases are correct (the bug is multi-tile only):
+        #   - ResNet8 (CCF, small single-tile convs, no NHWC transpose): passes
+        #     either way, a hair slower with ConvGradW SB (74->77M/step).
+        #   - CCT (contiguous transposes): unaffected (104M/step, was 103M).
+        #   - MobileNetV1 (large multi-tile activations + NHWC input transpose):
+        #     these two opt-outs are what make its DB pass (was 4/4 wrong).
+        # ConvGradX double-buffers correctly and is deliberately NOT opted out.
+        # TODO: real fix is in the multi-tile DB rearrange codegen; this
+        # per-op-type opt-out is the safe, validated stop-gap.
+        "Transpose",
+        "ConvGradW",
     })
 
     def multiBufferStrategy(self, tilerModel: TilerModel, ctxt: NetworkContext, pattern: SubGraph, path: List[str],
