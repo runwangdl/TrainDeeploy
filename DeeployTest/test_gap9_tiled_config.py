@@ -110,11 +110,14 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 # CCT + ResNet8: ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to
 # coeff=1 (SB) by TrainingDBOnlyL3Tiler, so on GAP9 it takes the blocking
 # gap9L3DmaHack path (safe for strided 2D ConvGrad transfers) — no UDMA DB
-# deadlock. MobileNetV1 still excluded (DB numerically wrong from forward
-# step 0, same as Siracusa — under investigation).
+# deadlock. MobileNetV1: multi-tile Transpose + ConvGradW opted out of DB
+# (tilingUtils.DB_OPT_OUT_OPS, same numerical fix as Siracusa) AND its CHW
+# im2col forward conv routed through GAP9ClusterBlockingDBTransformer (blocking
+# DB hop) so its per-channel strided transfers don't crash the gvsoc UDMA model.
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [122000],
     "Models/Training/ResNet8/resnet8_train": [122000],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
 }
 
 # Training + PromoteTensorsToL2 (singlebuffer). test path ->

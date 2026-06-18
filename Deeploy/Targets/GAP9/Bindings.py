@@ -93,6 +93,32 @@ GAP9ClusterTransformer = CodeTransformation([
     MemoryManagementGeneration(),
 ])
 
+# Same as GAP9ClusterTransformer but with a BLOCKING L3 DB hop (dbDma = the
+# blocking gap9L3DmaHack instead of async GAP9L3Dma). The CHW (channels-first)
+# im2col forward conv loads its input as multiple per-channel strided 2D
+# transfers; under the async DB hop those crash GAP9's gvsoc UDMA model
+# mid-forward (gvsoc exits ~11.7M cyc in im2col_conv2d_fw_kernel — found via
+# scripts/gap9-cluster-hang-trace.sh). Blocking each strided transfer inline is
+# safe. Only the CHW conv (MobileNetV1 w/ conv_channels_first) needs this; the
+# HWC convs (ResNet8) keep GAP9Transformer's async DB hop and are unaffected.
+GAP9ClusterBlockingDBTransformer = CodeTransformation([
+    TilingVariableReplacement("L1"),
+    TilingCallClosure(writeback = False, generateStruct = True),
+    TilingVariableReplacementUpdate("L1"),
+    PULPClusterTiling("L2", "L1", GAP9MchanDma()),
+    ArgumentStructGeneration(),
+    MemoryManagementGeneration("L1"),
+    TilingVariableReplacement("L2"),
+    MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
+    PULPL3Tiling("L3", "L2", gap9L3DmaHack, dbDma = gap9L3DmaHack),
+    PULPProfileUntiled(),
+    ArgumentStructGeneration(),
+    L3MemoryAwareFunctionCallClosure(writeback = False),
+    MemoryManagementGeneration("L2"),
+    MemoryManagementGeneration("L3.*"),
+    MemoryManagementGeneration(),
+])
+
 # Simple transformer for non-tiling cases
 GAP9SimpleTransformer = CodeTransformation([
     MemoryManagementGeneration("L2"),
@@ -222,7 +248,7 @@ GAP9FloatConv2DCHWBindings = [
     NodeBinding(
         ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]),
-        FloatConvTemplate.reference2DIm2ColTemplate_CHW, GAP9ClusterTransformer)
+        FloatConvTemplate.reference2DIm2ColTemplate_CHW, GAP9ClusterBlockingDBTransformer)
 ]
 
 GAP9FloatDWConv2DCHWBindings = [
@@ -230,7 +256,7 @@ GAP9FloatDWConv2DCHWBindings = [
         ConvChecker(
             [PointerClass(float_type), PointerClass(float_type),
              PointerClass(float_type)], [PointerClass(float_type)]), FloatConvTemplate.referenceDW2DIm2ColTemplate_CHW,
-        GAP9ClusterTransformer) for float_type in FloatDataTypes
+        GAP9ClusterBlockingDBTransformer) for float_type in FloatDataTypes
 ]
 
 GAP9RQSMatrixVecBindings = [
