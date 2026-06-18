@@ -1327,7 +1327,9 @@ def test_siracusa_tiled_training_promote_l3_doublebuffer(test_params, deeploy_te
         # buffers -> minimalloc infeasible. A 500 KB headroom both shrinks the
         # promoted pool (so it fits physical L2) and leaves room for the
         # double-buffered tiles (same value that works for GAP9 promote+DB).
-        promote_to_l2_headroom = 500000,
+        # Per-model override: MobileNetV1's larger activations need a bigger
+        # headroom (smaller promoted pool) or it over-commits L2 -> init crash.
+        promote_to_l2_headroom = overrides.get("promote_headroom", 500000),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "Siracusa L3 training promote+DB cycles")
 

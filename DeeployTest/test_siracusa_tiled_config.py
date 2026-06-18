@@ -230,6 +230,9 @@ TRAINING_MODEL_OVERRIDES = {
         # Pretrained MLPerf Tiny VWW checkpoint (vww_96.h5): max diff 3.1e-5
         # across all 4 steps — default 1e-3 tolerance is fine.
         "conv_channels_first": True,
+        # Bigger promote headroom than CCT (500K): MNV1's larger activations
+        # over-commit L2 at 500K -> init crash. 900K shrinks the promoted pool.
+        "promote_headroom": 900000,
     },
 }
 
@@ -251,6 +254,7 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(128000, "smallest", True),],
     "Models/Training/ResNet8/resnet8_train": [(128000, "cycle-aware", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(128000, "cycle-aware", True),],
 }
 
 # Inference models tested with PromoteTensorsToL2.
