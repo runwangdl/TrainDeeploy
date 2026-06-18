@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
+#
+# SPDX-FileCopyrightText: 2025 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
+#
 # Ring-buffer reader for a gvsoc --trace stream.
 # Reads the trace on stdin, keeps only the last RING_LINES lines in memory,
 # and on stall (no new data for STALL_SECS), c.unimp, or EOF, dumps that tail
 # to RING_OUT and exits. Keeps disk bounded (tail only) and finds the hang PC.
-import sys, os, select, time, collections
+import collections
+import os
+import select
+import sys
+import time
 
 N = int(os.environ.get("RING_LINES", "300000"))
 STALL = float(os.environ.get("STALL_SECS", "45"))
 OUT = os.environ.get("RING_OUT", "/scratch/runw/traces/hang.tail")
 fd = sys.stdin.fileno()
-buf = collections.deque(maxlen=N)
+buf = collections.deque(maxlen = N)
 carry = b""
 total = 0
 last = time.time()
@@ -47,4 +56,5 @@ for ln in reversed(buf):
 with open(OUT, "wb") as f:
     f.write(b"\n".join(buf))
 print("RING REASON=%s  ~total_lines=%d  last_cyc=%s  out=%s" %
-      (reason, total, last_cyc.decode(errors="replace"), OUT), flush=True)
+      (reason, total, last_cyc.decode(errors = "replace"), OUT),
+      flush = True)
