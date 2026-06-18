@@ -1588,6 +1588,6 @@ def test_gap9_tiled_training_promote_l3_doublebuffer(test_params, deeploy_test_d
         # "Initializing TrainingNetwork" (confirmed by fc/insn ring-trace).
         # 700000 promotes less (var_peak ~272 KB) so init fits; still the full
         # DB+promote win (~336M/4-step). DB staging is fine — more free L2 helps.
-        promote_to_l2_headroom = 700000,
+        promote_to_l2_headroom = overrides.get("promote_headroom", 700000),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "GAP9 L3 training promote+DB cycles")

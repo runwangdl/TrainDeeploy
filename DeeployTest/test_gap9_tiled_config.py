@@ -131,6 +131,7 @@ L3_DOUBLEBUFFER_TRAINING_MODELS = {
 L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
     "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
 }
 
 # Training + PromoteTensorsToL2 + double-buffering combined.
@@ -145,6 +146,7 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
     "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
     "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
 }
 
 TRAINING_MODEL_OVERRIDES = {
@@ -154,6 +156,7 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
         "cc_stack": 8192,  # -O3 cut the CC-stack need from 16384; frees L1 for a bigger arena
+        "promote_headroom": 920000,  # GAP9 1MB L2 is tight for MNV1 DB tiles; promote only a small pool
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
