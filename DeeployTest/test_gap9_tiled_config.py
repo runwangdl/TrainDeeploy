@@ -124,11 +124,18 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 # Training + PromoteTensorsToL2 + double-buffering combined. CCT only.
+# Strategy is "cycle-aware", NOT "smallest": "smallest" promotes ~138 KB of
+# const tensors (vs cycle-aware's ~40 KB), which deepens the init-time setup so
+# the CC master stack high-water overflows the razor-thin L1 margin (arena
+# 122000 + cc_stack 8192 = 130192, only ~864 B free) -> corrupts the RTOS event
+# list -> os_evt_release deadlock at "Initializing TrainingNetwork" (CI job
+# never completes). cycle-aware promotes fewer consts -> init fits -> CCT
+# promote+DB passes at ~336M/4-step.
 # ResNet8 promote+DB on GAP9 did not complete within a 25-min build+sim budget
 # (heavier promote+DB codegen, possible hang) — left out pending investigation.
 # Plain ResNet8 DB (L3_DOUBLEBUFFER_TRAINING_MODELS) passes at ~196M/step.
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
-    "Models/Training/CCT/cct_train": [(122000, "smallest", True),],
+    "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
 }
 
 TRAINING_MODEL_OVERRIDES = {

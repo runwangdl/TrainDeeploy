@@ -1577,10 +1577,15 @@ def test_gap9_tiled_training_promote_l3_doublebuffer(test_params, deeploy_test_d
         training_conv_channels_first = overrides.get("conv_channels_first", False),
         promote_to_l2 = promote,
         promote_to_l2_strategy = strategy if promote else "cycle-aware",
-        # Larger headroom than the SB promote test (200000): the promotion fills
-        # L2 down to ~headroom, and that remainder is the tiling staging budget.
-        # DB doubles the staging buffers, so SB's 200000 leaves minimalloc
-        # infeasible. 500000 keeps enough L2 free for the double-buffered tiles.
-        promote_to_l2_headroom = 500000,
+        # Headroom 700000 (NOT 500000). Headroom is the L2 left free after
+        # promotion = the tiling staging budget; the rest is promoted. 500000
+        # promotes too aggressively (var_peak ~469 KB, 91 tensors + more DB
+        # buffers) -> the init-time setup deepens the CC master stack past the
+        # razor-thin L1 margin (arena 122000 + cc_stack 8192 = 130192, ~864 B
+        # free) -> RTOS event list corrupted -> FC os_evt_release deadlock at
+        # "Initializing TrainingNetwork" (confirmed by fc/insn ring-trace).
+        # 700000 promotes less (var_peak ~272 KB) so init fits; still the full
+        # DB+promote win (~336M/4-step). DB staging is fine — more free L2 helps.
+        promote_to_l2_headroom = 700000,
     )
     run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "GAP9 L3 training promote+DB cycles")
