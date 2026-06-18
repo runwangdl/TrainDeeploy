@@ -1535,7 +1535,9 @@ def test_gap9_tiled_training_promote_l3_singlebuffer(test_params, deeploy_test_d
         training_conv_channels_first = overrides.get("conv_channels_first", False),
         promote_to_l2 = promote,
         promote_to_l2_strategy = strategy if promote else "cycle-aware",
-        promote_to_l2_headroom = 200000,
+        # Per-model headroom (default 200000); MobileNetV1 needs more so its promoted
+        # pool stays below the runtime L2-staging cliff once testData is moved out of L2.
+        promote_to_l2_headroom = overrides.get("promote_headroom", 200000),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 

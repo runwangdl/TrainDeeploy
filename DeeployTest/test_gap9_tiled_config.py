@@ -156,7 +156,11 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
         "cc_stack": 8192,  # -O3 cut the CC-stack need from 16384; frees L1 for a bigger arena
-        "promote_headroom": 920000,  # GAP9 1MB L2 is tight for MNV1 DB tiles; promote only a small pool
+        # 700000 (was 920000): testData is now hex-loaded to L3 (not baked into L2
+        # .data, freeing ~432KB), so MNV1 can promote a larger pool (~316KB). 700000
+        # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
+        # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
+        "promote_headroom": 700000,
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,

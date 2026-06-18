@@ -143,6 +143,16 @@ static void InitTrainingNetworkWrapper(void *args) {
   InitTrainingNetwork(pi_core_id(), pi_cl_cluster_nb_cores());
 }
 
+#ifdef TRAINING_TESTDATA_L3
+/* Large baked test inputs were moved out of L2 to L3; LoadTestDataL3 (generated
+ * in testinputs.h) cl_ram_malloc's + load_file_to_ram's them on the cluster
+ * controller (the file/ram APIs are cluster-delegated). */
+static void LoadTestDataL3Wrapper(void *args) {
+  (void)args;
+  LoadTestDataL3();
+}
+#endif
+
 static void RunTrainingNetworkWrapper(void *args) {
   (void)args;
   ResetTimer();
@@ -338,6 +348,14 @@ int main(void) {
   pi_cluster_task(&cluster_task, InitTrainingNetworkWrapper, NULL);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+
+#ifdef TRAINING_TESTDATA_L3
+  /* Load the L3-resident test inputs (separate cluster task; runs after
+   * InitTrainingNetwork so the FC is idle -> no alloc-path contention). */
+  pi_cluster_task(&cluster_task, LoadTestDataL3Wrapper, NULL);
+  SET_SLAVE_STACK(cluster_task);
+  pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+#endif
 
   /* ------------------------------------------------------------------
    * Zero-initialise gradient accumulation buffers.
