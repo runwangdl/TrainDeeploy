@@ -119,6 +119,14 @@ static uint8_t cluster_slave_stacks[SLAVESTACKSIZE * CLUSTER_MAX_CORES]
 
 struct pi_device cluster_dev;
 
+#ifdef POWER_MEASUREMENT
+/* GPIO pulse around the training compute window for external power measurement
+ * (e.g. PPK2), mirroring the inference harness (deeploytest.c). The pin is held
+ * high for the whole training loop (fwd/bwd + optimizer over all steps). */
+unsigned int GPIOs = 89;
+#define WRITE_GPIO(x) pi_gpio_pin_write(GPIOs, x)
+#endif
+
 /* -------------------------------------------------------------------------
  * Cycle accumulators — incremented after every RunTrainingNetwork /
  * RunOptimizerNetwork cluster dispatch.
@@ -413,6 +421,13 @@ int main(void) {
   printf("Starting training (%u optimizer steps x %u accum steps)...\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
 
+#ifdef POWER_MEASUREMENT
+  pi_pad_function_set(GPIOs, 1);
+  pi_gpio_pin_configure(GPIOs, PI_GPIO_OUTPUT);
+  pi_gpio_pin_write(GPIOs, 0);
+  WRITE_GPIO(1);
+#endif
+
   for (uint32_t update_step = 0; update_step < N_TRAIN_STEPS; update_step++) {
 
     for (uint32_t accum_step = 0; accum_step < N_ACCUM_STEPS; accum_step++) {
@@ -463,6 +478,10 @@ int main(void) {
     run_optimizer_step();
 
   } /* end update_step loop */
+
+#ifdef POWER_MEASUREMENT
+  WRITE_GPIO(0);
+#endif
 
   /* ------------------------------------------------------------------
    * Numerical verification — run on cluster (FC has no FPU)

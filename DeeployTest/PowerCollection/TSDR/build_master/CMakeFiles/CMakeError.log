@@ -1,0 +1,12 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc 
+Build flags: ;-march=rv32imcxgap9;-mPE=8;-mFC=1;-mint64;;-fcommon;-fno-jump-tables;-fno-tree-loop-distribute-patterns;-fno-delete-null-pointer-checks;-fomit-frame-pointer;-Os;-fmessage-length=0;-fno-exceptions;-ffunction-sections;-fdata-sections;-funsigned-char;-Wall;-Wextra;-Werror;-Wno-unused-parameter;-Wno-unused-function;-Wno-unused-variable;-Wno-unused-but-set-variable;-Wno-implicit-fallthrough;;-Wno-discarded-qualifiers
+Id flags:  
+
+The output was:
+1
+/app/install/gcc/gap9/bin/../lib/gcc/riscv32-unknown-elf/7.1.1/../../../../riscv32-unknown-elf/lib/rv32imcxgap9/ilp32/crt0.o: In function `_start':
+(.text+0x8): undefined reference to `__global_pointer$'
+collect2: error: ld returned 1 exit status
+
+

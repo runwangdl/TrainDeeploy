@@ -1,0 +1,21 @@
+The target system is: Generic -  - riscv32
+The host system is: Linux - 5.15.146.1-microsoft-standard-WSL2 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc 
+Build flags: ;-march=rv32imcxgap9;-mPE=8;-mFC=1;-mint64;;-fcommon;-fno-jump-tables;-fno-tree-loop-distribute-patterns;-fno-delete-null-pointer-checks;-fomit-frame-pointer;-Os;-fmessage-length=0;-fno-exceptions;-ffunction-sections;-fdata-sections;-funsigned-char;-Wall;-Wextra;-Werror;-Wno-unused-parameter;-Wno-unused-function;-Wno-unused-variable;-Wno-unused-but-set-variable;-Wno-implicit-fallthrough;;-Wno-discarded-qualifiers
+Id flags: -c 
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.o"
+
+The C compiler identification is GNU, found in "/app/TrainDeeploy/DeeployTest/TEST_GAP9/build_master/CMakeFiles/3.24.0/CompilerIdC/CMakeCCompilerId.o"
+
+Checking whether the ASM compiler is GNU using "--version" matched "(GNU assembler)|(GCC)|(Free Software Foundation)":
+riscv32-unknown-elf-gcc (GCC) 7.1.1 20170509
+Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
