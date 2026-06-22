@@ -93,6 +93,70 @@
 #define TRAINING_NUM_DATA_INPUTS 2
 #endif
 
+/* -------------------------------------------------------------------------
+ * Power measurement (PPK2) — only compiled when -DPOWER_MEASUREMENT=ON
+ *
+ * Mirrors the inference harness (deeploytest.c): GPIO 89 is driven as a digital
+ * trigger that brackets the region-of-interest, so the external power monitor
+ * can isolate the training compute from boot / data-load / UART overhead.
+ * Additionally pins the operating point (FC / cluster / periph frequency, and
+ * optionally chip voltage) so the measured power is taken at a known, fixed
+ * frequency/voltage rather than the arbitrary boot default. Units: MHz.
+ * Override on the cmake line, e.g. -DFREQ_FC=370 -DFREQ_CL=370 -DVOLTAGE=800.
+ * ---------------------------------------------------------------------- */
+#ifdef POWER_MEASUREMENT
+unsigned int GPIOs = 89;
+#define WRITE_GPIO(x) pi_gpio_pin_write(GPIOs, x)
+
+#ifndef FREQ_FC
+#define FREQ_FC 240
+#endif
+#ifndef FREQ_CL
+#define FREQ_CL 240
+#endif
+#ifndef FREQ_PE
+#define FREQ_PE 240
+#endif
+
+#ifdef POWER_BISECT
+/* Debug-only execution bisect: emit `n` short GPIO pulses (1ms hi / 1ms lo) as a
+ * burst so the PPK2 trace shows how far main() progressed before any hang. The
+ * highest burst count seen in the trace = last checkpoint reached. Build with
+ * -DPOWER_MEASUREMENT=ON -DPOWER_BISECT. Not part of the normal ROI harness. */
+/* Busy-wait, NOT pi_time_wait_us: under openocd load_and_start_binary there is
+ * no debugger attached and we must not depend on the OS tick/timer being live.
+ * ~100k nops @ 240MHz ≈ a few ms — comfortably visible at 100kHz PPK2 sampling. */
+static void bisect_delay(void) {
+  for (volatile uint32_t i = 0; i < 100000u; i++) {
+    __asm__ volatile("nop");
+  }
+}
+static void bisect_mark(int n) {
+  for (int i = 0; i < n; i++) {
+    pi_gpio_pin_write(GPIOs, 1);
+    bisect_delay();
+    pi_gpio_pin_write(GPIOs, 0);
+    bisect_delay();
+  }
+  bisect_delay(); /* inter-burst gap */
+  bisect_delay();
+  bisect_delay();
+}
+#define BISECT(n) bisect_mark(n)
+#else
+#define BISECT(n)                                                              \
+  do {                                                                         \
+  } while (0)
+#endif
+#endif /* POWER_MEASUREMENT */
+
+/* Fallback when not building for power measurement at all. */
+#ifndef BISECT
+#define BISECT(n)                                                              \
+  do {                                                                         \
+  } while (0)
+#endif
+
 /* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task */
 #define SLAVESTACKSIZE 3800
 
@@ -275,6 +339,7 @@ typedef struct {
   float *reference;
   uint32_t n;
   uint32_t *err_count;
+  uint32_t *computed_bits_out; /* cluster's view of each computed loss (hex) */
 } LossCompareArgs;
 
 static void CompareLossesOnCluster(void *args) {
@@ -284,6 +349,11 @@ static void CompareLossesOnCluster(void *args) {
   float tol = TRAINING_TOLERANCE_ABS;
   uint32_t errors = 0;
   for (uint32_t i = 0; i < a->n; i++) {
+    if (a->computed_bits_out) {
+      uint32_t b;
+      memcpy(&b, &a->computed[i], sizeof(uint32_t));
+      a->computed_bits_out[i] = b;
+    }
     float diff = a->computed[i] - a->reference[i];
     if (diff < 0.0f)
       diff = -diff;
@@ -303,10 +373,34 @@ static void CompareLossesOnCluster(void *args) {
 
 int main(void) {
 
+#ifdef POWER_MEASUREMENT
+  /* Configure GPIO 89 as a digital trigger FIRST, at the very top of main —
+   * exactly like the SDK's known-good GPIO example (helloworld.c) and the
+   * inference harness: pad function -> output -> drive low, before any cluster
+   * open / frequency change touches the IO subsystem. */
+  pi_pad_function_set(GPIOs, 1);
+  pi_gpio_pin_configure(GPIOs, PI_GPIO_OUTPUT);
+  pi_gpio_pin_write(GPIOs, 0);
+  WRITE_GPIO(0);
+#endif
+
+  BISECT(1); /* reached main, GPIO works */
+
+  /* Under POWER_MEASUREMENT the binary is started via `openocd
+   * load_and_start_binary ...; exit`, leaving NO debugger attached. A semihosting
+   * printf before the FC/cluster is fully up then traps with nothing to service
+   * it and hangs (observed: execution never passes this banner on-board). The
+   * inference harness only ever printfs AFTER pi_cluster_open, which is why it
+   * worked. So suppress all pre-ROI chatter for power runs — it is invisible when
+   * detached and would inflate the power trace anyway. */
+#ifndef POWER_MEASUREMENT
   printf("=== GAP9 Training Harness (Phase 2 — with OptimizerNetwork) ===\r\n");
   printf("N_TRAIN_STEPS=%u  N_ACCUM_STEPS=%u  DATA_INPUTS=%u\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS,
          (unsigned)TRAINING_NUM_DATA_INPUTS);
+#endif
+
+  BISECT(9); /* banner region passed (before cluster open) */
 
   struct pi_cluster_conf conf;
   pi_cluster_conf_init(&conf);
@@ -333,10 +427,34 @@ int main(void) {
   if (pi_cluster_open(&cluster_dev))
     return -1;
 
+  BISECT(2); /* cluster open ok */
+
+#ifdef POWER_MEASUREMENT
+  /* Pin the operating point (cluster domain requires the cluster powered on,
+   * hence after pi_cluster_open). GPIO was already configured at the top of
+   * main. Re-assert the pad function after the frequency change in case the
+   * PERIPH FLL retune perturbed the IO mux. */
+  pi_freq_set(PI_FREQ_DOMAIN_FC, FREQ_FC * 1000 * 1000);
+  pi_freq_set(PI_FREQ_DOMAIN_CL, FREQ_CL * 1000 * 1000);
+  pi_freq_set(PI_FREQ_DOMAIN_PERIPH, FREQ_PE * 1000 * 1000);
+#ifdef VOLTAGE
+  pi_pmu_voltage_set(PI_PMU_VOLTAGE_DOMAIN_CHIP, VOLTAGE);
+#endif
+  /* No printf here: see banner note — semihost would hang with openocd detached. */
+
+  pi_pad_function_set(GPIOs, 1);
+  pi_gpio_pin_configure(GPIOs, PI_GPIO_OUTPUT);
+  pi_gpio_pin_write(GPIOs, 0);
+#endif
+
+  BISECT(3); /* freq/voltage set */
+
   mem_init();
 #ifndef NOFLASH
   open_fs();
 #endif
+
+  BISECT(4); /* mem_init + open_fs */
 
   struct pi_cluster_task cluster_task;
 
@@ -344,10 +462,14 @@ int main(void) {
    * Init training network
    * ------------------------------------------------------------------ */
 
+#ifndef POWER_MEASUREMENT
   printf("Initializing TrainingNetwork...\r\n");
+#endif
   pi_cluster_task(&cluster_task, InitTrainingNetworkWrapper, NULL);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+
+  BISECT(5); /* InitTrainingNetwork done */
 
 #ifdef TRAINING_TESTDATA_L3
   /* Load the L3-resident test inputs (separate cluster task; runs after
@@ -379,14 +501,20 @@ int main(void) {
     }
   }
 
+  BISECT(6); /* grad buffers zeroed (+ LoadTestDataL3 if L3) */
+
   /* ------------------------------------------------------------------
    * Init optimizer network
    * ------------------------------------------------------------------ */
 
+#ifndef POWER_MEASUREMENT
   printf("Initializing OptimizerNetwork...\r\n");
+#endif
   pi_cluster_task(&cluster_task, InitOptimizerNetworkWrapper, NULL);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+
+  BISECT(7); /* InitOptimizerNetwork done */
 
   uint32_t reset_idx = DeeployNetwork_num_inputs - 1;
 
@@ -410,8 +538,18 @@ int main(void) {
   }
 #endif
 
+  BISECT(8); /* weight copy done — about to enter ROI */
+
+#ifndef POWER_MEASUREMENT
   printf("Starting training (%u optimizer steps x %u accum steps)...\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
+#endif
+
+#ifdef POWER_MEASUREMENT
+  /* Region-of-interest start: everything below (fwd + bwd + grad accum +
+   * optimizer SGD update for all steps) is the measured training workload. */
+  WRITE_GPIO(1);
+#endif
 
   for (uint32_t update_step = 0; update_step < N_TRAIN_STEPS; update_step++) {
 
@@ -419,9 +557,13 @@ int main(void) {
 
       uint32_t mb = update_step * N_ACCUM_STEPS + accum_step;
 
+#ifndef POWER_MEASUREMENT
+      /* Suppress per-mini-batch UART chatter inside the ROI — printing over the
+       * UART during the measured window would inflate the power trace. */
       printf("  update %u/%u  accum %u/%u  (mini-batch %u)\r\n",
              update_step + 1, (unsigned)N_TRAIN_STEPS, accum_step + 1,
              (unsigned)N_ACCUM_STEPS, mb);
+#endif
 
       /* ① Set lazy_reset_grad. */
       {
@@ -455,6 +597,9 @@ int main(void) {
         } else {
           ram_read(&stored_losses[mb], loss_ptr, sizeof(float));
         }
+        uint32_t _lbits;
+        memcpy(&_lbits, &stored_losses[mb], sizeof(uint32_t));
+        printf("LOSSLIVE %u hex=%08x\r\n", (unsigned)mb, (unsigned)_lbits);
       }
 
     } /* end accum_step loop */
@@ -464,6 +609,11 @@ int main(void) {
 
   } /* end update_step loop */
 
+#ifdef POWER_MEASUREMENT
+  /* Region-of-interest end. */
+  WRITE_GPIO(0);
+#endif
+
   /* ------------------------------------------------------------------
    * Numerical verification — run on cluster (FC has no FPU)
    * ------------------------------------------------------------------ */
@@ -471,17 +621,34 @@ int main(void) {
   uint32_t loss_err_count = 0;
   uint32_t total_loss_checks =
       (TOTAL_FWD_PASSES < N_LOSS_REFS) ? TOTAL_FWD_PASSES : N_LOSS_REFS;
+  static uint32_t cluster_computed_bits[TOTAL_FWD_PASSES];
   LossCompareArgs loss_cmp_args = {
       .computed = stored_losses,
       .reference = (float *)testLossRef,
       .n = total_loss_checks,
       .err_count = &loss_err_count,
+      .computed_bits_out = cluster_computed_bits,
   };
   pi_cluster_task(&cluster_task, CompareLossesOnCluster, &loss_cmp_args);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
   printf("Errors: %u out of %u\r\n", (unsigned)loss_err_count,
          (unsigned)total_loss_checks);
+
+  /* ------------------------------------------------------------------
+   * FC-side raw loss dump (no FPU needed): emit each computed/reference
+   * loss as its 32-bit IEEE-754 hex so the host can decode the full
+   * per-step trajectory. Parsed by panel_a loss-extraction script.
+   * computed_hex = FC view, cluster_hex = cluster's view (post-compare).
+   * ------------------------------------------------------------------ */
+  for (uint32_t _li = 0; _li < total_loss_checks; _li++) {
+    uint32_t _cbits, _rbits;
+    memcpy(&_cbits, &stored_losses[_li], sizeof(uint32_t));
+    memcpy(&_rbits, &((float *)testLossRef)[_li], sizeof(uint32_t));
+    printf("LOSSDUMP %u computed_hex=%08x ref_hex=%08x cluster_hex=%08x\r\n",
+           (unsigned)_li, (unsigned)_cbits, (unsigned)_rbits,
+           (unsigned)cluster_computed_bits[_li]);
+  }
 
   /* ------------------------------------------------------------------
    * Benchmark summary — parsed by benchmark_training.py

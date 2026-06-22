@@ -50,10 +50,9 @@ struct pi_device ram;
 static ram_conf_t ram_conf;
 
 void open_fs() {
-  // SCHEREMO: Fix FS
-  // Open filesystem on flash.
   pi_readfs_conf_init(&fs_conf);
   fs_conf.fs.flash = &flash;
+  fs_conf.fs.partition_name = "readfs_flash";
   pi_open_from_conf(&fs, &fs_conf);
   if (pi_fs_mount(&fs)) {
     printf("ERROR: Cannot mount filesystem! Exiting...\n");

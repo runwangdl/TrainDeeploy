@@ -97,9 +97,21 @@ def main(tiling_enabled: bool = False,
     worker_id = os.environ.get('PYTEST_XDIST_WORKER', 'master')
     build_dir = str(base_dir / f'TEST_{platform.upper()}' / f'build_{worker_id}')
 
-    cmake_args = [f'-DNUM_CORES={args.cores}']
+    cmake_args = [f'-DNUM_CORES={args.cores}', f'-DSIMULATOR={simulator}']
     if args.cmake:
         cmake_args.extend(args.cmake)
+
+    # Mirror the inference power-collection wiring: --powerMeasurement ->
+    # -DPOWER_MEASUREMENT=ON compiles the GPIO-89 trigger in deeploytraintest.c
+    # around the training loop. Only meaningful with -s board.
+    if getattr(args, 'powerMeasurement', False):
+        cmake_args.append('-DPOWER_MEASUREMENT=ON')
+        if hasattr(args, 'freqFC'):
+            cmake_args.append(f'-DFREQ_FC={args.freqFC}')
+        if hasattr(args, 'freqCL'):
+            cmake_args.append(f'-DFREQ_CL={args.freqCL}')
+        if hasattr(args, 'freqPE'):
+            cmake_args.append(f'-DFREQ_PE={args.freqPE}')
 
     gen_args = [f'--cores={args.cores}']
     if args.tolerance is not None:

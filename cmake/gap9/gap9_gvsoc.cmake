@@ -81,18 +81,33 @@ macro(add_gvsoc_emulation name target)
             VERBATIM
         )
     else()
-        # L2 mode: Use traditional gvsoc command directly (no flash/readfs)
-        message(STATUS "[Deeploy GAP9] L2 mode: using traditional gvsoc without flash")
+        # L2 mode: same gapy mram-boot as L3, just without readfs files. The binary
+        # still boots from mram, so the gap9.evk flash target must be set up; the old
+        # bare `gvsoc ... image flash run` omitted it -> gapy error
+        # "Dependency 'gapylib.chips.gap.flash' of target 'gap9.evk' is missing".
+        message(STATUS "[Deeploy GAP9] L2 mode: using gapy with mram boot (no readfs)")
 
-        set(GVSOC_EXECUTABLE "${GVSOC_INSTALL_DIR}/bin/gvsoc")
+        set(GAPY "${GAP9_SDK_HOME}/utils/gapy_v2/bin/gapy")
+        set(FLASH_LAYOUT "${GAP9_SDK_HOME}/utils/layouts/default_layout_multi_readfs.json")
+        set(FSBL_BINARY "${GAP9_SDK_HOME}/install/target/bin/fsbl")
+        set(SSBL_BINARY "${GAP9_SDK_HOME}/install/target/bin/ssbl")
 
-        # L2 mode: run directly without flash operations
         set(GVSOC_CMD
-            ${GVSOC_EXECUTABLE}
-            --target=${target}
-            --binary ${GVSOC_BINARY}
+            ${GAPY}
+            --target=gap9.evk
+            --target-dir=${GAP9_SDK_HOME}/install/workstation/generators
+            --model-dir=${GAP9_SDK_HOME}/install/workstation/models
+            --platform=gvsoc
             --work-dir=${GVSOC_WORKDIR}
+            --target-property=boot.flash_device=mram
+            --target-property=boot.mode=flash
+            --multi-flash-content=${FLASH_LAYOUT}
+            --flash-property=${GVSOC_BINARY}@mram:app:binary
+            --flash-property=${FSBL_BINARY}@mram:fsbl:binary
+            --flash-property=${SSBL_BINARY}@mram:ssbl:binary
+            --py-stack
             image flash run
+            --binary=${GVSOC_BINARY}
         )
 
         # Convert list to string for printing
