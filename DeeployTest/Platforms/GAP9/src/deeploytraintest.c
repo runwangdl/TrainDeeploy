@@ -296,7 +296,13 @@ static void run_optimizer_step(void) {
   struct pi_cluster_task opt_task;
   pi_cluster_task(&opt_task, RunOptimizerNetworkWrapper, NULL);
   SET_SLAVE_STACK(opt_task);
+#ifdef POWER_MEASUREMENT
+  WRITE_GPIO(1); /* OptimizerNetwork (SGD) dispatch — its own power peak */
+#endif
   pi_cluster_send_task_to_cl(&cluster_dev, &opt_task);
+#ifdef POWER_MEASUREMENT
+  WRITE_GPIO(0);
+#endif
 
   /* --- Step C: copy weight_updated back to training network's weight buffers
    * --- Skipped when codegen has shared the output buffer with the training
@@ -545,11 +551,12 @@ int main(void) {
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
 #endif
 
-#ifdef POWER_MEASUREMENT
-  /* Region-of-interest start: everything below (fwd + bwd + grad accum +
-   * optimizer SGD update for all steps) is the measured training workload. */
-  WRITE_GPIO(1);
-#endif
+  /* Power measurement: GPIO is driven per-dispatch (high during each
+   * TrainingNetwork and OptimizerNetwork cluster run, low during host-side data
+   * loading) rather than once around the whole loop — so the PPK2 trace shows a
+   * separate peak for every fwd/bwd mini-batch and every optimizer step, letting
+   * you attribute power AND time to each phase. See WRITE_GPIO in the loop body
+   * and in run_optimizer_step(). */
 
   for (uint32_t update_step = 0; update_step < N_TRAIN_STEPS; update_step++) {
 
@@ -587,7 +594,17 @@ int main(void) {
       /* ③ Forward + backward + InPlaceAccumulatorV2. */
       pi_cluster_task(&cluster_task, RunTrainingNetworkWrapper, NULL);
       SET_SLAVE_STACK(cluster_task);
+#ifdef POWER_MEASUREMENT
+      /* One power peak per mini-batch = TrainingNetwork (fwd+bwd+accumulate,
+       * fused in the compiled graph — they cannot be split host-side). GPIO is
+       * low during the surrounding host-side L3 data loading, so each dispatch
+       * shows as a cleanly separated peak in the PPK2 trace. */
+      WRITE_GPIO(1);
+#endif
       pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+#ifdef POWER_MEASUREMENT
+      WRITE_GPIO(0);
+#endif
 
       /* ④ Store loss — use memcpy to avoid float registers on FC (no FPU). */
       {
@@ -597,9 +614,14 @@ int main(void) {
         } else {
           ram_read(&stored_losses[mb], loss_ptr, sizeof(float));
         }
+#ifndef POWER_MEASUREMENT
+        /* Semihost printf hangs inside the ROI when openocd is detached (same
+         * failure as the pre-ROI banner) — and it would serialize every
+         * mini-batch, destroying the power trace. Suppress under power. */
         uint32_t _lbits;
         memcpy(&_lbits, &stored_losses[mb], sizeof(uint32_t));
         printf("LOSSLIVE %u hex=%08x\r\n", (unsigned)mb, (unsigned)_lbits);
+#endif
       }
 
     } /* end accum_step loop */
@@ -608,11 +630,6 @@ int main(void) {
     run_optimizer_step();
 
   } /* end update_step loop */
-
-#ifdef POWER_MEASUREMENT
-  /* Region-of-interest end. */
-  WRITE_GPIO(0);
-#endif
 
   /* ------------------------------------------------------------------
    * Numerical verification — run on cluster (FC has no FPU)
