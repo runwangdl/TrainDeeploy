@@ -392,19 +392,13 @@ int main(void) {
 
   BISECT(1); /* reached main, GPIO works */
 
-  /* Under POWER_MEASUREMENT the binary is started via `openocd
-   * load_and_start_binary ...; exit`, leaving NO debugger attached. A semihosting
-   * printf before the FC/cluster is fully up then traps with nothing to service
-   * it and hangs (observed: execution never passes this banner on-board). The
-   * inference harness only ever printfs AFTER pi_cluster_open, which is why it
-   * worked. So suppress all pre-ROI chatter for power runs — it is invisible when
-   * detached and would inflate the power trace anyway. */
-#ifndef POWER_MEASUREMENT
+  /* printf is safe here: the board build uses UART printf (sdk_board.config
+   * CONFIG_IO_TYPE_UART), not semihosting — so it does not need an attached
+   * debugger and does not hang when started via openocd load_and_start_binary. */
   printf("=== GAP9 Training Harness (Phase 2 — with OptimizerNetwork) ===\r\n");
   printf("N_TRAIN_STEPS=%u  N_ACCUM_STEPS=%u  DATA_INPUTS=%u\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS,
          (unsigned)TRAINING_NUM_DATA_INPUTS);
-#endif
 
   BISECT(9); /* banner region passed (before cluster open) */
 
@@ -446,7 +440,9 @@ int main(void) {
 #ifdef VOLTAGE
   pi_pmu_voltage_set(PI_PMU_VOLTAGE_DOMAIN_CHIP, VOLTAGE);
 #endif
-  /* No printf here: see banner note — semihost would hang with openocd detached. */
+  printf("[POWER] FC=%dMHz CL=%dMHz PE=%dMHz (get FC=%d CL=%d)\r\n", FREQ_FC,
+         FREQ_CL, FREQ_PE, pi_freq_get(PI_FREQ_DOMAIN_FC),
+         pi_freq_get(PI_FREQ_DOMAIN_CL));
 
   pi_pad_function_set(GPIOs, 1);
   pi_gpio_pin_configure(GPIOs, PI_GPIO_OUTPUT);
@@ -468,9 +464,7 @@ int main(void) {
    * Init training network
    * ------------------------------------------------------------------ */
 
-#ifndef POWER_MEASUREMENT
   printf("Initializing TrainingNetwork...\r\n");
-#endif
   pi_cluster_task(&cluster_task, InitTrainingNetworkWrapper, NULL);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
@@ -513,9 +507,7 @@ int main(void) {
    * Init optimizer network
    * ------------------------------------------------------------------ */
 
-#ifndef POWER_MEASUREMENT
   printf("Initializing OptimizerNetwork...\r\n");
-#endif
   pi_cluster_task(&cluster_task, InitOptimizerNetworkWrapper, NULL);
   SET_SLAVE_STACK(cluster_task);
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
@@ -546,10 +538,8 @@ int main(void) {
 
   BISECT(8); /* weight copy done — about to enter ROI */
 
-#ifndef POWER_MEASUREMENT
   printf("Starting training (%u optimizer steps x %u accum steps)...\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
-#endif
 
   /* Power measurement: GPIO is driven per-dispatch (high during each
    * TrainingNetwork and OptimizerNetwork cluster run, low during host-side data
@@ -614,14 +604,10 @@ int main(void) {
         } else {
           ram_read(&stored_losses[mb], loss_ptr, sizeof(float));
         }
-#ifndef POWER_MEASUREMENT
-        /* Semihost printf hangs inside the ROI when openocd is detached (same
-         * failure as the pre-ROI banner) — and it would serialize every
-         * mini-batch, destroying the power trace. Suppress under power. */
+        /* UART printf (not semihost) — safe even with openocd detached. */
         uint32_t _lbits;
         memcpy(&_lbits, &stored_losses[mb], sizeof(uint32_t));
         printf("LOSSLIVE %u hex=%08x\r\n", (unsigned)mb, (unsigned)_lbits);
-#endif
       }
 
     } /* end accum_step loop */
