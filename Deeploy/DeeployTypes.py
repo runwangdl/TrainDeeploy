@@ -2799,7 +2799,36 @@ class NetworkContainer():
 
         callStack = ''
 
+        # Power-measurement aid (compile-time gated). Emit a GPIO "notch" at the
+        # forward->backward boundary of a TRAINING graph so an external power
+        # monitor (PPK2) resolves forward and backward as separate power peaks.
+        # The boundary is the first gradient node ("...Grad...") that follows the
+        # loss node; only training graphs contain that pattern, so inference and
+        # optimizer networks emit nothing. The C is wrapped in
+        # #ifdef POWER_MEASUREMENT, so non-power builds are byte-for-byte
+        # unchanged. Cluster core 0 (the network-function orchestrator) drives
+        # GPIO 89; GPIOs is defined by the training harness (deeploytraintest.c).
+        fwdBwdMarker = ("{\n"
+                        "#ifdef POWER_MEASUREMENT\n"
+                        "    extern unsigned int GPIOs;\n"
+                        "    pi_gpio_pin_write(GPIOs, 0);\n"
+                        "    for (volatile int _fbm = 0; _fbm < 200000; _fbm++) {\n"
+                        "      __asm__ volatile(\"nop\");\n"
+                        "    }\n"
+                        "    pi_gpio_pin_write(GPIOs, 1);\n"
+                        "#endif\n"
+                        "}\n")
+        seenLoss = False
+        markerEmitted = False
+
         for key, node in self.layerBinding.items():
+            op = getattr(getattr(node, "node", None), "op", "") or ""
+            if (not markerEmitted) and seenLoss and ("Grad" in op):
+                callStack += fwdBwdMarker
+                markerEmitted = True
+            if ("Loss" in op) and ("Grad" not in op):
+                seenLoss = True
+
             self.ctxt, code = node.generate(self.ctxt)
 
             sections = reduce(lambda a, b: a + b, code, [])
