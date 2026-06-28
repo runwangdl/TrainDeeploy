@@ -18,7 +18,7 @@ from Deeploy.CommonExtensions.DataTypes import FloatDataTypes, IntegerDataTypes,
 from Deeploy.DeeployTypes import CodeTransformation, NodeBinding
 from Deeploy.FutureExtension.Bindings.AutoFutureBinding import AutoFutureBinding
 from Deeploy.FutureExtension.CodeTransformationPasses.FutureCodeTransformation import FutureGeneration
-from Deeploy.Targets.GAP9.DMA.L3Dma import GAP9L3Dma, gap9L3DmaHack
+from Deeploy.Targets.GAP9.DMA.L3Dma import GAP9L3Dma, gap9L3DmaHack, gap9L3DmaMultiReq
 from Deeploy.Targets.GAP9.DMA.MchanDma import GAP9MchanDma
 # Import templates from PULPOpen and Generic
 from Deeploy.Targets.Generic.Templates import AddTemplate, ConcatTemplate, DequantTemplate, FloatReduceMeanTemplate, \
@@ -110,7 +110,10 @@ GAP9ClusterBlockingDBTransformer = CodeTransformation([
     MemoryManagementGeneration("L1"),
     TilingVariableReplacement("L2"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    PULPL3Tiling("L3", "L2", gap9L3DmaHack, dbDma = gap9L3DmaHack),
+    # EXPERIMENT: SB stays blocking; DB hop now uses the multi-request async DMA
+    # (each per-channel transfer gets its own pi_cl_ram_req_t from a static pool),
+    # which is safe to overlap — unlike the single-req async path that crashes UDMA.
+    PULPL3Tiling("L3", "L2", gap9L3DmaHack, dbDma = gap9L3DmaMultiReq),
     PULPProfileUntiled(),
     ArgumentStructGeneration(),
     L3MemoryAwareFunctionCallClosure(writeback = False),
