@@ -9,6 +9,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(TRAINING)
   add_library(training_network OBJECT ${GENERATED_SOURCE}/TrainingNetwork.c)
   target_link_libraries(training_network PUBLIC deeploylib)
+  # The codegen emits a #ifdef POWER_MEASUREMENT GPIO notch at the fwd/bwd
+  # boundary inside RunTrainingNetwork; the training_network object must see the
+  # define for it to compile in (the executable target alone is not enough).
+  if(POWER_MEASUREMENT)
+    target_compile_definitions(training_network PRIVATE POWER_MEASUREMENT)
+  endif()
   # Optimizer network (SGD kernel, compiled separately to allow different prefix)
   add_library(optimizer_network OBJECT ${GENERATED_SOURCE}/OptimizerNetwork.c)
   target_link_libraries(optimizer_network PUBLIC deeploylib)

@@ -460,9 +460,15 @@ def main(default_platform: Optional[str] = None,
 
     if hasattr(args, 'powerMeasurement') and args.powerMeasurement:
         platform_specific_cmake_args.append("-DPOWER_MEASUREMENT=ON")
+        if hasattr(args, 'freqFC'):
+            platform_specific_cmake_args.append(f"-DFREQ_FC={args.freqFC}")
+        if hasattr(args, 'freqCL'):
+            platform_specific_cmake_args.append(f"-DFREQ_CL={args.freqCL}")
+        if hasattr(args, 'freqPE'):
+            platform_specific_cmake_args.append(f"-DFREQ_PE={args.freqPE}")
 
     if platform == 'GAP9':
-        platform_specific_cmake_args.append("-D SIMULATOR=" + simulator)
+        platform_specific_cmake_args.append("-DSIMULATOR=" + simulator)
 
     config = create_config_from_args(args, platform, simulator, tiling_enabled, platform_specific_cmake_args)
 

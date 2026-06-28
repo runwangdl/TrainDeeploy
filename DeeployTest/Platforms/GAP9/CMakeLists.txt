@@ -36,11 +36,8 @@ endif()
 target_compile_options(${ProjectId} INTERFACE ${NETWORK_LIB})
 
 if(TRAINING)
-    target_compile_definitions(${ProjectId} PRIVATE
-        N_TRAIN_STEPS=${N_TRAIN_STEPS}
-        N_ACCUM_STEPS=${N_ACCUM_STEPS}
-        TRAINING_NUM_DATA_INPUTS=${TRAINING_NUM_DATA_INPUTS}
-    )
+    # N_TRAIN_STEPS, N_ACCUM_STEPS, TRAINING_NUM_DATA_INPUTS are defined in
+    # the generated testinputs.h; do not redefine them here.
 endif()
 
 add_gvsoc_emulation(${ProjectId} "gap9.evk")
@@ -48,6 +45,13 @@ add_board_deployment(${ProjectId} "gap9.evk")
 
 if(POWER_MEASUREMENT)
   target_compile_definitions(${ProjectId} PRIVATE POWER_MEASUREMENT)
+  # Operating point (FREQ_FC/CL/PE, optional VOLTAGE) is configured at the
+  # board-deployment level — see add_board_deployment() in cmake/gap9/gap9_board.cmake.
+  # Debug-only: -DPOWER_BISECT emits GPIO pulse bursts at each main() checkpoint
+  # to locate where on-board execution hangs before the ROI.
+  if(POWER_BISECT)
+    target_compile_definitions(${ProjectId} PRIVATE POWER_BISECT)
+  endif()
 endif()
 
 if(CC_STACK_SIZE)
