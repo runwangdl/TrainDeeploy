@@ -119,13 +119,15 @@ unsigned int GPIOs = 89;
 #endif
 
 #ifdef POWER_BISECT
-/* Debug-only execution bisect: emit `n` short GPIO pulses (1ms hi / 1ms lo) as a
- * burst so the PPK2 trace shows how far main() progressed before any hang. The
- * highest burst count seen in the trace = last checkpoint reached. Build with
- * -DPOWER_MEASUREMENT=ON -DPOWER_BISECT. Not part of the normal ROI harness. */
+/* Debug-only execution bisect: emit `n` short GPIO pulses (1ms hi / 1ms lo) as
+ * a burst so the PPK2 trace shows how far main() progressed before any hang.
+ * The highest burst count seen in the trace = last checkpoint reached. Build
+ * with -DPOWER_MEASUREMENT=ON -DPOWER_BISECT. Not part of the normal ROI
+ * harness. */
 /* Busy-wait, NOT pi_time_wait_us: under openocd load_and_start_binary there is
  * no debugger attached and we must not depend on the OS tick/timer being live.
- * ~100k nops @ 240MHz ≈ a few ms — comfortably visible at 100kHz PPK2 sampling. */
+ * ~100k nops @ 240MHz ≈ a few ms — comfortably visible at 100kHz PPK2 sampling.
+ */
 static void bisect_delay(void) {
   for (volatile uint32_t i = 0; i < 100000u; i++) {
     __asm__ volatile("nop");
@@ -394,7 +396,8 @@ int main(void) {
 
   /* printf is safe here: the board build uses UART printf (sdk_board.config
    * CONFIG_IO_TYPE_UART), not semihosting — so it does not need an attached
-   * debugger and does not hang when started via openocd load_and_start_binary. */
+   * debugger and does not hang when started via openocd load_and_start_binary.
+   */
   printf("=== GAP9 Training Harness (Phase 2 — with OptimizerNetwork) ===\r\n");
   printf("N_TRAIN_STEPS=%u  N_ACCUM_STEPS=%u  DATA_INPUTS=%u\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS,
@@ -544,9 +547,9 @@ int main(void) {
   /* Power measurement: GPIO is driven per-dispatch (high during each
    * TrainingNetwork and OptimizerNetwork cluster run, low during host-side data
    * loading) rather than once around the whole loop — so the PPK2 trace shows a
-   * separate peak for every fwd/bwd mini-batch and every optimizer step, letting
-   * you attribute power AND time to each phase. See WRITE_GPIO in the loop body
-   * and in run_optimizer_step(). */
+   * separate peak for every fwd/bwd mini-batch and every optimizer step,
+   * letting you attribute power AND time to each phase. See WRITE_GPIO in the
+   * loop body and in run_optimizer_step(). */
 
   for (uint32_t update_step = 0; update_step < N_TRAIN_STEPS; update_step++) {
 

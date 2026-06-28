@@ -22,11 +22,20 @@ if __name__ == '__main__':
                             default = False,
                             help = 'Enable GPIO 89 toggling around the training loop for external '
                             'power measurement (e.g. PPK2). Only meaningful with -s board.\n')
-        parser.add_argument('--freqFC', type = int, default = 240, metavar = 'MHz',
+        parser.add_argument('--freqFC',
+                            type = int,
+                            default = 240,
+                            metavar = 'MHz',
                             help = 'FC clock frequency in MHz for power measurement (default: 240).\n')
-        parser.add_argument('--freqCL', type = int, default = 240, metavar = 'MHz',
+        parser.add_argument('--freqCL',
+                            type = int,
+                            default = 240,
+                            metavar = 'MHz',
                             help = 'Cluster clock frequency in MHz for power measurement (default: 240).\n')
-        parser.add_argument('--freqPE', type = int, default = 240, metavar = 'MHz',
+        parser.add_argument('--freqPE',
+                            type = int,
+                            default = 240,
+                            metavar = 'MHz',
                             help = 'Periph clock frequency in MHz for power measurement (default: 240).\n')
 
     sys.exit(
