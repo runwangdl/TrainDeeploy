@@ -185,17 +185,19 @@ TRAINING_MODEL_OVERRIDES = {
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
         "tolerance": 5e-3,
-        # 8192 (not 4096): promote+DB deepens the CC closure chain and DB doubles
-        # L1 arena pressure. cc_stack=4096 -> CC master stack overflows into the
-        # RTOS event list -> os_evt_release deadlock at init. cc_stack=16384 ->
-        # arena(122000)+stack > TCDM(131072) -> overlap -> wild-pointer crash.
-        # 8192: 122000+8192=130192 < 131072 -> fits AND stack deep enough.
-        "cc_stack": 8192,
-        # No slave_stack_l1: CCT's L1 is full (130192/131072), so L1 stacks need a
-        # smaller arena -> measured arena 119000 + L1@256 = 97.2M/step vs the
-        # arena 122000 + L2 default = 89.25M/step (the extra tiling from the
-        # smaller arena costs ~8%, and at equal arena L1≈L2 for CCT — its big
-        # gemms amortise the per-call stack overhead). So CCT keeps L2 stacks.
+        # cc_stack 4096 (was 8192): with promote_headroom 700000 the CC closure
+        # chain no longer overflows at 4096 (the old 4096->os_evt_release deadlock
+        # was a tighter-headroom scenario, since fixed). Dropping to 4096 frees the
+        # L1 the slave stacks need: arena 122000 + cc 4096 + slave 512*8 = 130192
+        # < 131072 -> L1 stacks fit, no arena cut, no tiling penalty. Verified
+        # (build memcheck + sim) on SB, DB and promote+DB.
+        "cc_stack": 4096,
+        # L1 slave stacks: measured cyc/step (N=2) on the CI best (promote+DB):
+        #   cc8192 + L2 stacks            87.1M  (previous config)
+        #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
+        # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
+        "slave_stack": 512,
+        "slave_stack_l1": True,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,
