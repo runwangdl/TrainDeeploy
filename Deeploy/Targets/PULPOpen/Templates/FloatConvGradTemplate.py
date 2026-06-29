@@ -142,15 +142,30 @@ class PULP2DFloatConvGradXIm2ColTemplate(NodeTemplate):
         return ctxt, operatorRepresentation, [im2col_name, bt_name]
 
 
+class _ConvGradXTemplate(NodeTemplate):
+    """Captures the FULL (untiled) output spatial dims before TilingVariableReplacement
+    rewrites dim_im_out_* into tile refs, so the gather kernel can numerically detect
+    spatial tiling and fall back to scatter."""
+
+    def alignToContext(self, ctxt: NetworkContext,
+                       operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
+        if not _is_tiled_expr(operatorRepresentation.get('dim_im_out_x')):
+            operatorRepresentation['full_dim_im_out_x'] = operatorRepresentation['dim_im_out_x']
+            operatorRepresentation['full_dim_im_out_y'] = operatorRepresentation['dim_im_out_y']
+        operatorRepresentation.setdefault('full_dim_im_out_x', operatorRepresentation['dim_im_out_x'])
+        operatorRepresentation.setdefault('full_dim_im_out_y', operatorRepresentation['dim_im_out_y'])
+        return ctxt, operatorRepresentation, []
+
+
 # Templates for ConvGradX operations
-referenceConvGradX2DTemplate = NodeTemplate("""
+referenceConvGradX2DTemplate = _ConvGradXTemplate("""
 // 2D FP ConvGradX (dX) NCHW trainlib naive (Name: ${nodeName}, Op: ${nodeOp})
 ${grad_out_type.typeName}  ref_${grad_out} = ${grad_out};   // dY
 ${weight_type.typeName}   ref_${weight}  = ${weight};    // W
 ${grad_in_type.typeName} ref_${grad_in}       = ${grad_in};  // dX
 
 for (uint32_t n=0; n<${batch}; ++n) {
-    PULP_ConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_scatter_tiled(
+    PULP_ConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_gather_tiled(
         ref_${grad_out},
         ${dim_im_out_x}, ${dim_im_out_y}, ${ch_im_out},
         ref_${weight},
@@ -161,8 +176,8 @@ for (uint32_t n=0; n<${batch}; ++n) {
         ${dim_im_in_x}, ${dim_im_in_y},
         ${padding_y_top}, ${padding_y_bottom}, ${padding_x_left}, ${padding_x_right},
         ${offset_grad_in_h}, ${offset_grad_in_w},
-        ${offset_grad_out_h}, ${offset_grad_out_w}
-
+        ${offset_grad_out_h}, ${offset_grad_out_w},
+        ${full_dim_im_out_x}, ${full_dim_im_out_y}
     );
 
     ref_${grad_out} += ${ch_im_out} * ${dim_im_out_y} * ${dim_im_out_x};
