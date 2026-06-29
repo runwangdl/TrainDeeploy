@@ -156,16 +156,16 @@ TRAINING_MODEL_OVERRIDES = {
     # L2 models with ample free L1 -> small L1 stacks, big win over L2 stacks.
     "Models/Training/Autoencoder/autoencoder_train": {
         "slave_stack": 512,
-        "slave_stack_l1": True,  # 1.91M vs 3.11M cyc L2 (-38.5%)
+        "slave_stack_l1": True,  # 0.48M vs 0.78M cyc/step L2 (-38.5%)
     },
     "Models/Training/DSCNN/dscnn_train": {
         "slave_stack": 512,
-        "slave_stack_l1": True,  # 1.60M vs 2.42M cyc L2 (-33.7%)
+        "slave_stack_l1": True,  # 0.80M vs 1.21M cyc/step L2 (-33.7%)
     },
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
         # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
-        # L1 stacks vs L2: 95.7M vs 125.7M cyc (-23.9%).
+        # L1 stacks vs L2: 47.8M vs 62.9M cyc/step (-23.9%).
         "slave_stack": 512,
         "slave_stack_l1": True,
     },
@@ -178,7 +178,7 @@ TRAINING_MODEL_OVERRIDES = {
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
         # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
-        # L1 stacks vs L2: 106.3M vs 137.5M cyc (-22.7%).
+        # L1 stacks vs L2: 53.1M vs 68.7M cyc/step (-22.7%).
         "slave_stack": 512,
         "slave_stack_l1": True,
     },
