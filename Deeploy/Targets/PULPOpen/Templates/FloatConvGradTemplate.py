@@ -150,7 +150,7 @@ ${weight_type.typeName}   ref_${weight}  = ${weight};    // W
 ${grad_in_type.typeName} ref_${grad_in}       = ${grad_in};  // dX
 
 for (uint32_t n=0; n<${batch}; ++n) {
-    PULP_ConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_scatter_tiled(
+    PULP_ConvGradX2d_fp${grad_out_type.referencedType.typeWidth}_fp${weight_type.referencedType.typeWidth}_fp${grad_in_type.referencedType.typeWidth}_CHW_gather_tiled(
         ref_${grad_out},
         ${dim_im_out_x}, ${dim_im_out_y}, ${ch_im_out},
         ref_${weight},

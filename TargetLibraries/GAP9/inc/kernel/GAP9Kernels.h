@@ -73,6 +73,16 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
     uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
     uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
     uint16_t offset_grad_out_w);
+void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_gather_tiled(
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_x_left, uint32_t padding_x_right, uint32_t padding_y_top,
+    uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w);
 
 void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_Im2Col_tiled(
     const float *__restrict__ pGradOut, uint32_t dim_im_out_x,

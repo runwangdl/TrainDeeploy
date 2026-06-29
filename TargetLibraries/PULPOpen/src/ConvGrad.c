@@ -240,6 +240,91 @@ void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_scatter_tiled(
   }
 }
 
+// Gather variant of CHW ConvGradX: output-stationary. For each dX[ci,ih,iw] it
+// accumulates the full (co,ky,kx) reduction in a REGISTER and writes dX once,
+// instead of the scatter's Cout*K read-modify-writes per output (a dependent
+// FP-accumulate chain through L1 that stalls the FPU ~44 cyc/MAC). Same args /
+// tile semantics as the scatter kernel; drop-in replacement.
+void PULP_ConvGradX2d_fp32_fp32_fp32_CHW_gather_tiled(
+    const float *__restrict__ pGradOut, uint32_t dim_im_out_x,
+    uint32_t dim_im_out_y, uint32_t ch_im_out,
+    const float *__restrict__ pWeight, uint32_t ch_im_in, uint32_t dim_kernel_x,
+    uint32_t dim_kernel_y, uint32_t stride_h, uint32_t stride_w,
+    float *__restrict__ pGradIn, uint32_t dim_im_in_x, uint32_t dim_im_in_y,
+    uint32_t padding_x_left, uint32_t padding_x_right, uint32_t padding_y_top,
+    uint32_t padding_y_bottom, uint16_t offset_grad_in_h,
+    uint16_t offset_grad_in_w, uint16_t offset_grad_out_h,
+    uint16_t offset_grad_out_w) {
+  (void)padding_x_right;
+  (void)padding_y_bottom;
+
+  const uint32_t Hout_t = dim_im_out_x;
+  const uint32_t Wout_t = dim_im_out_y;
+  const uint32_t Hin_t = dim_im_in_x;
+  const uint32_t Win_t = dim_im_in_y;
+  const uint32_t Cout = ch_im_out;
+  const uint32_t Cin = ch_im_in;
+  const uint32_t P = dim_kernel_x;
+  const uint32_t Q = dim_kernel_y;
+  const int32_t pad_top = (int32_t)padding_x_left;
+  const int32_t pad_left = (int32_t)padding_y_top;
+  const int32_t sh = (int32_t)stride_h;
+  const int32_t sw = (int32_t)stride_w;
+  const int32_t hx0 = (int32_t)offset_grad_in_h;
+  const int32_t wx0 = (int32_t)offset_grad_in_w;
+  const int32_t oy0 = (int32_t)offset_grad_out_h;
+  const int32_t ox0 = (int32_t)offset_grad_out_w;
+
+  // Parallel over Cin — each core owns exclusive dX[ci_start..ci_stop]
+  const int core_id = pi_core_id();
+  const uint32_t ci_chunk = (Cin + NUM_CORES - 1u) / NUM_CORES;
+  const uint32_t ci_start = (uint32_t)core_id * ci_chunk;
+  uint32_t ci_stop = ci_start + ci_chunk;
+  if (ci_stop > Cin)
+    ci_stop = Cin;
+  if (ci_start >= ci_stop)
+    return;
+
+  const size_t dyStrideCo = (size_t)Hout_t * Wout_t;  // dY[co] stride
+  const size_t wStrideCo = (size_t)Cin * P * Q;       // W[co] stride
+
+  for (uint32_t ci = ci_start; ci < ci_stop; ++ci) {
+    float *dx_ci = pGradIn + (size_t)ci * Hin_t * Win_t;
+    for (uint32_t ih = 0; ih < Hin_t; ++ih) {
+      const int32_t gih = hx0 + (int32_t)ih;  // global input row
+      for (uint32_t iw = 0; iw < Win_t; ++iw) {
+        const int32_t giw = wx0 + (int32_t)iw;
+        float acc = 0.0f;
+        for (uint32_t ky = 0; ky < P; ++ky) {
+          // gih = ly*sh - pad_top + ky  =>  ly = (gih + pad_top - ky) / sh
+          const int32_t ly_num = gih + pad_top - (int32_t)ky;
+          if (ly_num < 0 || (ly_num % sh) != 0)
+            continue;
+          const int32_t lyt = (ly_num / sh) - oy0;  // tile-local output row
+          if (lyt < 0 || lyt >= (int32_t)Hout_t)
+            continue;
+          for (uint32_t kx = 0; kx < Q; ++kx) {
+            const int32_t lx_num = giw + pad_left - (int32_t)kx;
+            if (lx_num < 0 || (lx_num % sw) != 0)
+              continue;
+            const int32_t lxt = (lx_num / sw) - ox0;
+            if (lxt < 0 || lxt >= (int32_t)Wout_t)
+              continue;
+            // accumulate the Cout reduction in the register `acc`
+            const float *dy_p =
+                pGradOut + (size_t)lyt * Wout_t + (uint32_t)lxt;
+            const float *w_p =
+                pWeight + ((size_t)ci * P * Q) + (uint32_t)ky * Q + kx;
+            for (uint32_t co = 0; co < Cout; ++co)
+              acc += dy_p[co * dyStrideCo] * w_p[co * wStrideCo];
+          }
+        }
+        dx_ci[ih * Win_t + iw] = acc;
+      }
+    }
+  }
+}
+
 // ============================================================================
 // Regular Conv — Im2Col+GEMM tiled ConvGradX (ForkTransformer)
 // ============================================================================
