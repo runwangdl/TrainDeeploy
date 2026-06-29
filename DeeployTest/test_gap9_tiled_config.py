@@ -153,8 +153,21 @@ L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 TRAINING_MODEL_OVERRIDES = {
+    # L2 models with ample free L1 -> small L1 stacks, big win over L2 stacks.
+    "Models/Training/Autoencoder/autoencoder_train": {
+        "slave_stack": 512,
+        "slave_stack_l1": True,  # 1.91M vs 3.11M cyc L2 (-38.5%)
+    },
+    "Models/Training/DSCNN/dscnn_train": {
+        "slave_stack": 512,
+        "slave_stack_l1": True,  # 1.60M vs 2.42M cyc L2 (-33.7%)
+    },
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
+        # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
+        # L1 stacks vs L2: 95.7M vs 125.7M cyc (-23.9%).
+        "slave_stack": 512,
+        "slave_stack_l1": True,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
@@ -164,6 +177,10 @@ TRAINING_MODEL_OVERRIDES = {
         # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
+        # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
+        # L1 stacks vs L2: 106.3M vs 137.5M cyc (-22.7%).
+        "slave_stack": 512,
+        "slave_stack_l1": True,
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
@@ -174,6 +191,11 @@ TRAINING_MODEL_OVERRIDES = {
         # arena(122000)+stack > TCDM(131072) -> overlap -> wild-pointer crash.
         # 8192: 122000+8192=130192 < 131072 -> fits AND stack deep enough.
         "cc_stack": 8192,
+        # No slave_stack_l1: CCT's L1 is full (130192/131072), so L1 stacks need a
+        # smaller arena -> measured arena 119000 + L1@256 = 97.2M/step vs the
+        # arena 122000 + L2 default = 89.25M/step (the extra tiling from the
+        # smaller arena costs ~8%, and at equal arena L1≈L2 for CCT — its big
+        # gemms amortise the per-call stack overhead). So CCT keeps L2 stacks.
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,
