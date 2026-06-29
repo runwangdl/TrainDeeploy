@@ -153,21 +153,20 @@ L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 TRAINING_MODEL_OVERRIDES = {
-    # L2 models with ample free L1 -> small L1 stacks, big win over L2 stacks.
+    # Slave stacks live in L1 (SDK default); we just shrink them to 512B. Small
+    # L1 stacks are a big win over parking them in L2 (cyc/step, L1 vs L2 below).
     "Models/Training/Autoencoder/autoencoder_train": {
-        "slave_stack": 512,
-        "slave_stack_l1": True,  # 0.48M vs 0.78M cyc/step L2 (-38.5%)
+        "slave_stack": 512,  # 0.48M vs 0.78M cyc/step (-38.5%)
     },
     "Models/Training/DSCNN/dscnn_train": {
-        "slave_stack": 512,
-        "slave_stack_l1": True,  # 0.80M vs 1.21M cyc/step L2 (-33.7%)
+        "slave_stack": 512,  # 0.80M vs 1.21M cyc/step (-33.7%)
     },
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
         # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
-        # L1 stacks vs L2: 47.8M vs 62.9M cyc/step (-23.9%).
+        # L1 vs L2 stacks: 47.8M vs 62.9M cyc/step (-23.9%, SB). With the gather
+        # ConvGradX kernel + promote+DB the best config is 44.1M/step.
         "slave_stack": 512,
-        "slave_stack_l1": True,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
@@ -178,9 +177,8 @@ TRAINING_MODEL_OVERRIDES = {
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
         # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
-        # L1 stacks vs L2: 53.1M vs 68.7M cyc/step (-22.7%).
+        # L1 vs L2 stacks: 53.1M vs 68.7M cyc/step (-22.7%).
         "slave_stack": 512,
-        "slave_stack_l1": True,
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
@@ -197,7 +195,6 @@ TRAINING_MODEL_OVERRIDES = {
         #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
         # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
         "slave_stack": 512,
-        "slave_stack_l1": True,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,

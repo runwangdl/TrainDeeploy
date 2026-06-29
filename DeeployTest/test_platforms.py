@@ -1435,14 +1435,11 @@ def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, tool
     cc_stack = overrides.get("cc_stack")
     if cc_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
-    # Per-model cluster slave-stack: shrink it (slave_stack) and keep it in fast
-    # L1 (slave_stack_l1) when the L1 budget has room -> avoids the L2-stack
-    # access penalty (-22..-38% train cycles). L1-full nets omit slave_stack_l1.
+    # Per-model cluster slave-stack size (stacks live in L1; this only shrinks
+    # them -> avoids the L2-stack access penalty, -22..-38% train cycles).
     slave_stack = overrides.get("slave_stack")
     if slave_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
-    if overrides.get("slave_stack_l1"):
-        gap9_cmake_args = gap9_cmake_args + ["SLAVE_STACK_L1=ON"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
@@ -1482,14 +1479,11 @@ def test_gap9_tiled_training_l3_doublebuffer(test_params, deeploy_test_dir, tool
     cc_stack = overrides.get("cc_stack")
     if cc_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
-    # Per-model cluster slave-stack: shrink it (slave_stack) and keep it in fast
-    # L1 (slave_stack_l1) when the L1 budget has room -> avoids the L2-stack
-    # access penalty (-22..-38% train cycles). L1-full nets omit slave_stack_l1.
+    # Per-model cluster slave-stack size (stacks live in L1; this only shrinks
+    # them -> avoids the L2-stack access penalty, -22..-38% train cycles).
     slave_stack = overrides.get("slave_stack")
     if slave_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
-    if overrides.get("slave_stack_l1"):
-        gap9_cmake_args = gap9_cmake_args + ["SLAVE_STACK_L1=ON"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
@@ -1531,14 +1525,11 @@ def test_gap9_tiled_training_promote_l3_singlebuffer(test_params, deeploy_test_d
     cc_stack = overrides.get("cc_stack")
     if cc_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
-    # Per-model cluster slave-stack: shrink it (slave_stack) and keep it in fast
-    # L1 (slave_stack_l1) when the L1 budget has room -> avoids the L2-stack
-    # access penalty (-22..-38% train cycles). L1-full nets omit slave_stack_l1.
+    # Per-model cluster slave-stack size (stacks live in L1; this only shrinks
+    # them -> avoids the L2-stack access penalty, -22..-38% train cycles).
     slave_stack = overrides.get("slave_stack")
     if slave_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
-    if overrides.get("slave_stack_l1"):
-        gap9_cmake_args = gap9_cmake_args + ["SLAVE_STACK_L1=ON"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
@@ -1585,14 +1576,11 @@ def test_gap9_tiled_training_promote_l3_doublebuffer(test_params, deeploy_test_d
     cc_stack = overrides.get("cc_stack")
     if cc_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
-    # Per-model cluster slave-stack: shrink it (slave_stack) and keep it in fast
-    # L1 (slave_stack_l1) when the L1 budget has room -> avoids the L2-stack
-    # access penalty (-22..-38% train cycles). L1-full nets omit slave_stack_l1.
+    # Per-model cluster slave-stack size (stacks live in L1; this only shrinks
+    # them -> avoids the L2-stack access penalty, -22..-38% train cycles).
     slave_stack = overrides.get("slave_stack")
     if slave_stack is not None:
         gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
-    if overrides.get("slave_stack_l1"):
-        gap9_cmake_args = gap9_cmake_args + ["SLAVE_STACK_L1=ON"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",

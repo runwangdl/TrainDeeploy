@@ -159,48 +159,26 @@ static void bisect_mark(int n) {
   } while (0)
 #endif
 
-/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task.
- * SLAVESTACKSIZE is the per-core cluster slave-stack size. Overridable per model
- * (-D SLAVESTACKSIZE=N): the FP32 trainlib kernels keep their working sets in
- * explicit L1 buffers, not on the stack, so the real per-core stack need is
- * <256B; the historical 3800 was ~15x over-provisioned. */
+/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task. SLAVESTACKSIZE is
+ * the per-core cluster slave-stack size. The FP32 trainlib kernels keep their
+ * working sets in explicit L1 buffers, not on the stack, so the real per-core
+ * need is <256B; 512 leaves margin. Overridable per model (-D SLAVESTACKSIZE=N).
+ *
+ * Placement: leave task->stacks == NULL so the SDK allocates the per-core stacks
+ * in fast L1 TCDM (its native default; see __pi_cluster_task_set_stack). At 512B
+ * x 8 cores that is only ~4KB of L1, and L1 stacks avoid the L2-access penalty
+ * (measured -22..-38% train cycles vs forcing the stacks into an L2 buffer). The
+ * old 3800B default ate ~30KB of L1, which is why the stacks used to be parked in
+ * L2; shrinking the stack makes that workaround unnecessary — every training net
+ * now fits its small L1 stacks alongside the tile arena (CCT via cc_stack=4096). */
 #ifndef SLAVESTACKSIZE
-#define SLAVESTACKSIZE 3800
+#define SLAVESTACKSIZE 512
 #endif
-
-/* RW: Cluster slave-stack PLACEMENT. The GAP9 SDK only pi_cl_l1_malloc's the
- * slave stacks when task->stacks == NULL (see __pi_cluster_task_set_stack in the
- * SDK cluster driver).
- *
- *   default (L2):  hand the SDK our own static L2 buffer -> the per-core stacks
- *                  live in L2, freeing the L1 they would take (8 cores x
- *                  SLAVESTACKSIZE) for the tile arena. ALWAYS fits (L2 is 1MB+),
- *                  so it is the safe default for any net. Cost: every stack
- *                  access goes to slow L2 (measured +50..63% train cycles).
- *   -D SLAVE_STACK_L1: stacks=NULL -> SDK allocates the per-core stacks in fast
- *                  L1 TCDM (1-cycle). With a small SLAVESTACKSIZE this costs only
- *                  a few KB of L1 yet removes the L2 penalty (measured -22..-38%
- *                  vs L2). Use whenever the L1 budget has room for the stacks.
- *
- * Best config is per-experiment (see GAP9_TRAINING_MODEL_OVERRIDES): keep the
- * stack small and in L1 (SLAVE_STACK_L1) whenever arena+cc_stack+stacks fit the
- * 128KB TCDM; fall back to L2 only when the arena needs every byte (e.g. CCT). */
-#define CLUSTER_MAX_CORES 9
-#ifndef SLAVE_STACK_L1
-static uint8_t cluster_slave_stacks[SLAVESTACKSIZE * CLUSTER_MAX_CORES]
-    __attribute__((aligned(16)));
-#define SET_SLAVE_STACK(task)                                                  \
-  do {                                                                         \
-    (task).slave_stack_size = SLAVESTACKSIZE;                                  \
-    (task).stacks = cluster_slave_stacks;                                      \
-  } while (0)
-#else
 #define SET_SLAVE_STACK(task)                                                  \
   do {                                                                         \
     (task).slave_stack_size = SLAVESTACKSIZE;                                  \
     (task).stacks = NULL; /* SDK allocates per-core stacks in fast L1 TCDM */  \
   } while (0)
-#endif
 
 /* -------------------------------------------------------------------------
  * Cluster device

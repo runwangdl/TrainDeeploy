@@ -58,15 +58,10 @@ if(CC_STACK_SIZE)
   target_compile_definitions(${ProjectId} PRIVATE CC_STACK_SIZE=${CC_STACK_SIZE})
 endif()
 
-# Per-experiment cluster slave-stack config (see deeploytraintest.c):
-# SLAVESTACKSIZE shrinks the per-core stack; SLAVE_STACK_L1 keeps the stacks in
-# fast L1 TCDM instead of L2 (default). Best config is per-model -> set from
-# GAP9_TRAINING_MODEL_OVERRIDES.
+# Per-model cluster slave-stack size (see deeploytraintest.c). The stacks live in
+# L1 (SDK default); this only shrinks them. Optional override per model.
 if(SLAVESTACKSIZE)
   target_compile_definitions(${ProjectId} PRIVATE SLAVESTACKSIZE=${SLAVESTACKSIZE})
-endif()
-if(SLAVE_STACK_L1)
-  target_compile_definitions(${ProjectId} PRIVATE SLAVE_STACK_L1)
 endif()
 
 # RW: Waive sign comparison warnings from pulp_nn_utils.h
