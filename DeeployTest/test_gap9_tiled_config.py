@@ -153,8 +153,20 @@ L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 TRAINING_MODEL_OVERRIDES = {
+    # Slave stacks live in L1 (SDK default); we just shrink them to 512B. Small
+    # L1 stacks are a big win over parking them in L2 (cyc/step, L1 vs L2 below).
+    "Models/Training/Autoencoder/autoencoder_train": {
+        "slave_stack": 512,  # 0.48M vs 0.78M cyc/step (-38.5%)
+    },
+    "Models/Training/DSCNN/dscnn_train": {
+        "slave_stack": 512,  # 0.80M vs 1.21M cyc/step (-33.7%)
+    },
     "Models/Training/ResNet8/resnet8_train": {
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
+        # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
+        # L1 vs L2 stacks: 47.8M vs 62.9M cyc/step (-23.9%, SB). With the gather
+        # ConvGradX kernel + promote+DB the best config is 44.1M/step.
+        "slave_stack": 512,
     },
     "Models/Training/MobileNetV1/mobilenetv1_train": {
         "conv_channels_first": True,  # CHW convs; the NHWC-transpose tiling is infeasible
@@ -164,16 +176,25 @@ TRAINING_MODEL_OVERRIDES = {
         # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
+        # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
+        # L1 vs L2 stacks: 53.1M vs 68.7M cyc/step (-22.7%).
+        "slave_stack": 512,
     },
     "Models/Training/CCT/cct_train": {
         "num_data_inputs": 1,
         "tolerance": 5e-3,
-        # 8192 (not 4096): promote+DB deepens the CC closure chain and DB doubles
-        # L1 arena pressure. cc_stack=4096 -> CC master stack overflows into the
-        # RTOS event list -> os_evt_release deadlock at init. cc_stack=16384 ->
-        # arena(122000)+stack > TCDM(131072) -> overlap -> wild-pointer crash.
-        # 8192: 122000+8192=130192 < 131072 -> fits AND stack deep enough.
-        "cc_stack": 8192,
+        # cc_stack 4096 (was 8192): with promote_headroom 700000 the CC closure
+        # chain no longer overflows at 4096 (the old 4096->os_evt_release deadlock
+        # was a tighter-headroom scenario, since fixed). Dropping to 4096 frees the
+        # L1 the slave stacks need: arena 122000 + cc 4096 + slave 512*8 = 130192
+        # < 131072 -> L1 stacks fit, no arena cut, no tiling penalty. Verified
+        # (build memcheck + sim) on SB, DB and promote+DB.
+        "cc_stack": 4096,
+        # L1 slave stacks: measured cyc/step (N=2) on the CI best (promote+DB):
+        #   cc8192 + L2 stacks            87.1M  (previous config)
+        #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
+        # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
+        "slave_stack": 512,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
         "num_data_inputs": 1,

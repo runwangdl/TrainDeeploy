@@ -58,6 +58,12 @@ if(CC_STACK_SIZE)
   target_compile_definitions(${ProjectId} PRIVATE CC_STACK_SIZE=${CC_STACK_SIZE})
 endif()
 
+# Per-model cluster slave-stack size (see deeploytraintest.c). The stacks live in
+# L1 (SDK default); this only shrinks them. Optional override per model.
+if(SLAVESTACKSIZE)
+  target_compile_definitions(${ProjectId} PRIVATE SLAVESTACKSIZE=${SLAVESTACKSIZE})
+endif()
+
 # RW: Waive sign comparison warnings from pulp_nn_utils.h
 target_compile_options(${NETWORK_LIB} PRIVATE
     -Wno-sign-compare

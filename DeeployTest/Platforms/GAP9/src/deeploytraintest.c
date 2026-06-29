@@ -159,24 +159,25 @@ static void bisect_mark(int n) {
   } while (0)
 #endif
 
-/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task */
-#define SLAVESTACKSIZE 3800
-
-/* RW: Place the cluster slave stacks in L2 instead of L1 TCDM. The GAP9 SDK
- * only pi_cl_l1_malloc's the slave stacks when task->stacks == NULL (see
- * __pi_cluster_task_set_stack in the SDK cluster driver); by handing it our own
- * buffer we make it skip that L1 allocation, freeing ~30KB of L1 (8 cores x
- * 3800B) for the Deeploy tile arena. Sized for the worst case (9 cores). This
- * is what lets conv-heavy nets (ResNet8/MobileNetV1) whose L1 working set
- * exceeds the stack-reduced L1 budget fit. Static array -> .bss -> L2_shared.
- */
-#define CLUSTER_MAX_CORES 9
-static uint8_t cluster_slave_stacks[SLAVESTACKSIZE * CLUSTER_MAX_CORES]
-    __attribute__((aligned(16)));
+/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task. SLAVESTACKSIZE is
+ * the per-core cluster slave-stack size. The FP32 trainlib kernels keep their
+ * working sets in explicit L1 buffers, not on the stack, so the real per-core
+ * need is <256B; 512 leaves margin. Overridable per model (-D SLAVESTACKSIZE=N).
+ *
+ * Placement: leave task->stacks == NULL so the SDK allocates the per-core stacks
+ * in fast L1 TCDM (its native default; see __pi_cluster_task_set_stack). At 512B
+ * x 8 cores that is only ~4KB of L1, and L1 stacks avoid the L2-access penalty
+ * (measured -22..-38% train cycles vs forcing the stacks into an L2 buffer). The
+ * old 3800B default ate ~30KB of L1, which is why the stacks used to be parked in
+ * L2; shrinking the stack makes that workaround unnecessary — every training net
+ * now fits its small L1 stacks alongside the tile arena (CCT via cc_stack=4096). */
+#ifndef SLAVESTACKSIZE
+#define SLAVESTACKSIZE 512
+#endif
 #define SET_SLAVE_STACK(task)                                                  \
   do {                                                                         \
     (task).slave_stack_size = SLAVESTACKSIZE;                                  \
-    (task).stacks = cluster_slave_stacks;                                      \
+    (task).stacks = NULL; /* SDK allocates per-core stacks in fast L1 TCDM */  \
   } while (0)
 
 /* -------------------------------------------------------------------------
