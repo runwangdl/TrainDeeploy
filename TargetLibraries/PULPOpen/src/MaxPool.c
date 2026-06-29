@@ -129,3 +129,69 @@ void PULP_MaxPoolGrad2d_fp32_fp32_HWC(
     }
   }
 }
+
+// CHW (channels-first / NCHW) variant of MaxPoolGrad. Same recompute-argmax
+// scatter, but indexing is c*H*W + h*W + w. Used by the GAP9 CCT conv tokenizer
+// whose tensors stay CHW (no HWC transpose) end-to-end. Channel-parallel.
+void PULP_MaxPoolGrad2d_fp32_fp32_CHW(
+    const float32_t *__restrict__ pGradOut,
+    const float32_t *__restrict__ pInput, uint32_t H_out, uint32_t W_out,
+    uint32_t C, uint32_t H_in, uint32_t W_in, uint32_t P, uint32_t Q,
+    uint32_t SP, uint32_t SQ, float32_t *__restrict__ pGradIn, uint32_t pad_top,
+    uint32_t pad_bottom, uint32_t pad_left, uint32_t pad_right) {
+
+  int8_t core_id = pi_core_id();
+  int8_t log2Core = LOG2(NUM_CORES);
+
+  uint16_t ch_chunk = (C >> log2Core) + ((C & (NUM_CORES - 1)) != 0);
+  uint16_t ch_start = MIN(ch_chunk * core_id, C);
+  uint16_t ch_stop = MIN(ch_start + ch_chunk, C);
+
+  for (uint32_t c = ch_start; c < ch_stop; ++c) {
+    const float32_t *in_c = pInput + (uint32_t)c * H_in * W_in;
+    const float32_t *gout_c = pGradOut + (uint32_t)c * H_out * W_out;
+    float32_t *gin_c = pGradIn + (uint32_t)c * H_in * W_in;
+
+    /* Zero-initialise this channel's gradient input */
+    for (uint32_t i = 0; i < H_in * W_in; ++i) {
+      gin_c[i] = 0.0f;
+    }
+
+    /* Scatter upstream gradient to the argmax position in each window */
+    for (uint32_t h_out = 0; h_out < H_out; ++h_out) {
+      for (uint32_t w_out = 0; w_out < W_out; ++w_out) {
+
+        int32_t h_in_start = (int32_t)h_out * (int32_t)SP - (int32_t)pad_top;
+        int32_t w_in_start = (int32_t)w_out * (int32_t)SQ - (int32_t)pad_left;
+
+        float32_t max_val = -inf;
+        int32_t max_h = -1;
+        int32_t max_w = -1;
+
+        for (uint32_t p = 0; p < P; ++p) {
+          int32_t h_in = h_in_start + (int32_t)p;
+          if (h_in < 0 || h_in >= (int32_t)H_in)
+            continue;
+
+          for (uint32_t q = 0; q < Q; ++q) {
+            int32_t w_in = w_in_start + (int32_t)q;
+            if (w_in < 0 || w_in >= (int32_t)W_in)
+              continue;
+
+            float32_t val = in_c[(uint32_t)h_in * W_in + (uint32_t)w_in];
+            if (val > max_val) {
+              max_val = val;
+              max_h = h_in;
+              max_w = w_in;
+            }
+          }
+        }
+
+        if (max_h >= 0 && max_w >= 0) {
+          gin_c[(uint32_t)max_h * W_in + (uint32_t)max_w] +=
+              gout_c[h_out * W_out + w_out];
+        }
+      }
+    }
+  }
+}

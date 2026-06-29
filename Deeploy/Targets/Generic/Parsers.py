@@ -578,6 +578,11 @@ class MaxPoolGradParser(NodeParser):
         self.operatorRepresentation['x_in'] = x_in.name
         self.operatorRepresentation['data_out'] = data_out.name
 
+        # Honor a per-node channels_first tag (set by PULPMaxPoolGradKeepCHWPass to
+        # keep the GAP9 conv tokenizer NCHW) over the global default, so the spatial
+        # dims aren't read from the channel axis.
+        channels_first = node.attrs.get("channels_first", channels_first)
+
         if channels_first:
             self.operatorRepresentation['batch'] = data_in.shape[0]
             self.operatorRepresentation['ch_im_in'] = data_in.shape[1]

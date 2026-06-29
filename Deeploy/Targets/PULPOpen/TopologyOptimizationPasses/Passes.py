@@ -39,6 +39,28 @@ class PULPConvKeepCHWPass(Pass):
         return graph
 
 
+@contextagnostic
+class PULPMaxPoolGradKeepCHWPass(Pass):
+    """Keep MaxPoolGrad nodes channels-first (NCHW) for the GAP9 conv tokenizer.
+
+    Tagging with ``keep_channels_first`` makes ``_NCHWtoNHWC_fun`` skip the
+    NCHW->NHWC transpose (which otherwise only transposed the grad I/O and left
+    the rewired x_in NCHW — a broken mixed-layout node). Tagging with
+    ``channels_first = True`` makes the generic MaxPoolGradParser read dims as
+    NCHW so it binds the *_CHW kernel + NCHW tile constraint. The conv-tokenizer
+    grads are already CHW, so the whole MaxPoolGrad stays channels-first.
+
+    Must run BEFORE PULPNCHWtoNHWCPass. No-op on graphs with no MaxPoolGrad.
+    """
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        for node in graph.nodes:
+            if node.op == "MaxPoolGrad":
+                node.attrs["keep_channels_first"] = True
+                node.attrs["channels_first"] = True
+        return graph
+
+
 def _squash_transpose_add_fun(graph: gs.Graph, match: Match, name: str):
 
     nodes_map = match.nodes_map

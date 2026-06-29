@@ -127,3 +127,114 @@ class MaxPoolGradCTileConstraint(TileConstraint):
         variableReplacementSchedule = VariableReplacementScheme(replacements, replacementTypes)
 
         return variableReplacementSchedule, tilingSchedule
+
+
+class MaxPoolGradCHWTileConstraint(TileConstraint):
+    """Channel-tiling constraint for **CHW (NCHW)** MaxPoolGrad.
+
+    Identical to MaxPoolGradCTileConstraint but the channel is dim 1 (NCHW
+    `[N, C, Hi, Wi]`), so it ties/tiles dim 1 and keeps the spatial dims full.
+    Used when the conv tokenizer is kept channels-first (no HWC transpose).
+    """
+
+    _CHANNEL = 1  # NCHW channel axis
+
+    @staticmethod
+    def addGeometricalConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        gradOutName = parseDict['data_in']
+        xInName = parseDict['x_in']
+        gradInName = parseDict['data_out']
+        C = MaxPoolGradCHWTileConstraint._CHANNEL
+
+        for bufferName in [gradOutName, xInName, gradInName]:
+            tilerModel.addTensorDimToModel(ctxt, bufferName)
+
+        # All three tensors share the same channel tile size (dim 1 in NCHW)
+        tilerModel.addConstraint(
+            tilerModel.getTensorDimVar(tensorName = gradInName, dimIdx = C) == tilerModel.getTensorDimVar(
+                tensorName = gradOutName, dimIdx = C))
+        tilerModel.addConstraint(
+            tilerModel.getTensorDimVar(tensorName = xInName, dimIdx = C) == tilerModel.getTensorDimVar(
+                tensorName = gradOutName, dimIdx = C))
+        return tilerModel
+
+    @staticmethod
+    def addPolicyConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        gradOutName = parseDict['data_in']
+        xInName = parseDict['x_in']
+        gradInName = parseDict['data_out']
+        numDims = len(ctxt.lookup(gradOutName).shape)
+        C = MaxPoolGradCHWTileConstraint._CHANNEL
+
+        # Fix every dimension except the channel (dim 1) for all three tensors
+        for bufferName in [gradOutName, xInName, gradInName]:
+            buf_shape = ctxt.lookup(bufferName).shape
+            for idx in range(numDims):
+                if idx != C:
+                    tilerModel.addConstraint(
+                        tilerModel.getTensorDimVar(tensorName = bufferName, dimIdx = idx) == buf_shape[idx])
+        return tilerModel
+
+    @classmethod
+    def serializeTilingSolution(
+            cls, tilingSolution: NodeMemoryConstraint, absoluteOutputCubes: List[AbsoluteHyperRectangle],
+            targetMemLevel: str, ctxt: NetworkContext,
+            operatorRepresentation: OperatorRepresentation) -> Tuple[VariableReplacementScheme, TilingSchedule]:
+        outputCubes = [cube.rectangle for cube in absoluteOutputCubes]
+        C = cls._CHANNEL
+
+        addrNames = ['data_in', 'data_out']
+        inputBaseOffsets, outputBaseOffsets = cls.extractBaseAddr(tilingSolution, targetMemLevel,
+                                                                  operatorRepresentation, addrNames)
+
+        x_in_name = operatorRepresentation['x_in']
+        x_in_in_solution = x_in_name in tilingSolution.tensorMemoryConstraints
+        if x_in_in_solution:
+            xInBaseOffsets, _ = cls.extractBaseAddr(tilingSolution, targetMemLevel, operatorRepresentation, ['x_in'])
+            inputBaseOffsets.update(xInBaseOffsets)
+
+        gradOutShape = ctxt.lookup(operatorRepresentation['data_in']).shape
+        xInShape = ctxt.lookup(x_in_name).shape
+
+        replacementTypes = {"ch_im_in": PointerClass(uint16_t)}
+        replacements: Dict[str, List[int]] = {"ch_im_in": []}
+
+        inputInCubes = []
+        xInCubes = []
+
+        for cube in outputCubes:
+            ch_tile = cube.dims[C]
+            ch_off = cube.offset[C]
+
+            # grad_out tile: same channel slice, full (output) spatial dims
+            grad_out_dims = list(gradOutShape)
+            grad_out_dims[C] = ch_tile
+            grad_out_offset = [0] * len(gradOutShape)
+            grad_out_offset[C] = ch_off
+            inputInCubes.append(HyperRectangle(tuple(grad_out_offset), tuple(grad_out_dims)))
+
+            # x_in tile: same channel slice, full (input) spatial dims
+            x_in_dims = list(xInShape)
+            x_in_dims[C] = ch_tile
+            x_in_offset = [0] * len(xInShape)
+            x_in_offset[C] = ch_off
+            xInCubes.append(HyperRectangle(tuple(x_in_offset), tuple(x_in_dims)))
+
+            replacements["ch_im_in"].append(ch_tile)
+
+        inputLoadSchedule = []
+        outputLoadSchedule = []
+
+        for grad_out_cube, x_in_cube in zip(inputInCubes, xInCubes):
+            entry = {"data_in": grad_out_cube}
+            if x_in_in_solution:
+                entry["x_in"] = x_in_cube
+            inputLoadSchedule.append(entry)
+
+        for out in outputCubes:
+            outputLoadSchedule.append({"data_out": out})
+
+        tilingSchedule = TilingSchedule(inputBaseOffsets, outputBaseOffsets, inputLoadSchedule, outputLoadSchedule)
+        variableReplacementSchedule = VariableReplacementScheme(replacements, replacementTypes)
+
+        return variableReplacementSchedule, tilingSchedule

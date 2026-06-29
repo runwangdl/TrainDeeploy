@@ -26,6 +26,7 @@ from Deeploy.Targets.Generic.Templates import AddTemplate, ConcatTemplate, Dequa
 from Deeploy.Targets.Generic.TypeCheckers import AddChecker, BatchNormalizationGradChecker, BatchNormInternalChecker, \
     ConcatChecker, ConvChecker, DequantChecker, GatherChecker, GELUChecker, GEMMChecker, GlobalAveragePoolChecker, \
     GlobalAveragePoolGradChecker, HardswishChecker, InPlaceAccumulatorV2Checker, LayerNormChecker, MatMulChecker, \
+    MaxPoolGradChecker, \
     MSELossChecker, MulChecker, PULPConvGradBChecker, QuantChecker, ReduceMeanChecker, ReluChecker, ReshapeChecker, \
     RQAddChecker, RQHardswishChecker, SGDChecker, SliceChecker, SoftmaxChecker, SoftmaxCrossEntropyLossChecker, \
     TransposeChecker
@@ -528,6 +529,15 @@ GAP9AveragePoolGrad2DBindings = [
                 FloatAveragePoolTemplate.referenceGradTemplate, GAP9Transformer)
 ]
 
+# MaxPool backward (needed to fine-tune the conv tokenizer, e.g. the CCT "full"
+# strategy). Reuses the shared FloatMaxPool reference-grad kernel; 2 inputs
+# (incoming grad + forward input, the kernel recomputes the argmax). GAP9Transformer
+# handles the L1/L2 staging like the forward MaxPool.
+GAP9MaxPoolGrad2DBindings = [
+    NodeBinding(MaxPoolGradChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMaxPoolTemplate.referenceGradTemplateCHW, GAP9Transformer)
+]
+
 GAP9GlobalAveragePool2DBindings = [
     NodeBinding(GlobalAveragePoolChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatGlobalAveragePoolTemplate.globalAveragePoolTemplate, GAP9Transformer)
@@ -579,3 +589,4 @@ GAP9LayernormGradBinding = NodeBinding(
         PointerClass(float32_t)
     ], [PointerClass(float32_t), PointerClass(float32_t),
         PointerClass(float32_t)]), FloatLayernormTemplate.referenceGradTemplate, GAP9Transformer)
+

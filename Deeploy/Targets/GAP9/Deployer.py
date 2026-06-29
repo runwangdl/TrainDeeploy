@@ -16,11 +16,12 @@ import onnx_graphsurgeon as gs
 from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.CommonExtensions.NetworkDeployers.SignPropDeployer import SignPropDeployer
 from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.LoweringOptimizationPasses import \
-    PULPNCHWtoNHWCPass
+    NCHWtoNHWCMaxPoolGradPass, PULPNCHWtoNHWCPass
 from Deeploy.DeeployTypes import ConstantBuffer, DeploymentPlatform, NodeTemplate, TopologyOptimizer, VariableBuffer
 from Deeploy.Targets.GAP9.Bindings import GAP9ClusterTransformer, GAP9SimpleTransformer, GAP9Transformer
 from Deeploy.Targets.PULPOpen.Deployer import PULPDeployer
-from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import PULPConvKeepCHWPass
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import PULPConvKeepCHWPass, \
+    PULPMaxPoolGradKeepCHWPass
 
 # GAP9-specific L3 RAM allocation and loading templates
 _GAP9L3AllocTemplate = NodeTemplate("""
@@ -82,6 +83,15 @@ class GAP9Deployer(PULPDeployer):
             passes = self.loweringOptimizer.passes
             insertIdx = next((i for i, p in enumerate(passes) if isinstance(p, PULPNCHWtoNHWCPass)), len(passes))
             passes.insert(insertIdx, PULPConvKeepCHWPass())
+
+        # RW: Keep MaxPoolGrad channels-first. The conv-tokenizer grads are CHW, so
+        # transposing only the MaxPoolGrad's grad I/O to NHWC (while its rewired x_in
+        # stayed NCHW) left a broken mixed-layout node. Tag MaxPoolGrad keep-CHW (skips
+        # the transpose) + channels_first (NCHW dim parse) so it binds the *_CHW kernel
+        # + NCHW tile constraint. Runs before PULPNCHWtoNHWCPass like the conv keep-CHW.
+        passes = self.loweringOptimizer.passes
+        mpgInsertIdx = next((i for i, p in enumerate(passes) if isinstance(p, PULPNCHWtoNHWCPass)), len(passes))
+        passes.insert(mpgInsertIdx, PULPMaxPoolGradKeepCHWPass())
 
     def generateBufferAllocationCode(self) -> str:
         retStr = SignPropDeployer.generateBufferAllocationCode(self)
