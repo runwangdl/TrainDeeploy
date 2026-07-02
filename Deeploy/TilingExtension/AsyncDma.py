@@ -230,27 +230,8 @@ class AnydimAsyncDmaTransferAdapter:
         transferRank = len(shape)
         kernelRank = self.nearestSupportedTransferRank(transferRank)
 
-        # Multi-request DMAs (those exposing _maxReq) index each decomposed transfer
-        # into its own request slot so they can be in-flight concurrently (async DB).
-        # Default to slot "0" (single-request / non-decomposed transfers).
-        future._reqIndexExpr = "0"
-
         if kernelRank < transferRank:
             nestedLoopDepth = transferRank - kernelRank
-
-            maxReq = getattr(self.dma, "_maxReq", None)
-            if maxReq is not None:
-                tripCount = math.prod([shape[level] for level in range(nestedLoopDepth)])
-                assert tripCount <= maxReq, \
-                    f"Anydim decomposition count {tripCount} exceeds DMA request pool {maxReq}"
-                # size this future's request pool to the exact decomposition count
-                future._poolSize = max(getattr(future, "_poolSize", 0), tripCount)
-                _dims = [shape[level] for level in range(nestedLoopDepth)]
-                _terms = []
-                for _lvl in range(nestedLoopDepth):
-                    _mult = math.prod(_dims[_lvl + 1:]) if _lvl + 1 < nestedLoopDepth else 1
-                    _terms.append(f"i_{_lvl}" if _mult == 1 else f"i_{_lvl}*{_mult}")
-                future._reqIndexExpr = " + ".join(_terms) if _terms else "0"
 
             nestedLoopOpRepr = {f"end_{level}": shape[level] for level in range(nestedLoopDepth)}
             locOffsetCalculationOpRepr = {f"stride_{level}": strideLoc[level] for level in range(nestedLoopDepth)}
