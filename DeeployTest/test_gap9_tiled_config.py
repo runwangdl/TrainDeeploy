@@ -110,13 +110,12 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
 # (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double.
-# CCT + ResNet8: ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to
-# coeff=1 (SB) by TrainingDBOnlyL3Tiler, so on GAP9 it takes the blocking
-# gap9L3DmaHack path (safe for strided 2D ConvGrad transfers) — no UDMA DB
-# deadlock. MobileNetV1: multi-tile Transpose + ConvGradW opted out of DB
-# (tilingUtils.DB_OPT_OUT_OPS, same numerical fix as Siracusa) AND its CHW
-# im2col forward conv routed through GAP9ClusterBlockingDBTransformer (blocking
-# DB hop) so its per-channel strided transfers don't crash the gvsoc UDMA model.
+# ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to coeff=1 (SB)
+# by TrainingDBOnlyL3Tiler. MobileNetV1: multi-tile Transpose + ConvGradW
+# opted out of DB (tilingUtils.DB_OPT_OUT_OPS, same numerical fix as
+# Siracusa); its CHW im2col forward conv runs the async DB hop directly
+# now that AnydimAsyncDmaTransferAdapter serializes decomposed sub-transfers
+# on the shared per-tensor request handle.
 L3_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT/cct_train": [122000],
     "Models/Training/ResNet8/resnet8_train": [122000],
