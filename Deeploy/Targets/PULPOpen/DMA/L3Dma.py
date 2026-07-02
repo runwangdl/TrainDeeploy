@@ -6,8 +6,7 @@ import math
 from typing import Dict, Tuple
 
 from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation, VariableBuffer
-from Deeploy.TilingExtension.AsyncDma import AsyncDma, BlockingDmaFromAsyncDmaAdapter, DmaDirection, Future, \
-    PerTensorWaitingStrategy
+from Deeploy.TilingExtension.AsyncDma import AsyncDma, DmaDirection, Future, PerTensorWaitingStrategy
 
 
 class L3DmaFuture(Future):
@@ -61,13 +60,9 @@ class L3Dma(AsyncDma):
         return operatorRepresentation
 
 
-# async L3 DMA — used ONLY as the DB (dbDma) backend, where it overlaps the
-# next-tile L3<->L2 prefetch with compute (the source of the DB speedup). It is
-# deliberately NOT used for SB hops: SB waits on each tile before computing, so
-# async buys no overlap, only the strided-2D deferred-wait corruption/deadlock
-# risk. (Matches the PULPL3Tiling docstring and the GAP9 binding.)
+# Async L3 DMA — used for both SB and DB. The strided-2D deferred-wait
+# corruption that previously required a blocking SB fallback is fixed at
+# the AnydimAsyncDmaTransferAdapter level (port of pulp-platform/Deeploy#198),
+# so async is now safe for every transfer shape and the separate
+# l3DmaBlocking variable is no longer needed.
 l3DmaHack = L3Dma()
-# blocking L3 DMA — the SB-hop backend (dma=). Waits each transfer inline so
-# strided 2D ConvGrad transfers complete in order: no corruption, no UDMA
-# deadlock. Matches devel's behaviour (devel used blocking for every hop).
-l3DmaBlocking = BlockingDmaFromAsyncDmaAdapter(L3Dma())

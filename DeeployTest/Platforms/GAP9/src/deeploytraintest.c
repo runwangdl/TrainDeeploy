@@ -159,18 +159,20 @@ static void bisect_mark(int n) {
   } while (0)
 #endif
 
-/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task. SLAVESTACKSIZE is
- * the per-core cluster slave-stack size. The FP32 trainlib kernels keep their
- * working sets in explicit L1 buffers, not on the stack, so the real per-core
- * need is <256B; 512 leaves margin. Overridable per model (-D SLAVESTACKSIZE=N).
+/* RW: GAP9 SDK does not use MAINSTACKSIZE for pi_cluster_task. SLAVESTACKSIZE
+ * is the per-core cluster slave-stack size. The FP32 trainlib kernels keep
+ * their working sets in explicit L1 buffers, not on the stack, so the real
+ * per-core need is <256B; 512 leaves margin. Overridable per model (-D
+ * SLAVESTACKSIZE=N).
  *
- * Placement: leave task->stacks == NULL so the SDK allocates the per-core stacks
- * in fast L1 TCDM (its native default; see __pi_cluster_task_set_stack). At 512B
- * x 8 cores that is only ~4KB of L1, and L1 stacks avoid the L2-access penalty
- * (measured -22..-38% train cycles vs forcing the stacks into an L2 buffer). The
- * old 3800B default ate ~30KB of L1, which is why the stacks used to be parked in
- * L2; shrinking the stack makes that workaround unnecessary — every training net
- * now fits its small L1 stacks alongside the tile arena (CCT via cc_stack=4096). */
+ * Placement: leave task->stacks == NULL so the SDK allocates the per-core
+ * stacks in fast L1 TCDM (its native default; see __pi_cluster_task_set_stack).
+ * At 512B x 8 cores that is only ~4KB of L1, and L1 stacks avoid the L2-access
+ * penalty (measured -22..-38% train cycles vs forcing the stacks into an L2
+ * buffer). The old 3800B default ate ~30KB of L1, which is why the stacks used
+ * to be parked in L2; shrinking the stack makes that workaround unnecessary —
+ * every training net now fits its small L1 stacks alongside the tile arena (CCT
+ * via cc_stack=4096). */
 #ifndef SLAVESTACKSIZE
 #define SLAVESTACKSIZE 512
 #endif

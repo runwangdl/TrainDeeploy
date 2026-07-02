@@ -39,7 +39,7 @@ class _ArgStructAllocateTemplate(NodeTemplate):
 # struct is fully re-initialized before use, and forks are barrier-synchronized.
 _stackAllocateTemplate = partial(
     _ArgStructAllocateTemplate,
-    templateStr =  "${structDict.typeName} ${name} = (${structDict.typeName}) ${str(structDict)};")
+    templateStr = "${structDict.typeName} ${name} = (${structDict.typeName}) ${str(structDict)};")
 
 
 class ArgumentStructGeneration(CodeTransformationPass, IntrospectiveCodeTransformationMixIn):
