@@ -61,9 +61,11 @@ GAP9Transformer = CodeTransformation([
     MemoryManagementGeneration("L1"),
     TilingVariableReplacement("L2"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    # SB -> blocking gap9L3DmaHack (safe for strided 2D ConvGrad L3 transfers);
-    # DB -> async GAP9L3Dma for real L3<->L2 prefetch overlap (CCT win).
-    PULPL3Tiling("L3", "L2", gap9L3DmaHack, dbDma = GAP9L3Dma()),
+    # Async L3 DMA for both SB and DB. Anydim now serializes the decomposed
+    # sub-transfers on the shared handle (port of pulp-platform/Deeploy#198),
+    # so async is safe for strided 2D ConvGrad L3 transfers too — no need for
+    # the SB blocking wrapper.
+    PULPL3Tiling("L3", "L2", gap9L3DmaHack),
     PULPProfileUntiled(),
     ArgumentStructGeneration(),
     L3MemoryAwareFunctionCallClosure(writeback = False),
@@ -82,9 +84,11 @@ GAP9ClusterTransformer = CodeTransformation([
     MemoryManagementGeneration("L1"),
     TilingVariableReplacement("L2"),
     MemoryAwareFunctionCallClosure(writeback = False, generateStruct = True),
-    # SB -> blocking gap9L3DmaHack (safe for strided 2D ConvGrad L3 transfers);
-    # DB -> async GAP9L3Dma for real L3<->L2 prefetch overlap (CCT win).
-    PULPL3Tiling("L3", "L2", gap9L3DmaHack, dbDma = GAP9L3Dma()),
+    # Async L3 DMA for both SB and DB. Anydim now serializes the decomposed
+    # sub-transfers on the shared handle (port of pulp-platform/Deeploy#198),
+    # so async is safe for strided 2D ConvGrad L3 transfers too — no need for
+    # the SB blocking wrapper.
+    PULPL3Tiling("L3", "L2", gap9L3DmaHack),
     PULPProfileUntiled(),
     ArgumentStructGeneration(),
     L3MemoryAwareFunctionCallClosure(writeback = False),
