@@ -11,12 +11,34 @@
 # the runscript -- so the same three lines would never fire. We therefore source
 # them once at build time and freeze the resulting environment.
 
-set -euo pipefail
+# Note: no `set -u`. The venv activate script and the SDK config are third-party
+# and reference unset variables freely; under `set -u` that kills the shell
+# outright, and buildkit does not surface the message.
+set -eo pipefail
 
+echo "== bake-env: GAP9_VENV=${GAP9_VENV} GAP9_SDK=${GAP9_SDK}"
+
+if [ ! -f "${GAP9_VENV}/bin/activate" ]; then
+    echo "bake-env: no venv at ${GAP9_VENV}/bin/activate" >&2
+    echo "bake-env: what is actually under ${GAP9_SDK}:" >&2
+    ls -la "${GAP9_SDK}" >&2 || echo "bake-env: ${GAP9_SDK} does not exist" >&2
+    exit 1
+fi
+
+# shellcheck disable=SC1090,SC1091
 source "${GAP9_VENV}/bin/activate"
-# The SDK config is board-flavoured; absent/failing config must not fail the
-# build because GVSoC simulation does not need the board bits.
-source "${GAP9_SDK}/configs/gap9_evk_audio.sh" >/dev/null 2>&1 || true
+echo "== bake-env: venv active, python=$(command -v python3) $(python3 --version 2>&1)"
+
+# Board-flavoured config; GVSoC simulation does not need the board bits, so a
+# missing or failing config must not fail the build.
+if [ -f "${GAP9_SDK}/configs/gap9_evk_audio.sh" ]; then
+    # shellcheck disable=SC1090,SC1091
+    source "${GAP9_SDK}/configs/gap9_evk_audio.sh" >/dev/null 2>&1 \
+        && echo "== bake-env: sourced gap9_evk_audio.sh" \
+        || echo "== bake-env: gap9_evk_audio.sh returned non-zero, continuing"
+else
+    echo "== bake-env: no gap9_evk_audio.sh, continuing"
+fi
 
 python3 - <<'PY' > /opt/gap9-env.sh
 import os
@@ -42,6 +64,6 @@ PY
 chmod 0644 /opt/gap9-env.sh
 
 # Fail loudly at build time rather than mysteriously at run time.
-grep -q '^export PATH=' /opt/gap9-env.sh
-grep -q '^export GVSOC_INSTALL_DIR=' /opt/gap9-env.sh
-echo "baked $(grep -c '^export' /opt/gap9-env.sh) variables into /opt/gap9-env.sh"
+grep -q '^export PATH=' /opt/gap9-env.sh || { echo "bake-env: no PATH captured" >&2; exit 1; }
+grep -q '^export GVSOC_INSTALL_DIR=' /opt/gap9-env.sh || { echo "bake-env: no GVSOC_INSTALL_DIR captured" >&2; exit 1; }
+echo "== bake-env: froze $(grep -c '^export' /opt/gap9-env.sh) variables into /opt/gap9-env.sh"

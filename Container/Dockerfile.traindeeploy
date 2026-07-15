@@ -65,6 +65,12 @@ RUN . /opt/gap9-env.sh && \
     pip install --no-cache-dir -e /app/Deeploy && \
     python3 -c 'import Deeploy; print("deeploy ok")'
 
+# The runner writes generated code to DeeployTest/TEST_<PLATFORM>/, i.e. inside
+# the repo -- which is read-only in a SIF. Create the directories at build time
+# so a writable per-run directory can be bind-mounted over them; Singularity
+# cannot create a bind target inside a read-only squashfs image.
+RUN mkdir -p /app/Deeploy/DeeployTest/TEST_GAP9 /app/Deeploy/DeeployTest/TEST_SIRACUSA /ccache
+
 # ---------------------------------------------------------------------------
 # 4. Agent tooling
 # ---------------------------------------------------------------------------
