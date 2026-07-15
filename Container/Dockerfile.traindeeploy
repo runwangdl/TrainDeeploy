@@ -83,4 +83,43 @@ RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | bash - && \
     npm install -g @anthropic-ai/claude-code && \
     claude --version
 
+# ---------------------------------------------------------------------------
+# 5. Interactive shell
+# ---------------------------------------------------------------------------
+# The GAP9 base has no zsh at all, despite the old gray containers having been
+# used through `docker exec -it ... zsh` -- that zsh was apt-installed into the
+# container's writable layer by hand and died with the machine. A SIF has no
+# writable layer, so whatever is wanted at the prompt has to be in the image.
+#
+# Everything lands in /opt/shell, not /root: Singularity runs as the invoking
+# user, so $HOME is never /root and a /root/.zshrc would never be read.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends zsh less vim && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV ZSH_DIR=/opt/shell/.oh-my-zsh
+RUN git clone --depth 1 https://github.com/ohmyzsh/ohmyzsh.git "${ZSH_DIR}" && \
+    git clone --depth 1 https://github.com/romkatv/powerlevel10k.git \
+        "${ZSH_DIR}/custom/themes/powerlevel10k" && \
+    git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git \
+        "${ZSH_DIR}/custom/plugins/zsh-autosuggestions" && \
+    git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        "${ZSH_DIR}/custom/plugins/zsh-syntax-highlighting" && \
+    git clone --depth 1 https://github.com/zsh-users/zsh-completions.git \
+        "${ZSH_DIR}/custom/plugins/zsh-completions" && \
+    git clone --depth 1 https://github.com/agkozak/zsh-z.git \
+        "${ZSH_DIR}/custom/plugins/zsh-z" && \
+    find /opt/shell -name .git -type d -prune -exec rm -rf {} +
+
+COPY Container/zshrc.container /opt/shell/.zshrc
+RUN chmod -R a+rX /opt/shell
+
+# ZDOTDIR makes zsh read /opt/shell/.zshrc instead of $HOME/.zshrc, so the shell
+# is configured from the image and nothing has to be seeded into a bound HOME.
+ENV ZDOTDIR=/opt/shell
+ENV SHELL=/usr/bin/zsh
+
+# Fail the build rather than ship a prompt that explodes on first use.
+RUN zsh -i -c 'echo "zsh ok: $ZSH_THEME"' < /dev/null
+
 WORKDIR /app/Deeploy

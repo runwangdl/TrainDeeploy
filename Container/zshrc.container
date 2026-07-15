@@ -1,0 +1,162 @@
+# SPDX-FileCopyrightText: 2026 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Interactive shell for the TrainDeeploy container.
+#
+# Adapted from the user's own .zshrc for a read-only SIF running as a non-root
+# user. Two things had to change, both forced by the container:
+#   - ZSH points into the image, not $HOME. HOME is whatever the caller binds
+#     in and has no .oh-my-zsh; the image does.
+#   - Every cache oh-my-zsh/p10k writes at startup goes to TMPDIR. The image is
+#     read-only, and the NFS home is shared across all machines and has hit 100%
+#     before, so it is a bad place for per-run scratch.
+# Loaded via ZDOTDIR=/opt/shell, so nothing needs seeding into $HOME.
+#
+# The GAP9 environment is already live when this runs: Singularity sources
+# /.singularity.d/env/91-gap9.sh first, so PATH, GVSOC_INSTALL_DIR and the gap9
+# venv are set. Nothing here may clobber them -- note the PATH line appends.
+
+export ZSH=/opt/shell/.oh-my-zsh
+
+# Writable scratch for everything that insists on writing at startup.
+export ZSH_CACHE_DIR="${TMPDIR:-/tmp}/omz-$(id -u)"
+export ZSH_COMPDUMP="$ZSH_CACHE_DIR/zcompdump"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$ZSH_CACHE_DIR}"
+mkdir -p "$ZSH_CACHE_DIR/completions"
+
+# Powerlevel10k instant prompt (must stay near top)
+if [[ -r "${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# With no ~/.p10k.zsh, p10k launches its interactive configuration wizard --
+# which hangs the image build and any non-interactive `singularity exec`. Ship a
+# plain prompt instead and let the user opt in by running `p10k configure`; the
+# result lands in the bound HOME and persists per project.
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
+HYPHEN_INSENSITIVE="true"
+ENABLE_CORRECTION="true"
+COMPLETION_WAITING_DOTS="true"
+HIST_STAMPS="yyyy-mm-dd"
+
+# History. HISTFILE lands in the bound HOME so it survives across runs.
+HISTSIZE=50000
+SAVEHIST=50000
+export HISTFILE="$HOME/.zsh_history"
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+setopt EXTENDED_HISTORY
+
+# Dropped from the original list: `docker` (no daemon is reachable from a SIF)
+# and `command-not-found` (wants Ubuntu's apt-file database, stripped from the
+# image).
+plugins=(
+  git
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+  zsh-completions
+  zsh-z
+  python
+  pip
+  colored-man-pages
+  extract
+  history
+  sudo
+)
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+source "$ZSH/oh-my-zsh.sh"
+
+# The git plugin aliases `gap` to `git apply`, which shadows the GAP9 SDK's own
+# `gap` command. The SDK wins here -- that is the point of this container.
+unalias gap 2>/dev/null
+
+# ── Aliases ──────────────────────────────────────────
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ll='ls -alFh --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate -20'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+alias gpl='git pull'
+
+alias py='python3'
+alias venv='python3 -m venv'
+alias activate='source ./venv/bin/activate 2>/dev/null || source ./.venv/bin/activate'
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+alias cls='clear'
+alias h='history'
+alias grep='grep --color=auto'
+alias ports='ss -tulanp'
+
+# ── GAP9 shortcuts ───────────────────────────────────
+alias dpcd='cd /app/Deeploy/DeeployTest'
+# The pytest entry point, not deeployTrainingRunner_gap9.py: that script
+# prepends /usr/bin to PATH, which resolves kconfigtool.py's `env python3` to
+# the system interpreter, which has none of the SDK deps. See PR #44.
+alias dptest='pytest test_platforms.py -v -m "gap9 and training"'
+
+# ── Functions ────────────────────────────────────────
+mkcd() { mkdir -p "$1" && cd "$1" }
+
+ex() {
+  if [ -f "$1" ]; then
+    case $1 in
+      *.tar.bz2) tar xjf "$1"   ;;
+      *.tar.gz)  tar xzf "$1"   ;;
+      *.bz2)     bunzip2 "$1"   ;;
+      *.gz)      gunzip "$1"    ;;
+      *.tar)     tar xf "$1"    ;;
+      *.tbz2)    tar xjf "$1"   ;;
+      *.tgz)     tar xzf "$1"   ;;
+      *.zip)     unzip "$1"     ;;
+      *.7z)      7z x "$1"      ;;
+      *)         echo "'$1' cannot be extracted" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+ff() { find . -type f -iname "*$1*" }
+fif() { grep -rn --color=auto "$1" . }
+
+# ── Key Bindings ─────────────────────────────────────
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[3~' delete-char
+
+# ── Environment ──────────────────────────────────────
+export EDITOR='vim'
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+# p10k config lives in the bound HOME, so `p10k configure` persists per project.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
