@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Run a command inside the frozen GAP9 environment.
+#
+# The image already injects /opt/gap9-env.sh via /.singularity.d/env, so under
+# Singularity you rarely need this. It exists as the fallback for the cases that
+# bypass that hook: plain `docker run --entrypoint`, `condor`'s own exec paths,
+# and any Singularity version that rebuilds /.singularity.d from scratch on
+# conversion. Sourcing twice is harmless -- the file is pure `export` lines.
+
+set -euo pipefail
+
+# shellcheck disable=SC1091
+. /opt/gap9-env.sh
+
+if [ "$#" -eq 0 ]; then
+    exec "${SHELL:-/bin/bash}"
+fi
+
+exec "$@"

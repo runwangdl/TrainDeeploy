@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: 2026 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# TrainDeeploy: Deeploy + Onnx4Deeploy + agent tooling, layered on the GAP9 image.
+#
+# Built to be consumed as a Singularity/Apptainer SIF on the IIS machines, where
+# there is no root, no --fakeroot (no /etc/subuid entry) and no Docker daemon.
+# The image is therefore built in CI and only ever *pulled* on the cluster.
+#
+# Design goal: `singularity exec traindeeploy.sif python deeployTrainingRunner_gap9.py -t <test>`
+# works with nothing sourced first. See Container/traindeeploy-bake-env.sh.
+
+ARG BASE_IMAGE=ghcr.io/runwangdl/deeploy:gap9
+FROM ${BASE_IMAGE}
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV GAP9_SDK=/app/install/gap9-sdk
+ENV GAP9_VENV=/app/install/gap9-sdk/.gap9-venv
+ENV GVSOC_INSTALL_DIR=/app/install/gap9-sdk/install/workstation
+
+# ---------------------------------------------------------------------------
+# 1. Freeze the GAP9 SDK environment
+# ---------------------------------------------------------------------------
+COPY Container/traindeeploy-bake-env.sh /tmp/traindeeploy-bake-env.sh
+RUN bash /tmp/traindeeploy-bake-env.sh && rm /tmp/traindeeploy-bake-env.sh
+
+# Singularity sources /.singularity.d/env/*.sh in filename order when it starts a
+# container, for `exec` and `shell` alike. Shipping our own file here is what
+# makes the frozen environment apply without a wrapper. 91- keeps it after
+# Singularity's own 90-environment.sh, so the SDK's PATH wins over the base one.
+RUN mkdir -p /.singularity.d/env && \
+    printf '#!/bin/sh\n# Injected by Container/Dockerfile.traindeeploy\n. /opt/gap9-env.sh\n' \
+        > /.singularity.d/env/91-gap9.sh && \
+    chmod 0755 /.singularity.d/env/91-gap9.sh
+
+COPY Container/dp /usr/local/bin/dp
+RUN chmod 0755 /usr/local/bin/dp
+
+# ---------------------------------------------------------------------------
+# 2. Onnx4Deeploy
+# ---------------------------------------------------------------------------
+# Pinned hard by upstream: the training-graph export path is sensitive to exact
+# torch/onnxruntime-training interactions, so let its own metadata drive pip and
+# do not co-resolve it with anything else.
+ARG ONNX4DEEPLOY_REPO=https://github.com/pulp-platform/Onnx4Deeploy.git
+ARG ONNX4DEEPLOY_REF=devel
+
+RUN . /opt/gap9-env.sh && \
+    python3 -c 'import sys; assert sys.version_info[:2] == (3, 10), sys.version' && \
+    git clone --depth 1 --branch "${ONNX4DEEPLOY_REF}" "${ONNX4DEEPLOY_REPO}" /app/Onnx4Deeploy && \
+    pip install --no-cache-dir -e /app/Onnx4Deeploy && \
+    python3 -c 'import onnx4deeploy, torch, onnx; print("onnx4deeploy ok:", torch.__version__, onnx.__version__)'
+
+# ---------------------------------------------------------------------------
+# 3. Deeploy itself
+# ---------------------------------------------------------------------------
+# Installed editable at the path README_GAP9.md uses for the bind mount, so a
+# working copy mounted over /app/Deeploy at run time is picked up with no
+# reinstall -- while an unmounted run still has the exact code this image was
+# built from, which is what the Condor jobs want.
+COPY . /app/Deeploy
+RUN . /opt/gap9-env.sh && \
+    pip install --no-cache-dir -e /app/Deeploy && \
+    python3 -c 'import Deeploy; print("deeploy ok")'
+
+# ---------------------------------------------------------------------------
+# 4. Agent tooling
+# ---------------------------------------------------------------------------
+# Claude Code runs *inside* the container in the current workflow, so node has
+# to be in the image. Kept last: it is the layer most likely to churn.
+ARG NODE_MAJOR=20
+RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | bash - && \
+    apt-get install -y --no-install-recommends nodejs && \
+    rm -rf /var/lib/apt/lists/* && \
+    npm install -g @anthropic-ai/claude-code && \
+    claude --version
+
+WORKDIR /app/Deeploy
