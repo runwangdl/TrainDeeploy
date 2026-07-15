@@ -35,6 +35,16 @@ RUN mkdir -p /.singularity.d/env && \
         > /.singularity.d/env/91-gap9.sh && \
     chmod 0755 /.singularity.d/env/91-gap9.sh
 
+# Singularity passes the host environment through by default, and some IIS
+# machines (fenga*, anything running Lmod) export FPATH into it. That FPATH
+# replaces zsh's own function path inside the container, so compinit and every
+# autoloaded function silently vanish -- the same image is fine on skylab, which
+# has no Lmod. Drop the host's value; the container ships its own zsh and needs
+# nothing from outside. 92- so it runs after the SDK env is in place.
+RUN printf '#!/bin/sh\n# Injected by Container/Dockerfile.traindeeploy\nunset FPATH\n' \
+        > /.singularity.d/env/92-drop-host-fpath.sh && \
+    chmod 0755 /.singularity.d/env/92-drop-host-fpath.sh
+
 COPY Container/dp /usr/local/bin/dp
 RUN chmod 0755 /usr/local/bin/dp
 
