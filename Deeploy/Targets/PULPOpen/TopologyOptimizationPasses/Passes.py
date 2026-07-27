@@ -39,6 +39,65 @@ class PULPConvKeepCHWPass(Pass):
         return graph
 
 
+@contextagnostic
+class TransposeGemmSquashPass(Pass):
+    """Eliminate the materialised transposed weight ``W^T`` of a linear layer.
+
+    A training graph emits a linear layer's forward as ``MatMul(X, Transpose(W))`` and
+    its input-gradient as ``Gemm(dY, Transpose(W), transB=1)``. Both read the SAME
+    materialised ``W^T = Transpose_[1,0](W)`` -- a full extra weight copy per linear
+    layer that is kept alive across the whole forward->backward step. But the GEMM
+    kernel already transposes its B operand in-place via ``transB``, so ``W^T`` never
+    needs to exist:
+
+      * forward  ``MatMul(X, T[1,0](W))``          == ``Gemm(X,  W, transB=1)``
+      * backward ``Gemm(dY, T[1,0](W), transB=1)``  == ``Gemm(dY, W, transB=0)``
+
+    This pass rewires both consumers to read ``W`` directly (converting the forward
+    MatMul to a Gemm). Once no consumer references the Transpose output, ``cleanup()``
+    drops the Transpose and ``W^T`` disappears from the arena entirely. Deeploy's GEMM
+    parser handles the forward's batched 3-D activation (``[1, seq, dim]``) natively via
+    its batch dims, so no reshape is needed.
+
+    Measured (GAP9, CCT training): removing the backward's ``W^T`` dependency alone gives
+    ``MEMORYARENA_L3`` 3528 -> 3173 KB; folding the forward too removes the remaining
+    forward-side ``W^T``. Exact, ``@contextagnostic``; only fires on a plain 2-D
+    ``perm=[1,0]`` Transpose of a weight leaf (graph input / Constant) feeding a
+    Gemm/MatMul's B input.
+    """
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        producers = {o.name: n for n in graph.nodes for o in n.outputs if o.name}
+        for node in graph.nodes:
+            if node.op not in ("Gemm", "MatMul") or len(node.inputs) < 2:
+                continue
+            tp = producers.get(node.inputs[1].name)
+            if tp is None or tp.op != "Transpose":
+                continue
+            perm = tp.attrs.get("perm", None)
+            if perm is None or list(perm) != [1, 0]:
+                continue
+            # only fold a transposed WEIGHT (a leaf: graph input or Constant), not a
+            # transposed activation -- keeps the rewrite to the W^T-redundancy case.
+            weight = tp.inputs[0]
+            if weight.name in producers:
+                continue
+            if node.op == "Gemm":
+                if int(node.attrs.get("transB", 0)) != 1:
+                    continue
+                node.inputs[1] = weight  # Gemm(A, T(W), transB=1) == Gemm(A, W, transB=0)
+                node.attrs["transB"] = 0
+            else:  # MatMul(A, T(W)) == Gemm(A, W, transB=1)
+                node.op = "Gemm"
+                node.inputs[1] = weight
+                node.attrs["transB"] = 1
+                node.attrs.setdefault("transA", 0)
+                node.attrs.setdefault("alpha", 1)
+                node.attrs.setdefault("beta", 1)
+        graph.cleanup()
+        return graph
+
+
 def _squash_transpose_add_fun(graph: gs.Graph, match: Match, name: str):
 
     nodes_map = match.nodes_map
