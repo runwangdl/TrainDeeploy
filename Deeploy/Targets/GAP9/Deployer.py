@@ -8,9 +8,8 @@ This deployer extends PULPDeployer to use GAP9-specific DMA (ClDma) via
 the GAP9Bindings transformers.
 """
 
-from typing import Callable, Dict, Tuple, Type
-
 import hashlib
+from typing import Callable, Dict, Tuple, Type
 
 import numpy as np
 import onnx_graphsurgeon as gs
@@ -36,7 +35,6 @@ load_file_to_ram(${locPtr}, "${extName}.hex");
 _GAP9L3AliasTemplate = NodeTemplate("""
 ${locPtr} = ${srcPtr};
 """)
-
 
 
 class GAP9Deployer(PULPDeployer):

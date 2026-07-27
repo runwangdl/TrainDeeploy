@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Callable, Dict, List, Tuple, Type
-
 import hashlib
+from typing import Callable, Dict, List, Tuple, Type
 
 import numpy as np
 import onnx_graphsurgeon as gs
@@ -164,11 +163,7 @@ class PULPDeployer(SignPropDeployer):
                 extName = str(idx)
                 buf.extName = extName
                 seenConst[key] = (locPtr, extName)
-                L3FileStr += _L3AllocTemplate.generate({
-                    "locPtr": locPtr,
-                    "extName": extName,
-                    "size": size
-                })
+                L3FileStr += _L3AllocTemplate.generate({"locPtr": locPtr, "extName": extName, "size": size})
             else:
                 extName = str(idx)
                 buf.extName = extName
