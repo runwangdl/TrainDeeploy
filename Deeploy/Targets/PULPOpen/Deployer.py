@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Callable, Dict, List, Type
+from typing import Callable, Dict, List, Tuple, Type
+
+import hashlib
 
 import numpy as np
 import onnx_graphsurgeon as gs
@@ -25,6 +27,10 @@ ${locPtr} = cl_ram_malloc(${size});
 
 _L3InitTemplate = NodeTemplate("""
 load_file_to_ram(${locPtr}, "${extName}.hex");
+""")
+
+_L3AliasTemplate = NodeTemplate("""
+${locPtr} = ${srcPtr};
 """)
 
 
@@ -121,15 +127,51 @@ class PULPDeployer(SignPropDeployer):
             if hasattr(buf, "_memoryLevel") and buf._memoryLevel == "L3" and not buf.name in outputBuffNames:
                 l3ConstBuffer.append(buf)
 
+        # Constants with byte-identical contents get one L3 allocation, not one each.
+        #
+        # `_duplicateConstants` gives every consumer of a multi-consumer constant its own
+        # copy, which the tiler needs -- it builds one geometry per buffer, and a single
+        # buffer consumed by two ops with different tile shapes is infeasible. But only
+        # the tiling descriptor has to be duplicated; the bytes are read-only and can be
+        # shared. Without that, every frozen weight is stored once per consumer, and a
+        # frozen weight always has at least two (the forward op and its gradient, which
+        # needs W to produce dL/dx).
+        #
+        # Measured on GAP9, L3 peak, address-deduplicated: duplicates are 58% of the
+        # persistent region of a loralib-style conv-LoRA ResNet8 (607KB of 1046KB) and
+        # 94% of the same model in PEFT form (1276KB of 1356KB). Transformers are barely
+        # affected (CCT 5.5%, CCT-LoRA 1%) because their weight transposes are constant-
+        # folded, so forward and backward read different tensors.
+        #
+        # Aliases also skip load_file_to_ram, so boot-time transfers drop by the same
+        # amount, and they reuse the source's extName so no duplicate .hex is written.
+        seenConst: Dict[str, Tuple[str, str]] = {}
+
         for idx, buf in enumerate(l3ConstBuffer):
 
             locPtr = str(buf._instance)
-            extName = str(idx)
-            buf.extName = extName
             size = np.prod(buf.shape) * (buf._type.referencedType.typeWidth // 8)
 
             if isinstance(buf, ConstantBuffer):
-                L3FileStr += _L3AllocTemplate.generate({"locPtr": locPtr, "extName": extName, "size": size})
+                values = np.ascontiguousarray(np.asarray(buf.values))
+                key = f"{values.dtype.str}|{values.shape}|{hashlib.md5(values.tobytes()).hexdigest()}"
+                previous = seenConst.get(key)
+                if previous is not None:
+                    srcPtr, srcExtName = previous
+                    buf.extName = srcExtName
+                    L3FileStr += _L3AliasTemplate.generate({"locPtr": locPtr, "srcPtr": srcPtr})
+                    continue
+                extName = str(idx)
+                buf.extName = extName
+                seenConst[key] = (locPtr, extName)
+                L3FileStr += _L3AllocTemplate.generate({
+                    "locPtr": locPtr,
+                    "extName": extName,
+                    "size": size
+                })
+            else:
+                extName = str(idx)
+                buf.extName = extName
 
             L3FileStr += _L3InitTemplate.generate({"locPtr": locPtr, "extName": extName, "size": size})
 

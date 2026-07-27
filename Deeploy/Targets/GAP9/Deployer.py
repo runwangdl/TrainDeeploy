@@ -8,7 +8,9 @@ This deployer extends PULPDeployer to use GAP9-specific DMA (ClDma) via
 the GAP9Bindings transformers.
 """
 
-from typing import Callable, Dict, Type
+from typing import Callable, Dict, Tuple, Type
+
+import hashlib
 
 import numpy as np
 import onnx_graphsurgeon as gs
@@ -30,6 +32,11 @@ ${locPtr} = cl_ram_malloc(${size});
 _GAP9L3InitTemplate = NodeTemplate("""
 load_file_to_ram(${locPtr}, "${extName}.hex");
 """)
+
+_GAP9L3AliasTemplate = NodeTemplate("""
+${locPtr} = ${srcPtr};
+""")
+
 
 
 class GAP9Deployer(PULPDeployer):
@@ -99,16 +106,33 @@ class GAP9Deployer(PULPDeployer):
             if hasattr(buf, "_memoryLevel") and buf._memoryLevel == "L3" and buf.name not in outputBuffNames:
                 l3ConstBuffer.append(buf)
 
-        # Generate allocation and loading code for each L3 buffer
+        # Generate allocation and loading code for each L3 buffer. Constants with
+        # byte-identical contents share one allocation and one load -- see the comment
+        # on the same loop in Targets/PULPOpen/Deployer.py for why the duplicates exist
+        # and how much they cost.
+        seenConst: Dict[str, Tuple[str, str]] = {}
+
         for idx, buf in enumerate(l3ConstBuffer):
             locPtr = str(buf._instance)
-            extName = str(idx)
-            buf.extName = extName  # This enables hex dump generation
             size = np.prod(buf.shape) * (buf._type.referencedType.typeWidth // 8)
 
             # Allocate L3 RAM space (for constant buffers only)
             if isinstance(buf, ConstantBuffer):
+                values = np.ascontiguousarray(np.asarray(buf.values))
+                key = f"{values.dtype.str}|{values.shape}|{hashlib.md5(values.tobytes()).hexdigest()}"
+                previous = seenConst.get(key)
+                if previous is not None:
+                    srcPtr, srcExtName = previous
+                    buf.extName = srcExtName  # reuse the source's hex, do not dump a copy
+                    L3FileStr += _GAP9L3AliasTemplate.generate({"locPtr": locPtr, "srcPtr": srcPtr})
+                    continue
+                extName = str(idx)
+                buf.extName = extName  # This enables hex dump generation
+                seenConst[key] = (locPtr, extName)
                 L3FileStr += _GAP9L3AllocTemplate.generate({"locPtr": locPtr, "extName": extName, "size": size})
+            else:
+                extName = str(idx)
+                buf.extName = extName
 
             # Load data from ReadFS
             L3FileStr += _GAP9L3InitTemplate.generate({"locPtr": locPtr, "extName": extName, "size": size})
