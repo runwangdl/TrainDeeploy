@@ -34,7 +34,7 @@ from Deeploy.Targets.PULPOpen.DMA.MchanDma import MchanDma
 from Deeploy.Targets.PULPOpen.Templates import ConvTemplate, DMASliceTemplate, FloatAddTemplate, \
     FloatAveragePoolTemplate, FloatBatchNormTemplate, FloatConvGradTemplate, FloatConvTemplate, FloatGELUTemplate, \
     FloatGemmTemplate, FloatGlobalAveragePoolTemplate, FloatInPlaceAccumulatorV2Template, FloatLayernormTemplate, \
-    FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReduceMeanTemplate, FloatReluTemplate, \
+    FloatMatMulDequantTemplate, FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReduceMeanTemplate, FloatReluTemplate, \
     FloatSoftmaxTemplate, GEMMTemplate, MatrixVectorTemplate, MaxPoolTemplate, MSELossTemplate, MulTemplate, \
     ReduceMeanTemplate, RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, SGDTemplate, \
     SoftmaxCrossEntropyLossTemplate, TallGEMMTemplate, TransposeTemplate, UniformRequantShiftTemplate, \
@@ -390,6 +390,12 @@ PULPDWConv1DBinding = NodeBinding(
 PULPMatMulBindings = [
     NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
                 GEMMTemplate.PULPMM_8_Template, ClusterTransformer)
+] + [
+    # fp32 activations against an int8 weight: the Dequant has been folded into the
+    # matmul, so the weight is never materialised as fp32. Listed before the plain
+    # fp32 binding because it is the more specific type signature.
+    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
+                FloatMatMulDequantTemplate.referenceTemplate, ForkTransformer)
 ] + [
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatMatMulTemplate.referenceTemplate, ForkTransformer)
