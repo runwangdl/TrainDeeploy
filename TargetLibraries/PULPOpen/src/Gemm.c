@@ -7,12 +7,19 @@
 #include "DeeployPULPMath.h"
 #include "pmsis.h"
 
+// biasStride is the row stride of pDstC: O for a full [M,O] bias, and 0 for a
+// broadcast [O] bias, where every output row adds the same vector. A
+// transformer stores its Linear bias as [O] but GEMMLayer.computeShapes used to
+// widen the C operand to [M,O], materialising the same O values M times -- 32
+// KB per 128-wide bias at 64 tokens, against 512 B of data. Passing a stride
+// keeps one kernel for both layouts, and biasStride == O reproduces the
+// previous behaviour exactly.
 void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
                                    const float32_t *__restrict__ pSrcB,
                                    const float32_t *__restrict__ pDstC,
                                    float32_t *__restrict__ pDstY, uint32_t M,
                                    uint32_t N, uint32_t O, uint32_t transA,
-                                   uint32_t transB) {
+                                   uint32_t transB, uint32_t biasStride) {
 
   int8_t core_id = pi_core_id();
   int8_t log2Core = LOG2(NUM_CORES);
@@ -35,7 +42,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
     for (uint32_t i = M_start; i < M_end; ++i) {
       const float32_t *__restrict__ a_row = &pSrcA[i * N];
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
 
@@ -85,7 +93,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
 
     for (uint32_t i = M_start; i < M_end; ++i) {
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {
@@ -181,7 +190,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
     for (uint32_t i = M_start; i < M_end; ++i) {
       const float32_t *__restrict__ a_row = &pSrcA[i * N];
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {
@@ -266,7 +276,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
 
     for (uint32_t i = M_start; i < M_end; ++i) {
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {

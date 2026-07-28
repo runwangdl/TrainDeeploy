@@ -39,6 +39,7 @@ from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTil
 from Deeploy.Targets.PULPOpen.TileConstraints.AveragePoolTileConstraint import AveragePoolCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import BatchNormalizationGradTileConstraint, \
     BatchNormInternalTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.BroadcastAddTileConstraint import PULPBroadcastAddTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import ConvGradBTileConstraint, \
     ConvGradW2DTileConstraint, ConvGradX2DIm2ColHWTileConstraint, DWConvGradW2DTileConstraint, \
     DWConvGradX2DTileConstraint, PWConvGradWTileConstraint, PWConvGradXTileConstraint
@@ -130,7 +131,7 @@ GAP9TransposeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9Tr
                                                            tileConstraint = TransposeTileConstraint())
 
 GAP9AddTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9AddBindings,
-                                                     tileConstraint = AddTileConstraint())
+                                                     tileConstraint = PULPBroadcastAddTileConstraint())
 
 GAP9SoftmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9SoftmaxBindings,
                                                          tileConstraint = iSoftmaxTileConstraint())

@@ -22,6 +22,18 @@ class PULPFloatGEMMTemplate(NodeTemplate):
             operatorRepresentation['C'] = None
             operatorRepresentation['C_type'] = PointerClass(float32_t)  # Default to fp32 type
             operatorRepresentation['C_batched'] = False
+            operatorRepresentation['C_stride'] = 0
+            return ctxt, operatorRepresentation, []
+
+        # Row stride of the bias. A bias the parser left one-dimensional holds O
+        # values shared by every output row, so the kernel re-reads the same vector
+        # (stride 0) instead of the graph carrying M identical copies of it. A
+        # two-dimensional bias keeps the original [M,O] walk.
+        biasShape = ctxt.lookup(operatorRepresentation['C']).shape
+        broadcast = len([d for d in biasShape if d != 1]) <= 1
+        operatorRepresentation['C_stride'] = 0 if broadcast else operatorRepresentation['O']
+        if broadcast:
+            operatorRepresentation['C_batched'] = False
 
         return ctxt, operatorRepresentation, []
 
@@ -48,7 +60,8 @@ for(uint32_t i=0; i<${batch}; i++){
         ${N},
         ${O},
         ${transA},
-        ${transB}
+        ${transB},
+        ${C_stride}
     );
     % else:
     PULP_Gemm_fp${A_type.referencedType.typeWidth}_fp${B_type.referencedType.typeWidth}_fp${C_type.referencedType.typeWidth}_fp${data_out_type.referencedType.typeWidth}(
@@ -60,7 +73,8 @@ for(uint32_t i=0; i<${batch}; i++){
         ${N},
         ${O},
         ${transA},
-        ${transB}
+        ${transB},
+        ${C_stride}
     );
     % endif
     % if A_batched:

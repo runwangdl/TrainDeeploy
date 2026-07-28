@@ -233,11 +233,21 @@ class FloatGEMMTileConstraint(TileConstraint):
 
         # Add bias constraints only if bias is present
         if has_bias:
-            dimOffsetC = len(bufferC.shape) - 2
-            addDimVar_1 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC)
-            addDimVar_2 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC + 1)
-            tilerModel.addConstraint(outputFirstDimVar == addDimVar_1)
-            tilerModel.addConstraint(outputSecondDimVar == addDimVar_2)
+            # A one-dimensional bias is broadcast over the output rows: it has no M
+            # extent to tie to the output's, and the kernel re-reads the same vector
+            # for every row (bias row stride 0). Constraining only the trailing
+            # dimension is what lets it stay [O] instead of being widened to [M,O].
+            biasDims = [d for d in bufferC.shape if d != 1]
+            if len(biasDims) <= 1:
+                lastDimIdx = len(bufferC.shape) - 1
+                addDimVar = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = lastDimIdx)
+                tilerModel.addConstraint(outputSecondDimVar == addDimVar)
+            else:
+                dimOffsetC = len(bufferC.shape) - 2
+                addDimVar_1 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC)
+                addDimVar_2 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC + 1)
+                tilerModel.addConstraint(outputFirstDimVar == addDimVar_1)
+                tilerModel.addConstraint(outputSecondDimVar == addDimVar_2)
 
         return tilerModel
 
@@ -340,7 +350,18 @@ class FloatGEMMTileConstraint(TileConstraint):
             inputBCubes.append(BCube)
 
             if has_bias:
-                CCube = HyperRectangle(tuple(cube.offset), tuple(cube.dims))
+                # A widened [M, O] bias is tiled exactly like the output. A broadcast
+                # bias is not: it only has the trailing O extent, so asking for the
+                # output's cube would have the DMA read M * O elements out of an
+                # O-element buffer. That is invisible when everything already sits in
+                # L2 and there is no transfer, and it is why this only ever showed up
+                # on the L3 and promote configurations.
+                biasShape = ctxt.lookup(operatorRepresentation['C']).shape
+                if len([d for d in biasShape if d != 1]) <= 1:
+                    leading = len(biasShape) - 1
+                    CCube = HyperRectangle(tuple([0] * leading + [OOffset]), tuple([1] * leading + [OSize]))
+                else:
+                    CCube = HyperRectangle(tuple(cube.offset), tuple(cube.dims))
                 inputAddCubes.append(CCube)
 
         inputLoadSchedule = []
