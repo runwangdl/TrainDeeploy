@@ -62,7 +62,8 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPSGDTilingReadyBindings, PULPSliceTilingReadyBindings, PULPSoftmaxCrossEntropyGradTilingReadyBindings, \
     PULPSoftmaxCrossEntropyTilingReadyBindings, PULPSoftmaxGradTilingReadyBindings, PULPSoftmaxTilingReadyBindings, \
     PULPTransposeTilingReadyBindings, PULPUniformRQSTilingReadyBindings
-from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import PULPAddRequantMergePass, \
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldDequantIntoMatMulPass, \
+    PULPAddRequantMergePass, \
     PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
@@ -276,6 +277,10 @@ PULPOptimizer = TopologyOptimizer([
     TransposeGemmSquashPass(),
     QuantPatternPass(),
     DequantPatternPass(),
+    # Fold a weight's Dequant into the matmul that reads it, so the dequantised
+    # weight is never materialised. Placed straight after DequantPatternPass, which
+    # is what normalises the Dequant nodes this matches on.
+    FoldDequantIntoMatMulPass(),
     SkipEmptyConcatPass(),
     SkipUnityRequantPass(previous_op_regex = "Concat", num_inputs = 2),
     SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
