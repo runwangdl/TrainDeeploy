@@ -91,6 +91,9 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
     "Models/Training/Autoencoder/autoencoder_train": [128000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+    # ResNet8 on-chip: 1316 KB peak with the memory-minimising schedule, which is
+    # what brings it inside 1.5 MB L2 alongside the ~171 KB static section.
+    "Models/Training/ResNet8/resnet8_train": [122000],
 }
 
 # L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
@@ -103,6 +106,14 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
     "Models/Training/CCT_LoRA/cct_lora_train": [40000],
+    # Rank-4 LoRA on CCT-2 at the official spec (mlp_ratio=1), adapters on attention
+    # and FFN. 2292 KB peak, 54.5M cycles -- faster than full fine-tuning because the
+    # frozen base weights need no weight gradients.
+    "Models/Training/CCT_LoRA_R1/cct_lorar1_train": [122000],
+    # The same model with its frozen backbone quantised to int8. Exercises the folded
+    # Dequant path: without in-kernel dequantisation this model does not fit at all
+    # (minimalloc fails), and with it the weights reach the kernels as int8.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [122000],
     "Models/Training/SleepConViT/sleepconvit_train": [122000],
     "Models/Training/TSDR/tsdr_train": [122000],
     "Models/Training/MCUNet/mcunet_train": [116000],
@@ -193,6 +204,20 @@ TRAINING_MODEL_OVERRIDES = {
         #   cc8192 + L2 stacks            87.1M  (previous config)
         #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
         # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
+        "slave_stack": 512,
+    },
+    "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
+        "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+    },
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": {
+        "num_data_inputs": 1,
+        # int8 weights dequantised in-kernel; the tolerance covers per-tensor
+        # symmetric quantisation of the frozen backbone, not a looser kernel.
+        "tolerance": 5e-2,
+        "cc_stack": 4096,
         "slave_stack": 512,
     },
     "Models/Training/CCT_LoRA/cct_lora_train": {
