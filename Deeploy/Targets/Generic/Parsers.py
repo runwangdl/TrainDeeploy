@@ -2064,6 +2064,13 @@ class MatMulParser(NodeParser):
             self.operatorRepresentation['transB'] = 0
             self.operatorRepresentation['transA'] = 0
 
+            # A weight-only-quantised graph can fold its Dequant into this node, in
+            # which case the B operand arrives as int8 and carries the per-tensor
+            # affine parameters the kernel needs. Defaults keep the fp32 path
+            # unchanged for every graph that has no folded Dequant.
+            self.operatorRepresentation['dequant_scale'] = float(node.attrs.get('dequant_scale', 1.0))
+            self.operatorRepresentation['dequant_zero_point'] = int(node.attrs.get('dequant_zero_point', 0))
+
         return ret
 
     def parseNodeCtxt(self,

@@ -344,3 +344,98 @@ class PULPMatMulRequantMergePass(ReplaceSequentialPatternPass):
 
         name = "_MERGE_GEMM_MATMUL_RQ_PASS"
         super().__init__(graph, _merge_gemm_rq_fun, name)
+
+
+@contextagnostic
+class FoldDequantIntoMatMulPass(Pass):
+    """Fold a weight's Dequant into the MatMul or Gemm nodes that consume it.
+
+    Weight-only quantisation stores a frozen weight as int8 and needs it as float
+    for an fp32 matmul. Left as its own node, the Dequant materialises the whole
+    dequantised matrix, which then has to live from the forward pass to the
+    backward one or be recomputed -- on CCT-QLoRA, 1088 KB of fp32 tensors whose
+    Dequant nodes account for 239.95M cycles, only 48.47M of which is the kernel.
+    QLoRA instead dequantises inside the matmul and discards the value;
+    PULP_MatMul_fp32_i8_fp32_unroll1x7 does that, given the per-tensor scale and
+    zero point this pass attaches.
+
+    Written as a plain graph walk rather than a pattern replacement. The Dequant
+    worth folding is read by TWO nodes, the forward matmul and its gradient, and
+    that fan-out is what the sequential matcher skips; a Dequant with one consumer
+    is the cheap tail. Each consumer then dequantises independently, which repeats
+    the conversion on purpose -- it is register-level work inside the kernel, and
+    cheaper than keeping a materialised fp32 copy alive across the step.
+
+    Only a win alongside constant deduplication: removing the Dequant gives the
+    int8 constant two direct consumers, and _duplicateConstants stores one copy per
+    consumer unless byte-identical constants are shared.
+    """
+
+    FOLDABLE_OPS = ('MatMul', 'Gemm')
+
+    def run_pass(self, graph: gs.Graph):
+        folded = 0
+        for node in list(graph.nodes):
+            if node.op != 'Dequant' or not node.outputs or node.outputs[0] is None:
+                continue
+            dequantOut = node.outputs[0]
+            consumers = list(dequantOut.outputs)
+            if not consumers:
+                continue
+            # Every consumer must take it as the weight operand, which is the one
+            # the kernels dequantise. A Dequant feeding anything else is left alone.
+            if not all(c.op in self.FOLDABLE_OPS and len(c.inputs) >= 2 and c.inputs[1] is dequantOut
+                       for c in consumers):
+                continue
+            quantised = node.inputs[0] if node.inputs else None
+            if quantised is None:
+                continue
+
+            for consumer in consumers:
+                consumer.inputs[1] = quantised
+                consumer.attrs['dequant_scale'] = float(node.attrs.get('scale', 1.0))
+                consumer.attrs['dequant_zero_point'] = int(node.attrs.get('zero_point', 0))
+
+            node.inputs.clear()
+            node.outputs.clear()
+            folded += 1
+
+        if folded:
+            graph.cleanup()
+        return graph
+
+
+def _fold_dequant_fun(graph: gs.Graph, match: Match, name: str):
+    """Rewire a Dequant's consumer to read the int8 tensor and dequantise in-kernel."""
+    matched = [m for k, m in match.nodes_map.items()]
+    dequant, consumer = matched[0], matched[1]
+
+    dequantOut = dequant.outputs[0]
+    # Only the weight operand is folded: the kernels dequantise their second input.
+    if len(consumer.inputs) < 2 or consumer.inputs[1] is not dequantOut:
+        return graph
+    quantised = dequant.inputs[0] if dequant.inputs else None
+    if quantised is None:
+        return graph
+
+    # Every consumer of this Dequant takes the int8 tensor and dequantises it
+    # itself. That repeats the conversion on purpose: it is register-level work
+    # inside the kernel, and cheaper than keeping a materialised fp32 copy alive
+    # between a forward use and the backward one that reads it again.
+    consumers = list(dequantOut.outputs)
+    if not all(len(c.inputs) >= 2 and c.inputs[1] is dequantOut for c in consumers):
+        return graph
+
+    for c in consumers:
+        c.inputs[1] = quantised
+        c.attrs['dequant_scale'] = float(dequant.attrs.get('scale', 1.0))
+        c.attrs['dequant_zero_point'] = int(dequant.attrs.get('zero_point', 0))
+
+    # deleteNode() reconnects a node's output to its input, which assumes the node
+    # is a pass-through. This one is not any more: its consumers now read the int8
+    # tensor directly, so its output is an orphan. Detach it and let cleanup()
+    # collect the node instead.
+    dequant.inputs.clear()
+    dequant.outputs.clear()
+    graph.cleanup()
+    return graph
