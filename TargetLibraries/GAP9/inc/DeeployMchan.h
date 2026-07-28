@@ -44,17 +44,17 @@
 // GAP9's mchan.h carries the older push/wait API used by dory_dma.c. The tiling
 // codegen (MchanDma.py) emits the channel API instead -- mchan_channel_alloc /
 // _wait / _free, mchan_transfer_1d, mchan_transfer_2d_ext_strided -- which only
-// PULPOpen's mchan_v7.h defines. GAP9 *is* MCHAN v7, and PULPOpen/inc is already
-// on the include path, so pull in the definitions rather than duplicating them.
-// Every macro mchan_v7.h requires (MCHAN_BASE_ADDR, MCHAN_EVENT/POLLED,
-// MCHAN_EVENT_BIT) is set above.
-// mchan_v7.h asserts on the channel id, but neither "assert.h" nor <assert.h>
-// yields an assert() macro here: the GAP9 SDK ships
-// rtos/pmsis/tools/assert/include/assert.h ahead of the toolchain's on the include
-// path, and it declares only pi_assert. With -Werror the implicit declaration is
-// fatal. Supply the macro rather than reordering the SDK's include path; the checks
-// guard a channel id the codegen already bounds, and this is a DMA hot path where
-// a runtime check would not be wanted anyway.
+// PULPOpen's mchan_v7.h defines. GAP9 *is* MCHAN v7, and PULPOpen/inc is
+// already on the include path, so pull in the definitions rather than
+// duplicating them. Every macro mchan_v7.h requires (MCHAN_BASE_ADDR,
+// MCHAN_EVENT/POLLED, MCHAN_EVENT_BIT) is set above. mchan_v7.h asserts on the
+// channel id, but neither "assert.h" nor <assert.h> yields an assert() macro
+// here: the GAP9 SDK ships rtos/pmsis/tools/assert/include/assert.h ahead of
+// the toolchain's on the include path, and it declares only pi_assert. With
+// -Werror the implicit declaration is fatal. Supply the macro rather than
+// reordering the SDK's include path; the checks guard a channel id the codegen
+// already bounds, and this is a DMA hot path where a runtime check would not be
+// wanted anyway.
 #ifndef assert
 #define assert(cond) ((void)0)
 #endif

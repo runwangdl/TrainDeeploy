@@ -43,8 +43,8 @@ for(uint32_t b=0; b<${batch}; b++) {
         ${M},
         ${N},
         ${O},
-        ${dequant_scale}f,
-        ${dequant_zero_point}
+        ${context.get('dequant_scale', 1.0)}f,
+        ${context.get('dequant_zero_point', 0)}
     );
 }
 """)

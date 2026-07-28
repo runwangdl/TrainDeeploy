@@ -85,27 +85,28 @@ void PULP_MatMul_fp32_fp32_fp32_unroll1x7(const float32_t *__restrict__ pSrcA,
 }
 // Matmul against an int8 weight matrix, dequantising inside the loop.
 //
-// A weight-only-quantised model stores the frozen weight as int8 and needs it as
-// float for the fp32 matmul. Emitting that as a separate Dequant node materialises
-// the whole dequantised matrix -- on CCT-QLoRA, 1088 KB of fp32 tensors that exist
-// only to be consumed by the very next node, which then has to be kept alive or
-// recomputed. QLoRA itself never does this: it dequantises inside the matmul kernel
-// and discards the value immediately.
+// A weight-only-quantised model stores the frozen weight as int8 and needs it
+// as float for the fp32 matmul. Emitting that as a separate Dequant node
+// materialises the whole dequantised matrix -- on CCT-QLoRA, 1088 KB of fp32
+// tensors that exist only to be consumed by the very next node, which then has
+// to be kept alive or recomputed. QLoRA itself never does this: it dequantises
+// inside the matmul kernel and discards the value immediately.
 //
-// The dequantisation is affine and per-tensor, so it factors out of the inner loop
-// entirely:
+// The dequantisation is affine and per-tensor, so it factors out of the inner
+// loop entirely:
 //
-//   sum_k a_k * (b_k - zp) * scale  ==  scale * (sum_k a_k * b_k  -  zp * sum_k a_k)
+//   sum_k a_k * (b_k - zp) * scale  ==  scale * (sum_k a_k * b_k  -  zp * sum_k
+//   a_k)
 //
-// leaving one multiply per output element instead of one per multiply-accumulate.
-// With zeroPoint 0 the second term vanishes and the loop is the fp32 loop with an
-// int8 load. Numerically identical to Dequant followed by matmul, up to the order
-// of the same floating-point operations.
+// leaving one multiply per output element instead of one per
+// multiply-accumulate. With zeroPoint 0 the second term vanishes and the loop
+// is the fp32 loop with an int8 load. Numerically identical to Dequant followed
+// by matmul, up to the order of the same floating-point operations.
 void PULP_MatMul_fp32_i8_fp32_unroll1x7(const float32_t *__restrict__ pSrcA,
                                         const int8_t *__restrict__ pSrcB,
-                                        float32_t *__restrict__ pDstY, uint32_t M,
-                                        uint32_t N, uint32_t O, float32_t scale,
-                                        int32_t zeroPoint) {
+                                        float32_t *__restrict__ pDstY,
+                                        uint32_t M, uint32_t N, uint32_t O,
+                                        float32_t scale, int32_t zeroPoint) {
   int8_t core_id = pi_core_id();
   int8_t log2Core = LOG2(NUM_CORES);
   uint32_t M_chunk = (M >> log2Core) + ((M & (NUM_CORES - 1)) != 0);
@@ -122,9 +123,9 @@ void PULP_MatMul_fp32_i8_fp32_unroll1x7(const float32_t *__restrict__ pSrcA,
   uint32_t O_block = O - (O % 7);
 
   for (uint32_t i = 0; i < M_size; i++) {
-    // sum_a is only needed when the zero point is non-zero; the compiler drops it
-    // when zeroPoint is a compile-time 0 after inlining, and it costs one add per
-    // element otherwise.
+    // sum_a is only needed when the zero point is non-zero; the compiler drops
+    // it when zeroPoint is a compile-time 0 after inlining, and it costs one
+    // add per element otherwise.
     float32_t sum_a = 0.0f;
     if (zeroPoint != 0) {
       for (uint32_t k = 0; k < N; k++) {

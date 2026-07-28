@@ -39,9 +39,9 @@ from Deeploy.Targets.PULPOpen.DataTypes import PULPDMAFuture
 from Deeploy.Targets.PULPOpen.Templates import ConvTemplate, DMASliceTemplate, FloatAddTemplate, \
     FloatAveragePoolTemplate, FloatBatchNormTemplate, FloatConvGradTemplate, FloatConvTemplate, FloatGELUTemplate, \
     FloatGemmTemplate, FloatGlobalAveragePoolTemplate, FloatInPlaceAccumulatorV2Template, FloatLayernormTemplate, \
-    FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReluTemplate, FloatSoftmaxTemplate, \
-    GEMMTemplate, MatrixVectorTemplate, MaxPoolTemplate, MSELossTemplate, MulTemplate, ReduceMeanTemplate, \
-    RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, SGDTemplate, \
+    FloatMatMulDequantTemplate, FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReluTemplate, \
+    FloatSoftmaxTemplate, GEMMTemplate, MatrixVectorTemplate, MaxPoolTemplate, MSELossTemplate, MulTemplate, \
+    ReduceMeanTemplate, RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, SGDTemplate, \
     SoftmaxCrossEntropyLossTemplate, TallGEMMTemplate, TransposeTemplate, UniformRequantShiftTemplate, \
     iRMSNormTemplate, iSoftmaxTemplate
 from Deeploy.Targets.PULPOpen.TypeCheckers import PULPConvChecker, PULPLinearChecker, PULPMaxPoolChecker, \
@@ -196,6 +196,14 @@ GAP9RQSGEMM_8_Binding = [
 ]
 
 GAP9FloatGEMMBindings = [
+    # int8 weight with the Dequant folded in. Needed on the BACKWARD Gemm too, not
+    # just the forward MatMul: they share the weight constant, and if the backward
+    # one selects an fp32 binding, typeInferGlobalCtxt re-types the shared constant
+    # to float and its allocation quadruples.
+    NodeBinding(
+        GEMMChecker([PointerClass(float32_t), PointerClass(int8_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]), FloatGemmTemplate.referenceDequantTemplate,
+        GAP9Transformer),
     NodeBinding(
         GEMMChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatGemmTemplate.referenceTemplate,
@@ -203,6 +211,13 @@ GAP9FloatGEMMBindings = [
 ]
 
 GAP9FloatConv2DBindings = [
+    # int8 weight with the Dequant folded in; first because its signature is the
+    # more specific. GAP9 keeps its own binding list, so this has to be added here
+    # and not only in PULPFloatConv2DBindings.
+    NodeBinding(
+        ConvChecker([PointerClass(float32_t), PointerClass(int8_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]),
+        FloatConvTemplate.reference2DIm2ColDequantTemplate, GAP9Transformer),
     NodeBinding(
         ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatConvTemplate.reference2DIm2ColTemplate,
@@ -280,6 +295,12 @@ GAP9DWConv1DBinding = NodeBinding(
 GAP9MatMulBindings = [
     NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
                 GEMMTemplate.PULPMM_8_Template, GAP9ClusterTransformer)
+] + [
+    # fp32 activations against an int8 weight whose Dequant has been folded in, so
+    # the dequantised weight is never materialised. GAP9 keeps its own binding list;
+    # adding this to PULPMatMulBindings alone has no effect here.
+    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
+                FloatMatMulDequantTemplate.referenceTemplate, GAP9Transformer)
 ] + [
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatMatMulTemplate.referenceTemplate, GAP9Transformer)
