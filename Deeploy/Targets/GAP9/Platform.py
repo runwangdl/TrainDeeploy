@@ -52,7 +52,7 @@ from Deeploy.Targets.Generic.Parsers import AddParser, AveragePool2DParser, Batc
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBindings, PULPDMASliceBindings, \
     PULPDWConv1DBinding, PULPReduceMeanBindings, PULPRQSConv1DBindings
-from Deeploy.Targets.PULPOpen.Layers import PULPRQSConvLayer, PULPRQSGEMMLayer
+from Deeploy.Targets.PULPOpen.Layers import PULPAddLayer, PULPGEMMLayer, PULPRQSConvLayer, PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
     PULPConvGradX2DParser, PULPDWConv1DParser, PULPDWConv2DParser, PULPDWConvGradW2DParser, PULPDWConvGradX2DParser, \
     PULPFPConv2DCHWParser, PULPFPConv2DParser, PULPFPDWConv2DCHWParser, PULPFPDWConv2DParser, PULPGEMMParser, \
@@ -144,7 +144,7 @@ GAP9Mapping = {
     'RequantizedGemm':
         PULPRQSGEMMLayer([GAP9_MatrixVecMapper, GAP9_TallGEMMMapper, GAP9_GEMMMapper]),
     'Gemm':
-        GEMMLayer([GAP9_FloatGEMMMapper, GAP9_GEMMDequantMapper]),
+        PULPGEMMLayer([GAP9_FloatGEMMMapper, GAP9_GEMMDequantMapper]),
     'Gelu':
         GELULayer([GAP9_GELUMapper]),
     'GeluGrad':
@@ -172,7 +172,7 @@ GAP9Mapping = {
     'RequantShift':
         RequantShiftLayer([GAP9_UniformRequantShiftMapper, GAP9_RequantShiftMapper]),
     'Add':
-        AddLayer([GAP9_AddMapper]),
+        PULPAddLayer([GAP9_AddMapper]),
     'Flatten':
         ReshapeLayer([GAP9_FlattenMapper]),
     'Gather':

@@ -5,6 +5,8 @@
 import copy
 
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.BroadcastAddTileConstraint import \
+    PULPBroadcastAddTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.ConcatTileConstraint import ConcatTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.iHardswishTileConstraint import iHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.iRMSNormTileConstraint import iRMSNormTileConstraint
@@ -151,7 +153,7 @@ PULPTransposeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPTr
                                                            tileConstraint = TransposeTileConstraint())
 
 PULPAddTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPAddBindings,
-                                                     tileConstraint = AddTileConstraint())
+                                                     tileConstraint = PULPBroadcastAddTileConstraint())
 
 PULPSoftmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPSoftmaxBindings,
                                                          tileConstraint = iSoftmaxTileConstraint())

@@ -5,7 +5,7 @@
 from typing import List, Tuple
 
 from Deeploy.DeeployTypes import NodeMapper, Shape
-from Deeploy.Targets.Generic.Layers import GEMMLayer, RQGEMMLayer, RQSConvLayer
+from Deeploy.Targets.Generic.Layers import AddLayer, GEMMLayer, RQGEMMLayer, RQSConvLayer
 
 
 class PULPRQSConvLayer(RQSConvLayer):
@@ -65,4 +65,26 @@ class PULPGEMMLayer(GEMMLayer):
                       channels_first) -> Tuple[Shape, Shape]:
         if len(inputShapes) == 3 and len([d for d in inputShapes[2] if d != 1]) <= 1:
             return (inputShapes, outputShapes)          # broadcast bias: leave as [O]
+        return super().computeShapes(inputShapes, outputShapes, operatorRepresentation, channels_first)
+
+
+class PULPAddLayer(AddLayer):
+    """Add that leaves a broadcast second operand at its own shape.
+
+    The generic layer rewrites the lower-rank operand to the higher-rank one's
+    shape, which turns a Linear's [O] bias into a full [1, M, O] tensor storing the
+    same row M times. PULPBroadcastAddTileConstraint and PULPFloatAddTemplate
+    handle the unequal shapes, so the rewrite is only needed when the operand is
+    not a broadcast.
+    """
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
+                      channels_first) -> Tuple[Shape, Shape]:
+        big, small = (0, 1) if len(inputShapes[0]) >= len(inputShapes[1]) else (1, 0)
+        if len(inputShapes[big]) != len(inputShapes[small]) and \
+                len([d for d in inputShapes[small] if d != 1]) <= 1:
+            return (inputShapes, [inputShapes[big]])
         return super().computeShapes(inputShapes, outputShapes, operatorRepresentation, channels_first)

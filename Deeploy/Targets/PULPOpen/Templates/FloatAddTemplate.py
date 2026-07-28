@@ -2,9 +2,30 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from Deeploy.DeeployTypes import NodeTemplate
+from typing import Dict, List, Tuple
 
-referenceTemplate = NodeTemplate("""
+from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation
+
+
+def _isBroadcast(shape) -> bool:
+    return len([dim for dim in shape if dim != 1]) <= 1
+
+
+class PULPFloatAddTemplate(NodeTemplate):
+
+    def alignToContext(self, ctxt: NetworkContext,
+                       operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
+        # A second operand with a single non-unit axis is a vector added to every
+        # row of the first. Keeping it that way avoids storing the same row once
+        # per output row; the loop below reads it with a wrapped index instead.
+        shape = ctxt.lookup(operatorRepresentation['data_in_2']).shape
+        operatorRepresentation['broadcast'] = _isBroadcast(shape)
+        if 'rowLen' not in operatorRepresentation:
+            operatorRepresentation['rowLen'] = shape[-1] if shape else 1
+        return ctxt, operatorRepresentation, []
+
+
+referenceTemplate = PULPFloatAddTemplate("""
 // Add Parallel with 1x6 unrolling (Name: ${nodeName}, Op: ${nodeOp})
 uint8_t ${nodeName}_core_id = (uint8_t) pi_core_id();
 uint8_t ${nodeName}_log2Core = (uint8_t) log2(NUM_CORES);
@@ -12,6 +33,18 @@ uint32_t ${nodeName}_chunk = (${size} >> ${nodeName}_log2Core) + ((${size} & (NU
 uint32_t ${nodeName}_chunk_start = (uint32_t) MIN(${nodeName}_chunk*${nodeName}_core_id, (uint32_t) ${size});
 uint32_t ${nodeName}_chunk_stop = (uint32_t) MIN(${nodeName}_chunk_start + ${nodeName}_chunk, (uint32_t) ${size});
 
+% if broadcast:
+// data_in_2 holds one row of ${rowLen} shared by every output row. Walk the row
+// index alongside i rather than dividing: there is no hardware divide here.
+uint32_t ${nodeName}_j = ${nodeName}_chunk_start % ${rowLen};
+for (uint32_t i = ${nodeName}_chunk_start; i < ${nodeName}_chunk_stop; i++) {
+    ${data_out}[i] = ${data_in_1}[i] + ${data_in_2}[${nodeName}_j];
+    ${nodeName}_j++;
+    if (${nodeName}_j == ${rowLen}) {
+        ${nodeName}_j = 0;
+    }
+}
+% else:
 uint32_t i = ${nodeName}_chunk_start;
 for (; i + 5 < ${nodeName}_chunk_stop; i += 6) {
     ${data_out}[i] = ${data_in_1}[i] + ${data_in_2}[i];
@@ -25,4 +58,5 @@ for (; i + 5 < ${nodeName}_chunk_stop; i += 6) {
 for (; i < ${nodeName}_chunk_stop; i++) {
     ${data_out}[i] = ${data_in_1}[i] + ${data_in_2}[i];
 }
+% endif
 """)
