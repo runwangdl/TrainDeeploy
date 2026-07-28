@@ -233,11 +233,21 @@ class FloatGEMMTileConstraint(TileConstraint):
 
         # Add bias constraints only if bias is present
         if has_bias:
-            dimOffsetC = len(bufferC.shape) - 2
-            addDimVar_1 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC)
-            addDimVar_2 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC + 1)
-            tilerModel.addConstraint(outputFirstDimVar == addDimVar_1)
-            tilerModel.addConstraint(outputSecondDimVar == addDimVar_2)
+            # A one-dimensional bias is broadcast over the output rows: it has no M
+            # extent to tie to the output's, and the kernel re-reads the same vector
+            # for every row (bias row stride 0). Constraining only the trailing
+            # dimension is what lets it stay [O] instead of being widened to [M,O].
+            biasDims = [d for d in bufferC.shape if d != 1]
+            if len(biasDims) <= 1:
+                lastDimIdx = len(bufferC.shape) - 1
+                addDimVar = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = lastDimIdx)
+                tilerModel.addConstraint(outputSecondDimVar == addDimVar)
+            else:
+                dimOffsetC = len(bufferC.shape) - 2
+                addDimVar_1 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC)
+                addDimVar_2 = tilerModel.getTensorDimVar(tensorName = bufferC.name, dimIdx = dimOffsetC + 1)
+                tilerModel.addConstraint(outputFirstDimVar == addDimVar_1)
+                tilerModel.addConstraint(outputSecondDimVar == addDimVar_2)
 
         return tilerModel
 
