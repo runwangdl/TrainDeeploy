@@ -63,8 +63,8 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPSoftmaxGradTilingReadyBindings, PULPSoftmaxTilingReadyBindings, PULPTransposeTilingReadyBindings, \
     PULPUniformRQSTilingReadyBindings
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldDequantIntoMatMulPass, \
-    PULPAddRequantMergePass, \
-    PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, TransposeGemmSquashPass
+    PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, \
+    TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
 RQAddMapper = NodeMapper(RQAddParser(), PULPRQAddTilingReadyBindings)
@@ -272,33 +272,34 @@ class PULPStructBuffer(StructBuffer):
     deallocTemplate = NodeTemplate("")
 
 
-PULPOptimizer = TopologyOptimizer([
-    SplitConvGradPass(),
-    TransposeGemmSquashPass(),
-    QuantPatternPass(),
-    DequantPatternPass(),
-    # Fold a weight's Dequant into the matmul that reads it, so the dequantised
-    # weight is never materialised. Placed straight after DequantPatternPass, which
-    # is what normalises the Dequant nodes this matches on.
-    FoldDequantIntoMatMulPass(),
-    SkipEmptyConcatPass(),
-    SkipUnityRequantPass(previous_op_regex = "Concat", num_inputs = 2),
-    SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
-    SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
-    RQSSplitPass(),
-    MergeTrueIntegerDivRequantShiftPass(),
-    IntegerDivRequantMergePass(),
-    iGELURequantMergePass(),
-    iHardswishRequantMergePass(),
-    PULPConvRequantMergePass(),
-    MergeConstAddAndRequantPass(),
-    PULPGEMMRequantMergePass(),
-    PULPMatMulRequantMergePass(),
-    PULPAddRequantMergePass(),
-    RemoveEmptyConvBiasPass(),
-    RemoveOnlySingletonReduceMeanPass(),
-],
-                                  name = "PULPOptimizer")
+PULPOptimizer = TopologyOptimizer(
+    [
+        SplitConvGradPass(),
+        TransposeGemmSquashPass(),
+        QuantPatternPass(),
+        DequantPatternPass(),
+        # Fold a weight's Dequant into the matmul that reads it, so the dequantised
+        # weight is never materialised. Placed straight after DequantPatternPass, which
+        # is what normalises the Dequant nodes this matches on.
+        FoldDequantIntoMatMulPass(),
+        SkipEmptyConcatPass(),
+        SkipUnityRequantPass(previous_op_regex = "Concat", num_inputs = 2),
+        SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
+        SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
+        RQSSplitPass(),
+        MergeTrueIntegerDivRequantShiftPass(),
+        IntegerDivRequantMergePass(),
+        iGELURequantMergePass(),
+        iHardswishRequantMergePass(),
+        PULPConvRequantMergePass(),
+        MergeConstAddAndRequantPass(),
+        PULPGEMMRequantMergePass(),
+        PULPMatMulRequantMergePass(),
+        PULPAddRequantMergePass(),
+        RemoveEmptyConvBiasPass(),
+        RemoveOnlySingletonReduceMeanPass(),
+    ],
+    name = "PULPOptimizer")
 
 # SCHEREMO: stdint is included before pulp_nn_kernels.h because it is supposed to be included in there, but isn't...
 _includeList = [

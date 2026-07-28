@@ -255,3 +255,40 @@ for (uint32_t n=0; n<${batch}; ++n) {
     ref_${data_out}_${data_out} += ${ch_im_out} * ${dim_im_out_x} * ${dim_im_out_y};
 }
 """)
+
+# 2D conv whose weight arrives int8, with the Dequant folded in. Identical body to
+# reference2DIm2ColTemplate, bound to the kernel that dequantises inside the loop
+# and given the per-tensor scale and zero point.
+reference2DIm2ColDequantTemplate = PULP2DFloatConvIm2ColTemplate("""
+// 2D FP Conv HWC with Im2Col and ChannelOout parallelism (Name: ${nodeName}, Op: ${nodeOp})
+
+${data_in_type.typeName} ref_${data_out}_${data_in} = ${data_in};
+${data_out_type.typeName} ref_${data_out}_${data_out} = ${data_out};
+
+for (uint32_t n=0; n<${batch}; ++n) {
+    PULP_Conv2d_Im2Col_fp32_i8_fp32_HWC(
+        ref_${data_out}_${data_in},
+        ${dim_im_in_x},
+        ${dim_im_in_y},
+        ${ch_im_in},
+        ${weight},
+        ${ch_im_out},
+        ${dim_kernel_x},
+        ${dim_kernel_y},
+        ${stride_x},
+        ${stride_y},
+        ${bias}, ${has_bias},
+        ref_${data_out}_${data_out},
+        ${padding_y_top},
+        ${padding_y_bottom},
+        ${padding_x_left},
+        ${padding_x_right},
+        ${ctxtBuffer},
+        ${context.get('dequant_scale', 1.0)}f,
+        ${context.get('dequant_zero_point', 0)}
+    );
+
+    ref_${data_out}_${data_in} += ${ch_im_in} * ${dim_im_in_x} * ${dim_im_in_y};
+    ref_${data_out}_${data_out} += ${ch_im_out} * ${dim_im_out_x} * ${dim_im_out_y};
+}
+""")

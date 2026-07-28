@@ -371,7 +371,11 @@ class FoldDequantIntoMatMulPass(Pass):
     consumer unless byte-identical constants are shared.
     """
 
-    FOLDABLE_OPS = ('MatMul', 'Gemm')
+    # Conv is here because at this stage -- before parsing inserts the NCHW->NHWC
+    # transposes -- the tokenizer's quantised weight reaches its Conv directly.
+    # Reading the post-parsing graph suggests otherwise and sent three attempts at
+    # this after a Transpose that does not exist yet when the pass runs.
+    FOLDABLE_OPS = ('MatMul', 'Gemm', 'Conv')
 
     def run_pass(self, graph: gs.Graph):
         folded = 0
@@ -384,16 +388,25 @@ class FoldDequantIntoMatMulPass(Pass):
                 continue
             # Every consumer must take it as the weight operand, which is the one
             # the kernels dequantise. A Dequant feeding anything else is left alone.
-            if not all(c.op in self.FOLDABLE_OPS and len(c.inputs) >= 2 and c.inputs[1] is dequantOut
-                       for c in consumers):
+            if not all(
+                    c.op in self.FOLDABLE_OPS and len(c.inputs) >= 2 and c.inputs[1] is dequantOut for c in consumers):
                 continue
             quantised = node.inputs[0] if node.inputs else None
             if quantised is None:
                 continue
 
-            for consumer in consumers:
-                consumer.inputs[1] = quantised
-                consumer.attrs['dequant_scale'] = float(node.attrs.get('scale', 1.0))
+            # The stored array is int8 but the tensor can carry a wider dtype from
+            # the exporter; with the Dequant in place that never mattered, because
+            # its output was explicitly float32. Once folded, this dtype is what the
+            # binding checker sees, and a wrong one silently selects the fp32 kernel
+            # and reads the int8 weight as float -- which runs, reports no error, and
+            # computes nonsense four times faster.
+            # gs.Constant derives dtype from values and does not let it be set, so
+            # rewriting the array is both necessary and sufficient. A Variable that
+            # is not a Constant cannot be corrected here and is left for the fp32
+            # path rather than folded into a kernel that would misread it.
+            if isinstance(quantised, gs.Constant):
+                quantised.values = np.asarray(quantised.values).astype(np.int8)
                 consumer.attrs['dequant_zero_point'] = int(node.attrs.get('zero_point', 0))
 
             node.inputs.clear()
