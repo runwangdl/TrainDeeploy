@@ -35,7 +35,7 @@ from testUtils.codeGenerateTraining import build_shared_buffer_maps, generateOpt
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import TrainingDBTiler, TrainingSBTiler
-from testUtils.trainingUtils import _mockScheduler, add_optimizer_training_dir_arg
+from testUtils.trainingUtils import _memoryMinimisingScheduler, add_optimizer_training_dir_arg
 
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.DataTypes import float32_t
@@ -74,7 +74,8 @@ def generateTiledOptimizerNetwork(args) -> None:
     inputTypes = {f"input_{i}": PointerClass(float32_t) for i in range(len(graph_input_names))}
     inputOffsets = {f"input_{i}": 0 for i in range(len(graph_input_names))}
 
-    # 4. Create deployer with _mockScheduler (required for TilerDeployerWrapper).
+    # 4. Create deployer with the memory-minimising scheduler (the Tiler requires
+    #    a scheduler; this one also picks the order that holds fewest tensors live).
     _DEEPLOYSTATEDIR = os.path.join(args.dumpdir, "deeployStates_optimizer")
 
     deployer = mapDeployer(platform,
@@ -83,7 +84,7 @@ def generateTiledOptimizerNetwork(args) -> None:
                            name = "DeeployOptimizerNetwork",
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
-                           scheduler = _mockScheduler)
+                           scheduler = _memoryMinimisingScheduler)
 
     # 5. Set up memory hierarchy.
     #    Tiles execute in L1; optimizer I/O (weights, grads) live in L2 (or L3).
