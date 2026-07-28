@@ -350,7 +350,18 @@ class FloatGEMMTileConstraint(TileConstraint):
             inputBCubes.append(BCube)
 
             if has_bias:
-                CCube = HyperRectangle(tuple(cube.offset), tuple(cube.dims))
+                # A widened [M, O] bias is tiled exactly like the output. A broadcast
+                # bias is not: it only has the trailing O extent, so asking for the
+                # output's cube would have the DMA read M * O elements out of an
+                # O-element buffer. That is invisible when everything already sits in
+                # L2 and there is no transfer, and it is why this only ever showed up
+                # on the L3 and promote configurations.
+                biasShape = ctxt.lookup(operatorRepresentation['C']).shape
+                if len([d for d in biasShape if d != 1]) <= 1:
+                    leading = len(biasShape) - 1
+                    CCube = HyperRectangle(tuple([0] * leading + [OOffset]), tuple([1] * leading + [OSize]))
+                else:
+                    CCube = HyperRectangle(tuple(cube.offset), tuple(cube.dims))
                 inputAddCubes.append(CCube)
 
         inputLoadSchedule = []

@@ -5,8 +5,6 @@
 import copy
 
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.BroadcastAddTileConstraint import \
-    PULPBroadcastAddTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.ConcatTileConstraint import ConcatTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.iHardswishTileConstraint import iHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.iRMSNormTileConstraint import iRMSNormTileConstraint
@@ -16,7 +14,7 @@ from Deeploy.Targets.Generic.TileConstraints.RQSiGELUTileConstraint import RQSiG
 from Deeploy.Targets.Generic.TileConstraints.RQSiHardswishTileConstraint import RQSiHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import TransposeTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTileConstraint
-from Deeploy.Targets.PULPOpen.Bindings import PULPAddBindings, PULPAveragePool2DBindings, \
+from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, PULPAddBindings, PULPAveragePool2DBindings, \
     PULPAveragePoolGrad2DBindings, PULPBatchNormalizationGradBindings, PULPBatchNormInternalBindings, \
     PULPConcatBindings, PULPFloatConv2DBindings, PULPFloatConvGradBBindings, PULPFloatConvGradW2DBindings, \
     PULPFloatConvGradX2DBindings, PULPFloatDWConv2DBindings, PULPFloatDWConvGradW2DBindings, \
@@ -34,6 +32,7 @@ from Deeploy.Targets.PULPOpen.Bindings import PULPAddBindings, PULPAveragePool2D
 from Deeploy.Targets.PULPOpen.TileConstraints.AveragePoolTileConstraint import AveragePoolCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import BatchNormalizationGradTileConstraint, \
     BatchNormInternalTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.BroadcastAddTileConstraint import PULPBroadcastAddTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.ConvGradConstraint import ConvGradBTileConstraint, \
     ConvGradW2DTileConstraint, ConvGradX2DIm2ColHWTileConstraint, DWConvGradW2DTileConstraint, \
     DWConvGradX2DTileConstraint, PWConvGradWTileConstraint, PWConvGradXTileConstraint
@@ -151,6 +150,14 @@ PULPUniformRQSTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPU
 
 PULPTransposeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPTransposeBindings,
                                                            tileConstraint = TransposeTileConstraint())
+
+# Dequant is elementwise, single-input/single-output
+# (`out[i] = (in[i] - zero_point) * scale`, Targets/Generic/Templates/DequantTemplate.py),
+# which is exactly what UnaryTileConstraint expresses. Without this wrapper the raw
+# NodeBindings carry no tileConstraint on their template and the tiler aborts with
+# `AttributeError: '_DequantTemplate' object has no attribute 'tileConstraint'`.
+PULPDequantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicDequantBindings,
+                                                         tileConstraint = UnaryTileConstraint())
 
 PULPAddTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPAddBindings,
                                                      tileConstraint = PULPBroadcastAddTileConstraint())

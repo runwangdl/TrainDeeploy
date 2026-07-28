@@ -15,7 +15,7 @@ from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatf
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import TrainingDBOnlyL3Tiler, TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum, _infer_num_data_inputs, \
-    _infer_total_mb, _load_reference_losses, _mockScheduler, add_training_inference_args
+    _infer_total_mb, _load_reference_losses, _memoryMinimisingScheduler, add_training_inference_args
 from testUtils.typeMapping import inferTypeAndOffset
 
 from Deeploy.AbstractDataTypes import PointerClass
@@ -104,7 +104,8 @@ def generateTiledTrainingNetwork(args) -> None:
                 inputTypes[f"input_{graph_idx}"] = _type
                 inputOffsets[f"input_{graph_idx}"] = offset
 
-    # 6. Create deployer with _mockScheduler (required for TilerDeployerWrapper).
+    # 6. Create deployer with the memory-minimising scheduler (the Tiler requires
+    #    a scheduler; this one also picks the order that holds fewest tensors live).
     _DEEPLOYSTATEDIR = os.path.join(args.dumpdir, "deeployStates")
 
     deployer = mapDeployer(platform,
@@ -114,7 +115,7 @@ def generateTiledTrainingNetwork(args) -> None:
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
                            conv_channels_first = args.convChannelsFirst,
-                           scheduler = _mockScheduler)
+                           scheduler = _memoryMinimisingScheduler)
 
     # 7. Set up memory hierarchy.
     L3 = MemoryLevel(name = "L3", neighbourNames = ["L2"], size = 64_000_000)

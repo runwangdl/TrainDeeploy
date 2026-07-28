@@ -66,10 +66,8 @@ class PULPBroadcastAddTileConstraint(AddTileConstraint):
 
         # The broadcast operand contributes only its trailing axis, which must match
         # the output's trailing axis so a tile reads a whole row of it.
-        broadcastDimVar = tilerModel.getTensorDimVar(tensorName = inputBuffer2Name,
-                                                     dimIdx = len(inputBuffer2Shape) - 1)
-        outputLastDimVar = tilerModel.getTensorDimVar(tensorName = outputBufferName,
-                                                      dimIdx = len(input1Shape) - 1)
+        broadcastDimVar = tilerModel.getTensorDimVar(tensorName = inputBuffer2Name, dimIdx = len(inputBuffer2Shape) - 1)
+        outputLastDimVar = tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = len(input1Shape) - 1)
         tilerModel.addConstraint(broadcastDimVar == outputLastDimVar)
 
         return tilerModel
