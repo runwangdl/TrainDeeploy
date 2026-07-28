@@ -3467,6 +3467,15 @@ class NetworkDeployer(NetworkContainer):
         log.debug(" - Constant Folding")
         self._foldConstants(self.graph)
 
+        # Folding can hand a single constant to several consumers: a weight reached
+        # through Constant -> Transpose -> Variable collapses to one Constant, and a
+        # training graph has the forward MatMul and the backward Gemm both reading it.
+        # Duplication ran before the fold, so nothing splits that, and hoistConstant
+        # then asserts. Run it again; it only touches tensors with more than one
+        # consumer, so it is a no-op when the fold introduced none.
+        log.debug(" - Duplicate Constants (post-fold)")
+        self._duplicateConstants(self.graph)
+
         log.info(f"> Export State to {_middlewarePreLoweringFilename}[.onnx|.pkl]")
         self.exportDeeployState(self.deeployStateDir, _middlewarePreLoweringFilename)
 
