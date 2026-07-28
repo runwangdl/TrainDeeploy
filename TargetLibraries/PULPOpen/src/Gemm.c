@@ -8,11 +8,12 @@
 #include "pmsis.h"
 
 // biasStride is the row stride of pDstC: O for a full [M,O] bias, and 0 for a
-// broadcast [O] bias, where every output row adds the same vector. A transformer
-// stores its Linear bias as [O] but GEMMLayer.computeShapes used to widen the C
-// operand to [M,O], materialising the same O values M times -- 32 KB per 128-wide
-// bias at 64 tokens, against 512 B of data. Passing a stride keeps one kernel for
-// both layouts, and biasStride == O reproduces the previous behaviour exactly.
+// broadcast [O] bias, where every output row adds the same vector. A
+// transformer stores its Linear bias as [O] but GEMMLayer.computeShapes used to
+// widen the C operand to [M,O], materialising the same O values M times -- 32
+// KB per 128-wide bias at 64 tokens, against 512 B of data. Passing a stride
+// keeps one kernel for both layouts, and biasStride == O reproduces the
+// previous behaviour exactly.
 void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
                                    const float32_t *__restrict__ pSrcB,
                                    const float32_t *__restrict__ pDstC,

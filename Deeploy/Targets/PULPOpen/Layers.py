@@ -64,5 +64,5 @@ class PULPGEMMLayer(GEMMLayer):
     def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
                       channels_first) -> Tuple[Shape, Shape]:
         if len(inputShapes) == 3 and len([d for d in inputShapes[2] if d != 1]) <= 1:
-            return (inputShapes, outputShapes)          # broadcast bias: leave as [O]
+            return (inputShapes, outputShapes)  # broadcast bias: leave as [O]
         return super().computeShapes(inputShapes, outputShapes, operatorRepresentation, channels_first)
