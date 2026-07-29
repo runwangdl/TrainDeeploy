@@ -91,14 +91,15 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
     "Models/Training/Autoencoder/autoencoder_train": [128000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
-    # ResNet8 on-chip is held back until its schedule is settled. It has run at L2
-    # before -- 43.53M cycles, Errors: 0, 1316 KB of live tensors -- but that run had
-    # one mini-batch and one data input, while CI uses four and two. Raising l2 to the
-    # real 1.5 MB and lowering l1 to 116000 clears the arena and the L1 allocator in
-    # turn, and it then fails in the L2 allocator, so the remaining gap is the
-    # schedule rather than a budget. Enabling it by turning num_data_inputs down to 1
-    # would change what the test covers, which is not a resource knob.
-    # "Models/Training/ResNet8/resnet8_train": [116000],
+    # ResNet8 on-chip. It only fits channels-first: the NHWC path materialises a
+    # transposed copy of every conv weight -- 75 of them, 2950 KB in total -- because
+    # the pass that eliminates W^T covers Linear layers and not Conv. CHW kernels need
+    # no transpose at all, which takes the peak from 1410 KB to 1278 KB and brings it
+    # inside L2 with no recompute, no promotion and no double buffering.
+    # Measured at one mini-batch: Errors: 0, 43,531,388 cycles, L2_shared 164928 B.
+    # 116000, not 122000: CI trains four, and their accumulator buffers leave the L1
+    # allocator 118 KB.
+    "Models/Training/ResNet8/resnet8_train": [116000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
@@ -204,10 +205,8 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,  # 0.80M vs 1.21M cyc/step (-33.7%)
     },
     "Models/Training/ResNet8/resnet8_train": {
-        # GAP9's real 1.5 MB. Needed by the on-chip entry: the arena wants 1410 KB
-        # against the 997 KB the runner default leaves. The L3 entry is unaffected,
-        # since there the weights live off-chip.
-        "l2": 1572864,
+        "conv_channels_first": True,  # CHW convs; see the on-chip entry above
+        "l2": 1400000,  # arena 1278 KB plus the static section, inside GAP9's 1.5 MB
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
         # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
         # L1 vs L2 stacks: 47.8M vs 62.9M cyc/step (-23.9%, SB). With the gather
