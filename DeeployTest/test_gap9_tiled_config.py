@@ -105,7 +105,6 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
-    "Models/Training/CCT_LoRA/cct_lora_train": [40000],
     # Rank-4 LoRA on CCT-2 at the official spec (mlp_ratio=1), adapters on attention
     # and FFN. 2292 KB peak, 54.5M cycles -- faster than full fine-tuning because the
     # frozen base weights need no weight gradients.
@@ -239,9 +238,6 @@ TRAINING_MODEL_OVERRIDES = {
         "tolerance": 5e-2,
         "cc_stack": 4096,
         "slave_stack": 512,
-    },
-    "Models/Training/CCT_LoRA/cct_lora_train": {
-        "num_data_inputs": 1,
     },
     "Models/Training/SleepConViT/sleepconvit_train": {
         "num_data_inputs": 1,
