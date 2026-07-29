@@ -239,16 +239,21 @@ PULPFloatGEMMBindings = [
 ]
 
 PULPFloatConv2DBindings = [
-    # int8 weight with the Dequant folded in; listed first because its signature is
-    # the more specific and the fp32 one would otherwise match everything.
-    NodeBinding(
-        ConvChecker([PointerClass(float32_t), PointerClass(int8_t),
-                     PointerClass(float32_t)], [PointerClass(float32_t)]),
-        FloatConvTemplate.reference2DIm2ColDequantTemplate, ForkTransformer),
+    # fp32 first. A binding is matched before a weight constant's type is fixed, and
+    # typeInferGlobalCtxt then types that constant from the SELECTED binding's
+    # input_types. Listing the int8 variant first does not make it "more specific":
+    # it claims an ordinary fp32 weight and retypes it to int8, silently quantising
+    # it. That is what failed the FP32 Conv kernel test 512 of 512. A genuinely int8
+    # constant already carries that type, so the fp32 checker rejects it and the
+    # int8 binding below still wins.
     NodeBinding(
         ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatConvTemplate.reference2DIm2ColTemplate,
-        ForkTransformer)
+        ForkTransformer),
+    NodeBinding(
+        ConvChecker([PointerClass(float32_t), PointerClass(int8_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]),
+        FloatConvTemplate.reference2DIm2ColDequantTemplate, ForkTransformer)
 ]
 
 PULPFloatConvGradW2DBindings = [
@@ -397,14 +402,18 @@ PULPMatMulBindings = [
     NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
                 GEMMTemplate.PULPMM_8_Template, ClusterTransformer)
 ] + [
-    # fp32 activations against an int8 weight: the Dequant has been folded into the
-    # matmul, so the weight is never materialised as fp32. Listed before the plain
-    # fp32 binding because it is the more specific type signature.
-    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
-                FloatMatMulDequantTemplate.referenceTemplate, ForkTransformer)
-] + [
+    # fp32 before the int8 variant. A binding is matched before a weight constant's
+    # type is fixed, and typeInferGlobalCtxt types that constant from the SELECTED
+    # binding's input_types, so an int8-first order claims an ordinary fp32 weight
+    # and retypes it to int8. A genuinely int8 constant already carries that type,
+    # so the fp32 checker rejects it and the int8 binding still wins.
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatMatMulTemplate.referenceTemplate, ForkTransformer)
+] + [
+    # fp32 activations against an int8 weight: the Dequant has been folded into the
+    # matmul, so the weight is never materialised as fp32.
+    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
+                FloatMatMulDequantTemplate.referenceTemplate, ForkTransformer)
 ]
 
 PULPReduceMeanBindings = [

@@ -196,6 +196,17 @@ GAP9RQSGEMM_8_Binding = [
 ]
 
 GAP9FloatGEMMBindings = [
+    # fp32 first. A binding is matched before a weight constant's type is fixed, and
+    # typeInferGlobalCtxt then types that constant from the SELECTED binding's
+    # input_types. With the int8 variant first, an ordinary fp32 weight is claimed by
+    # it and retyped to int8, silently quantising it: the FP32 Conv kernel test
+    # failed 512 of 512 and the emitted GAP9 call had no visible declaration. A
+    # genuinely int8 constant already carries that type, so the fp32 checker rejects
+    # it and the int8 binding below still wins.
+    NodeBinding(
+        GEMMChecker([PointerClass(float32_t), PointerClass(float32_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]), FloatGemmTemplate.referenceTemplate,
+        GAP9Transformer),
     # int8 weight with the Dequant folded in. Needed on the BACKWARD Gemm too, not
     # just the forward MatMul: they share the weight constant, and if the backward
     # one selects an fp32 binding, typeInferGlobalCtxt re-types the shared constant
@@ -203,25 +214,21 @@ GAP9FloatGEMMBindings = [
     NodeBinding(
         GEMMChecker([PointerClass(float32_t), PointerClass(int8_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatGemmTemplate.referenceDequantTemplate,
-        GAP9Transformer),
-    NodeBinding(
-        GEMMChecker([PointerClass(float32_t), PointerClass(float32_t),
-                     PointerClass(float32_t)], [PointerClass(float32_t)]), FloatGemmTemplate.referenceTemplate,
         GAP9Transformer)
 ]
 
 GAP9FloatConv2DBindings = [
-    # int8 weight with the Dequant folded in; first because its signature is the
-    # more specific. GAP9 keeps its own binding list, so this has to be added here
-    # and not only in PULPFloatConv2DBindings.
-    NodeBinding(
-        ConvChecker([PointerClass(float32_t), PointerClass(int8_t),
-                     PointerClass(float32_t)], [PointerClass(float32_t)]),
-        FloatConvTemplate.reference2DIm2ColDequantTemplate, GAP9Transformer),
+    # fp32 first, for the reason given on GAP9FloatGEMMBindings above.
     NodeBinding(
         ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatConvTemplate.reference2DIm2ColTemplate,
-        GAP9Transformer)
+        GAP9Transformer),
+    # int8 weight with the Dequant folded in. GAP9 keeps its own binding list, so
+    # this has to be added here and not only in PULPFloatConv2DBindings.
+    NodeBinding(
+        ConvChecker([PointerClass(float32_t), PointerClass(int8_t),
+                     PointerClass(float32_t)], [PointerClass(float32_t)]),
+        FloatConvTemplate.reference2DIm2ColDequantTemplate, GAP9Transformer)
 ]
 
 GAP9FloatDWConv2DBindings = [
@@ -296,14 +303,15 @@ GAP9MatMulBindings = [
     NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
                 GEMMTemplate.PULPMM_8_Template, GAP9ClusterTransformer)
 ] + [
+    # fp32 before the int8 variant, for the reason given on GAP9FloatGEMMBindings.
+    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMatMulTemplate.referenceTemplate, GAP9Transformer)
+] + [
     # fp32 activations against an int8 weight whose Dequant has been folded in, so
     # the dequantised weight is never materialised. GAP9 keeps its own binding list;
     # adding this to PULPMatMulBindings alone has no effect here.
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
                 FloatMatMulDequantTemplate.referenceTemplate, GAP9Transformer)
-] + [
-    NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
-                FloatMatMulTemplate.referenceTemplate, GAP9Transformer)
 ]
 
 GAP9ReduceMeanBindings = [
