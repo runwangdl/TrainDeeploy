@@ -119,6 +119,26 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/MCUNet/mcunet_train": [116000],
 }
 
+# Gradient-checkpointed training. Each entry replays a solved recompute schedule
+# instead of keeping every forward activation live across the backward pass: an
+# activation is dropped after its forward use and regenerated just before the
+# gradient node reads it, trading cycles for peak memory.
+#
+# Only schedules verified end to end on gvsoc belong here. A schedule is keyed on
+# node names, so one produced from a different graph would replay as the default
+# order under a name claiming to be checkpointed; the replay refuses below 90%
+# name coverage rather than report that as a pass.
+#
+#   model                  schedule                       Errors  cycles/step
+#   CCT (exact ILP)        recompute_checkmate.json       0       68.63M vs 64.24M
+#                                                                 baseline (+6.8%)
+L3_RECOMPUTE_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": {
+        "l1": 122000,
+        "schedule": "Tests/Models/Training/CCT/cct_train/recompute_checkmate.json",
+    },
+}
+
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
 # (TrainingDBOnlyL3Tiler) so the L2 staging budget doesn't double.
 # ResNet8's strided ConvGrad InPlaceAccumulatorV2 is forced to coeff=1 (SB)
