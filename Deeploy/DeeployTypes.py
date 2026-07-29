@@ -979,8 +979,12 @@ class NetworkContext():
             Returns the name of the newly registed ConstantBuffer
 
         """
-        assert len(constant.outputs) <= 1, f"Constant {constant.name} has more than one output"
-
+        # A ConstantBuffer is global and read-only, so several nodes reading one is
+        # sound and needs no copy. Requiring a single consumer blocked every graph
+        # where a frozen weight is read twice: a quantised weight reaching both the
+        # forward MatMul and its backward Gemm, and a transposed weight shared the
+        # same way after constant folding. Duplicating to satisfy the assertion is
+        # not free either, since it charges the full constant again per consumer.
         name = name if name is not None else constant.name
 
         # LMACAN: The shape needs to be copied into a tuple for pickling to work. Don't ask me why..

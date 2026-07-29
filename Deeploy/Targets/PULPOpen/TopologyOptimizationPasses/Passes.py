@@ -405,8 +405,23 @@ class FoldDequantIntoMatMulPass(Pass):
             # rewriting the array is both necessary and sufficient. A Variable that
             # is not a Constant cannot be corrected here and is left for the fp32
             # path rather than folded into a kernel that would misread it.
-            if isinstance(quantised, gs.Constant):
-                quantised.values = np.asarray(quantised.values).astype(np.int8)
+            if not isinstance(quantised, gs.Constant):
+                continue
+            quantised.values = np.asarray(quantised.values).astype(np.int8)
+
+            # Each consumer takes the int8 tensor directly and carries the scale and
+            # zero point as attributes, so it dequantises inside the kernel. Several
+            # consumers each repeat that conversion on purpose: it is register-level
+            # work, and cheaper than keeping a materialised fp32 copy alive between a
+            # forward use and its backward one.
+            # Every consumer reads the same int8 constant. A ConstantBuffer is global
+            # and read-only, so sharing one across the forward MatMul and its backward
+            # Gemm is sound, and it is what keeps the memory win: giving each consumer
+            # its own copy charges the full constant again per clone, which on the int8
+            # QLoRA CCT took persistent from 662 KB to 938 KB.
+            for consumer in consumers:
+                consumer.inputs[1] = quantised
+                consumer.attrs['dequant_scale'] = float(node.attrs.get('scale', 1.0))
                 consumer.attrs['dequant_zero_point'] = int(node.attrs.get('zero_point', 0))
 
             node.inputs.clear()

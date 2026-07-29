@@ -7,6 +7,7 @@ from typing import List, Sequence, Type
 from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.CommonExtensions.TypeCheckers.SignPropTypeChecker import SignPropTypeChecker
 from Deeploy.DeeployTypes import OperatorRepresentation, VariableBuffer
+from Deeploy.Targets.Generic.TypeCheckers import ConvChecker, GEMMChecker, MatMulChecker
 
 
 class PULPDMASliceChecker(SignPropTypeChecker):
@@ -136,3 +137,38 @@ class PULPMaxPoolChecker(SignPropTypeChecker):
     # Override this. This should compute the signednes of each output node of the Layer
     def checkOutputType(self, inputs: List[VariableBuffer], operatorRepresentation: OperatorRepresentation) -> bool:
         return True
+
+
+class _DequantFoldedMixin:
+    """Match only a node the Dequant fold has rewritten.
+
+    The int8 kernel variants must not be selected on type alone. A binding is chosen
+    before a weight constant's type is fixed, and typeInferGlobalCtxt then types that
+    constant from the SELECTED binding's input_types, so whichever of the fp32 and
+    int8 bindings is tried first claims the weight and defines its type. Ordering them
+    is therefore not a fix: int8-first retypes ordinary fp32 weights to int8 and
+    silently quantises them (FP32 Conv kernel test, 512 errors of 512), while
+    fp32-first retypes folded int8 weights upward and inflates them (CCT-QLoRA
+    persistent 409 KB -> 1094 KB, with the int8 weights landing as float64).
+
+    FoldDequantIntoMatMulPass marks every node it rewrites with dequant_scale, so that
+    attribute, not the operand type, is what distinguishes the two cases.
+    """
+
+    def typeCheck(self, ctxt, node, operatorRepresentation) -> bool:
+        # The fold marks every node it rewrites; nothing else may select this binding.
+        if 'dequant_scale' not in node.attrs:
+            return ctxt, False
+        return super().typeCheck(ctxt, node, operatorRepresentation)
+
+
+class PULPDequantMatMulChecker(_DequantFoldedMixin, MatMulChecker):
+    pass
+
+
+class PULPDequantGEMMChecker(_DequantFoldedMixin, GEMMChecker):
+    pass
+
+
+class PULPDequantConvChecker(_DequantFoldedMixin, ConvChecker):
+    pass
