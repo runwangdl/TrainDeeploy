@@ -65,6 +65,9 @@ repos:
       - id: clang-format
         name: Autoformat C/C++ Files
         args: ["-i"]
+        # The hook's default file set includes .json, and reformatting a recompute
+        # schedule leaves it unparseable. Only C and C++ here.
+        types_or: [c, c++]
         stages: [pre-commit, pre-merge-commit, pre-push, manual]
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.33.0
