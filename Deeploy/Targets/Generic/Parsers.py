@@ -757,7 +757,13 @@ class AddParser(NodeParser):
         self.operatorRepresentation['data_in_1'] = data_in_1.name
         self.operatorRepresentation['data_in_2'] = data_in_2.name
         self.operatorRepresentation['data_out'] = data_out.name
-        self.operatorRepresentation['size'] = np.prod(data_in_1.shape)
+        # Size the loop by the output, not by an input. With both operands the same
+        # shape these agree, but a broadcast operand does not: PULPAddLayer leaves a
+        # Linear's [O] bias at its own shape rather than storing the same row per
+        # output row, and taking the first input's size then bounded the loop at the
+        # bias length. The remaining outputs were never written and read back as
+        # whatever was in memory.
+        self.operatorRepresentation['size'] = np.prod(data_out.shape)
 
         return ctxt, True
 

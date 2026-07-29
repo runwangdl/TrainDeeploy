@@ -15,13 +15,29 @@ class PULPFloatAddTemplate(NodeTemplate):
 
     def alignToContext(self, ctxt: NetworkContext,
                        operatorRepresentation: OperatorRepresentation) -> Tuple[NetworkContext, Dict, List[str]]:
-        # A second operand with a single non-unit axis is a vector added to every
-        # row of the first. Keeping it that way avoids storing the same row once
-        # per output row; the loop below reads it with a wrapped index instead.
-        shape = ctxt.lookup(operatorRepresentation['data_in_2']).shape
-        operatorRepresentation['broadcast'] = _isBroadcast(shape)
+        # An operand with a single non-unit axis is a vector added to every row of
+        # the other. Keeping it that way avoids storing the same row once per output
+        # row; the loop below reads it with a wrapped index instead.
+        #
+        # Either operand can be the broadcast one. A Linear exported as MatMul + Add
+        # puts the bias second, but the same graph after lowering can present it
+        # first, and indexing a two-element bias by the output index reads past it.
+        # Normalise here so the template always adds data_in_2 into data_in_1.
+        shape1 = ctxt.lookup(operatorRepresentation['data_in_1']).shape
+        shape2 = ctxt.lookup(operatorRepresentation['data_in_2']).shape
+
+        if _isBroadcast(shape2) and not _isBroadcast(shape1):
+            broadcastShape = shape2
+        elif _isBroadcast(shape1) and not _isBroadcast(shape2):
+            operatorRepresentation['data_in_1'], operatorRepresentation['data_in_2'] = \
+                operatorRepresentation['data_in_2'], operatorRepresentation['data_in_1']
+            broadcastShape = shape1
+        else:
+            broadcastShape = None
+
+        operatorRepresentation['broadcast'] = broadcastShape is not None
         if 'rowLen' not in operatorRepresentation:
-            operatorRepresentation['rowLen'] = shape[-1] if shape else 1
+            operatorRepresentation['rowLen'] = (broadcastShape[-1] if broadcastShape else (shape2[-1] if shape2 else 1))
         return ctxt, operatorRepresentation, []
 
 
