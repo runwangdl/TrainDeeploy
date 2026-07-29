@@ -15,7 +15,8 @@ from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatf
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import TrainingDBOnlyL3Tiler, TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum, _infer_num_data_inputs, \
-    _infer_total_mb, _load_reference_losses, _memoryMinimisingScheduler, add_training_inference_args
+    _infer_total_mb, _load_reference_losses, _memoryMinimisingScheduler, add_training_inference_args, \
+    recomputeScheduler
 from testUtils.typeMapping import inferTypeAndOffset
 
 from Deeploy.AbstractDataTypes import PointerClass
@@ -115,7 +116,8 @@ def generateTiledTrainingNetwork(args) -> None:
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
                            conv_channels_first = args.convChannelsFirst,
-                           scheduler = _memoryMinimisingScheduler)
+                           scheduler = recomputeScheduler(args.recomputeSchedule)
+                           if args.recomputeSchedule else _memoryMinimisingScheduler)
 
     # 7. Set up memory hierarchy.
     L3 = MemoryLevel(name = "L3", neighbourNames = ["L2"], size = 64_000_000)
@@ -314,6 +316,13 @@ if __name__ == '__main__':
                         type = int,
                         default = 131072,
                         help = 'Bytes reserved in L2 for tile staging')
+    parser.add_argument('--recomputeSchedule',
+                        type = str,
+                        default = None,
+                        help = 'Path to a recompute schedule: JSON {"seq": [[node, is_recompute], ...]} in run '
+                        'order, as emitted by a gradient-checkpointing solve. Replays it on the deployed graph, '
+                        'regenerating each checkpointed activation just before the backward pass reads it '
+                        'instead of keeping it live. Without this the memory-minimising schedule is used.')
     parser.add_argument('--convChannelsFirst',
                         action = 'store_true',
                         help = 'Use channels-first forward convolutions (no NCHW<->NHWC transpose).')
