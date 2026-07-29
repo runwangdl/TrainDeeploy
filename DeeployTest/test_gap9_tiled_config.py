@@ -150,9 +150,13 @@ L3_RECOMPUTE_TRAINING_MODELS = {
     # cost of doing so. Checkpointing buys peak memory with compute, so these run
     # alongside the ordinary entries rather than replacing them.
     #
-    #   model         recomputes  Errors  cycles (4 steps)  versus no recompute
-    #   CCT                    6       0   287,126,768       +6.8% at one step
-    #   MobileNetV1           19       0   217,072,544       --
+    # Solved by scripts/solve_recompute_schedule.py against the current deployed
+    # graph; see docs/gradient_checkpointing.md for why they have to be re-solved
+    # rather than carried forward.
+    #
+    #   model         recomputes  Errors  cycles (1 step)
+    #   CCT                    6       0   68,634,810
+    #   MobileNetV1           16       0   52,727,331
     #
     # ResNet8 is not here. Its schedules all replay against the NHWC graph, and its
     # on-chip entry runs channels-first, so every one of the seven solved sequences
