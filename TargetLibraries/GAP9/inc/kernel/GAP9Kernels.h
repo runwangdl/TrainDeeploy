@@ -145,6 +145,22 @@ void PULP_DW_Conv2d_Im2Col_fp32_fp32_fp32_CHW(
     uint32_t pad_left, uint32_t pad_right,
     float32_t *__restrict__ pContextBuffer);
 
+// MatMul, declared here for the same reason as the gradient kernels above: the
+// generated code includes DeeployGAP9Math.h and never PULPOpen's
+// kernel/Matmul.h, so without this the call is emitted against an implicit
+// (int) declaration and the float arguments go under the wrong ABI. Kept in
+// sync with TargetLibraries/PULPOpen/inc/kernel/Matmul.h.
+void PULP_MatMul_fp32_fp32_fp32_unroll1x7(const float32_t *__restrict__ pSrcA,
+                                          const float32_t *__restrict__ pSrcB,
+                                          float32_t *__restrict__ pDstY,
+                                          uint32_t M, uint32_t N, uint32_t O);
+
+void PULP_MatMul_fp32_i8_fp32_unroll1x7(const float32_t *__restrict__ pSrcA,
+                                        const int8_t *__restrict__ pSrcB,
+                                        float32_t *__restrict__ pDstY,
+                                        uint32_t M, uint32_t N, uint32_t O,
+                                        float32_t scale, int32_t zeroPoint);
+
 void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
                                    const float32_t *__restrict__ pSrcB,
                                    const float32_t *__restrict__ pDstC,
