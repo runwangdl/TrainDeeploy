@@ -64,13 +64,35 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training"
 
+  # On-chip training: weights and activations stay in L2, nothing spills to L3.
+  # Without this job the L2 training entries are configured but never executed.
+  gap9-training-tiled-l2-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and singlebuffer and l2"
+
   gap9-training-tiled-l3-singlebuffer:
     needs: select-env
     uses: ./.github/workflows/_runner-gap9-tiled.yml
     with:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
-      pytest-markers: "gap9_tiled and training and singlebuffer and l3"
+      pytest-markers: "gap9_tiled and training and singlebuffer and l3 and not recompute"
+
+  # Gradient-checkpointed training: the same models and budgets as the singlebuffer
+  # job, but replaying a solved recompute schedule so checkpointed activations are
+  # regenerated before the backward pass rather than held live. Its own job so it
+  # does not stretch the singlebuffer job's runtime and a failure is attributable.
+  gap9-training-tiled-l3-recompute:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and l3 and recompute"
 
   # L3 double-buffered training (CCT) — promote+DB handled by its own job below
   gap9-training-tiled-l3-doublebuffer:

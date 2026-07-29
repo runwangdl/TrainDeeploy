@@ -212,12 +212,6 @@ L3_DOUBLEBUFFER_TRAINING_MODELS = {
 #   model artifacts.
 TRAINING_MODEL_OVERRIDES = {
     "Models/Training/CCT/cct_train": {},
-    "Models/Training/CCT_LoRA/cct_lora_train": {
-        # Reduced from 32→4 mini-batches (2 optimizer steps, n_accum=2).
-        # Steps 0-3 are all within 2.5e-5 of ORT — no tolerance override needed.
-        # The old 32-step test compounded LoRA backward drift to ~1.2e-2 at
-        # step 27; 4 steps is sufficient coverage at default 1e-3 tolerance.
-    },
     # conv_channels_first: run the convs natively in NCHW. In NHWC the conv
     # nets emit hundreds of NCHW<->NHWC Transpose ops (ResNet8 forward alone has
     # ~647) that stream through L3 HyperRAM — cheap on GAP9's memory but ~4x the

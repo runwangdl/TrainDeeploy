@@ -7,12 +7,19 @@
 #include "DeeployPULPMath.h"
 #include "pmsis.h"
 
+// biasStride is the row stride of pDstC: O for a full [M,O] bias, and 0 for a
+// broadcast [O] bias, where every output row adds the same vector. A
+// transformer stores its Linear bias as [O] but GEMMLayer.computeShapes used to
+// widen the C operand to [M,O], materialising the same O values M times -- 32
+// KB per 128-wide bias at 64 tokens, against 512 B of data. Passing a stride
+// keeps one kernel for both layouts, and biasStride == O reproduces the
+// previous behaviour exactly.
 void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
                                    const float32_t *__restrict__ pSrcB,
                                    const float32_t *__restrict__ pDstC,
                                    float32_t *__restrict__ pDstY, uint32_t M,
                                    uint32_t N, uint32_t O, uint32_t transA,
-                                   uint32_t transB) {
+                                   uint32_t transB, uint32_t biasStride) {
 
   int8_t core_id = pi_core_id();
   int8_t log2Core = LOG2(NUM_CORES);
@@ -35,7 +42,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
     for (uint32_t i = M_start; i < M_end; ++i) {
       const float32_t *__restrict__ a_row = &pSrcA[i * N];
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
 
@@ -85,7 +93,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
 
     for (uint32_t i = M_start; i < M_end; ++i) {
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {
@@ -181,7 +190,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
     for (uint32_t i = M_start; i < M_end; ++i) {
       const float32_t *__restrict__ a_row = &pSrcA[i * N];
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {
@@ -266,7 +276,8 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
 
     for (uint32_t i = M_start; i < M_end; ++i) {
       float32_t *__restrict__ y_row = &pDstY[i * O];
-      const float32_t *__restrict__ c_row = has_bias ? &pDstC[i * O] : NULL;
+      const float32_t *__restrict__ c_row =
+          has_bias ? &pDstC[i * biasStride] : NULL;
 
       uint32_t j = 0;
       for (; j < O_unroll; j += 6) {
@@ -349,6 +360,56 @@ void PULP_Gemm_fp32_fp32_fp32_fp32(const float32_t *__restrict__ pSrcA,
 
         y_row[j] = has_bias ? sum + c_row[j] : sum;
       }
+    }
+  }
+}
+
+// Gemm against an int8 weight, dequantising inside the loop. Same factorisation
+// as PULP_MatMul_fp32_i8_fp32_unroll1x7: the per-tensor affine dequantisation
+// comes out of the accumulation, so it costs one multiply per output element.
+//
+// This exists because the backward pass reads the same weight as the forward
+// one. If only the forward MatMul takes the int8 binding, the shared constant
+// gets typed from whichever binding the backward Gemm selected -- and a fp32
+// binding there re-types the weight to float, quadrupling its allocation. Both
+// consumers have to agree.
+void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
+                                 const int8_t *__restrict__ pSrcB,
+                                 const float32_t *__restrict__ pDstC,
+                                 float32_t *__restrict__ pDstY, uint32_t M,
+                                 uint32_t N, uint32_t O, uint32_t transA,
+                                 uint32_t transB, uint32_t biasStride,
+                                 float32_t scale, int32_t zeroPoint) {
+  int8_t core_id = pi_core_id();
+  int8_t log2Core = LOG2(NUM_CORES);
+  uint32_t M_chunk = (M >> log2Core) + ((M & (NUM_CORES - 1)) != 0);
+  uint32_t M_start = MIN(core_id * M_chunk, M);
+  uint32_t M_end = MIN(M_start + M_chunk, M);
+  if (M_end <= M_start) {
+    return;
+  }
+  const uint32_t has_bias = (pDstC != NULL);
+
+  for (uint32_t i = M_start; i < M_end; ++i) {
+    const float32_t *__restrict__ a_row = &pSrcA[i * N];
+    float32_t *__restrict__ y_row = &pDstY[i * O];
+    const float32_t *__restrict__ c_row =
+        has_bias ? &pDstC[i * biasStride] : NULL;
+
+    float32_t sum_a = 0.0f;
+    if (zeroPoint != 0) {
+      for (uint32_t k = 0; k < N; ++k) {
+        sum_a += a_row[k];
+      }
+    }
+    const float32_t correction = scale * (float32_t)zeroPoint * sum_a;
+
+    for (uint32_t j = 0; j < O; ++j) {
+      float32_t sum = 0.0f;
+      for (uint32_t k = 0; k < N; ++k) {
+        sum += a_row[k] * (float32_t)pSrcB[k * O + j];
+      }
+      y_row[j] = scale * sum - correction + (has_bias ? c_row[j] : 0.0f);
     }
   }
 }

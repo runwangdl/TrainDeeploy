@@ -91,6 +91,23 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
     "Models/Training/Autoencoder/autoencoder_train": [128000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+    # ResNet8 on-chip. It only fits channels-first: the NHWC path materialises a
+    # transposed copy of every conv weight -- 75 of them, 2950 KB in total -- because
+    # the pass that eliminates W^T covers Linear layers and not Conv. CHW kernels need
+    # no transpose at all, which takes the peak from 1410 KB to 1278 KB and brings it
+    # inside L2 with no recompute, no promotion and no double buffering.
+    # Measured at one mini-batch: Errors: 0, 43,531,388 cycles, L2_shared 164928 B.
+    # 116000, not 122000: CI trains four, and their accumulator buffers leave the L1
+    # allocator 118 KB.
+    "Models/Training/ResNet8/resnet8_train": [116000],
+    # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
+    # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
+    # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
+    # L2 but not the 1000 KB runner default -- hence the l2 override below.
+    # 116000, not the 122000 the L3 entry uses: CI trains 4 mini-batches, whose
+    # accumulator buffers leave the L1 allocator 118 KB, and a 122000 arena does not
+    # fit alongside them.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [116000],
 }
 
 # L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
@@ -102,10 +119,37 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
-    "Models/Training/CCT_LoRA/cct_lora_train": [40000],
+    # Rank-4 LoRA on CCT-2 at the official spec (mlp_ratio=1), adapters on attention
+    # and FFN. 2292 KB peak, 54.5M cycles -- faster than full fine-tuning because the
+    # frozen base weights need no weight gradients.
+    "Models/Training/CCT_LoRA_R1/cct_lorar1_train": [122000],
+    # The same model with its frozen backbone quantised to int8. Exercises the folded
+    # Dequant path: without in-kernel dequantisation this model does not fit at all
+    # (minimalloc fails), and with it the weights reach the kernels as int8.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [122000],
     "Models/Training/SleepConViT/sleepconvit_train": [122000],
     "Models/Training/TSDR/tsdr_train": [122000],
     "Models/Training/MCUNet/mcunet_train": [116000],
+}
+
+# Gradient-checkpointed training. Each entry replays a solved recompute schedule
+# instead of keeping every forward activation live across the backward pass: an
+# activation is dropped after its forward use and regenerated just before the
+# gradient node reads it, trading cycles for peak memory.
+#
+# Only schedules verified end to end on gvsoc belong here. A schedule is keyed on
+# node names, so one produced from a different graph would replay as the default
+# order under a name claiming to be checkpointed; the replay refuses below 90%
+# name coverage rather than report that as a pass.
+#
+#   model                  schedule                       Errors  cycles/step
+#   CCT (exact ILP)        recompute_checkmate.json       0       68.63M vs 64.24M
+#                                                                 baseline (+6.8%)
+L3_RECOMPUTE_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": {
+        "l1": 122000,
+        "schedule": "Tests/Models/Training/CCT/cct_train/recompute_checkmate.json",
+    },
 }
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
@@ -161,6 +205,8 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,  # 0.80M vs 1.21M cyc/step (-33.7%)
     },
     "Models/Training/ResNet8/resnet8_train": {
+        "conv_channels_first": True,  # CHW convs; see the on-chip entry above
+        "l2": 1400000,  # arena 1278 KB plus the static section, inside GAP9's 1.5 MB
         "cc_stack": 4096,  # conv-light backward -> small CC stack, frees L1 for arena
         # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072 -> L1 stacks fit.
         # L1 vs L2 stacks: 47.8M vs 62.9M cyc/step (-23.9%, SB). With the gather
@@ -195,8 +241,25 @@ TRAINING_MODEL_OVERRIDES = {
         # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
         "slave_stack": 512,
     },
-    "Models/Training/CCT_LoRA/cct_lora_train": {
+    "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
         "num_data_inputs": 1,
+        "tolerance": 5e-3,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+    },
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": {
+        "l2": 1572864,  # GAP9's real 1.5 MB; the arena needs 923 KB of it
+        # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072, so the cluster
+        # stacks stay in L1. Without these the SDK defaults overflow it and gvsoc
+        # exits before producing any output.
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "num_data_inputs": 1,
+        # int8 weights dequantised in-kernel; the tolerance covers per-tensor
+        # symmetric quantisation of the frozen backbone, not a looser kernel.
+        "tolerance": 5e-2,
+        "cc_stack": 4096,
+        "slave_stack": 512,
     },
     "Models/Training/SleepConViT/sleepconvit_train": {
         "num_data_inputs": 1,

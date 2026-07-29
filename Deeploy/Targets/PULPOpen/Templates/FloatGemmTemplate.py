@@ -22,6 +22,18 @@ class PULPFloatGEMMTemplate(NodeTemplate):
             operatorRepresentation['C'] = None
             operatorRepresentation['C_type'] = PointerClass(float32_t)  # Default to fp32 type
             operatorRepresentation['C_batched'] = False
+            operatorRepresentation['C_stride'] = 0
+            return ctxt, operatorRepresentation, []
+
+        # Row stride of the bias. A bias the parser left one-dimensional holds O
+        # values shared by every output row, so the kernel re-reads the same vector
+        # (stride 0) instead of the graph carrying M identical copies of it. A
+        # two-dimensional bias keeps the original [M,O] walk.
+        biasShape = ctxt.lookup(operatorRepresentation['C']).shape
+        broadcast = len([d for d in biasShape if d != 1]) <= 1
+        operatorRepresentation['C_stride'] = 0 if broadcast else operatorRepresentation['O']
+        if broadcast:
+            operatorRepresentation['C_batched'] = False
 
         return ctxt, operatorRepresentation, []
 
@@ -48,10 +60,66 @@ for(uint32_t i=0; i<${batch}; i++){
         ${N},
         ${O},
         ${transA},
-        ${transB}
+        ${transB},
+        ${C_stride}
     );
     % else:
     PULP_Gemm_fp${A_type.referencedType.typeWidth}_fp${B_type.referencedType.typeWidth}_fp${C_type.referencedType.typeWidth}_fp${data_out_type.referencedType.typeWidth}(
+        ref_${data_out}_${A},
+        ref_${data_out}_${B},
+        NULL,
+        ref_${data_out}_${data_out},
+        ${M},
+        ${N},
+        ${O},
+        ${transA},
+        ${transB},
+        ${C_stride}
+    );
+    % endif
+    % if A_batched:
+    ref_${data_out}_${A} += ${M} * ${N};
+    % endif
+
+    % if B_batched:
+    ref_${data_out}_${B} += ${N} * ${O};
+    % endif
+
+    % if C is not None and C_batched:
+    ref_${data_out}_${C} += ${M} * ${O};
+    % endif
+
+    ref_${data_out}_${data_out} += ${M} * ${O};
+}
+""")
+
+# Gemm whose weight operand is int8 with the Dequant folded in.
+referenceDequantTemplate = PULPFloatGEMMTemplate("""
+// GEMM (Name: ${nodeName}, Op: ${nodeOp})
+${A_type.typeName} ref_${data_out}_${A} = ${A};
+${B_type.typeName} ref_${data_out}_${B} = ${B};
+% if C is not None:
+${C_type.typeName} ref_${data_out}_${C} = ${C};
+% else:
+${C_type.typeName} ref_${data_out}_C = NULL;
+% endif
+${data_out_type.typeName} ref_${data_out}_${data_out} = ${data_out};
+
+for(uint32_t i=0; i<${batch}; i++){
+    % if C is not None:
+    PULP_Gemm_fp32_i8_fp32_fp32(
+        ref_${data_out}_${A},
+        ref_${data_out}_${B},
+        ref_${data_out}_${C},
+        ref_${data_out}_${data_out},
+        ${M},
+        ${N},
+        ${O},
+        ${transA},
+        ${transB}
+    );
+    % else:
+    PULP_Gemm_fp32_i8_fp32_fp32(
         ref_${data_out}_${A},
         ref_${data_out}_${B},
         NULL,

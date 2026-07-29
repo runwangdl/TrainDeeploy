@@ -122,6 +122,8 @@ def main(tiling_enabled: bool = False,
         gen_args.extend(['--input-offset-map'] + list(args.input_offset_map))
     if getattr(args, 'convChannelsFirst', False):
         gen_args.append('--convChannelsFirst')
+    if getattr(args, 'recomputeSchedule', None):
+        gen_args.append(f'--recomputeSchedule={args.recomputeSchedule}')
 
     if tiling_enabled:
         if getattr(args, 'defaultMemLevel', None):

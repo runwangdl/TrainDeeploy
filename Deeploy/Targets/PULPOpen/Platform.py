@@ -15,7 +15,7 @@ from Deeploy.Targets.Generic.Bindings import BasicGEMMBindings, BasicPad1DBindin
     BasicRQIntegerDivBinding
 from Deeploy.Targets.Generic.Layers import AddLayer, AveragePoolGradLayer, AveragePoolLayer, \
     BatchNormalizationGradLayer, BatchNormInternalLayer, ConcatLayer, ConvGradBLayer, ConvGradWLayer, ConvGradXLayer, \
-    ConvLayer, GatherLayer, GELUGradLayer, GELULayer, GEMMLayer, GlobalAveragePoolGradLayer, GlobalAveragePoolLayer, \
+    ConvLayer, GatherLayer, GELUGradLayer, GELULayer, GlobalAveragePoolGradLayer, GlobalAveragePoolLayer, \
     InPlaceAccumulatorV2Layer, LayerNormGradLayer, LayerNormLayer, MatMulLayer, MaxPoolGradLayer, MaxPoolLayer, \
     MSELossGradLayer, MSELossLayer, MulLayer, PadLayer, QuantLayer, ReduceMeanLayer, ReduceSumLayer, ReluGradLayer, \
     ReluLayer, RequantShiftLayer, ReshapeLayer, RQIntegerDivLayer, RQSiGELULayer, RQSiHardswishLayer, SGDLayer, \
@@ -35,7 +35,7 @@ from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import DequantPat
     MergeConstAddAndRequantPass, MergeTrueIntegerDivRequantShiftPass, QuantPatternPass, RQSSplitPass, \
     SkipEmptyConcatPass, SkipUnityRequantPass, iGELURequantMergePass, iHardswishRequantMergePass
 from Deeploy.Targets.PULPOpen.Bindings import BasicQuantBindings, PULPDMASliceBindings, PULPDWConv1DBinding
-from Deeploy.Targets.PULPOpen.Layers import PULPRQSConvLayer, PULPRQSGEMMLayer
+from Deeploy.Targets.PULPOpen.Layers import PULPAddLayer, PULPGEMMLayer, PULPRQSConvLayer, PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
     PULPConvGradX2DParser, PULPDWConv1DParser, PULPDWConv2DParser, PULPDWConvGradW2DParser, PULPDWConvGradX2DParser, \
     PULPFPConv2DParser, PULPFPDWConv2DParser, PULPGEMMParser, PULPMatrixVecParser, PULPPWConvGradW2DParser, \
@@ -62,8 +62,9 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPSoftmaxCrossEntropyGradTilingReadyBindings, PULPSoftmaxCrossEntropyTilingReadyBindings, \
     PULPSoftmaxGradTilingReadyBindings, PULPSoftmaxTilingReadyBindings, PULPTransposeTilingReadyBindings, \
     PULPUniformRQSTilingReadyBindings
-from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import PULPAddRequantMergePass, \
-    PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, TransposeGemmSquashPass
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldDequantIntoMatMulPass, \
+    PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, \
+    TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
 RQAddMapper = NodeMapper(RQAddParser(), PULPRQAddTilingReadyBindings)
@@ -151,7 +152,7 @@ PULPMapping = {
     'ConvGradB': ConvGradBLayer([ConvGradBMapper]),
     'RequantizedConv': PULPRQSConvLayer([Conv2DMapper, DWConv2DMapper, Conv1DMapper, DWConv1DMapper]),
     'RequantizedGemm': PULPRQSGEMMLayer([MatrixVecMapper, TallGEMMMapper, GEMMMapper]),
-    'Gemm': GEMMLayer([FloatGEMMMapper, GEMMDequantMapper]),
+    'Gemm': PULPGEMMLayer([FloatGEMMMapper, GEMMDequantMapper]),
     'Gelu': GELULayer([GELUMapper]),
     'GeluGrad': GELUGradLayer([GELUGradMapper]),
     'LayerNormalization': LayerNormLayer([LayerNormMapper]),
@@ -175,7 +176,7 @@ PULPMapping = {
     'ReduceMean': ReduceMeanLayer([ReduceMeanMapper]),
     'ReduceSum': ReduceSumLayer([ReduceSumMapper]),
     'RequantShift': RequantShiftLayer([UniformRequantShiftMapper, RequantShiftMapper]),
-    'Add': AddLayer([AddMapper]),
+    'Add': PULPAddLayer([AddMapper]),
     'Flatten': ReshapeLayer([FlattenMapper]),
     'Gather': GatherLayer([GatherMapper]),
     'Mul': MulLayer([MulMapper]),
@@ -271,29 +272,34 @@ class PULPStructBuffer(StructBuffer):
     deallocTemplate = NodeTemplate("")
 
 
-PULPOptimizer = TopologyOptimizer([
-    SplitConvGradPass(),
-    TransposeGemmSquashPass(),
-    QuantPatternPass(),
-    DequantPatternPass(),
-    SkipEmptyConcatPass(),
-    SkipUnityRequantPass(previous_op_regex = "Concat", num_inputs = 2),
-    SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
-    SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
-    RQSSplitPass(),
-    MergeTrueIntegerDivRequantShiftPass(),
-    IntegerDivRequantMergePass(),
-    iGELURequantMergePass(),
-    iHardswishRequantMergePass(),
-    PULPConvRequantMergePass(),
-    MergeConstAddAndRequantPass(),
-    PULPGEMMRequantMergePass(),
-    PULPMatMulRequantMergePass(),
-    PULPAddRequantMergePass(),
-    RemoveEmptyConvBiasPass(),
-    RemoveOnlySingletonReduceMeanPass(),
-],
-                                  name = "PULPOptimizer")
+PULPOptimizer = TopologyOptimizer(
+    [
+        SplitConvGradPass(),
+        TransposeGemmSquashPass(),
+        QuantPatternPass(),
+        DequantPatternPass(),
+        # Fold a weight's Dequant into the matmul that reads it, so the dequantised
+        # weight is never materialised. Placed straight after DequantPatternPass, which
+        # is what normalises the Dequant nodes this matches on.
+        FoldDequantIntoMatMulPass(),
+        SkipEmptyConcatPass(),
+        SkipUnityRequantPass(previous_op_regex = "Concat", num_inputs = 2),
+        SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
+        SkipUnityRequantPass(previous_op_regex = "Reshape|Transpose", num_inputs = 1),
+        RQSSplitPass(),
+        MergeTrueIntegerDivRequantShiftPass(),
+        IntegerDivRequantMergePass(),
+        iGELURequantMergePass(),
+        iHardswishRequantMergePass(),
+        PULPConvRequantMergePass(),
+        MergeConstAddAndRequantPass(),
+        PULPGEMMRequantMergePass(),
+        PULPMatMulRequantMergePass(),
+        PULPAddRequantMergePass(),
+        RemoveEmptyConvBiasPass(),
+        RemoveOnlySingletonReduceMeanPass(),
+    ],
+    name = "PULPOptimizer")
 
 # SCHEREMO: stdint is included before pulp_nn_kernels.h because it is supposed to be included in there, but isn't...
 _includeList = [

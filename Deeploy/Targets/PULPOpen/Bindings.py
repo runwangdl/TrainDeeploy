@@ -34,13 +34,13 @@ from Deeploy.Targets.PULPOpen.DMA.MchanDma import MchanDma
 from Deeploy.Targets.PULPOpen.Templates import ConvTemplate, DMASliceTemplate, FloatAddTemplate, \
     FloatAveragePoolTemplate, FloatBatchNormTemplate, FloatConvGradTemplate, FloatConvTemplate, FloatGELUTemplate, \
     FloatGemmTemplate, FloatGlobalAveragePoolTemplate, FloatInPlaceAccumulatorV2Template, FloatLayernormTemplate, \
-    FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReduceMeanTemplate, FloatReluTemplate, \
-    FloatSoftmaxTemplate, GEMMTemplate, MatrixVectorTemplate, MaxPoolTemplate, MSELossTemplate, MulTemplate, \
-    ReduceMeanTemplate, RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, SGDTemplate, \
-    SoftmaxCrossEntropyLossTemplate, TallGEMMTemplate, TransposeTemplate, UniformRequantShiftTemplate, \
+    FloatMatMulDequantTemplate, FloatMatMulTemplate, FloatMaxPoolTemplate, FloatMulTemplate, FloatReduceMeanTemplate, \
+    FloatReluTemplate, FloatSoftmaxTemplate, GEMMTemplate, MatrixVectorTemplate, MaxPoolTemplate, MSELossTemplate, \
+    MulTemplate, ReduceMeanTemplate, RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, \
+    SGDTemplate, SoftmaxCrossEntropyLossTemplate, TallGEMMTemplate, TransposeTemplate, UniformRequantShiftTemplate, \
     iRMSNormTemplate, iSoftmaxTemplate
-from Deeploy.Targets.PULPOpen.TypeCheckers import PULPConvChecker, PULPLinearChecker, PULPMaxPoolChecker, \
-    PULPRequantShiftChecker
+from Deeploy.Targets.PULPOpen.TypeCheckers import PULPConvChecker, PULPDequantConvChecker, PULPDequantMatMulChecker, \
+    PULPLinearChecker, PULPMaxPoolChecker, PULPRequantShiftChecker
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingVariableReplacement import TilingVariableReplacement, \
     TilingVariableReplacementUpdate
 
@@ -194,6 +194,11 @@ PULPAddBindings = [
     for type1 in IntegerDataTypes
     for type2 in IntegerDataTypes
 ] + [
+    # fp32 activations against an int8 weight: the Dequant has been folded into the
+    # matmul, so the weight is never materialised as fp32.
+    NodeBinding(PULPDequantMatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
+                FloatMatMulDequantTemplate.referenceTemplate, ForkTransformer)
+] + [
     NodeBinding(AddChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatAddTemplate.referenceTemplate, ForkTransformer)
 ]
@@ -239,6 +244,18 @@ PULPFloatGEMMBindings = [
 ]
 
 PULPFloatConv2DBindings = [
+    NodeBinding(
+        PULPDequantConvChecker(
+            [PointerClass(float32_t), PointerClass(int8_t),
+             PointerClass(float32_t)], [PointerClass(float32_t)]), FloatConvTemplate.reference2DIm2ColDequantTemplate,
+        ForkTransformer),
+    # fp32 first. A binding is matched before a weight constant's type is fixed, and
+    # typeInferGlobalCtxt then types that constant from the SELECTED binding's
+    # input_types. Listing the int8 variant first does not make it "more specific":
+    # it claims an ordinary fp32 weight and retypes it to int8, silently quantising
+    # it. That is what failed the FP32 Conv kernel test 512 of 512. A genuinely int8
+    # constant already carries that type, so the fp32 checker rejects it and the
+    # int8 binding below still wins.
     NodeBinding(
         ConvChecker([PointerClass(float32_t), PointerClass(float32_t),
                      PointerClass(float32_t)], [PointerClass(float32_t)]), FloatConvTemplate.reference2DIm2ColTemplate,
@@ -390,6 +407,17 @@ PULPDWConv1DBinding = NodeBinding(
 PULPMatMulBindings = [
     NodeBinding(MatMulChecker([PointerClass(int8_t), PointerClass(int8_t)], [PointerClass(int32_t)]),
                 GEMMTemplate.PULPMM_8_Template, ClusterTransformer)
+] + [
+    # int8 weight with the Dequant folded in. Ordering alone cannot separate this from
+    # the fp32 binding: selection happens before a weight constant's type is fixed and
+    # typeInferGlobalCtxt then types that constant from the SELECTED binding, so
+    # whichever comes first claims the weight and defines its type. int8-first
+    # silently quantised ordinary fp32 weights (FP32 Conv kernel test, 512 of 512);
+    # fp32-first inflated folded int8 weights (CCT-QLoRA persistent 409 KB -> 1094 KB).
+    # PULPDequantMatMulChecker keys on the dequant_scale attribute the fold leaves
+    # behind instead, so it is invisible to an fp32 graph and can safely come first.
+    NodeBinding(PULPDequantMatMulChecker([PointerClass(float32_t), PointerClass(int8_t)], [PointerClass(float32_t)]),
+                FloatMatMulDequantTemplate.referenceTemplate, ForkTransformer)
 ] + [
     NodeBinding(MatMulChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatMatMulTemplate.referenceTemplate, ForkTransformer)
