@@ -64,6 +64,16 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "training"
 
+  # On-chip training: weights and activations stay in L2, nothing spills to L3.
+  # Without this job the L2 training entries are configured but never executed.
+  gap9-training-tiled-l2-singlebuffer:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and singlebuffer and l2"
+
   gap9-training-tiled-l3-singlebuffer:
     needs: select-env
     uses: ./.github/workflows/_runner-gap9-tiled.yml
