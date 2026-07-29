@@ -58,6 +58,9 @@ DeeployTest/Tests/**/pactIntegerizationProto
 DeeployTest/Tests/**/quantlib
 DeeployTest/Tests/**/*.py
 DeeployTest/Tests/**/*.json
+# Recompute schedules are inputs, not generated artefacts: a test that names one
+# and cannot find it fails at generation, which is how it reached CI unnoticed.
+!DeeployTest/Tests/**/recompute_*.json
 DeeployTest/Tests/**/generateTest.py
 DeeployTest/out.txt
 
