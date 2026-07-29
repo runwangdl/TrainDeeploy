@@ -1405,7 +1405,9 @@ def test_gap9_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, tool
         tiling = True,
         cores = GAP9_TILED_DEFAULT_CORES,
         l1 = l1,
-        l2 = 1024000,
+        # GAP9's L2 is 1.5 MB; 1024000 is the runner default. A model that needs
+        # the real capacity says so rather than being left out of the on-chip job.
+        l2 = overrides.get("l2", 1024000),
         default_mem_level = "L2",
         double_buffer = False,
         training = True,

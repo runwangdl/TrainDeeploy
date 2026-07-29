@@ -94,6 +94,14 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # ResNet8 on-chip: 1316 KB peak with the memory-minimising schedule, which is
     # what brings it inside 1.5 MB L2 alongside the ~171 KB static section.
     "Models/Training/ResNet8/resnet8_train": [122000],
+    # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
+    # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
+    # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
+    # L2 but not the 1000 KB runner default -- hence the l2 override below.
+    # 116000, not the 122000 the L3 entry uses: CI trains 4 mini-batches, whose
+    # accumulator buffers leave the L1 allocator 118 KB, and a 122000 arena does not
+    # fit alongside them.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [116000],
 }
 
 # L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
@@ -232,6 +240,12 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,
     },
     "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": {
+        "l2": 1572864,  # GAP9's real 1.5 MB; the arena needs 923 KB of it
+        # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072, so the cluster
+        # stacks stay in L1. Without these the SDK defaults overflow it and gvsoc
+        # exits before producing any output.
+        "cc_stack": 4096,
+        "slave_stack": 512,
         "num_data_inputs": 1,
         # int8 weights dequantised in-kernel; the tolerance covers per-tensor
         # symmetric quantisation of the frozen backbone, not a looser kernel.
