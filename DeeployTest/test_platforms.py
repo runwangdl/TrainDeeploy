@@ -23,6 +23,7 @@ from test_gap9_tiled_config import L3_DOUBLEBUFFER_MODELS as GAP9_L3_DOUBLEBUFFE
 from test_gap9_tiled_config import L3_DOUBLEBUFFER_TRAINING_MODELS as GAP9_L3_DOUBLEBUFFER_TRAINING_MODELS
 from test_gap9_tiled_config import \
     L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS as GAP9_L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS
+from test_gap9_tiled_config import L3_RECOMPUTE_TRAINING_MODELS as GAP9_L3_RECOMPUTE_TRAINING_MODELS
 from test_gap9_tiled_config import L3_SINGLEBUFFER_MODELS as GAP9_L3_SINGLEBUFFER_MODELS
 from test_gap9_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as GAP9_L3_SINGLEBUFFER_TRAINING_MODELS
 from test_gap9_tiled_config import \
@@ -1458,6 +1459,56 @@ def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, tool
         training_num_data_inputs = overrides.get("num_data_inputs"),
         training_tolerance = overrides.get("tolerance"),
         training_conv_channels_first = overrides.get("conv_channels_first", False),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9_tiled
+@pytest.mark.training
+@pytest.mark.singlebuffer
+@pytest.mark.l3
+@pytest.mark.recompute
+@pytest.mark.parametrize(
+    "test_name,recompute_config",
+    sorted(GAP9_L3_RECOMPUTE_TRAINING_MODELS.items()),
+    ids = lambda value: value.replace("/", "-") if isinstance(value, str) else "",
+)
+def test_gap9_tiled_training_l3_recompute(test_name, recompute_config, deeploy_test_dir, toolchain, toolchain_dir,
+                                          cmake_args, skipgen, skipsim) -> None:
+    """Train with a solved gradient-checkpointing schedule replayed on the deployed graph.
+
+    This is the same model and budget as the singlebuffer case; what differs is that
+    checkpointed activations are regenerated before the backward pass reads them
+    rather than held live. It costs cycles and buys peak memory, so it is a separate
+    entry rather than a replacement, and both run.
+    """
+    overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
+    slave_stack = overrides.get("slave_stack")
+    if slave_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = True,
+        cores = GAP9_TILED_DEFAULT_CORES,
+        l1 = recompute_config["l1"],
+        l2 = 1024000,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
+        training_recompute_schedule = recompute_config["schedule"],
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 

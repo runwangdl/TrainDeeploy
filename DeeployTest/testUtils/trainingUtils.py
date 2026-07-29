@@ -30,7 +30,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np
 import onnx_graphsurgeon as gs
@@ -136,6 +136,209 @@ def _infer_n_accum(inputs_path: str) -> int:
 def _mockScheduler(graph: gs.Graph) -> List[List[gs.Node]]:
     """Wrap every node in a singleton list for the Tiler pattern interface."""
     return [[node] for node in graph.nodes]
+
+
+# Suffix marking a node, tensor or constant created as a recompute clone. Also the
+# signal that a graph has already been injected, so the second scheduler call
+# replays the cached order instead of cloning a second time.
+_CLONE_MARKER = "__ck"
+
+# Fraction of a schedule's entries that must name a node in the deployed graph before
+# the replay is trusted. Not 100%: lowering legitimately renames a few nodes.
+_MIN_SCHEDULE_COVERAGE = 0.9
+
+
+def _loadRecomputeSchedule(path: str) -> List[Tuple[str, bool]]:
+    """Read a recompute schedule: a list of (node name, is_recompute) in run order.
+
+    The file is what a Checkmate solve emits, one entry per execution rather than
+    per node, so a tensor that is recomputed appears more than once. The first
+    appearance of a name is its original execution; every later one asks for a
+    fresh clone.
+    """
+    with open(path) as handle:
+        data = json.load(handle)
+    return [(str(name), bool(isRecompute)) for name, isRecompute in data["seq"]]
+
+
+def _liveOutputs(node: gs.Node) -> int:
+    return len([out for out in node.outputs if out is not None])
+
+
+def _nodesByName(graph: gs.Graph) -> Dict[str, gs.Node]:
+    """Map name to node, preferring one that still produces something.
+
+    Lowering can leave a stale same-named node whose outputs have been cleared. A
+    plain comprehension may pick that one, and scheduling a zero-output node puts
+    an empty layer into layerBinding, which fails with an IndexError far from here.
+    """
+    byName: Dict[str, gs.Node] = {}
+    for node in graph.nodes:
+        if node.name not in byName or (_liveOutputs(node) and not _liveOutputs(byName[node.name])):
+            byName[node.name] = node
+    return byName
+
+
+def _spliceMissingNodes(schedule: List[gs.Node], graph: gs.Graph) -> List[gs.Node]:
+    """Insert nodes the schedule does not mention after their last producer.
+
+    The scheduler runs twice, once for binding and once for the tiler, and lowering
+    between the two can add or rename nodes. Dropping them would leave their outputs
+    unproduced. Splicing each one in after its last scheduled predecessor keeps the
+    rest of the order byte-identical, which a full re-topologisation would not.
+    """
+    placed = {id(node) for node in schedule}
+    for node in [n for n in graph.nodes if id(n) not in placed]:
+        producedNames = {t.name for t in node.inputs if t is not None and t.name}
+        insertAt = 0
+        for index, scheduled in enumerate(schedule):
+            if any(out is not None and out.name in producedNames for out in scheduled.outputs):
+                insertAt = index + 1
+        schedule.insert(insertAt, node)
+    return schedule
+
+
+def _pruneDeadRecomputes(schedule: List[gs.Node], graph: gs.Graph) -> Tuple[List[gs.Node], int]:
+    """Drop scheduled nodes nothing reads, to a fixpoint.
+
+    A solve may place a recompute in a stage whose consumers linearise before the
+    clone, so nothing is rewired to it. It may equally rewire every consumer of an
+    original to a clone, which makes the "recompute" a move and leaves the original
+    unread. Either way cleanup strips the output and the empty layer reaches
+    layerBinding. Dropping such a node is strictly better: less compute and less
+    memory. Removing one can orphan its producer, hence the fixpoint.
+    """
+    graphOutputs = {out.name for out in graph.outputs if out is not None}
+    dropped = 0
+    while True:
+        position = {id(node): index for index, node in enumerate(schedule)}
+        dead = []
+        for node in schedule:
+            if any(out is not None and out.name in graphOutputs for out in node.outputs):
+                continue
+            isRead = any(
+                id(consumer) in position and position[id(consumer)] > position[id(node)] for out in node.outputs
+                if out is not None for consumer in out.outputs)
+            if not isRead:
+                dead.append(node)
+        if not dead:
+            return schedule, dropped
+        deadIds = {id(node) for node in dead}
+        schedule = [node for node in schedule if id(node) not in deadIds]
+        dropped += len(dead)
+
+
+def recomputeScheduler(schedulePath: str, shareConstants: bool = True):
+    """Build a scheduler that replays a recompute schedule on the deployed graph.
+
+    Gradient checkpointing trades compute for memory: an activation is dropped after
+    its forward use and regenerated before the backward one reads it. The decision of
+    what to drop comes from a solve over the training graph; this replays that
+    decision on the graph Deeploy actually deploys, which is not the graph the solve
+    saw, because lowering has run in between.
+
+    Each recompute becomes a short-lived clone, and consumers scheduled after it read
+    the clone rather than the original, so the original's output dies at its last
+    forward use instead of staying live across the backward pass.
+
+    ``shareConstants`` lets a clone reference the same constant as the original
+    rather than carrying a copy. A copy charges the full constant again for every
+    clone, so recomputing a node that reads a weight grows the persistent region
+    instead of shrinking the peak: measured on the int8 QLoRA CCT, 117 clones pushed
+    persistent from 662 KB to 938 KB. Sharing is sound because a ConstantBuffer is
+    global and read-only.
+
+    The returned callable is used twice on the same graph, once for binding and once
+    for the tiler. The second call replays the order cached from the first: cloning
+    again would produce a second set of clones for the same recomputes.
+    """
+    sequence = _loadRecomputeSchedule(schedulePath)
+    cachedOrder: List[Optional[List[str]]] = [None]
+
+    def schedule(graph: gs.Graph) -> List[List[gs.Node]]:
+        byName = _nodesByName(graph)
+
+        if cachedOrder[0] is not None and any(_CLONE_MARKER in node.name for node in graph.nodes):
+            replayed = [byName[name] for name in cachedOrder[0] if name in byName]
+            replayed = _spliceMissingNodes(replayed, graph)
+            return [[node] for node in replayed if _liveOutputs(node)]
+
+        # A schedule is keyed on node names, and lowering renames nodes. If a solve is
+        # replayed against a graph it was not produced from, most names miss, every
+        # recompute silently vanishes, and what runs is the default order under a name
+        # that claims to be checkpointed. That degradation is invisible in a pass/fail
+        # CI result, so refuse it rather than report a green run of the wrong thing.
+        matched = sum(1 for name, _ in sequence if name in byName)
+        if matched < len(sequence) * _MIN_SCHEDULE_COVERAGE:
+            raise ValueError(f"Recompute schedule matches only {matched} of {len(sequence)} entries against this "
+                             f"graph ({matched / max(len(sequence), 1):.0%}, need "
+                             f"{_MIN_SCHEDULE_COVERAGE:.0%}). It was almost certainly produced from a different "
+                             f"graph: replaying it would drop the recomputes and silently run the default order.")
+
+        current: Dict[str, gs.Tensor] = {}
+        ordered: List[gs.Node] = []
+        clones: List[gs.Node] = []
+        alreadyRun: Set[str] = set()
+        instance = 0
+
+        for name, isRecompute in sequence:
+            original = byName.get(name)
+            if original is None:
+                continue
+            rewiredInputs = [current[t.name] if (t is not None and t.name in current) else t for t in original.inputs]
+
+            if not isRecompute and name not in alreadyRun:
+                original.inputs = rewiredInputs
+                ordered.append(original)
+                for out in original.outputs:
+                    if out.name:
+                        current[out.name] = out
+                alreadyRun.add(name)
+                continue
+
+            instance += 1
+            cloneInputs = []
+            for tensor in rewiredInputs:
+                if isinstance(tensor, gs.Constant) and not shareConstants:
+                    cloneInputs.append(
+                        gs.Constant(name = f"{tensor.name}{_CLONE_MARKER}{instance}", values = tensor.values))
+                else:
+                    cloneInputs.append(tensor)
+            cloneOutputs = [
+                gs.Variable(name = f"{out.name}{_CLONE_MARKER}{instance}", dtype = out.dtype, shape = out.shape)
+                if out.name else out for out in original.outputs
+            ]
+            clone = gs.Node(op = original.op,
+                            name = f"{original.name}{_CLONE_MARKER}{instance}",
+                            attrs = dict(original.attrs),
+                            inputs = cloneInputs,
+                            outputs = cloneOutputs)
+            ordered.append(clone)
+            clones.append(clone)
+            for out, cloneOut in zip(original.outputs, cloneOutputs):
+                if out.name:
+                    current[out.name] = cloneOut
+
+        ordered, dropped = _pruneDeadRecomputes(ordered, graph)
+        if dropped:
+            log.info(f"[Recompute] dropped {dropped} recomputes nothing reads")
+
+        liveClones = {id(node) for node in ordered}
+        graph.nodes.extend([node for node in clones if id(node) in liveClones])
+
+        # Nodes the schedule never named still have to run, and they cannot simply go
+        # at the end: a constant duplicated per consumer during frontend folding
+        # produces a tensor its consumer reads, so appending it after that consumer
+        # leaves the input unresolved and context lookup fails. Splice each one in
+        # after whatever produces its inputs.
+        ordered = _spliceMissingNodes(ordered, graph)
+
+        cachedOrder[0] = [node.name for node in ordered]
+        log.info(f"[Recompute] {len(sequence)} scheduled executions, "
+                 f"{len([n for n in ordered if _CLONE_MARKER in n.name])} recompute clones")
+        return [[node] for node in ordered if _liveOutputs(node)]
+
+    return schedule
 
 
 # Element size assumed by _tensorSize.  Deliberately uniform: this is the weight

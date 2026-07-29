@@ -64,6 +64,7 @@ def create_test_config(
     training_num_data_inputs: Optional[int] = None,
     training_tolerance: Optional[float] = None,
     training_conv_channels_first: bool = False,
+    training_recompute_schedule: str = None,
     promote_to_l2: bool = False,
     promote_to_l2_strategy: str = "cycle-aware",
     promote_to_l2_headroom: int = 131072,
@@ -127,6 +128,9 @@ def create_test_config(
 
     if training and training_conv_channels_first:
         gen_args_list.append("--convChannelsFirst")
+
+    if training and training_recompute_schedule is not None:
+        gen_args_list.append(f"--recomputeSchedule={training_recompute_schedule}")
 
     config = DeeployTestConfig(
         test_name = test_name_clean,

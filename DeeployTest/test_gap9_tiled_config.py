@@ -105,7 +105,6 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
-    "Models/Training/CCT_LoRA/cct_lora_train": [40000],
     # Rank-4 LoRA on CCT-2 at the official spec (mlp_ratio=1), adapters on attention
     # and FFN. 2292 KB peak, 54.5M cycles -- faster than full fine-tuning because the
     # frozen base weights need no weight gradients.
@@ -117,6 +116,26 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SleepConViT/sleepconvit_train": [122000],
     "Models/Training/TSDR/tsdr_train": [122000],
     "Models/Training/MCUNet/mcunet_train": [116000],
+}
+
+# Gradient-checkpointed training. Each entry replays a solved recompute schedule
+# instead of keeping every forward activation live across the backward pass: an
+# activation is dropped after its forward use and regenerated just before the
+# gradient node reads it, trading cycles for peak memory.
+#
+# Only schedules verified end to end on gvsoc belong here. A schedule is keyed on
+# node names, so one produced from a different graph would replay as the default
+# order under a name claiming to be checkpointed; the replay refuses below 90%
+# name coverage rather than report that as a pass.
+#
+#   model                  schedule                       Errors  cycles/step
+#   CCT (exact ILP)        recompute_checkmate.json       0       68.63M vs 64.24M
+#                                                                 baseline (+6.8%)
+L3_RECOMPUTE_TRAINING_MODELS = {
+    "Models/Training/CCT/cct_train": {
+        "l1": 122000,
+        "schedule": "Tests/Models/Training/CCT/cct_train/recompute_checkmate.json",
+    },
 }
 
 # L3 double-buffered training. Only the L3<->L2 hop is double-buffered
@@ -219,9 +238,6 @@ TRAINING_MODEL_OVERRIDES = {
         "tolerance": 5e-2,
         "cc_stack": 4096,
         "slave_stack": 512,
-    },
-    "Models/Training/CCT_LoRA/cct_lora_train": {
-        "num_data_inputs": 1,
     },
     "Models/Training/SleepConViT/sleepconvit_train": {
         "num_data_inputs": 1,
