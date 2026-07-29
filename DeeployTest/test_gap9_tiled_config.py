@@ -146,9 +146,30 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 #   CCT (exact ILP)        recompute_checkmate.json       0       68.63M vs 64.24M
 #                                                                 baseline (+6.8%)
 L3_RECOMPUTE_TRAINING_MODELS = {
+    # Each entry is a solved schedule that has been replayed end to end, with the
+    # cost of doing so. Checkpointing buys peak memory with compute, so these run
+    # alongside the ordinary entries rather than replacing them.
+    #
+    #   model         recomputes  Errors  cycles (4 steps)  versus no recompute
+    #   CCT                    6       0   287,126,768       +6.8% at one step
+    #   MobileNetV1           19       0   217,072,544       --
+    #
+    # ResNet8 is not here. Its schedules all replay against the NHWC graph, and its
+    # on-chip entry runs channels-first, so every one of the seven solved sequences
+    # matches 67-75% of the deployed graph and the replay refuses them. Verified at
+    # L2 without channels-first it does work -- 86 recomputes, Errors: 0, 71.32M
+    # cycles against 43.53M, taking the arena from 1443800 B to 1308676 B -- so what
+    # it needs is a solve on the CHW graph, not a lower coverage threshold.
+    #
+    # Recompute count is not the lever either way: a 113-recompute ResNet8 schedule
+    # needed MORE arena (1535196 B) than doing nothing at all.
     "Models/Training/CCT/cct_train": {
         "l1": 122000,
         "schedule": "Tests/Models/Training/CCT/cct_train/recompute_checkmate.json",
+    },
+    "Models/Training/MobileNetV1/mobilenetv1_train": {
+        "l1": 116000,
+        "schedule": "Tests/Models/Training/MobileNetV1/mobilenetv1_train/recompute_checkmate.json",
     },
 }
 
