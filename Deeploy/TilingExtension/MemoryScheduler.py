@@ -327,6 +327,30 @@ class MemoryScheduler():
                 new_lifetime = (lifetime[0], maxStepIdx)
             tensorLifetimeMap[tensorName] = new_lifetime
 
+        # RW: A buffer nobody reads is dead the moment its producer returns, but it reaches
+        # here with an interval spanning to wherever it was last MENTIONED in the constraint
+        # set, which is far later. The arena is then packed around a block that holds no
+        # live value.
+        #
+        # These are not rare. BatchNormInternal takes saved_mean and saved_inv_std as kernel
+        # OUTPUT pointers, but the backward reads the running-statistics tensors instead, so
+        # both are written and never read. On ResNet8 that is 18 tensors and 2.6KB in the
+        # plain graph -- easy to miss -- but rematerialisation multiplies it, since every
+        # recomputed BatchNorm contributes two more: at 86 recomputes the same network
+        # carries 126 such tensors totalling 255.6KB, of which 187.5KB is live at the peak,
+        # 16.4% of it. It also masks the effect of a tighter memory budget, because a
+        # tighter budget buys more recomputes and each one adds two more never-freed blocks.
+        #
+        # Graph outputs are excluded above (is_output already pins them to maxStepIdx) and
+        # aliased buffers keep the extension applied in the _alias branch, so this only
+        # collapses blocks that genuinely hold nothing.
+        for tensorName, lifetime in tensorLifetimeMap.items():
+            buffer = ctxt.lookup(tensorName)
+            if buffer.is_input or buffer.is_output or hasattr(buffer, "_alias"):
+                continue
+            if len(getattr(buffer, "_users", [])) == 0:
+                tensorLifetimeMap[tensorName] = (lifetime[0], lifetime[0])
+
         return tensorLifetimeMap, tensorMap
 
     def _buildAdjacencyMatrix(self, graph, tensorMap):
