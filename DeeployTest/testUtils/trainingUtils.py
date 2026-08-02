@@ -179,16 +179,28 @@ def _nodesByName(graph: gs.Graph) -> Dict[str, gs.Node]:
     return byName
 
 
-def _spliceMissingNodes(schedule: List[gs.Node], graph: gs.Graph) -> List[gs.Node]:
+def _spliceMissingNodes(schedule: List[gs.Node],
+                        graph: gs.Graph,
+                        excludedNames: Optional[Set[str]] = None) -> List[gs.Node]:
     """Insert nodes the schedule does not mention after their last producer.
 
     The scheduler runs twice, once for binding and once for the tiler, and lowering
     between the two can add or rename nodes. Dropping them would leave their outputs
     unproduced. Splicing each one in after its last scheduled predecessor keeps the
     rest of the order byte-identical, which a full re-topologisation would not.
+
+    ``excludedNames`` are nodes deliberately left out, which must not be spliced back.
+    ``_pruneDeadRecomputes`` removes a node from the SCHEDULE but cannot remove it from
+    ``graph.nodes``, so "in the graph and not in the schedule" describes a pruned node
+    just as well as a genuinely missing one. Without this, every node the prune dropped
+    is reinserted, cleanup strips the outputs nothing reads, and the empty layer reaches
+    layerBinding as ``IndexError: list index out of range`` at TilerExtension:1748 --
+    the very failure the prune exists to prevent. The two functions are each correct
+    alone and cancel each other out when composed.
     """
+    excluded = excludedNames or set()
     placed = {id(node) for node in schedule}
-    for node in [n for n in graph.nodes if id(n) not in placed]:
+    for node in [n for n in graph.nodes if id(n) not in placed and n.name not in excluded]:
         producedNames = {t.name for t in node.inputs if t is not None and t.name}
         insertAt = 0
         for index, scheduled in enumerate(schedule):
@@ -198,7 +210,7 @@ def _spliceMissingNodes(schedule: List[gs.Node], graph: gs.Graph) -> List[gs.Nod
     return schedule
 
 
-def _pruneDeadRecomputes(schedule: List[gs.Node], graph: gs.Graph) -> Tuple[List[gs.Node], int]:
+def _pruneDeadRecomputes(schedule: List[gs.Node], graph: gs.Graph) -> Tuple[List[gs.Node], Set[str]]:
     """Drop scheduled nodes nothing reads, to a fixpoint.
 
     A solve may place a recompute in a stage whose consumers linearise before the
@@ -209,7 +221,7 @@ def _pruneDeadRecomputes(schedule: List[gs.Node], graph: gs.Graph) -> Tuple[List
     memory. Removing one can orphan its producer, hence the fixpoint.
     """
     graphOutputs = {out.name for out in graph.outputs if out is not None}
-    dropped = 0
+    droppedNames: Set[str] = set()
     while True:
         position = {id(node): index for index, node in enumerate(schedule)}
         dead = []
@@ -222,10 +234,10 @@ def _pruneDeadRecomputes(schedule: List[gs.Node], graph: gs.Graph) -> Tuple[List
             if not isRead:
                 dead.append(node)
         if not dead:
-            return schedule, dropped
+            return schedule, droppedNames
         deadIds = {id(node) for node in dead}
         schedule = [node for node in schedule if id(node) not in deadIds]
-        dropped += len(dead)
+        droppedNames.update(node.name for node in dead)
 
 
 def recomputeScheduler(schedulePath: str, shareConstants: bool = True):
@@ -254,13 +266,16 @@ def recomputeScheduler(schedulePath: str, shareConstants: bool = True):
     """
     sequence = _loadRecomputeSchedule(schedulePath)
     cachedOrder: List[Optional[List[str]]] = [None]
+    # Carried across the two calls: the tiler call replays the cached order and splices
+    # too, so a node the binding call pruned would be reinserted there instead.
+    prunedNames: Set[str] = set()
 
     def schedule(graph: gs.Graph) -> List[List[gs.Node]]:
         byName = _nodesByName(graph)
 
         if cachedOrder[0] is not None and any(_CLONE_MARKER in node.name for node in graph.nodes):
             replayed = [byName[name] for name in cachedOrder[0] if name in byName]
-            replayed = _spliceMissingNodes(replayed, graph)
+            replayed = _spliceMissingNodes(replayed, graph, prunedNames)
             return [[node] for node in replayed if _liveOutputs(node)]
 
         # A schedule is keyed on node names, and lowering renames nodes. If a solve is
@@ -319,9 +334,10 @@ def recomputeScheduler(schedulePath: str, shareConstants: bool = True):
                 if out.name:
                     current[out.name] = cloneOut
 
-        ordered, dropped = _pruneDeadRecomputes(ordered, graph)
-        if dropped:
-            log.info(f"[Recompute] dropped {dropped} recomputes nothing reads")
+        ordered, droppedNames = _pruneDeadRecomputes(ordered, graph)
+        prunedNames.update(droppedNames)
+        if droppedNames:
+            log.info(f"[Recompute] dropped {len(droppedNames)} recomputes nothing reads")
 
         liveClones = {id(node) for node in ordered}
         graph.nodes.extend([node for node in clones if id(node) in liveClones])
@@ -331,7 +347,7 @@ def recomputeScheduler(schedulePath: str, shareConstants: bool = True):
         # produces a tensor its consumer reads, so appending it after that consumer
         # leaves the input unresolved and context lookup fails. Splice each one in
         # after whatever produces its inputs.
-        ordered = _spliceMissingNodes(ordered, graph)
+        ordered = _spliceMissingNodes(ordered, graph, prunedNames)
 
         cachedOrder[0] = [node.name for node in ordered]
         log.info(f"[Recompute] {len(sequence)} scheduled executions, "
