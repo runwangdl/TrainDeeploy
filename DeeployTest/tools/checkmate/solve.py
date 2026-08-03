@@ -42,7 +42,7 @@ import onnx
 import onnx_graphsurgeon as gs
 from ortools.sat.python import cp_model
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))          # DeeployTest
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # DeeployTest
 from testUtils.trainingUtils import _memoryMinimisingScheduler  # noqa: E402
 
 
@@ -137,9 +137,14 @@ for k, nd in enumerate(order):
     for i in nd.inputs:
         if i is not None and i.name and i.name in _tlast:
             _tlast[i.name] = max(_tlast[i.name], k)
-preds = [sorted({producer[i.name] for i in nd.inputs
-                 if i is not None and i.name and i.name in producer and producer[i.name] < idx[id(nd)]})
-         for nd in order]
+preds = [
+    sorted({
+        producer[i.name]
+        for i in nd.inputs
+        if i is not None and i.name and i.name in producer and producer[i.name] < idx[id(nd)]
+    })
+    for nd in order
+]
 n = len(order)
 
 # TENSOR-INDEXED RETENTION.  S used to be S[t, node]: one bit for a whole node, so a
@@ -155,7 +160,7 @@ n = len(order)
 # measured exactly zero saving.
 #
 # So S is indexed by TENSOR. R stays node-indexed, because a node is what executes.
-tensors = []                      # (name, producer node, bytes)
+tensors = []  # (name, producer node, bytes)
 tid = {}
 for _i, _nd in enumerate(order):
     for _o in _nd.outputs:
@@ -166,14 +171,11 @@ for _i, _nd in enumerate(order):
 nT = len(tensors)
 
 # What a node materialises when it runs: all of its outputs.
-sizes = [0 if _i in _aliased else sum(sz(_o) for _o in _nd.outputs if _o is not None)
-         for _i, _nd in enumerate(order)]
+sizes = [0 if _i in _aliased else sum(sz(_o) for _o in _nd.outputs if _o is not None) for _i, _nd in enumerate(order)]
 
 # A node depends on TENSORS, not on producer nodes: BatchNorm's main output and its
 # saved_mean are two independent requirements from here on.
-in_tensors = [[tid[_x.name] for _x in _nd.inputs
-               if _x is not None and _x.name and _x.name in tid]
-              for _nd in order]
+in_tensors = [[tid[_x.name] for _x in _nd.inputs if _x is not None and _x.name and _x.name in tid] for _nd in order]
 consumers_of = [[] for _ in range(nT)]
 for _k, _q in ((k, q) for k, qs in enumerate(in_tensors) for q in qs):
     consumers_of[_q].append(_k)
@@ -184,6 +186,23 @@ BAN_OPS = ALWAYS_BAN | set(x for x in ban_csv.split(',') if x)
 # Aliased nodes join the ban: recomputing one costs cycles and a fresh buffer while
 # freeing nothing, so it can only ever make the realised peak worse.
 ban = {k for k, nd in enumerate(order) if nd.op in BAN_OPS} | _aliased
+
+# BAN_FILE -- bar named nodes from recompute WITHOUT zeroing their size, which ALIAS_FILE
+# cannot express. Needed when a node's output is real but recomputing it is a bad trade.
+#
+# CCT's stem is the case. Its own tensors are nowhere near the peak: they live for four
+# steps at the start while the baseline peak is at step 108 of 244. But the objective is
+# recompute CYCLES and the stem is one Conv plus one Relu, so dropping it looks cheap --
+# and the two 256KB clones then land at step 255, which becomes the new peak. The model
+# cannot see that because its peak is computed per stage and sits elsewhere. Unit-level
+# enumeration finds the same thing directly: recomputing the stem takes the model peak
+# from 672.5KB to 768.5KB.
+_ban_file = os.environ.get('BAN_FILE')
+if _ban_file:
+    _ban_names = set(json.load(open(_ban_file))['aliased'])
+    _extra = {k for k, nd in enumerate(order) if nd.name in _ban_names}
+    ban = ban | _extra
+    print(f'BAN_FILE={_ban_file}: {len(_extra)} nodes barred from recompute (sizes kept)')
 
 # SCHEDULE-DERIVED PRUNING.  Every node is a decision variable at every stage, but
 # most of them can never pay: if a tensor's LAST consumer is only a couple of stages
@@ -233,10 +252,9 @@ if os.environ.get('PRUNE_BWD') == '1':
     _keep = set()
     for _i, _nd in enumerate(order):
         if _is_grad(_nd):
-            _keep.add(_i)                      # backward nodes stay decidable
+            _keep.add(_i)  # backward nodes stay decidable
             continue
-        _cons = [c for o in _nd.outputs if o is not None
-                 for c in o.outputs if id(c) in _pos]
+        _cons = [c for o in _nd.outputs if o is not None for c in o.outputs if id(c) in _pos]
         if any(_is_grad(c) for c in _cons):
             _keep.add(_i)
     _drop = {i for i in range(n) if i not in _keep and i not in ban}
@@ -252,8 +270,7 @@ if _span_min > 0:
     for _i, _nd in enumerate(order):
         if _i in ban:
             continue
-        _cs = [_pos[id(c)] for o in _nd.outputs if o is not None
-               for c in o.outputs if id(c) in _pos]
+        _cs = [_pos[id(c)] for o in _nd.outputs if o is not None for c in o.outputs if id(c) in _pos]
         _span = (max(_cs) - _i) if _cs else 0
         if _span <= _span_min or sizes[_i] < _byte_min:
             _pruned.add(_i)
@@ -273,9 +290,7 @@ if mkb == 0:
         for _x in _nd.inputs:
             if _x is not None and _x.name in tid:
                 _tl[tid[_x.name]] = max(_tl[tid[_x.name]], _k)
-    print('MODELPEAK=%d' % max(
-        sum(b for q, (_, _p, b) in enumerate(tensors) if _p <= t <= _tl[q])
-        for t in range(n)))
+    print('MODELPEAK=%d' % max(sum(b for q, (_, _p, b) in enumerate(tensors) if _p <= t <= _tl[q]) for t in range(n)))
     print(f'NBAN={len(ban)}/{n} BANOPS={sorted(BAN_OPS)}')
     sys.exit(0)
 
@@ -283,6 +298,7 @@ budget = mkb * 1024 - floor_kb * 1024
 if budget <= 0:
     print(f'm_max={mkb}KB: BUDGET<=0 after floor {floor_kb}KB')
     sys.exit(1)
+
 
 # COST MODEL.  Checkmate's objective is sum(costs[i]*R[t,i]); with costs=1 it minimises
 # the NUMBER of recomputed nodes, which is not latency -- 3 recomputed Convs cost far more
@@ -295,6 +311,8 @@ def _numel(t):
     for d in t.shape:
         p *= d if isinstance(d, int) and d > 0 else 1
     return p
+
+
 def _cost(nd):
     out = sum(_numel(o) for o in nd.outputs if o is not None)
     if nd.op in ('Conv', 'ConvGradX', 'ConvGradW'):
@@ -305,7 +323,7 @@ def _cost(nd):
             k = 1
             for d in sh[1:]:
                 k *= d
-        return max(1, out * k)                       # MACs
+        return max(1, out * k)  # MACs
     if nd.op in ('Gemm', 'MatMul'):
         w = [i for i in nd.inputs if i is not None and i.shape and len(i.shape) >= 1]
         k = 1
@@ -314,8 +332,10 @@ def _cost(nd):
             k = sh[0] if sh else 1
         return max(1, out * k)
     if nd.op in ('Softmax', 'LayerNormalization', 'BatchNormInternal', 'Gelu'):
-        return max(1, out * 4)                       # multi-pass elementwise
-    return max(1, out)                               # plain elementwise
+        return max(1, out * 4)  # multi-pass elementwise
+    return max(1, out)  # plain elementwise
+
+
 costs = [_cost(nd) for nd in order]
 # SCALE THE OBJECTIVE.  _cost returns MACs, which on ResNet8 span 10 .. 150,994,944 --
 # a factor of 15 million -- so the objective's upper bound is ~6e10 while the model
@@ -379,7 +399,8 @@ for q in range(nT):
     cs = consumers_of[q]
     if cs and all(c in ban for c in cs):
         for t in range(_tlast[q] + 1, n):
-            model.Add(S[t, q] == 0); _pruned_S += 1
+            model.Add(S[t, q] == 0)
+            _pruned_S += 1
 if _pruned_S:
     print(f'safe S pruning: {_pruned_S} retentions fixed to 0 (all consumers banned)')
 
@@ -392,15 +413,35 @@ if EXACT:
 # cannot drift from the constrained one -- it did once, reporting 997KB at a budget of
 # 689KB, which made the realisability check pass against a number the constraint makes
 # impossible.
+# MIN_PEAK -- optimise the peak itself instead of recompute cycles.
+#
+# The default objective is min sum(kappa_i * R) subject to M(t) <= m_max, which answers
+# "cheapest schedule that fits this budget". When the budget is loose that is not the
+# same question as "how small can the peak be": at m_max 800 and 700 CCT returns
+# different schedules, both REALISABLE and both realising 2772KB, because among the
+# schedules that fit it takes the one with fewest cycles and that one happens to
+# materialise a frozen tokenizer chain -- 512KB of intermediates to avoid retaining a
+# 32KB tensor. Nothing is wrong with that answer; it is the answer to the question asked.
+#
+# MIN_PEAK=1 asks the other question directly: minimise max_t M(t), with the cycle budget
+# as a constraint rather than the objective. It removes the need to probe m_max at all.
+_min_peak = os.environ.get('MIN_PEAK') == '1'
+
 mem_terms = [[] for _ in range(n)]
 for t in range(n):
     for i in range(t + 1):
         if sizes[i]:
-            mem_terms[t].append((sizes[i], R[t, i]))          # production: all outputs
+            mem_terms[t].append((sizes[i], R[t, i]))  # production: all outputs
     for q, (_, _p, b) in enumerate(tensors):
         if b and _p < t:
-            mem_terms[t].append((b, S[t, q]))                 # retention: one tensor
+            mem_terms[t].append((b, S[t, q]))  # retention: one tensor
     model.Add(sum(c * v for c, v in mem_terms[t]) <= budget)
+
+_peak = None
+if _min_peak:
+    _peak = model.NewIntVar(0, budget, 'peak')
+    for t in range(n):
+        model.Add(sum(c * v for c, v in mem_terms[t]) <= _peak)
 
 # Clones are the recomputations only: R[i,i] is the original execution of node i.
 clone_terms = [R[t, i] for t in range(n) for i in range(t + 1) if t != i]
@@ -429,7 +470,14 @@ if os.environ.get('FEAS_ONLY') == '1':
     print('FEAS_ONLY=1: no objective, first feasible schedule wins')
 else:
     sv_first = False
-    model.Minimize(obj)
+    if _min_peak:
+        # Lexicographic in spirit: the peak dominates, cycles break ties. The weight only
+        # has to exceed the largest achievable cycle total, and kappa is already rescaled
+        # by GRAIN, so a modest factor suffices.
+        model.Minimize(_peak * 1000 + obj)
+        print('MIN_PEAK=1: minimising max_t M(t), cycles as tie-break')
+    else:
+        model.Minimize(obj)
 sv = cp_model.CpSolver()
 sv.parameters.max_time_in_seconds = tl
 sv.parameters.num_search_workers = int(os.environ.get('WORKERS', '8'))
@@ -453,8 +501,7 @@ sv.parameters.random_seed = int(os.environ.get('SEED', '0'))
 if sv_first:
     sv.parameters.stop_after_first_solution = True
 st = sv.Solve(model)
-nm = {cp_model.OPTIMAL: 'OPTIMAL', cp_model.FEASIBLE: 'FEASIBLE',
-      cp_model.INFEASIBLE: 'INFEASIBLE'}.get(st, 'UNKNOWN')
+nm = {cp_model.OPTIMAL: 'OPTIMAL', cp_model.FEASIBLE: 'FEASIBLE', cp_model.INFEASIBLE: 'INFEASIBLE'}.get(st, 'UNKNOWN')
 if st not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
     print(f'm_max={mkb}KB(budget {budget // 1024}KB) EXACT={int(EXACT)}: {nm}')
     sys.exit(1)
@@ -472,17 +519,33 @@ print(f'MODEL_MT={_mt} ({_mt/1024:.1f}KB) at budget {budget/1024:.0f}KB '
       f'-- slack {100*(1 - _mt/budget):.1f}%')
 
 if os.environ.get('DUMP_RS'):
-    json.dump({'n': n, 'nT': nT,
-               'R': [[int(sv.Value(R[t, i])) for i in range(n)] for t in range(n)],
-               'S': [[int(sv.Value(S[t, q])) for q in range(nT)] for t in range(n)],
-               'tensors': tensors, 'sizes': sizes, 'names': names},
-              open(os.environ['DUMP_RS'], 'w'))
+    json.dump(
+        {
+            'n': n,
+            'nT': nT,
+            'R': [[int(sv.Value(R[t, i])) for i in range(n)] for t in range(n)],
+            'S': [[int(sv.Value(S[t, q])) for q in range(nT)] for t in range(n)],
+            'tensors': tensors,
+            'sizes': sizes,
+            'names': names
+        }, open(os.environ['DUMP_RS'], 'w'))
     print(f"DUMP_RS -> {os.environ['DUMP_RS']}")
 
-seq = materializeSchedule({(t, i): sv.Value(R[t, i])
-                           for t in range(n) for i in range(n)}, n)
-json.dump({'seq': [[names[k], int(r)] for k, r in seq]},
-          open(os.environ.get('SEQ_PATH', 'recompute_checkmate.json'), 'w'))
+seq = materializeSchedule({(t, i): sv.Value(R[t, i]) for t in range(n) for i in range(n)}, n)
+# Fingerprint the graph this was solved against. A schedule replayed on a different
+# node set fails deep inside parsing with a KeyError naming a tensor that simply does
+# not exist in the graph it was solved on, which says nothing about the cause. Solving
+# against a stored post-parsing dump from an older Deeploy -- 244 nodes where the
+# current one produces 250 -- is an easy mistake and this makes it a clear one.
+json.dump(
+    {
+        'seq': [[names[k], int(r)] for k, r in seq],
+        'graph': {
+            'nodes': n,
+            'source': os.path.abspath(dep),
+            'names_sha1': __import__('hashlib').sha1('\n'.join(names).encode()).hexdigest()[:16]
+        }
+    }, open(os.environ.get('SEQ_PATH', 'recompute_checkmate.json'), 'w'))
 # REALISABILITY CHECK.  M(t) is computed from the same (R,S) the constraints were
 # written over, so an error in the memory model is self-consistent and invisible from
 # inside it. This replays the MATERIALISED sequence with plain reference counting --
@@ -525,9 +588,10 @@ _live, _cs, _replay = {}, 0, 0
 for _i, _o in _execs:
     for _vid, _b in _o:
         if _vid not in _live:
-            _live[_vid] = _b; _cs += _b
+            _live[_vid] = _b
+            _cs += _b
     _replay = max(_replay, _cs)
-    for _vid, _b in _o:                      # an output nobody reads dies immediately
+    for _vid, _b in _o:  # an output nobody reads dies immediately
         if _rem.get(_vid, 0) == 0 and _vid in _live:
             _cs -= _live.pop(_vid)
     for _v in _i:

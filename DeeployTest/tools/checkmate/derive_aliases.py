@@ -38,7 +38,6 @@ usage: derive_aliases.py <deploy_dir> [out.json]
        deeployStates/{backend_post_parsing.onnx,memory_alloc.html}
 """
 import json
-import os
 import re
 import sys
 
@@ -110,9 +109,16 @@ for node in g.nodes:
         bytesSaved += outputBytes(node)
 
 total = sum(outputBytes(n) for n in g.nodes)
-json.dump({'deploy_dir': DEPLOY, 'aliased': aliased, 'by_op': byOp,
-           'aliased_output_bytes': bytesSaved, 'total_output_bytes': total},
-          open(OUT, 'w'), indent=1)
+json.dump(
+    {
+        'deploy_dir': DEPLOY,
+        'aliased': aliased,
+        'by_op': byOp,
+        'aliased_output_bytes': bytesSaved,
+        'total_output_bytes': total
+    },
+    open(OUT, 'w'),
+    indent = 1)
 print(f'{len(aliased)}/{len(g.nodes)} nodes aliased  {byOp}')
 print(f'their outputs: {bytesSaved/1024:.0f}KB of {total/1024:.0f}KB '
       f'({100*bytesSaved/total:.1f}%) that M(t) currently charges and should not')

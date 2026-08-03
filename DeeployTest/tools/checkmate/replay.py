@@ -15,19 +15,26 @@ every later reader, and a buffer dies when no later execution reads it.
   replay ~= M(t)        -> the model is self-consistent and the device diverges
   replay is neither     -> the materialisation does not implement what was solved
 """
-import json, sys
-import onnx, onnx_graphsurgeon as gs
+import json
+import sys
+
+import onnx
+import onnx_graphsurgeon as gs
 
 DEP, SEQ = sys.argv[1], sys.argv[2]
 g = gs.import_onnx(onnx.load(DEP))
 byname = {n.name: n for n in g.nodes}
 seq = json.load(open(SEQ))['seq']
 
+
 def sz(t):
-    if t is None or t.shape is None: return 0
+    if t is None or t.shape is None:
+        return 0
     p = 1
-    for d in t.shape: p *= d if isinstance(d, int) and d > 0 else 1
+    for d in t.shape:
+        p *= d if isinstance(d, int) and d > 0 else 1
     return p * 4
+
 
 ALIAS_FREE = {'InPlaceAccumulatorV2'}
 
@@ -36,12 +43,14 @@ ALIAS_FREE = {'InPlaceAccumulatorV2'}
 cur, execs = {}, []
 for k, (name, is_rc) in enumerate(seq):
     nd = byname.get(name)
-    if nd is None: continue
+    if nd is None:
+        continue
     ins = [cur.get(t.name) for t in nd.inputs if t is not None and t.name]
     outs = []
     for o in nd.outputs:
-        if o is None or not o.name: continue
-        vid = (o.name, k)                       # a fresh buffer per execution
+        if o is None or not o.name:
+            continue
+        vid = (o.name, k)  # a fresh buffer per execution
         cur[o.name] = vid
         outs.append((vid, 0 if nd.op in ALIAS_FREE else sz(o)))
     execs.append((k, name, [i for i in ins if i], outs))
@@ -54,19 +63,23 @@ for k, (name, is_rc) in enumerate(seq):
 # against the device before it was fixed.
 remaining = {}
 for k, name, ins, outs in execs:
-    for vid, b in outs: remaining.setdefault(vid, 0)
-    for v in ins: remaining[v] = remaining.get(v, 0) + 1
+    for vid, b in outs:
+        remaining.setdefault(vid, 0)
+    for v in ins:
+        remaining[v] = remaining.get(v, 0) + 1
 
 live, cursz, peak, peak_k = {}, 0, 0, None
 for k, name, ins, outs in execs:
-    for vid, b in outs:                          # allocate this execution's outputs
+    for vid, b in outs:  # allocate this execution's outputs
         if vid not in live:
-            live[vid] = b; cursz += b
-    if cursz > peak: peak, peak_k = cursz, k
-    for vid, b in outs:                      # an output nobody reads dies immediately
+            live[vid] = b
+            cursz += b
+    if cursz > peak:
+        peak, peak_k = cursz, k
+    for vid, b in outs:  # an output nobody reads dies immediately
         if remaining.get(vid, 0) == 0 and vid in live:
             cursz -= live.pop(vid)
-    for v in ins:                                # release inputs with no later reader
+    for v in ins:  # release inputs with no later reader
         remaining[v] -= 1
         if remaining[v] == 0 and v in live:
             cursz -= live.pop(v)
