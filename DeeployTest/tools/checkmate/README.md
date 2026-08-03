@@ -34,6 +34,63 @@ Both solved points ran on gvsoc with `Errors: 0` and a bit-identical loss
 (`3ff13b69`). Below m_max=300 the model is infeasible. 12 recomputes buy 23.8% of the
 memory for 13.6% of the time; the next 18 buy 2.4% more for another 26 points of it.
 
+## Which granularity, per network -- read this before using solve.py
+
+`solve.py` decides per node. That is the right granularity for ResNet8 and the wrong one
+for the other two training models, and the difference is not marginal:
+
+| network | nodes | `solve.py` | `enumerate_groups.py` | use |
+|---|---|---|---|---|
+| ResNet8 | 103 | **969 KB**, 8 points | 1217 KB | `solve.py` |
+| CCT | 244 | 2772 KB, 46 min/point | **2610 KB**, < 1 min | `enumerate_groups.py units` |
+| MobileNetV1 | 281 | no feasible solution | **2731 KB** | `enumerate_groups.py blocks` |
+
+On MobileNetV1 the n^2 ILP has 204k variables and returns UNKNOWN after 25 minutes
+without ever finding a feasible schedule. Running `solve.py` there and concluding the
+tool is broken is the expected outcome, which is why this table is above the usage
+instructions rather than below them.
+
+Coarse enumeration is **not** a fallback for when the ILP is too slow. On a repetitive
+graph it finds better schedules, because deciding per node lets the solver pick
+combinations that are locally cheap in cycles while leaving large intermediates
+straddling the peak. Attention on CCT is both the memory hotspot and a self-contained
+segment: recomputed whole, its intermediates are produced and consumed inside it.
+
+```
+# MobileNetV1: one group per repeated block, 2^13 candidates
+enumerate_groups.py <graph.onnx> blocks recompute_mnv1
+# CCT: attention / MLP / remainder per transformer block + stem&head, 2^7
+enumerate_groups.py <graph.onnx> units  recompute_cct
+```
+
+Both score candidates with the same independent replay as `replay.py`. **The replay is a
+prediction.** CCT's 4-, 5- and 6-group schedules tie at 672.5 KB in the replay and the
+device separates them by 33 KB, because each surviving clone occupies memory the replay
+does not model. Deploy every point you intend to report.
+
+## A schedule is only as good as the proof that it ran
+
+Rematerialisation is numerically neutral, so a schedule that never reached codegen still
+produces `Errors: 0` and a bit-identical loss, and a cycle count that looks entirely
+reasonable. Neither is evidence. The evidence is the **clone count** in
+`[Recompute] N scheduled executions, M recompute clones`.
+
+Two consequences worth internalising:
+
+- Requested recomputes and surviving clones are different numbers. A CCT schedule asking
+  for 106 got 44: the other 62 were placed in stages whose consumers linearise before the
+  clone, so nothing reads them, and `_pruneDeadRecomputes` drops them. **Report the
+  surviving count.**
+- Three CCT points once came back within 0.3% of baseline and read as "recompute is
+  nearly free on CCT". They were the baseline, measured three times, through an injection
+  path that had silently stopped reaching codegen. Assert the clone count on every point.
+
+Cycle counts also have a floor. Two runs of an identical configuration gave 78.84 M and
+78.62 M: codegen is not deterministic (two identity-schedule runs emit C differing in
+3685 lines of declaration ordering, and pinning `PYTHONHASHSEED` only reduces that to
+744), which moves buffer layout and DMA behaviour. Memory peaks are stable across it.
+**No cycle difference below about 0.5% is readable.**
+
 ## Three things worth knowing before changing this
 
 **Retention is per TENSOR, computation is per NODE.** A node materialises all of its
