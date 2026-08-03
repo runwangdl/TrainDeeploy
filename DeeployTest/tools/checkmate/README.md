@@ -3,18 +3,119 @@
 Produces the schedules `--recompute-schedule` consumes. `trainingUtils` already knows how
 to replay one (`_loadRecomputeSchedule`); this is the half that generates and validates it.
 
-```
-# 1. deploy once to get the graph the deployer will actually schedule
-#    -> <dump>/deeployStates/backend_post_parsing.onnx
-# 2. what does it cost with no rematerialisation at all?
-solve.py <graph.onnx> 0 mem_min_schedule ConvGradW 10          # prints MODELPEAK
+## The three steps
 
-# 3. solve for a budget, in KB of activation
-SEQ_PATH=recompute.json solve.py <graph.onnx> 400 mem_min_schedule ConvGradW 240
+Solve/enumerate, deploy for peak memory, gvsoc for latency. Reference values from this
+repository are given at each step, so a wrong turn shows up where it was taken rather
+than after a full sweep.
 
-# 4. deploy with it
-deeployTrainingRunner_tiled_gap9.py ... --recompute-schedule recompute.json
+### 0. Deploy once, to get the graph the deployer will actually schedule
+
+```bash
+deeployTrainingRunner_tiled_gap9.py \
+    -t Tests/Models/Training/CCT/cct_train -p GAP9 -s gvsoc --toolchain LLVM \
+    --l1 122000 --defaultMemLevel L3 --cores 8 --n-steps 1 --n-accum 1 \
+    --num-data-inputs 1
+# -> <build>/Tests/Models/Training/CCT/cct_train/deeployStates/backend_post_parsing.onnx
 ```
+
+> **That graph must come from a ZERO-recompute deployment**, and checking the node count
+> is how you know. Enumerating against a deployment that already had one MobileNetV1
+> block rematerialised -- 287 nodes with six clones in them rather than the baseline's
+> 281 -- yields a baseline of 1704.2 KB instead of 1848.4, and errors nowhere.
+
+### 1. Solve
+
+```bash
+export PYTHONPATH=<repo>          # for testUtils.trainingUtils
+
+# CCT / MobileNetV1: group-level enumeration (see the granularity table below)
+tools/checkmate/enumerate_groups.py <graph.onnx> units  recompute_cct    # 2^7
+tools/checkmate/enumerate_groups.py <graph.onnx> blocks recompute_mnv1   # 2^13
+
+# ResNet8: node-level ILP. Second argument is the activation budget in KB;
+# sweep 689/650/600/550/500/450/400/350, below 300 is infeasible.
+SEQ_PATH=recompute_rn8.json \
+tools/checkmate/solve.py <graph.onnx> 400 mem_min_schedule ConvGradW 240
+```
+
+Replay KB to check against -- if these do not match, the graph is wrong:
+
+```
+CCT          962.5  738.5  705.5  704.5  672.5  672.5  768.5
+              ^0     ^1     ^2     ^3     ^4     ^6     ^7 <- rebounds
+MobileNetV1 1848.4 1560.2 1343.7 1199.3 1090.3 1017.6  961.6  905.6  896.6
+              ^0     ^1     ^2     ^3     ^4     ^5     ^6     ^7     ^8 <- floor
+```
+
+CCT's seventh group **rebounds**: adding stem&head takes the replay from 672.5 to 768.5.
+Not a bug -- the frozen tokenizer chain has one 32 KB tensor the backward needs, and
+recomputing it materialises the whole chain's ~512 KB of intermediates. Leaving it in the
+enumeration is more useful than excluding it by hand: it is an explicable result rather
+than a trap.
+
+### 2. Deploy, and read the peak
+
+```bash
+deeployTrainingRunner_tiled_gap9.py ... --recomputeSchedule recompute_cct_3.json
+```
+
+**Read this line before any number:**
+
+```
+[Recompute] 358 scheduled executions, 114 recompute clones
+```
+
+Zero clones, or no such line, means the point is void. See the section below on why that
+is the only evidence a schedule ran.
+
+The peak comes from the deployment's own `deeployStates/memory_alloc.html` -- the
+address-deduplicated sum of live blocks.
+
+| CCT groups | surviving clones | activation | peak |
+|---|---|---|---|
+| 0 | 0 | 834.5 KB | 2899 KB |
+| 1 | 53 | 674.5 | 2739 |
+| 2 | 106 | 577.5 | 2642 |
+| 3 | 114 | **545.5** | **2610** |
+| 4 | 126 | 545.5 | 2610 (dominated by 3) |
+| 6 | 158 | 578.5 | 2643 (**worse** than 3) |
+
+Persistent memory is **2064.8 KB at every one of those points, byte for byte** -- it is
+what rematerialisation cannot touch. If it moves between points, the split is wrong.
+
+Six groups lands 33 KB above three while the replay has them tied at 672.5 KB: **each
+surviving clone occupies memory the replay does not model.** This is the concrete cost of
+trusting a prediction, and the reason every reported point has to be deployed.
+
+### 3. gvsoc, for the latency
+
+Same command (`-s gvsoc`). CCT at 370 MHz:
+
+| groups | cycles | vs baseline |
+|---|---|---|
+| 0 | 71.17 M | -- |
+| 1 | 74.13 M | +4.17% |
+| 2 | 76.90 M | +8.05% |
+| 3 | 77.09 M | +8.32% |
+
+**There is a ~0.3% noise floor.** Two runs of an identical configuration gave 78.84 M and
+78.62 M: codegen is not deterministic -- two identity-schedule runs emit C differing in
+3685 lines of declaration ordering, and pinning `PYTHONHASHSEED` only reduces that to 744
+-- which moves buffer layout and DMA behaviour. Memory peaks are stable to the kilobyte.
+**No cycle difference below about 0.5% is readable.**
+
+### Two switches that silently produce wrong numbers
+
+`--convChannelsFirst` is a **per-network** decision, not a preference. On CCT it buys
+**0 KB** (2899 with and without, same tree same tool one flag) and costs **9.8%** cycles;
+it removes two transposes and neither is live at the peak. On MobileNetV1 it is
+mandatory -- training does not fit GAP9 L1 without it.
+
+A schedule is bound to the graph version it was solved against. `recomputeScheduler`
+replays by node name and **raises** below 90% coverage rather than degrading to the
+default order. Change a topology pass or a branch and the schedule must be re-solved; old
+JSON cannot be reused.
 
 Solve at the **post-parsing** graph, never the exported model: parsing fuses and renames
 nodes, and a schedule solved against the wrong node set cannot be replayed.
@@ -56,17 +157,8 @@ combinations that are locally cheap in cycles while leaving large intermediates
 straddling the peak. Attention on CCT is both the memory hotspot and a self-contained
 segment: recomputed whole, its intermediates are produced and consumed inside it.
 
-```
-# MobileNetV1: one group per repeated block, 2^13 candidates
-enumerate_groups.py <graph.onnx> blocks recompute_mnv1
-# CCT: attention / MLP / remainder per transformer block + stem&head, 2^7
-enumerate_groups.py <graph.onnx> units  recompute_cct
-```
-
-Both score candidates with the same independent replay as `replay.py`. **The replay is a
-prediction.** CCT's 4-, 5- and 6-group schedules tie at 672.5 KB in the replay and the
-device separates them by 33 KB, because each surviving clone occupies memory the replay
-does not model. Deploy every point you intend to report.
+Both score candidates with the same independent replay `replay.py` implements. Commands
+are under "The three steps" above.
 
 ## A schedule is only as good as the proof that it ran
 
@@ -84,12 +176,6 @@ Two consequences worth internalising:
 - Three CCT points once came back within 0.3% of baseline and read as "recompute is
   nearly free on CCT". They were the baseline, measured three times, through an injection
   path that had silently stopped reaching codegen. Assert the clone count on every point.
-
-Cycle counts also have a floor. Two runs of an identical configuration gave 78.84 M and
-78.62 M: codegen is not deterministic (two identity-schedule runs emit C differing in
-3685 lines of declaration ordering, and pinning `PYTHONHASHSEED` only reduces that to
-744), which moves buffer layout and DMA behaviour. Memory peaks are stable across it.
-**No cycle difference below about 0.5% is readable.**
 
 ## Three things worth knowing before changing this
 
