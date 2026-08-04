@@ -29,12 +29,12 @@ deeployTrainingRunner_tiled_gap9.py \
 ```bash
 export PYTHONPATH=<repo>          # for testUtils.trainingUtils
 
-# CCT / MobileNetV1: group-level enumeration (see the granularity table below)
-tools/checkmate/enumerate_groups.py <graph.onnx> units  recompute_cct    # 2^7
+# MobileNetV1: group-level enumeration. See "Two axes" below for why this is the
+# right tool there and the wrong one on the other two.
 tools/checkmate/enumerate_groups.py <graph.onnx> blocks recompute_mnv1   # 2^13
 
-# ResNet8: node-level ILP. Second argument is the activation budget in KB;
-# sweep 689/650/600/550/500/450/400/350, below 300 is infeasible.
+# ResNet8 and CCT: node-level ILP. Second argument is the activation budget in KB.
+# ResNet8: sweep 689/650/600/550/500/450/400/350, below 300 is infeasible.
 SEQ_PATH=recompute_rn8.json \
 tools/checkmate/solve.py <graph.onnx> 400 mem_min_schedule ConvGradW 240
 ```
@@ -135,30 +135,70 @@ Both solved points ran on gvsoc with `Errors: 0` and a bit-identical loss
 (`3ff13b69`). Below m_max=300 the model is infeasible. 12 recomputes buy 23.8% of the
 memory for 13.6% of the time; the next 18 buy 2.4% more for another 26 points of it.
 
-## Which granularity, per network -- read this before using solve.py
+## Two axes, and each network sits somewhere different
 
-`solve.py` decides per node. That is the right granularity for ResNet8 and the wrong one
-for the other two training models, and the difference is not marginal:
+Rematerialisation methods differ along two independent axes: the granularity of the
+decision (per node, or per repeated group) and the set of tensors eligible for
+recomputation (forward activations only, or any intermediate). Checkmate takes the finest
+choice on both and pays in solver time; Rockmate restricts to both, which is what makes
+it tractable -- on models where its assumption holds, that the memory worth reclaiming is
+forward activations kept alive across the backward pass.
 
-| network | nodes | `solve.py` | `enumerate_groups.py` | use |
+**That assumption is a property of the network, not of the method.** Activation memory
+after rematerialisation, GAP9, replay estimate:
+
+| | baseline | forward only | all nodes | node-level ILP |
 |---|---|---|---|---|
-| ResNet8 | 103 | **969 KB**, 8 points | 1217 KB | `solve.py` |
-| CCT | 244 | 2772 KB, 46 min/point | **2610 KB**, < 1 min | `enumerate_groups.py units` |
-| MobileNetV1 | 281 | no feasible solution | **2731 KB** | `enumerate_groups.py blocks` |
+| MobileNetV1 | 1848.4 KB | **895.8 KB** (−51.5%) | — | no feasible solution |
+| ResNet8 | 689.1 KB | 608.4 KB (−11.7%) | — | **344.6 KB** (−50.0%) |
+| CCT | 962.5 KB | 961.5 KB (−0.1%) | 962.5 KB (0%) | 707.2 KB (−26.5%) |
 
-On MobileNetV1 the n^2 ILP has 204k variables and returns UNKNOWN after 25 minutes
-without ever finding a feasible schedule. Running `solve.py` there and concluding the
-tool is broken is the expected outcome, which is why this table is above the usage
-instructions rather than below them.
+MobileNetV1 behaves as the literature assumes, and the node-level ILP is not merely
+slower there but returns no feasible schedule at all in 25 minutes on its 281 nodes.
 
-Coarse enumeration is **not** a fallback for when the ILP is too slow. On a repetitive
-graph it finds better schedules, because deciding per node lets the solver pick
-combinations that are locally cheap in cycles while leaving large intermediates
-straddling the peak. Attention on CCT is both the memory hotspot and a self-contained
-segment: recomputed whole, its intermediates are produced and consumed inside it.
+ResNet8 does not. Forward-only reaches −11.7%; lifting the restriction at node
+granularity reaches −50.0%. The group-level method is not approximating the node-level
+one, it is solving a smaller and different problem.
 
-Both score candidates with the same independent replay `replay.py` implements. Commands
-are under "The three steps" above.
+CCT is the extreme case: recomputing forward activations reclaims **nothing**, with
+either candidate set, and past five groups it makes the peak worse. Of the 170 nodes in
+its backward pass, 113 are `Gemm`, `Transpose` or `Reshape` -- indistinguishable by
+operator type from its forward pass -- and it is those intermediates that dominate what
+can be reclaimed. Use `solve.py` on CCT.
+
+```
+# MobileNetV1: one group per repeated block, 2^13 candidates
+enumerate_groups.py <graph.onnx> blocks recompute_mnv1
+# CCT / ResNet8: node-level ILP
+SEQ_PATH=out.json solve.py <graph.onnx> 400 mem_min_schedule ConvGradW 240
+```
+
+## Where a recompute is placed matters more than which nodes are chosen
+
+A group's recomputes are anchored at the earliest **backward** node that reads any of the
+group's outputs, found per tensor. Both qualifiers were learned the expensive way:
+
+*It must be a backward consumer.* A block's output is read by the next block's forward
+immediately, so anchoring at the first consumer of any kind lands right after the group.
+Measured: every MobileNetV1 point collapses to the 1848.4 KB baseline. What
+rematerialisation avoids is the forward-to-backward lifetime, not the consumption.
+
+*It must be per tensor, not per group.* An earlier version anchored at "the group's first
+backward node", which depends on how forward and backward are told apart -- and the two
+plausible definitions disagree by up to 177 positions in a 244-step order. Anchoring 177
+steps early keeps every recomputed value alive that much longer.
+
+Fixing the anchor is worth more than any choice of candidate set:
+
+| groups | anchored per group | anchored per tensor |
+|---|---|---|
+| 1 | 1560.2 KB | **1416.2 KB** |
+| 2 | 1343.7 | **1127.7** |
+| 3 | 1199.3 | **982.7** |
+| 7 | 905.6 | **895.8** |
+
+Three groups now reach what seven reached before: the same peak for roughly half the
+recomputes, and therefore half the latency.
 
 ## A schedule is only as good as the proof that it ran
 
