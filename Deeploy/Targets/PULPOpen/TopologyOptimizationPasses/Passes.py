@@ -376,6 +376,11 @@ class FoldActivationTransposeIntoGemmPass(Pass):
     """
 
     def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        # Diagnostic escape hatch: lets the same tree be built with and without
+        # the fold so a failure can be attributed to it rather than argued about.
+        import os
+        if os.environ.get("DISABLE_TPFOLD") == "1":
+            return graph
         producers = {o.name: n for n in graph.nodes for o in n.outputs if o is not None and o.name}
         folded = 0
         for node in graph.nodes:
