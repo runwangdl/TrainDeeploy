@@ -28,6 +28,11 @@ memory the replay cannot see. Deploy every candidate you intend to report.
 usage:
     enumerate_groups.py <graph.onnx> <partition> [out_prefix]
 
+    [--candidates forward|all]
+                  `forward` (default) recomputes only forward nodes, the Rockmate
+                  restriction. `all` lifts it. Which one wins is a property of the
+                  NETWORK, not of the method -- see the table below.
+
     <partition>   `blocks`  MobileNetV1: one group per `blocks_blocks_<i>_` block
                   `units`   CCT: attention / MLP / remainder of each transformer block,
                             plus stem+head as one group
@@ -46,14 +51,24 @@ import sys
 import onnx
 import onnx_graphsurgeon as gs
 
+
 # A group is recomputed by re-running its FORWARD nodes immediately before the backward
 # node that first needs them. Gradient nodes are never re-run: their inputs are the very
 # activations this is trying not to keep, so recomputing one would recompute the forward
 # anyway and then discard the saving.
-FORWARD_OPS = {
-    'Gemm', 'MatMul', 'Add', 'LayerNormalization', 'Softmax', 'Mul', 'Gelu', 'Transpose', 'Reshape', 'Conv',
-    'BatchNormInternal', 'Relu', 'MaxPool', 'AveragePool', 'Pad', 'Concat'
-}
+#
+# CLASSIFY BY NAME, NOT BY OP. A training graph's backward pass uses the SAME operators as
+# its forward: CCT's gradient path is Gemm, MatMul, Transpose and Reshape, exactly like
+# its forward path. An op-type whitelist put 113 of CCT's 170 backward nodes -- 38 Gemm,
+# 36 Reshape, 28 Transpose -- on the recompute candidate list, so schedules spent their
+# budget re-running gradient computations. MobileNetV1 hid this: its backward is ConvGrad
+# and ConvGradW, distinct op types, and only 3 nodes were misclassified.
+#
+# Deeploy suffixes every gradient node with `_backward` or names it `*Grad*`, which is the
+# distinction that actually holds.
+def isBackward(node):
+    return '_backward' in node.name or 'Grad' in node.name
+
 
 PARTITIONS = {
     'blocks': lambda name: (m.group(1) if (m := re.search(r'blocks_blocks_(\d+)_', name)) else 'rest'),
@@ -142,8 +157,11 @@ def replayPeak(sequence, byName):
 def main():
     if len(sys.argv) < 3:
         sys.exit(__doc__)
-    graphPath, partitionArg = sys.argv[1], sys.argv[2]
-    prefix = sys.argv[3] if len(sys.argv) > 3 else 'recompute_groups'
+    argv = [a for a in sys.argv[1:] if not a.startswith('--')]
+    candidates = 'all' if '--candidates=all' in sys.argv or (
+        '--candidates' in sys.argv and sys.argv[sys.argv.index('--candidates') + 1] == 'all') else 'forward'
+    graphPath, partitionArg = argv[0], argv[1]
+    prefix = argv[2] if len(argv) > 2 else 'recompute_groups'
 
     if partitionArg in PARTITIONS:
         groupOf = PARTITIONS[partitionArg]
@@ -164,8 +182,17 @@ def main():
 
     groups = collections.defaultdict(lambda: {'fwd': [], 'bwd': []})
     for node in order:
-        key = 'fwd' if node.op in FORWARD_OPS else 'bwd'
-        groups[groupOf(node.name)][key].append(node.name)
+        # Two distinct roles, and conflating them silently disables recomputation:
+        # `bwd` locates the INSERTION POINT (the first gradient node of the group, before
+        # which the recomputes are placed), while `fwd` is the CANDIDATE SET. Putting
+        # every node in `fwd` under --candidates=all leaves `bwd` empty, the group gets no
+        # insertion point, and nothing is inserted -- the sweep then reports the baseline
+        # at every k and looks like "recompute does not help here".
+        back = isBackward(node)
+        if back:
+            groups[groupOf(node.name)]['bwd'].append(node.name)
+        if candidates == 'all' or not back:
+            groups[groupOf(node.name)]['fwd'].append(node.name)
     keys = sorted(groups)
     print(f'{len(keys)} groups: ' + ', '.join(f'{k}({len(groups[k]["fwd"])}f/{len(groups[k]["bwd"])}b)' for k in keys),
           flush = True)
@@ -173,11 +200,42 @@ def main():
         sys.exit(f'refusing to enumerate 2^{len(keys)} candidates; use a coarser partition')
 
     def build(chosen):
-        firstBackward = {k: min(position[n] for n in groups[k]['bwd']) for k in keys if groups[k]['bwd']}
+        """Place a group's recomputes immediately before the first node that READS them.
+
+        The obvious anchor -- the group's first backward node -- is wrong, and wrong by a
+        lot. Which node that is depends on how forward and backward are told apart, and
+        the two plausible definitions disagree by up to 177 positions in a 244-step order
+        on CCT. Anchoring 177 steps before the consumer keeps every recomputed value alive
+        that much longer and gives back the whole saving. The published CCT curve depended
+        on an accidentally late anchor, not on a deliberate one.
+
+        The consumer is a property of the TENSORS the group produces, so it is found from
+        them: the earliest node outside the group that reads any of the group's outputs
+        and runs after the group does.
+        """
         insertions = collections.defaultdict(list)
         for key in chosen:
-            if key in firstBackward:
-                insertions[firstBackward[key]].extend(groups[key]['fwd'])
+            produced = {
+                out.name for name in groups[key]['fwd'] for out in byName[name].outputs if out is not None and out.name
+            }
+            groupSpan = {position[n] for n in groups[key]['fwd']}
+            last = max(groupSpan) if groupSpan else 0
+            # Only BACKWARD consumers anchor. A block's output is read by the next
+            # block's forward immediately, so anchoring at the first consumer of any kind
+            # lands right after the group and saves nothing -- measured: every
+            # MobileNetV1 point collapses back to the 1848.4 KB baseline. What
+            # rematerialisation avoids is keeping the value alive from the forward use to
+            # the backward one, so the backward use is the anchor.
+            anchor = None
+            for i, node in enumerate(order):
+                if i <= last or i in groupSpan or not isBackward(node):
+                    continue
+                if any(t is not None and t.name in produced for t in node.inputs):
+                    anchor = i
+                    break
+            if anchor is None:  # nothing outside reads it: not worth
+                continue  # recomputing, and nothing to anchor to
+            insertions[anchor].extend(groups[key]['fwd'])
         sequence = []
         for i, node in enumerate(order):
             for name in insertions.get(i, []):
