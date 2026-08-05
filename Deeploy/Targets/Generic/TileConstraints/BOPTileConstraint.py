@@ -12,7 +12,7 @@ from Deeploy.DeeployTypes import NetworkContext, OperatorRepresentation
 from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint
 from Deeploy.TilingExtension.TileConstraint import TileConstraint
 from Deeploy.TilingExtension.TilerModel import TilerModel
-from Deeploy.TilingExtension.TilingCodegen import AbsoluteHyperRectangle, TilingSchedule, VariableReplacementScheme
+from Deeploy.TilingExtension.TilingCodegen import AbsoluteHyperRectangle, HyperRectangle, TilingSchedule, VariableReplacementScheme
 
 
 class BOPTileConstraint(TileConstraint):
@@ -34,13 +34,17 @@ class BOPTileConstraint(TileConstraint):
             tilerModel.addTensorDimToModel(ctxt, bufferName)
 
         input1Shape = ctxt.lookup(inputBuffer1Name).shape
+        # A second operand that is a single element is not tiled with the output: tying its
+        # extents to the output's is what forces it to be stored at the output's size.
+        scalarIn2 = int(np.prod(ctxt.lookup(inputBuffer2Name).shape)) == 1
 
         for dim in range(len(input1Shape)):
             inputDim1Var = tilerModel.getTensorDimVar(tensorName = inputBuffer1Name, dimIdx = dim)
-            inputDim2Var = tilerModel.getTensorDimVar(tensorName = inputBuffer2Name, dimIdx = dim)
             outputDimVar = tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = dim)
 
-            tilerModel.addConstraint(inputDim1Var == inputDim2Var)
+            if not scalarIn2:
+                inputDim2Var = tilerModel.getTensorDimVar(tensorName = inputBuffer2Name, dimIdx = dim)
+                tilerModel.addConstraint(inputDim1Var == inputDim2Var)
             tilerModel.addConstraint(inputDim1Var == outputDimVar)
 
         return tilerModel
@@ -67,8 +71,21 @@ class BOPTileConstraint(TileConstraint):
         inputLoadSchedule = []
         outputLoadSchedule = []
 
+        # The scalar is transferred once at its own extent, not once per output tile at the
+        # output's extent. Asking the DMA for the output cube out of a one-element buffer is
+        # the same read-past-the-end that the Gemm broadcast bias had.
+        in2Shape = ctxt.lookup(operatorRepresentation[cls.dataIn2Name]).shape
+        scalarIn2 = int(np.prod(in2Shape)) == 1
+
         for cube in outputCubes:
-            inputLoadSchedule.append({cls.dataIn1Name: cube, cls.dataIn2Name: cube})
+            if scalarIn2:
+                # At least rank 1: a rank-0 scalar yields an empty offset tuple, and
+                # minimizeRectangle indexes offset[0] unconditionally.
+                cubeShape = tuple(in2Shape) if len(in2Shape) > 0 else (1,)
+                scalarCube = HyperRectangle(tuple(0 for _ in cubeShape), cubeShape)
+                inputLoadSchedule.append({cls.dataIn1Name: cube, cls.dataIn2Name: scalarCube})
+            else:
+                inputLoadSchedule.append({cls.dataIn1Name: cube, cls.dataIn2Name: cube})
 
         for out in outputCubes:
             outputLoadSchedule.append({cls.dataOutName: out})
