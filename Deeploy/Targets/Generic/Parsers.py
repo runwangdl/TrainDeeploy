@@ -1611,6 +1611,16 @@ class Conv2DParser(ConvParser):
             self.operatorRepresentation['bias_shift'] = int(0)
             self.operatorRepresentation['out_shift'] = int(0)
 
+            # A weight-only-quantised graph can fold its Dequant into this convolution,
+            # in which case the weight arrives as int8 and carries the per-tensor affine
+            # parameters the kernel needs. The GEMM parser has carried this since the
+            # fold landed; the Conv one did not, so the dequantising Conv templates were
+            # rendering context.get('dequant_scale', 1.0) -- the DEFAULT -- and would have
+            # scaled every int8 weight by 1.0. Defaults keep the fp32 path unchanged.
+            self.operatorRepresentation['dequant_scale'] = float(node.attrs.get('dequant_scale', 1.0))
+            self.operatorRepresentation['dequant_zero_point'] = int(
+                node.attrs.get('dequant_zero_point', 0))
+
         return ret
 
     def parseNodeCtxt(self,

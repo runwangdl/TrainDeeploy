@@ -375,7 +375,20 @@ class FoldDequantIntoMatMulPass(Pass):
     # transposes -- the tokenizer's quantised weight reaches its Conv directly.
     # Reading the post-parsing graph suggests otherwise and sent three attempts at
     # this after a Transpose that does not exist yet when the pass runs.
-    FOLDABLE_OPS = ('MatMul', 'Gemm', 'Conv')
+    # Which input index carries the WEIGHT, per consumer op. It is not always 1: a
+    # convolution's gradient is ConvGrad(dY, X, W), so the weight is third. Hard-coding
+    # index 1 made the all() below false for every Conv whose weight is also read by its
+    # gradient -- which is every frozen weight in an adapter-tuned CNN -- so all 18
+    # Dequants in MobileNetV1-QLoRA were skipped and the fp32 copies stayed materialised.
+    # CCT never showed it because a Gemm's gradient is another Gemm, weight at index 1.
+    # ConvGradX, not ConvGrad: this pass runs AFTER lowering has split the fused
+    # gradient into its input-gradient and weight-gradient halves, and only the input
+    # gradient reads the weight. Reading the exported graph says ConvGrad(dY, X, W) with
+    # the weight third, and that is not what the pass sees -- ConvGradX takes it at 1,
+    # like the forward. Checking the graph the pass actually runs on is the only way to
+    # get this right; the same mistake sent three earlier attempts at the Conv case.
+    WEIGHT_INPUT_IDX = {'MatMul': 1, 'Gemm': 1, 'Conv': 1, 'ConvGradX': 1}
+    FOLDABLE_OPS = tuple(WEIGHT_INPUT_IDX)
 
     def run_pass(self, graph: gs.Graph):
         folded = 0
@@ -388,8 +401,17 @@ class FoldDequantIntoMatMulPass(Pass):
                 continue
             # Every consumer must take it as the weight operand, which is the one
             # the kernels dequantise. A Dequant feeding anything else is left alone.
-            if not all(
-                    c.op in self.FOLDABLE_OPS and len(c.inputs) >= 2 and c.inputs[1] is dequantOut for c in consumers):
+            def readsAsWeight(consumer):
+                idx = self.WEIGHT_INPUT_IDX.get(consumer.op)
+                return (idx is not None and len(consumer.inputs) > idx
+                        and consumer.inputs[idx] is dequantOut)
+
+            if not all(readsAsWeight(c) for c in consumers):
+                import os as _os
+                if _os.environ.get('DEBUG_FOLD'):
+                    print(f"@@FOLD skip {node.name[:40]}: consumers="
+                          f"{[(c.op, list(c.inputs).index(dequantOut) if dequantOut in c.inputs else -1) for c in consumers]}",
+                          flush = True)
                 continue
             quantised = node.inputs[0] if node.inputs else None
             if quantised is None:
@@ -406,6 +428,10 @@ class FoldDequantIntoMatMulPass(Pass):
             # is not a Constant cannot be corrected here and is left for the fp32
             # path rather than folded into a kernel that would misread it.
             if not isinstance(quantised, gs.Constant):
+                import os as _os
+                if _os.environ.get('DEBUG_FOLD'):
+                    print(f"@@FOLD skip {node.name[:40]}: weight is {type(quantised).__name__}, not Constant",
+                          flush = True)
                 continue
             quantised.values = np.asarray(quantised.values).astype(np.int8)
 
@@ -420,7 +446,7 @@ class FoldDequantIntoMatMulPass(Pass):
             # its own copy charges the full constant again per clone, which on the int8
             # QLoRA CCT took persistent from 662 KB to 938 KB.
             for consumer in consumers:
-                consumer.inputs[1] = quantised
+                consumer.inputs[self.WEIGHT_INPUT_IDX[consumer.op]] = quantised
                 consumer.attrs['dequant_scale'] = float(node.attrs.get('scale', 1.0))
                 consumer.attrs['dequant_zero_point'] = int(node.attrs.get('zero_point', 0))
 
