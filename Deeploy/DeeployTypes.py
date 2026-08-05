@@ -1764,6 +1764,16 @@ class NodeMapper():
 
         """
 
+        # A binder discarded while type-checking a PREVIOUS node says nothing about this
+        # one, but NodeMapper instances are shared by every node of the same operator and
+        # discardedBindings persisted across them. One Slice with ends=[128] bound to the
+        # uint8_t rule; the next, with ends=[256], failed checkPromotion on that same rule
+        # -- which then discarded it, while every wider rule had already been discarded
+        # serving earlier nodes. The node was reported as having no adequate mapping
+        # although 32 bindings existed, one of which fits. Only shows up when one operator
+        # has several nodes and a constant exceeds the narrowest type's range.
+        self.discardedBindings = set()
+
         for idx, binder in enumerate(self.bindings):
 
             if binder in self.discardedBindings:
