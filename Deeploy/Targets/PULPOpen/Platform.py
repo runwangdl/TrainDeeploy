@@ -62,10 +62,9 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPSoftmaxCrossEntropyGradTilingReadyBindings, PULPSoftmaxCrossEntropyTilingReadyBindings, \
     PULPSoftmaxGradTilingReadyBindings, PULPSoftmaxTilingReadyBindings, PULPTransposeTilingReadyBindings, \
     PULPUniformRQSTilingReadyBindings
-from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import \
-    FoldActivationTransposeIntoGemmPass, FoldDequantIntoMatMulPass, \
-    PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, \
-    TransposeGemmSquashPass
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldActivationTransposeIntoGemmPass, \
+    FoldDequantIntoMatMulPass, PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, \
+    PULPMatMulRequantMergePass, TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
 RQAddMapper = NodeMapper(RQAddParser(), PULPRQAddTilingReadyBindings)

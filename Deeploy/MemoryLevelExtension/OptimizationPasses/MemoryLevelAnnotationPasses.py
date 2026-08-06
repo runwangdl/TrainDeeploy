@@ -312,6 +312,23 @@ class PromoteTensorsToL2(SequentialPass):
         # Without these guards, post-tile invocations double-count tile-staging buffers
         # that happen to be tagged at L2, inflating already_l2 by hundreds of KB and
         # making the "promoted N / M bytes" log line meaningless.
+        # Graph I/O promoted to L2 is allocated standalone for the whole program --
+        # InitNetwork emits one pi_l2_malloc per tensor, and they are NOT packed into
+        # PROMOTED_POOL_L2 the way activations are. Charging them by sweep-line overlap
+        # therefore lets several of them claim the same bytes in the budget while the
+        # generated code asks the allocator for all of them at once. On CCT training that
+        # understated L2 by 256 KB (four 64 KB weights) and the runtime allocator failed
+        # while initialising the optimizer network. They are weights and gradients: live
+        # from the first step to the last, so there is no overlap to exploit anyway.
+        graphIONames = {
+            name for name, buf in ctxt.globalObjects.items()
+            if isinstance(buf, VariableBuffer) and not isinstance(buf, (ConstantBuffer, _ReferenceBuffer,
+                                                                        TransientBuffer))
+        }
+
+        def _isStandaloneGraphIO(buf) -> bool:
+            return getattr(buf, 'name', None) in graphIONames
+
         def _occupies_standalone_l2(buf) -> bool:
             if isinstance(buf, _ReferenceBuffer):
                 return False
@@ -344,7 +361,7 @@ class PromoteTensorsToL2(SequentialPass):
                 continue
             sz = self._bufferSize(buf)
             lt = getattr(buf, '_lifetime', None)
-            if lt is not None and not isinstance(buf, ConstantBuffer):
+            if lt is not None and not isinstance(buf, ConstantBuffer) and not _isStandaloneGraphIO(buf):
                 _already_var_blocks.append((sz, lt))
             else:
                 _already_const += sz
@@ -402,7 +419,7 @@ class PromoteTensorsToL2(SequentialPass):
             if 'allocTemplate' in buf.__dict__:
                 continue
             lt = getattr(buf, '_lifetime', None)
-            if lt is None:
+            if lt is None or _isStandaloneGraphIO(buf):
                 continue
             var_blocks.append((self._bufferSize(buf), lt))
         # Fixed bytes: the const portion of already_l2. The var portion is
@@ -424,7 +441,7 @@ class PromoteTensorsToL2(SequentialPass):
                 if size >= l1_safety:
                     continue
                 lt = getattr(buf, '_lifetime', None)
-                if lt is None:
+                if lt is None or _isStandaloneGraphIO(buf):
                     # No lifetime info -> can't measure overlap; charge full size
                     if trial_total(size, var_blocks) <= self.l2Budget:
                         buf._memoryLevel = 'L2'
