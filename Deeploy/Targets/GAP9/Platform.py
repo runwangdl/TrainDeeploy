@@ -35,7 +35,7 @@ from Deeploy.Targets.Generic.Bindings import BasicGEMMBindings, BasicPad1DBindin
 from Deeploy.Targets.Generic.Layers import AddLayer, AveragePoolGradLayer, BatchNormalizationGradLayer, \
     BatchNormInternalLayer, ConcatLayer, ConvGradBLayer, ConvGradWLayer, ConvGradXLayer, ConvLayer, GatherLayer, \
     GELUGradLayer, GELULayer, GlobalAveragePoolGradLayer, GlobalAveragePoolLayer, InPlaceAccumulatorV2Layer, \
-    LayerNormGradLayer, LayerNormLayer, MatMulLayer, MaxPoolLayer, MSELossGradLayer, MSELossLayer, MulLayer, PadLayer, \
+    LayerNormGradLayer, LayerNormLayer, MatMulLayer, MaxPoolLayer, MSELossGradLayer, MSELossLayer, PadLayer, \
     QuantLayer, ReduceMeanLayer, ReduceSumLayer, ReluGradLayer, ReluLayer, RequantShiftLayer, ReshapeLayer, \
     RQIntegerDivLayer, RQSiGELULayer, RQSiHardswishLayer, SGDLayer, SliceLayer, SoftmaxCrossEntropyLossGradLayer, \
     SoftmaxCrossEntropyLossLayer, SoftmaxGradLayer, SoftmaxLayer, TransposeLayer, iHardswishLayer, iRMSNormLayer
@@ -51,7 +51,8 @@ from Deeploy.Targets.Generic.Parsers import AddParser, AveragePool2DParser, Batc
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
 from Deeploy.Targets.PULPOpen.Bindings import BasicQuantBindings, PULPDMASliceBindings, PULPDWConv1DBinding, \
     PULPReduceMeanBindings, PULPRQSConv1DBindings
-from Deeploy.Targets.PULPOpen.Layers import PULPAddLayer, PULPMulLayer, PULPGEMMLayer, PULPRQSConvLayer, PULPRQSGEMMLayer
+from Deeploy.Targets.PULPOpen.Layers import PULPAddLayer, PULPGEMMLayer, PULPMulLayer, PULPRQSConvLayer, \
+    PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
     PULPConvGradX2DParser, PULPDWConv1DParser, PULPDWConv2DParser, PULPDWConvGradW2DParser, PULPDWConvGradX2DParser, \
     PULPFPConv2DCHWParser, PULPFPConv2DParser, PULPFPDWConv2DCHWParser, PULPFPDWConv2DParser, PULPGEMMParser, \
