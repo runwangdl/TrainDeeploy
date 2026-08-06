@@ -23,6 +23,8 @@ from test_gap9_tiled_config import L3_DOUBLEBUFFER_MODELS as GAP9_L3_DOUBLEBUFFE
 from test_gap9_tiled_config import L3_DOUBLEBUFFER_TRAINING_MODELS as GAP9_L3_DOUBLEBUFFER_TRAINING_MODELS
 from test_gap9_tiled_config import \
     L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS as GAP9_L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS
+from test_gap9_tiled_config import L3_EXPERIMENT_TRAINING_MODELS as GAP9_L3_EXPERIMENT_TRAINING_MODELS
+from test_gap9_tiled_config import L3_LAYERWISE_TRAINING_MODELS as GAP9_L3_LAYERWISE_TRAINING_MODELS
 from test_gap9_tiled_config import L3_RECOMPUTE_TRAINING_MODELS as GAP9_L3_RECOMPUTE_TRAINING_MODELS
 from test_gap9_tiled_config import L3_SINGLEBUFFER_MODELS as GAP9_L3_SINGLEBUFFER_MODELS
 from test_gap9_tiled_config import L3_SINGLEBUFFER_TRAINING_MODELS as GAP9_L3_SINGLEBUFFER_TRAINING_MODELS
@@ -1455,6 +1457,90 @@ def test_gap9_tiled_training_l3_singlebuffer(test_params, deeploy_test_dir, tool
         cores = GAP9_TILED_DEFAULT_CORES,
         l1 = l1,
         l2 = 1024000,
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9_tiled
+@pytest.mark.training
+@pytest.mark.experiments
+@pytest.mark.parametrize(
+    "test_params",
+    generate_test_params(GAP9_L3_EXPERIMENT_TRAINING_MODELS, "L3-experiment-training"),
+    ids = param_id,
+)
+def test_gap9_tiled_training_experiments(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen,
+                                         skipsim) -> None:
+    """Parameter-efficient fine-tuning variants: channel-wise, QLoRA and LoRA."""
+    test_name, l1, _config_name = test_params
+    overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
+    slave_stack = overrides.get("slave_stack")
+    if slave_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = True,
+        cores = GAP9_TILED_DEFAULT_CORES,
+        l1 = l1,
+        l2 = overrides.get("l2", 1024000),
+        default_mem_level = "L3",
+        double_buffer = False,
+        training = True,
+        training_num_data_inputs = overrides.get("num_data_inputs"),
+        training_tolerance = overrides.get("tolerance"),
+        training_conv_channels_first = overrides.get("conv_channels_first", False),
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.gap9_tiled
+@pytest.mark.training
+@pytest.mark.experiments
+@pytest.mark.parametrize(
+    "test_params",
+    generate_test_params(GAP9_L3_LAYERWISE_TRAINING_MODELS, "L3-layerwise-training"),
+    ids = param_id,
+)
+def test_gap9_tiled_training_layerwise(test_params, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen,
+                                       skipsim) -> None:
+    """Layerwise sweep: only the last N weighted layers are trainable."""
+    test_name, l1, _config_name = test_params
+    overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
+    gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
+    slave_stack = overrides.get("slave_stack")
+    if slave_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
+    config = create_test_config(
+        test_name = test_name,
+        platform = "GAP9",
+        simulator = "gvsoc",
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = gap9_cmake_args,
+        tiling = True,
+        cores = GAP9_TILED_DEFAULT_CORES,
+        l1 = l1,
+        l2 = overrides.get("l2", 1024000),
         default_mem_level = "L3",
         double_buffer = False,
         training = True,
