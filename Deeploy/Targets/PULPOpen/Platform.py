@@ -63,9 +63,9 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPSoftmaxCrossEntropyGradTilingReadyBindings, PULPSoftmaxCrossEntropyTilingReadyBindings, \
     PULPSoftmaxGradTilingReadyBindings, PULPSoftmaxTilingReadyBindings, PULPTransposeTilingReadyBindings, \
     PULPUniformRQSTilingReadyBindings
-from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldDequantIntoMatMulPass, \
-    PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, \
-    TransposeGemmSquashPass
+from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldActivationTransposeIntoGemmPass, \
+    FoldDequantIntoMatMulPass, PULPAddRequantMergePass, PULPConvRequantMergePass, PULPGEMMRequantMergePass, \
+    PULPMatMulRequantMergePass, TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
 RQAddMapper = NodeMapper(RQAddParser(), PULPRQAddTilingReadyBindings)
@@ -277,6 +277,10 @@ PULPOptimizer = TopologyOptimizer(
     [
         SplitConvGradPass(),
         TransposeGemmSquashPass(),
+        # The mirror case: an ACTIVATION transposed only to be a Gemm's B operand.
+        # Runs next to the weight version because both are the same identity read in
+        # opposite directions, and neither needs anything new from the kernel.
+        FoldActivationTransposeIntoGemmPass(),
         QuantPatternPass(),
         DequantPatternPass(),
         # Fold a weight's Dequant into the matmul that reads it, so the dequantised

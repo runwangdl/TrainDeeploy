@@ -347,6 +347,63 @@ class PULPMatMulRequantMergePass(ReplaceSequentialPatternPass):
 
 
 @contextagnostic
+class FoldActivationTransposeIntoGemmPass(Pass):
+    """Fold a 2-D activation transpose into the Gemm that consumes it.
+
+    ``Gemm(A, T_[1,0](X), transB=0)`` and ``Gemm(A, X, transB=1)`` compute the same
+    thing, so a Transpose feeding a Gemm's B input only to be multiplied can be replaced
+    by a flag the kernel already honours. Nothing new is asked of the backend: transB=1
+    is the path a linear layer's backward already takes.
+
+    Mirror image of TransposeGemmSquashPass, which rewrites transB 1 -> 0 to drop a
+    WEIGHT transpose the Gemm was undoing anyway. Here the transpose is of an ACTIVATION
+    and the flag goes the other way. What decides whether a transpose can be folded is
+    not where its data comes from but whether the permutation is expressible as the
+    flag, and a 2-D perm=[1,0] is, constant or not.
+
+    Motivation, CCT on GAP9. At the training peak six [128,128] fp32 transposes are
+    live, 384KB, every one perm=[1,0] feeding a Gemm as B with transB=0 -- 43% of that
+    peak and, together with a 256KB NCHW->NHWC transpose into MaxPool, the reason
+    rematerialisation cannot reach it: those transposes were on the recompute ban list,
+    which made every budget below 880KB infeasible in under 7 seconds. Unbanning them
+    and letting the ILP recompute instead was measured and is the worse trade: 2896KB
+    against a 2960KB baseline, 64KB for 23 recomputes, because a recomputed tensor still
+    has to be materialised somewhere. Folding removes the buffer instead of shortening
+    its life.
+
+    The Transpose node is left in place. graph.cleanup() drops it once the rewire has
+    taken its last consumer and keeps it when something else still reads X^T.
+    """
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        # Diagnostic escape hatch: lets the same tree be built with and without
+        # the fold so a failure can be attributed to it rather than argued about.
+        import os
+        if os.environ.get("DISABLE_TPFOLD") == "1":
+            return graph
+        producers = {o.name: n for n in graph.nodes for o in n.outputs if o is not None and o.name}
+        folded = 0
+        for node in graph.nodes:
+            if node.op != "Gemm" or len(node.inputs) < 2 or node.inputs[1] is None:
+                continue
+            if int(node.attrs.get("transB", 0)) != 0:
+                continue
+            transpose = producers.get(node.inputs[1].name)
+            if transpose is None or transpose.op != "Transpose":
+                continue
+            if not transpose.inputs or transpose.inputs[0] is None:
+                continue
+            perm = transpose.attrs.get("perm", None)
+            if perm is None or list(perm) != [1, 0]:
+                continue
+            node.inputs[1] = transpose.inputs[0]
+            node.attrs["transB"] = 1
+            folded += 1
+        graph.cleanup()
+        return graph
+
+
+@contextagnostic
 class FoldDequantIntoMatMulPass(Pass):
     """Fold a weight's Dequant into the MatMul or Gemm nodes that consume it.
 
