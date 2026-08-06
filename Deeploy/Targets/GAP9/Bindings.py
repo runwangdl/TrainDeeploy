@@ -128,15 +128,22 @@ GAP9DMASliceBindings = [
     for type in IntegerDataTypes
 ]
 
+# starts/ends/axes/steps are indices, not data: their width follows the extent of the
+# tensor being sliced, not its element type. Hardcoding uint8_t offered four bindings,
+# all of them unusable once any bound exceeds 255, and the node was then reported as
+# having no adequate mapping for the whole graph. The identical SliceTemplate is bound
+# across every integer type by PULPSliceBindings, so the template already handles it.
 GAP9SliceBindings = [
     NodeBinding(
         SliceChecker([
             PointerClass(type),
-            PointerClass(uint8_t),
-            PointerClass(uint8_t),
-            PointerClass(uint8_t),
-            PointerClass(uint8_t)
-        ], [PointerClass(type)]), SliceTemplate.referenceTemplate, GAP9Transformer) for type in FloatDataTypes
+            PointerClass(index_type),
+            PointerClass(index_type),
+            PointerClass(index_type),
+            PointerClass(index_type)
+        ], [PointerClass(type)]), SliceTemplate.referenceTemplate, GAP9Transformer)
+    for type in FloatDataTypes
+    for index_type in IntegerDataTypes
 ]
 
 GAP9ReshapeBindings = [
