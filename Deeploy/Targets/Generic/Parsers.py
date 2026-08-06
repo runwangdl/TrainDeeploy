@@ -1618,8 +1618,7 @@ class Conv2DParser(ConvParser):
             # rendering context.get('dequant_scale', 1.0) -- the DEFAULT -- and would have
             # scaled every int8 weight by 1.0. Defaults keep the fp32 path unchanged.
             self.operatorRepresentation['dequant_scale'] = float(node.attrs.get('dequant_scale', 1.0))
-            self.operatorRepresentation['dequant_zero_point'] = int(
-                node.attrs.get('dequant_zero_point', 0))
+            self.operatorRepresentation['dequant_zero_point'] = int(node.attrs.get('dequant_zero_point', 0))
 
         return ret
 

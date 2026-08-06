@@ -403,15 +403,9 @@ class FoldDequantIntoMatMulPass(Pass):
             # the kernels dequantise. A Dequant feeding anything else is left alone.
             def readsAsWeight(consumer):
                 idx = self.WEIGHT_INPUT_IDX.get(consumer.op)
-                return (idx is not None and len(consumer.inputs) > idx
-                        and consumer.inputs[idx] is dequantOut)
+                return (idx is not None and len(consumer.inputs) > idx and consumer.inputs[idx] is dequantOut)
 
             if not all(readsAsWeight(c) for c in consumers):
-                import os as _os
-                if _os.environ.get('DEBUG_FOLD'):
-                    print(f"@@FOLD skip {node.name[:40]}: consumers="
-                          f"{[(c.op, list(c.inputs).index(dequantOut) if dequantOut in c.inputs else -1) for c in consumers]}",
-                          flush = True)
                 continue
             quantised = node.inputs[0] if node.inputs else None
             if quantised is None:
@@ -428,10 +422,6 @@ class FoldDequantIntoMatMulPass(Pass):
             # is not a Constant cannot be corrected here and is left for the fp32
             # path rather than folded into a kernel that would misread it.
             if not isinstance(quantised, gs.Constant):
-                import os as _os
-                if _os.environ.get('DEBUG_FOLD'):
-                    print(f"@@FOLD skip {node.name[:40]}: weight is {type(quantised).__name__}, not Constant",
-                          flush = True)
                 continue
             quantised.values = np.asarray(quantised.values).astype(np.int8)
 
