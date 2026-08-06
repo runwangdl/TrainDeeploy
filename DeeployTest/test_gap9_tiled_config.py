@@ -146,9 +146,20 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
 #   CCT (exact ILP)        recompute_checkmate.json       0       68.63M vs 64.24M
 #                                                                 baseline (+6.8%)
 L3_RECOMPUTE_TRAINING_MODELS = {
+    # Solved by scripts/solve_recompute_schedule.py against the current deployed
+    # graph. They cannot be carried across a lowering change: see
+    # docs/gradient_checkpointing.md.
+    #
+    #   model         recomputes  Errors  cycles (1 step)
+    #   CCT                    6       0   68,634,810
+    #   MobileNetV1           16       0   52,727,331
     "Models/Training/CCT/cct_train": {
         "l1": 122000,
         "schedule": "Tests/Models/Training/CCT/cct_train/recompute_checkmate.json",
+    },
+    "Models/Training/MobileNetV1/mobilenetv1_train": {
+        "l1": 116000,
+        "schedule": "Tests/Models/Training/MobileNetV1/mobilenetv1_train/recompute_checkmate.json",
     },
 }
 
