@@ -57,9 +57,8 @@ def test_every_float_data_type_keeps_a_wide_index_option(table, name):
     # by the tensor being sliced, so each one needs its own wide-index binding.
     floats = {t.typeName for t in FloatDataTypes}
     covered = {
-        b.typeChecker.input_types[0].referencedType.typeName
-        for b in table
-        if all(_fits(t, 256) for t in _indexTypes(b))
+        b.typeChecker.input_types[0].referencedType.typeName for b in table if all(
+            _fits(t, 256) for t in _indexTypes(b))
     }
     missing = floats - covered
     assert not missing, f"{name} has no wide-index binding for {sorted(missing)}"
