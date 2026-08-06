@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
 """Exhaustive rematerialisation search over GROUPS of nodes, not individual nodes.
 
 `solve.py` decides per node, which is the right granularity for ResNet8 and the wrong one
