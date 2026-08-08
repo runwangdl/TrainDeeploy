@@ -358,7 +358,7 @@ class ConvLayer(ONNXLayer):
     def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
                       channels_first) -> Tuple[Shape, Shape]:
         if len(inputShapes) == 3:
-            inputShapes[2] = inputShapes[1][0]
+            inputShapes[2] = (inputShapes[1][0],)
         return (inputShapes, outputShapes)
 
     def computeOps(self):

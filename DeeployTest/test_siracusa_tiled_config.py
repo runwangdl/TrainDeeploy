@@ -163,6 +163,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # the workflow summary actually pairs up.
     "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
     "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+    "Models/Training/SpeechNet/speechnet_train": [128000],
 }
 
 # Training-enabled tiled models that need L3 spill (weights/activations don't

@@ -14,6 +14,13 @@ from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresent
 # the template always sees the real name even when a Closure pass renders
 # the kernel body before TilingCodeGeneration runs.
 _TILE_IDX_SYMBOL_FMT = "TILING_CODEGEN_L1_{node}_tileIdxPtr"
+# Per-execution "dW already zeroed" flag. Reset to 0 on every backward pass
+# (every RunTrainingNetwork entry), set to 1 after the first spatial tile zeroes
+# grad_weight. This is the CORRECT first-tile signal for the H/W-tiled memset:
+# tileIdxPtr is a per-EXECUTION index (constant across an execution's spatial
+# tiles, so guarding the memset on `*tileIdxPtr==0` memset-ed EVERY tile and
+# wiped the cross-tile mm_add weight-gradient accumulation).
+_DW_ZERO_FLAG_SYMBOL_FMT = "TILING_CODEGEN_L1_{node}_dwZeroFlagPtr"
 
 
 def _is_tiled_expr(val: Any) -> bool:
@@ -69,6 +76,25 @@ class _ConvGradWTemplate(NodeTemplate):
                                                    "${type.referencedType.typeName}* ${name} = &bu_${name};")
 
         operatorRepresentation['tileIdxPtr'] = symbol
+
+        # Hoist a per-execution dW-zeroing flag (same stack-var pattern as
+        # tileIdxPtr: re-initialised to 0 on every backward pass). Used by the
+        # H/W-tiled memset guard so grad_weight is zeroed exactly once per
+        # execution (on the first spatial tile) and then accumulated across the
+        # remaining tiles via the kernel's mm_add.
+        flagSymbol = _DW_ZERO_FLAG_SYMBOL_FMT.format(node = node)
+        if not ctxt.is_buffer(flagSymbol):
+            from Deeploy.AbstractDataTypes import PointerClass
+            from Deeploy.CommonExtensions.DataTypes import uint32_t
+            dwZeroFlag = ctxt.VariableBuffer(flagSymbol, shape = [1])
+            ctxt.add(dwZeroFlag, "local")
+            dwZeroFlag._type = PointerClass(uint32_t)
+            dwZeroFlag._instance = dwZeroFlag._type(dwZeroFlag.name, ctxt)
+            dwZeroFlag.allocTemplate = NodeTemplate("")
+            dwZeroFlag.deallocTemplate = NodeTemplate("")
+            dwZeroFlag.initTemplate = NodeTemplate("${type.referencedType.typeName} bu_${name} = 0;\n"
+                                                   "${type.referencedType.typeName}* ${name} = &bu_${name};")
+        operatorRepresentation['dwZeroFlagPtr'] = flagSymbol
         return ctxt, operatorRepresentation, []
 
 
@@ -213,8 +239,9 @@ ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 ## Tiled template vars render as '*..._ref' pointer-deref strings; untiled
 ## vars render as literal ints/identifiers — see _is_tiled_expr.
 % if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
-if ((uint32_t)*${tileIdxPtr} == 0u) {
+if ((uint32_t)*${dwZeroFlagPtr} == 0u) {
     memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
+    *${dwZeroFlagPtr} = 1u;
 }
 % else:
 memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
@@ -252,8 +279,9 @@ ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 ## Tiled template vars render as '*..._ref' pointer-deref strings; untiled
 ## vars render as literal ints/identifiers — see _is_tiled_expr.
 % if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
-if ((uint32_t)*${tileIdxPtr} == 0u) {
+if ((uint32_t)*${dwZeroFlagPtr} == 0u) {
     memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
+    *${dwZeroFlagPtr} = 1u;
 }
 % else:
 memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
