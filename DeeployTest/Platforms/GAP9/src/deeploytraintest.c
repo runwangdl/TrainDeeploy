@@ -610,10 +610,18 @@ int main(void) {
         } else {
           ram_read(&stored_losses[mb], loss_ptr, sizeof(float));
         }
-        /* UART printf (not semihost) — safe even with openocd detached. */
+#ifndef POWER_MEASUREMENT
+        /* UART printf (not semihost) — safe even with openocd detached.
+         * Suppressed under POWER_MEASUREMENT: this fires once per mini-batch,
+         * i.e. between two GPIO pulses and therefore *inside* the first->last
+         * GPIO-high window the PPK2 average is taken over, so the UART traffic
+         * would land in the measured power. Every loss is printed after the
+         * loop anyway (check_losses reads stored_losses[]), so nothing is lost.
+         */
         uint32_t _lbits;
         memcpy(&_lbits, &stored_losses[mb], sizeof(uint32_t));
         printf("LOSSLIVE %u hex=%08x\r\n", (unsigned)mb, (unsigned)_lbits);
+#endif
       }
 
     } /* end accum_step loop */
