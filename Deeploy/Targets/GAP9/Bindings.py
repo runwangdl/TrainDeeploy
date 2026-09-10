@@ -584,12 +584,19 @@ GAP9ReluGradBinding = NodeBinding(
     ReluChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
     FloatReluTemplate.referenceGradTemplate, GAP9Transformer)
 
+# Parallel (8-core) accumulation. The single-core binding below it was chosen
+# when dense back-to-back accumulator forks were seen to lock up the GVSoC EU
+# dispatch unit, on the assumption that "accumulation is cheap & elementwise".
+# That holds for MAC-dense models (1.2% of DS-CNN-S, 2.5% of ResNet-8) but not
+# for parameter-dense ones: accumulation cost scales with PARAMETER COUNT while
+# the backward scales with MACs, so on the MLperf AD autoencoder (268 K params,
+# 0.26 M MACs) it was 55.5% of the training cycles while running on 1 of 8 cores.
 GAP9InPlaceAccumulatorV2Bindings = [
     NodeBinding(
         InPlaceAccumulatorV2Checker(
             [PointerClass(float32_t), PointerClass(float32_t),
-             PointerClass(uint8_t)], [PointerClass(float32_t)]), FloatInPlaceAccumulatorV2Template.singleCoreTemplate,
-        GAP9ClusterTransformer)
+             PointerClass(uint8_t)], [PointerClass(float32_t)]), FloatInPlaceAccumulatorV2Template.referenceTemplate,
+        GAP9Transformer)
 ]
 
 GAP9LayernormGradBinding = NodeBinding(
