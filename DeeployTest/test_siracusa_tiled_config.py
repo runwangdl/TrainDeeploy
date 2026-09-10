@@ -159,30 +159,38 @@ L3_DOUBLEBUFFER_MODELS = {
 # L2 size is fixed by the runner at 2_000_000 to match the validated local run.
 L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    # 32 KB variant matches the L2 DB matrix so the SB/DB join table in
-    # the workflow summary actually pairs up.
-    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
-    "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+    # The Autoencoder has moved to the L3 list below. As the MLperf Tiny AD
+    # reference (640 -> 128x4 -> 8 -> 128x4 -> 640, 267,928 params) its
+    # graph-input tensors alone are 2,148,548 B -- 1046.6 KB of weights plus an
+    # equally large gradient-accumulation buffer -- against Siracusa's 2 MB
+    # (2,097,152 B) L2. It is over the whole level by 51 KB before a single
+    # activation, so no --l2 value recovers it; minimalloc fails at the runner's
+    # 1,991,744 B capacity.
+    "Models/Training/DSCNN/dscnn_train": [128000],
 }
 
 # Training-enabled tiled models that need L3 spill (weights/activations don't
 # fit in L2). Same shape: test path -> list of L1 sizes (bytes).
 L3_SINGLEBUFFER_TRAINING_MODELS = {
+    # Autoencoder: L3 is the only level that fits it (see the L2 list above).
+    "Models/Training/Autoencoder/autoencoder_train": [128000],
     "Models/Training/ResNet8/resnet8_train": [128000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [128000],
     "Models/Training/CCT/cct_train": [128000],
 }
 
 # Double-buffered training models. Start narrow: only SimpleMLP until DB+alias
-# path is validated end-to-end. Expand to Autoencoder/DSCNN once stable.
+# path is validated end-to-end.
 # L2 DB at L1=128 KB → almost all ops are 1-tile (tensors fit comfortably);
-# DB pass triggers but has nothing to pipeline. Add a 32 KB autoencoder
-# variant so ~8 of 55 ops become 2-4 tiles and DB pipelining actually
-# fires. DSCNN is structurally DB-unfriendly at L2 (depthwise/pointwise
-# Conv weights are tiny, only ~1 of 97 ops multi-tiles even at L1=16 KB).
+# DB pass triggers but has nothing to pipeline. The 32 KB autoencoder variant
+# used to be here to force ~8 of 55 ops to 2-4 tiles so DB pipelining actually
+# fired; that reasoning was written against the old 29,120-parameter fixture
+# (55 ops) and does not carry over -- the MLperf reference is 205 nodes and no
+# longer fits L2 at all. DSCNN is structurally DB-unfriendly at L2
+# (depthwise/pointwise Conv weights are tiny, only ~1 of 97 ops multi-tiles even
+# at L1=16 KB).
 L2_DOUBLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    "Models/Training/Autoencoder/autoencoder_train": [128000, 32000],
     "Models/Training/DSCNN/dscnn_train": [128000],
 }
 
