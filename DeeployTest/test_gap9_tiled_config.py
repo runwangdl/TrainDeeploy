@@ -105,10 +105,19 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # the pass that eliminates W^T covers Linear layers and not Conv. CHW kernels need
     # no transpose at all, which takes the peak from 1410 KB to 1278 KB and brings it
     # inside L2 with no recompute, no promotion and no double buffering.
-    # Measured at one mini-batch: Errors: 0, 43,531,388 cycles, L2_shared 164928 B.
-    # 116000, not 122000: CI trains four, and their accumulator buffers leave the L1
-    # allocator 118 KB.
-    "Models/Training/ResNet8/resnet8_train": [116000],
+    # 122000, raised from 116000. The lower figure was chosen because CI trains four
+    # mini-batches and their accumulation buffers left the L1 allocator 118 KB; with
+    # the accumulator now forked across the cluster that budget holds at 122000, and
+    # the 6 KB is worth a great deal here: 55.40M -> 43.16M cycles per step, -22.2%.
+    # That also settles a confusing comparison -- at 116000 this on-chip deployment
+    # was *slower* than every L3 configuration, which reads as though going off-chip
+    # were free. At an equal L1 it is the fastest of them (43.16M against 45.68M for
+    # L3+promote+DB), which is what one would expect. The L1 budget, not the memory
+    # level, was doing the work.
+    # It cannot be double-buffered: the arena is 1,350,236 B of the 1.5 MB L2 and
+    # doubled staging does not fit ("Allocation failed for allocator 1"; allocator 1
+    # is L2 and 2 is cluster L1, see pi_malloc.h).
+    "Models/Training/ResNet8/resnet8_train": [122000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
