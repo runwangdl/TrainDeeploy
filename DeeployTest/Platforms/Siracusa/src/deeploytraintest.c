@@ -214,9 +214,11 @@ typedef struct {
   uint32_t *err_count;
 } LossCompareArgs;
 
+/* NOTE: no pi_core_id() guard -- this runs once on the cluster master via a
+ * non-forked pi_cluster_send_task_to_cl(). The guard that used to be here made
+ * the whole comparison dead code on GAP9 (CC core id is 8), which silently
+ * turned every training test into "Errors: 0 out of N". */
 static void CompareLossesOnCluster(void *args) {
-  if (pi_core_id() != 0)
-    return;
   LossCompareArgs *a = (LossCompareArgs *)args;
   float tol = TRAINING_TOLERANCE_ABS; /* read on cluster — has FPU */
   uint32_t errors = 0;

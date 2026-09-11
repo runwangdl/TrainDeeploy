@@ -353,9 +353,15 @@ typedef struct {
   uint32_t *computed_bits_out; /* cluster's view of each computed loss (hex) */
 } LossCompareArgs;
 
+/* NOTE: no pi_core_id() guard here. This entry point is dispatched via
+ * pi_cluster_send_task_to_cl() *without* a fork, so it executes exactly once,
+ * on the cluster controller core. On GAP9 the CC reports pi_core_id() == 8
+ * (cores 0..7 are the workers), so the "if (pi_core_id() != 0) return;" guard
+ * this function used to carry fired unconditionally: the comparison never ran,
+ * *err_count kept its initial 0 and every training test printed a vacuous
+ * "Errors: 0 out of N". See the other *Wrapper entry points in this file --
+ * none of them guards on the core id either. */
 static void CompareLossesOnCluster(void *args) {
-  if (pi_core_id() != 0)
-    return;
   LossCompareArgs *a = (LossCompareArgs *)args;
   float tol = TRAINING_TOLERANCE_ABS;
   uint32_t errors = 0;
