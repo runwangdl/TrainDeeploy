@@ -403,16 +403,16 @@ int main(void) {
    * Benchmark summary — parsed by benchmark_training.py
    * ------------------------------------------------------------------ */
 
-  uint32_t weight_sram_bytes = 0;
+  uint32_t trainable_bytes_total = 0;
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
   for (uint32_t _wi = 0; _wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; _wi++) {
-    weight_sram_bytes +=
+    trainable_bytes_total +=
         DeeployNetwork_inputs_bytes[(uint32_t)TRAINING_NUM_DATA_INPUTS + _wi];
   }
 #endif
 
-  printf("BENCH train_cycles=%u opt_cycles=%u weight_sram=%u\r\n",
-         g_train_cycles_acc, g_opt_cycles_acc, weight_sram_bytes);
+  printf("BENCH train_cycles=%u opt_cycles=%u trainable_bytes=%u\r\n",
+         g_train_cycles_acc, g_opt_cycles_acc, trainable_bytes_total);
 
   return loss_err_count == 0 ? 0 : 1;
 }

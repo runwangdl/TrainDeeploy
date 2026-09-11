@@ -20,8 +20,11 @@ _PERF_RESULTS: List[Dict[str, Any]] = []
 
 # Inference harness format
 _RUNTIME_CYCLES_RE = re.compile(r"Runtime:\s*(\d+)\s*cycles")
-# Training harness format: train + optimizer step cycles + (optional) weight sram
-_BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s+weight_sram=(\d+))?")
+# Training harness format: train + optimizer step cycles + (optional) total bytes
+# of the trainable weight tensors. NOTE: a logical sum over the weight slots of
+# DeeployNetwork_inputs[], independent of which memory level those tensors
+# actually live in -- it is a parameter-count cross-check, not a footprint.
+_BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s+trainable_bytes=(\d+))?")
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -191,7 +194,7 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
 
     Two harness formats are recognised:
       * inference  : ``Runtime: N cycles``
-      * training   : ``BENCH train_cycles=N opt_cycles=N weight_sram=N``
+      * training   : ``BENCH train_cycles=N opt_cycles=N trainable_bytes=N``
     """
     if report.when != "call":
         return
@@ -224,7 +227,7 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
         if bench.group(2):
             entry["opt_cycles"] = int(bench.group(2))
         if bench.group(3):
-            entry["weight_sram"] = int(bench.group(3))
+            entry["trainable_bytes"] = int(bench.group(3))
     elif runtime is not None:
         entry["runtime_cycles"] = int(runtime.group(1))
     else:
@@ -248,8 +251,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
             extras = f"train={r['train_cycles']:>12,} cyc"
             if "opt_cycles" in r:
                 extras += f"  opt={r['opt_cycles']:>10,} cyc"
-            if "weight_sram" in r:
-                extras += f"  weight_sram={r['weight_sram']:>8,} B"
+            if "trainable_bytes" in r:
+                extras += f"  trainable_bytes={r['trainable_bytes']:>8,} B"
             terminalreporter.write_line(f"  [{mark}] {r['nodeid']:60s}  {extras}")
         elif "runtime_cycles" in r:
             terminalreporter.write_line(f"  [{mark}] {r['nodeid']:60s}  runtime={r['runtime_cycles']:>12,} cyc")
@@ -268,7 +271,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
         lines += [
             "### Training",
             "",
-            "| Test | Status | train_cycles | opt_cycles | weight_sram |",
+            "| Test | Status | train_cycles | opt_cycles | trainable_bytes |",
             "|---|:---:|---:|---:|---:|",
         ]
         for r in results:
@@ -276,8 +279,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
                 continue
             status = ":white_check_mark:" if r["outcome"] == "passed" else ":x:"
             opt = f"{r['opt_cycles']:,}" if "opt_cycles" in r else "—"
-            sram = f"{r['weight_sram']:,}" if "weight_sram" in r else "—"
-            lines.append(f"| `{r['nodeid']}` | {status} | {r['train_cycles']:,} | {opt} | {sram} |")
+            tb = f"{r['trainable_bytes']:,}" if "trainable_bytes" in r else "—"
+            lines.append(f"| `{r['nodeid']}` | {status} | {r['train_cycles']:,} | {opt} | {tb} |")
         lines.append("")
 
     if has_inference:

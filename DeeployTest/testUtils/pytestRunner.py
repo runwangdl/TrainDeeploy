@@ -23,10 +23,10 @@ __all__ = [
 # parametrised cases that share a section.
 _METRIC_SECTIONS_WRITTEN: set = set()
 
-# `BENCH train_cycles=<N> opt_cycles=<M> weight_sram=<K>` — printed once per
+# `BENCH train_cycles=<N> opt_cycles=<M> trainable_bytes=<K>` — printed once per
 # training run by the test harness; captured here so we can append a cycles
 # row to $GITHUB_STEP_SUMMARY for SB-vs-DB comparison.
-_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)")
+_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) trainable_bytes=(\d+)")
 
 
 def get_worker_id() -> str:
@@ -196,7 +196,7 @@ def run_and_assert_test(test_name: str,
 
     cycles = getattr(result, "runtime_cycles", None)
     if cycles is None and getattr(result, "stdout", None):
-        # Training tests emit "BENCH train_cycles=N opt_cycles=M weight_sram=K"
+        # Training tests emit "BENCH train_cycles=N opt_cycles=M trainable_bytes=K"
         # instead of "Runtime: N cycles"; fall back to that format so the
         # training cycle reference table works the same as the inference one.
         import re as _re

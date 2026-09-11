@@ -102,7 +102,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [116000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
-    # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
+    # trainable_bytes is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
     # L2 but not the 1000 KB runner default -- hence the l2 override below.
     # 116000, not the 122000 the L3 entry uses: CI trains 4 mini-batches, whose
     # accumulator buffers leave the L1 allocator 118 KB, and a 122000 arena does not
