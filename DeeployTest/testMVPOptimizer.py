@@ -203,6 +203,12 @@ if __name__ == '__main__':
     parser.add_argument('--promoteToL2',
                         action = 'store_true',
                         help = 'Promote selected L3 tensors to L2 (requires --defaultMemLevel L3)')
+    parser.add_argument('--promoteToL2FetchBytes',
+                        type = str,
+                        default = None,
+                        help = 'Accepted so the shared generation-argument list can carry it; the '
+                        'optimizer network is a separate graph whose tensors do not appear in the '
+                        'training-graph harvest, so it is not applied here.')
     parser.add_argument('--promoteToL2Strategy',
                         type = str,
                         default = 'cycle-aware',

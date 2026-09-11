@@ -17,6 +17,13 @@ if __name__ == '__main__':
                             help = 'Keep forward convs channels-first (NCHW), binding the *_CHW kernels '
                             '(removes the NCHW<->NHWC transpose around every conv; required for '
                             'MobileNetV1 training to fit GAP9 L1).\n')
+        parser.add_argument('--promoteToL2FetchBytes',
+                            type = str,
+                            default = None,
+                            help = 'JSON of measured per-tensor L3<->L2 traffic, harvested from a run '
+                            'with nothing promoted (DEEPLOY_FETCH_HARVEST). Replaces the consuming-node '
+                            'count in the promotion score, which counts at schedule granularity and so '
+                            'misses tensors an operator re-reads once per tile.\n')
         parser.add_argument('--recomputeSchedule',
                             type = str,
                             default = None,

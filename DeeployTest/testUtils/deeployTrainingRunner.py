@@ -124,6 +124,8 @@ def main(tiling_enabled: bool = False,
         gen_args.append('--convChannelsFirst')
     if getattr(args, 'recomputeSchedule', None):
         gen_args.append(f'--recomputeSchedule={args.recomputeSchedule}')
+    if getattr(args, 'promoteToL2FetchBytes', None):
+        gen_args.append(f'--promoteToL2FetchBytes={args.promoteToL2FetchBytes}')
 
     if tiling_enabled:
         if getattr(args, 'defaultMemLevel', None):
