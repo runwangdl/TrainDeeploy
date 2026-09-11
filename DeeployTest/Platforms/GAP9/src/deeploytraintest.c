@@ -542,6 +542,11 @@ int main(void) {
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0) && \
     !defined(TRAINING_SKIP_INITWEIGHT_COPY)
   for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+    /* NULL slot: that weight is L3-resident and InitTrainingNetwork already
+     * loaded it from its N.hex file, so there is nothing to copy. */
+    if (testInitWeights[wi] == NULL) {
+      continue;
+    }
     uint32_t idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
     l3_aware_copy(DeeployNetwork_inputs[idx], testInitWeights[wi],
                   DeeployNetwork_inputs_bytes[idx]);
