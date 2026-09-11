@@ -237,7 +237,6 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,
     },
     "Models/Training/CCT/cct_train": {
-        "num_data_inputs": 1,
         "tolerance": 5e-3,
         # cc_stack 4096 (was 8192): with promote_headroom 700000 the CC closure
         # chain no longer overflows at 4096 (the old 4096->os_evt_release deadlock
@@ -253,7 +252,6 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,
     },
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
-        "num_data_inputs": 1,
         "tolerance": 5e-3,
         "cc_stack": 4096,
         "slave_stack": 512,
@@ -265,7 +263,6 @@ TRAINING_MODEL_OVERRIDES = {
         # exits before producing any output.
         "cc_stack": 4096,
         "slave_stack": 512,
-        "num_data_inputs": 1,
         # int8 weights dequantised in-kernel; the tolerance covers per-tensor
         # symmetric quantisation of the frozen backbone, not a looser kernel.
         "tolerance": 5e-2,
@@ -273,18 +270,15 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,
     },
     "Models/Training/SleepConViT/sleepconvit_train": {
-        "num_data_inputs": 1,
         "tolerance": 5e-3,
         "cc_stack": 4096,  # transformer backward; small CC stack frees L1 for the arena
     },
     "Models/Training/TSDR/tsdr_train": {
-        "num_data_inputs": 1,
         "tolerance": 5e-3,
         "cc_stack": 4096,  # spectrogram transformer; same profile as SleepConViT
         "conv_channels_first": True,  # CHW patch-embed conv (no NCHW<->NHWC transpose)
     },
     "Models/Training/MCUNet/mcunet_train": {
-        "num_data_inputs": 1,
         "tolerance": 5e-3,
         "cc_stack": 8192,  # MnasNet-style; deep DW/PW chain needs a larger CC stack
         "conv_channels_first": True,  # CHW convs; NHWC-transpose tiling is infeasible
