@@ -533,10 +533,6 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
     # models pass in L3 and on Siracusa. Key the decision on where the weights
     # actually live, not on the platform name.
     _num_data_bufs = len(all_mb_data[0]) if all_mb_data else 0
-    _weight_keys = [
-        f"input_{_i}" for _i in range(_num_data_bufs, grad_buf_start_idx)
-        if deployer.ctxt.is_buffer(f"input_{_i}")
-    ]
     _weight_is_l3 = {
         _wi: getattr(deployer.ctxt.lookup(f"input_{_num_data_bufs + _wi}"), "_memoryLevel", None) == "L3"
         for _wi in range(grad_buf_start_idx - _num_data_bufs)
@@ -569,8 +565,7 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
     # Whenever the weights are being staged through L3 (on-chip-L2 nets), stage the
     # baked test images the same way: every byte kept out of .data is a byte the
     # arena can use, and the on-chip configs are the ones that need it.
-    _testdata_to_l3 = _is_gap9 and (_weights_to_l3 or
-                                    (_weights_all_l3 and _testdata_bytes > _TESTDATA_L3_THRESHOLD))
+    _testdata_to_l3 = _is_gap9 and (_weights_to_l3 or (_weights_all_l3 and _testdata_bytes > _TESTDATA_L3_THRESHOLD))
     if _testdata_to_l3:
         print(f"  [testData->L3] {_testdata_bytes} B of baked test inputs moved out of L2 to L3 (hex-loaded)")
 
