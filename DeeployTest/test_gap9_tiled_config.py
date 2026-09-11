@@ -207,6 +207,123 @@ L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 TRAINING_MODEL_OVERRIDES = {
+    "Models/Training/ResNet8_LW/last6_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last4_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last6_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last8_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last12_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last16_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last20_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last24_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    # Fine-tuning experiments. These mirror what their verification runs on gvsoc
+    # actually used -- CC_STACK_SIZE=4096 and SLAVESTACKSIZE=512 for every one of
+    # them, including the MobileNetV1-derived graphs whose base model is tuned to
+    # cc_stack 8192. Registering the base model's tuned values instead would put a
+    # configuration into CI that nobody measured.
+    "Models/Training/ResNet8SplitBlock/resnet8split_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1SplitAlt/mobilenetv1alt_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+    },
+    "Models/Training/MobileNetV1QLoRA/mobilenetv1qlora_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/ResNet8_PEFT/resnet8_peft_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+    },
+    "Models/Training/MobileNetV1LoRA/mobilenetv1lora_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/ResNet8_LW/last1_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/ResNet8_LW/last2_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/ResNet8_LW/last4_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last1_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
+    "Models/Training/MobileNetV1_LW/last2_train": {
+        "num_data_inputs": 1,
+        "cc_stack": 4096,
+        "slave_stack": 512,
+        "conv_channels_first": True,
+    },
     # Slave stacks live in L1 (SDK default); we just shrink them to 512B. Small
     # L1 stacks are a big win over parking them in L2 (cyc/step, L1 vs L2 below).
     "Models/Training/Autoencoder/autoencoder_train": {
@@ -289,4 +406,67 @@ TRAINING_MODEL_OVERRIDES = {
         "cc_stack": 8192,  # MnasNet-style; deep DW/PW chain needs a larger CC stack
         "conv_channels_first": True,  # CHW convs; NHWC-transpose tiling is infeasible
     },
+}
+
+# ---------------------------------------------------------------------------------- #
+# Fine-tuning experiments                                                             #
+# ---------------------------------------------------------------------------------- #
+# The parameter-efficient training variants, kept in their own job
+# (gap9-training-experiments) so they neither lengthen the l3-singlebuffer job nor
+# gate it. Four families:
+#
+#   channel-wise  every convolution halved along a channel axis, one half trained
+#   qlora         int8 weight storage with an fp32 compute type
+#   lora          low-rank adapters, loralib and PEFT forms
+#   layerwise     the last N weighted layers trained, everything before them frozen
+#
+# Every entry below was run end-to-end on gvsoc against this commit and reported
+# "Errors: 0"; the cycle counts are from those runs. What is NOT here was tried and
+# failed on this same tree, which is why it is not registered:
+#
+#   ResNet8_QLORA        faults on device -- cluster PE7 LSU "Invalid access"
+#   ResNet8_PEFT_QLORA   tiler assert in minimizeRectangle, the same one a
+#                        channel split with a doubly-read half hits: per-channel
+#                        transfers with the channel index written into the batch
+#                        offset. Both need a fix before they can be registered.
+#
+# The overrides for these models mirror what the verification runs actually used
+# (CC_STACK_SIZE=4096, SLAVESTACKSIZE=512), not the tuned values of the base model
+# they derive from -- registering settings that were never exercised would mean CI
+# runs a configuration nobody measured.
+L3_EXPERIMENT_TRAINING_MODELS = {
+    # channel-wise: half of every convolution's weights trained. 3x3 splits cannot
+    # be rejoined with a Concat (ConcatTileConstraint pins every dimension from the
+    # concat axis onwards, which forbids spatial tiling of the producers), so both
+    # graphs sum two convolutions instead. Exact: identical parameter counts.
+    "Models/Training/ResNet8SplitBlock/resnet8split_train": [122000],  # 42.66 Mcyc
+    "Models/Training/MobileNetV1SplitAlt/mobilenetv1alt_train": [116000],  # 38.53 Mcyc
+    # qlora
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [122000],  # 53.89 Mcyc
+    "Models/Training/MobileNetV1QLoRA/mobilenetv1qlora_train": [116000],  # 42.28 Mcyc
+    # lora
+    "Models/Training/ResNet8_PEFT/resnet8_peft_train": [122000],  # 56.52 Mcyc
+    "Models/Training/MobileNetV1LoRA/mobilenetv1lora_train": [116000],  # 51.13 Mcyc
+}
+
+# Layerwise sweeps. Separated from the table above because they are a SWEEP over the
+# same architecture rather than distinct methods: N is the number of trailing weighted
+# layers left trainable. Kept in the same job.
+L3_LAYERWISE_TRAINING_MODELS = {
+    # N counts trailing weighted layers. The cycle counts are the point of the sweep:
+    # cost grows with N, and the frozen prefix is what makes the memory saving real --
+    # unlike channel-wise selection, which cannot create one.
+    "Models/Training/ResNet8_LW/last1_train": [122000],  # 16.23 Mcyc
+    "Models/Training/ResNet8_LW/last2_train": [122000],  # 19.71 Mcyc
+    "Models/Training/ResNet8_LW/last4_train": [122000],  # 29.58 Mcyc
+    "Models/Training/ResNet8_LW/last6_train": [122000],  # 38.64 Mcyc
+    "Models/Training/MobileNetV1_LW/last1_train": [116000],  # 18.73 Mcyc
+    "Models/Training/MobileNetV1_LW/last2_train": [116000],  # 22.14 Mcyc
+    "Models/Training/MobileNetV1_LW/last4_train": [116000],  # 24.83 Mcyc
+    "Models/Training/MobileNetV1_LW/last6_train": [116000],  # 26.60 Mcyc
+    "Models/Training/MobileNetV1_LW/last8_train": [116000],  # 28.72 Mcyc
+    "Models/Training/MobileNetV1_LW/last12_train": [116000],  # 32.92 Mcyc
+    "Models/Training/MobileNetV1_LW/last16_train": [116000],  # 36.60 Mcyc
+    "Models/Training/MobileNetV1_LW/last20_train": [116000],  # 39.70 Mcyc
+    "Models/Training/MobileNetV1_LW/last24_train": [116000],  # 44.28 Mcyc
 }

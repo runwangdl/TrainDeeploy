@@ -92,6 +92,9 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line(
         "markers", "recompute: mark test as replaying a gradient-checkpointing schedule "
         "(activations regenerated before the backward pass instead of held live)")
+    config.addinivalue_line(
+        "markers", "experiments: mark test as a parameter-efficient fine-tuning experiment "
+        "(channel-wise, QLoRA, LoRA, layerwise)")
     config.addinivalue_line("markers", "wmem: mark test as using Neureka weight memory")
     config.addinivalue_line("markers", "promote: mark test as exercising the L3->L2 tensor promotion pass")
     config.addinivalue_line("markers", "dma: mark test as DMA test")
