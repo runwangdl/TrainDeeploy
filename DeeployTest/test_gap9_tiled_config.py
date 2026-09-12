@@ -86,20 +86,44 @@ L3_DOUBLEBUFFER_MODELS = {
 }
 
 # Training models — GAP9 L2 size is 1 MB (DEFAULT_L2 = 1024000).
-# L2 models: Autoencoder and DSCNN fit within 1 MB L2.
+# L2 models: DSCNN fits within 1 MB L2.
+# The Autoencoder does NOT, and has moved to the L3 lists below. It is the MLperf
+# Tiny anomaly-detection reference (640 -> 128x4 -> 8 -> 128x4 -> 640, 267,928
+# params): 1046.6 KB of weights plus an equally large gradient-accumulation
+# buffer is 2098 KB of graph-input tensors alone, against GAP9's 1536 KB L2, so
+# minimalloc fails even at --l2 1572864. Being a pure MLP it has 0.99 MACs per
+# parameter where the convolutional benchmarks have 115-160, which is why it is
+# the one benchmark whose parameters, not its activations, set the footprint.
 L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/SimpleMLP/simplemlp_train": [64000],
-    "Models/Training/Autoencoder/autoencoder_train": [128000],
-    "Models/Training/DSCNN/dscnn_train": [128000, 64000],
+    # 128000 only: the MLperf-compliant DS-CNN-S (49x10 MFCC, 64 channels,
+    # 23,180 params) is 8x the old XS fixture and no longer has anything to gain
+    # from the smaller arena.
+    "Models/Training/DSCNN/dscnn_train": [128000],
     # ResNet8 on-chip. It only fits channels-first: the NHWC path materialises a
     # transposed copy of every conv weight -- 75 of them, 2950 KB in total -- because
     # the pass that eliminates W^T covers Linear layers and not Conv. CHW kernels need
     # no transpose at all, which takes the peak from 1410 KB to 1278 KB and brings it
     # inside L2 with no recompute, no promotion and no double buffering.
-    # Measured at one mini-batch: Errors: 0, 43,531,388 cycles, L2_shared 164928 B.
-    # 116000, not 122000: CI trains four, and their accumulator buffers leave the L1
-    # allocator 118 KB.
-    "Models/Training/ResNet8/resnet8_train": [116000],
+    # 122000, raised from 116000. The lower figure was chosen because CI trains four
+    # mini-batches and their accumulation buffers left the L1 allocator 118 KB; with
+    # the accumulator now forked across the cluster that budget holds at 122000, and
+    # the 6 KB is worth a great deal here: 55.40M -> 43.16M cycles per step, -22.2%.
+    # That also settles a confusing comparison -- at 116000 this on-chip deployment
+    # was *slower* than every L3 configuration, which reads as though going off-chip
+    # were free. At an equal L1 it is the fastest of them (43.16M against 45.68M for
+    # L3+promote+DB), which is what one would expect. The L1 budget, not the memory
+    # level, was doing the work.
+    # It cannot be double-buffered: the arena is 1,350,236 B of the 1.5 MB L2 and
+    # doubled staging does not fit ("Allocation failed for allocator 1"; allocator 1
+    # is L2 and 2 is cluster L1, see pi_malloc.h).
+    # 118000, not 122000. The cluster-L1 allocator has 118,672 B free once the
+    # runtime and the cluster stacks are up, and at a 122000 budget the random-max
+    # tiling search can land on a 121,984 B arena, which does not fit. pi_l1_malloc
+    # returns NULL, nothing checks it, and the wild pointer surfaces later as
+    # "Allocation failed for allocator 2" followed by an Invalid access -- randomly,
+    # because a different search result fits. Same reasoning as CCT_QLORA_FT below.
+    "Models/Training/ResNet8/resnet8_train": [118000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
@@ -116,6 +140,12 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 # cc_stack (TRAINING_MODEL_OVERRIDES) keeps arena+cc_stack within the ~127 KB L1
 # pool. MobileNetV1 runs channels-first (CHW kernels, no NCHW<->NHWC transpose).
 L3_SINGLEBUFFER_TRAINING_MODELS = {
+    # Autoencoder: L3 is not a choice, it is the only level that fits (see the
+    # L2 list above). 122000, not the 128000 it used on L2 -- an L3 model must
+    # leave L1 room for the cluster stacks: 122000 + cc 4096 + slave 512*8 =
+    # 130192 < 131072. At 128000 the arena overflows and gvsoc aborts with
+    # "Allocation failed for allocator 2".
+    "Models/Training/Autoencoder/autoencoder_train": [122000],
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
@@ -201,6 +231,10 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 # cycle-aware promotes 0 for ResNet8). headroom 700000 (set in the test) leaves
 # enough L2 for the doubled DB staging buffers.
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
+    # Autoencoder's best measured config: 21.8M/4-step against 36.6M for L3
+    # single-buffer (-40%). "smallest" -- cycle-aware has nothing to weigh on a
+    # graph whose cost is dominated by parameter transfer, not by layer cycles.
+    "Models/Training/Autoencoder/autoencoder_train": [(122000, "smallest", True),],
     "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
     "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
     "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
@@ -210,10 +244,16 @@ TRAINING_MODEL_OVERRIDES = {
     # Slave stacks live in L1 (SDK default); we just shrink them to 512B. Small
     # L1 stacks are a big win over parking them in L2 (cyc/step, L1 vs L2 below).
     "Models/Training/Autoencoder/autoencoder_train": {
-        "slave_stack": 512,  # 0.48M vs 0.78M cyc/step (-38.5%)
+        # L3 model now: arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072.
+        "cc_stack": 4096,
+        "slave_stack": 512,
     },
     "Models/Training/DSCNN/dscnn_train": {
-        "slave_stack": 512,  # 0.80M vs 1.21M cyc/step (-33.7%)
+        # Cluster stacks in L1 rather than L2 (see the ResNet8 entry for the
+        # measured effect). The -33.7% figure this comment used to quote was
+        # taken on the old XS fixture (2,732 params, 0.80M cyc/step) and does
+        # not carry over to DS-CNN-S (23,180 params, 10.2M cyc/step).
+        "slave_stack": 512,
     },
     "Models/Training/ResNet8/resnet8_train": {
         "conv_channels_first": True,  # CHW convs; see the on-chip entry above
