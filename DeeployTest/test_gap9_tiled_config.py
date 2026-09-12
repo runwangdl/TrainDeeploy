@@ -117,7 +117,13 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # It cannot be double-buffered: the arena is 1,350,236 B of the 1.5 MB L2 and
     # doubled staging does not fit ("Allocation failed for allocator 1"; allocator 1
     # is L2 and 2 is cluster L1, see pi_malloc.h).
-    "Models/Training/ResNet8/resnet8_train": [122000],
+    # 118000, not 122000. The cluster-L1 allocator has 118,672 B free once the
+    # runtime and the cluster stacks are up, and at a 122000 budget the random-max
+    # tiling search can land on a 121,984 B arena, which does not fit. pi_l1_malloc
+    # returns NULL, nothing checks it, and the wild pointer surfaces later as
+    # "Allocation failed for allocator 2" followed by an Invalid access -- randomly,
+    # because a different search result fits. Same reasoning as CCT_QLORA_FT below.
+    "Models/Training/ResNet8/resnet8_train": [118000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # weight_sram is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
