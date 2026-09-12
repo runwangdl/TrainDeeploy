@@ -638,6 +638,14 @@ class Tiler():
                     str(_alignedSize)
                 ])
 
+        _dumpBase = os.environ.get("DEEPLOY_MINIMALLOC_DUMP")
+        if _dumpBase:
+            import shutil as _sh
+            _n = 0
+            while os.path.exists(f"{_dumpBase}_{memoryLevel}_{_n}.csv"):
+                _n += 1
+            _sh.copyfile(f"{self._minimalloc_input}.csv", f"{_dumpBase}_{memoryLevel}_{_n}.csv")
+
         try:
             minimallocInstallDir = os.environ["MINIMALLOC_INSTALL_DIR"]
         except KeyError:
@@ -2017,6 +2025,78 @@ class Tiler():
                                         1), f"Invalid memory map! Buffer {tensor.name} is not alive at step {stepIdx}!"
 
 
+def harvestFetchTraffic(ctxt, tilingSolution, layerBinding, level: str):
+    """Bytes moved into `level` per tensor, over the whole tile loop.
+
+    Q(t) in the residency stage is the traffic saved by promoting t, which is the
+    traffic incurred while t is NOT promoted -- so this is only meaningful when
+    read off a solution in which everything still lives at the default level.
+
+    Returns {tensorName: bytes}. Tensors whose tile count cannot be established
+    are omitted rather than guessed.
+    """
+    import math
+
+    traffic = {}
+    diag = {"patterns": 0, "nodes": 0, "noTileCount": 0, "noShape": 0}
+    for layer, pattern in zip(layerBinding.values(), tilingSolution):
+        diag["patterns"] += 1
+        # tilingSolution holds PatternMemoryConstraints; the per-node constraints
+        # are one level down.
+        nodeConstraints = getattr(pattern, "nodeConstraints", None)
+        if nodeConstraints is None:
+            nodeConstraints = [pattern]
+        for nodeConstraint in nodeConstraints:
+            diag["nodes"] += 1
+            constraints = getattr(nodeConstraint, "tensorMemoryConstraints", None)
+            if not constraints:
+                continue
+
+            # Tile count comes from an output tensor: outputs are what the tile loop
+            # is indexed over, so ceil(full / tile) per dimension is the trip count.
+            numTiles = None
+            for outTensor in layer.node.outputs:
+                entry = constraints.get(outTensor.name)
+                if entry is None:
+                    continue
+                mc = entry.memoryConstraints.get(level)
+                if mc is None or mc.shape is None:
+                    continue
+                try:
+                    full = ctxt.lookup(outTensor.name).shape
+                except Exception:
+                    continue
+                if len(full) != len(mc.shape):
+                    continue
+                count = 1
+                for fullDim, tileDim in zip(full, mc.shape):
+                    if not isinstance(tileDim, int) or tileDim <= 0:
+                        count = None
+                        break
+                    count *= max(1, math.ceil(fullDim / tileDim))
+                if count is not None:
+                    numTiles = count
+                    break
+            if numTiles is None:
+                diag["noTileCount"] += 1
+                continue
+            diag.setdefault("tileCounts", []).append(numTiles)
+
+            for name, entry in constraints.items():
+                mc = entry.memoryConstraints.get(level)
+                if mc is None or not isinstance(mc.size, int):
+                    continue
+                try:
+                    width = ctxt.lookup(name)._type.referencedType.typeWidth // 8
+                except Exception:
+                    width = 4
+                # multiBufferCoefficient is how many buffers are allocated, not how
+                # many times the data moves; it must not scale the traffic.
+                traffic[name] = traffic.get(name, 0) + numTiles * mc.size * width
+    traffic["__diag__"] = diag
+    return traffic
+
+
 class TilerDeployerWrapper(NetworkDeployerWrapper):
     """Wrapper for network deployers that adds tiling capabilities.
 
@@ -2170,6 +2250,19 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
             memoryMap = self.tiler.computeMemoryMap(self.ctxt, tilingSolution)
 
         assert tilingSolution is not None and memoryMap is not None
+
+        _harvestPath = os.environ.get("DEEPLOY_FETCH_HARVEST")
+        if _harvestPath:
+            import json as _json
+            _out = {}
+            for _lvl in self.Platform.memoryHierarchy.memoryLevels.keys():
+                _out[_lvl] = harvestFetchTraffic(self.ctxt, tilingSolution, self.layerBinding, _lvl)
+            _users = {}
+            for _n, _b in list(self.ctxt.localObjects.items()) + list(self.ctxt.globalObjects.items()):
+                _users[_n] = len(getattr(_b, "_users", []) or [])
+            with open(_harvestPath, "w") as _fh:
+                _json.dump({"traffic": _out, "users": _users}, _fh)
+            log.info(f" > Fetch traffic written to {_harvestPath}")
 
         log.debug(" - Test Tiling Solution Correctness")
         self.tiler.testTilingSolutionCorrectness(tilingSolution)

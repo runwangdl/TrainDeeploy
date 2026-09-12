@@ -4,7 +4,7 @@
 
 import math
 import random as _random
-from typing import List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import onnx_graphsurgeon as gs
 
@@ -127,8 +127,21 @@ class PromoteTensorsToL2(SequentialPass):
                  minBufferBytes: int = 0,
                  setupCycles: int = 200,
                  bandwidthBytesPerCycle: float = 4.0,
-                 seed: int = 42):
+                 seed: int = 42,
+                 fetchBytes: Optional[Dict[str, int]] = None):
         super().__init__()
+        # Measured L3<->L2 traffic per tensor, harvested from a tiling solution in
+        # which nothing was promoted -- Q(t) is the traffic saved by promoting t, so it
+        # can only be read off a run where t is still in L3.
+        #
+        # Without it the access count is len(buf._users), the number of consuming
+        # nodes, which counts at SCHEDULE granularity only. The L3->L2 DMA sits inside
+        # the per-tile loop bounded by TILING_CODEGEN_L2_<node>_numTiles, so a tensor an
+        # operator re-reads on every tile is fetched once per tile rather than once.
+        # Measured on ResNet8, 32 of 92 nodes have a trip count above 1 and one reaches
+        # 20; per tensor the correction runs to 4.9x on ResNet8, 25x on MobileNetV1 and
+        # 64.5x on CCT, and it changes the selected set on the latter two.
+        self.fetchBytes = fetchBytes or {}
         self.l2Budget = l2Size - headroom
         self.strategy = strategy
         self.includeActivations = includeActivations
@@ -218,7 +231,11 @@ class PromoteTensorsToL2(SequentialPass):
                 continue
             if size < self.minBufferBytes:
                 continue
-            candidates.append((name, buf, size, len(buf._users)))
+            # Accesses, so the cycle model keeps its meaning: measured traffic over
+            # the tensor's size is how many times its worth of bytes crosses L3.
+            measured = self.fetchBytes.get(name)
+            accesses = (measured / size) if (measured and size > 0) else len(buf._users)
+            candidates.append((name, buf, size, accesses))
 
         if self.includeActivations:
             for name, buf in ctxt.localObjects.items():
@@ -242,7 +259,11 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 if size < self.minBufferBytes:
                     continue
-                candidates.append((name, buf, size, len(buf._users)))
+                # Accesses, so the cycle model keeps its meaning: measured traffic over
+                # the tensor's size is how many times its worth of bytes crosses L3.
+                measured = self.fetchBytes.get(name)
+                accesses = (measured / size) if (measured and size > 0) else len(buf._users)
+                candidates.append((name, buf, size, accesses))
 
             # Graph I/O lives in globalObjects as VariableBuffer (not ConstantBuffer).
             # Without this loop they stay in L3 even when there is plenty of L2 budget
@@ -284,7 +305,11 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 if size < self.minBufferBytes:
                     continue
-                candidates.append((name, buf, size, len(buf._users)))
+                # Accesses, so the cycle model keeps its meaning: measured traffic over
+                # the tensor's size is how many times its worth of bytes crosses L3.
+                measured = self.fetchBytes.get(name)
+                accesses = (measured / size) if (measured and size > 0) else len(buf._users)
+                candidates.append((name, buf, size, accesses))
 
         if self.strategy == 'cycle-aware':
             candidates.sort(key = lambda x: x[3] * (self.setupCycles + x[2] / self.bw) / max(x[2], 1), reverse = True)
@@ -461,6 +486,17 @@ class PromoteTensorsToL2(SequentialPass):
               f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, "
               f"new_const={const_used}, var_peak={final_var_peak}, "
               f"strategy={self.strategy!r})")
+
+        # Off-chip traffic the promotion removes. Only meaningful against measured
+        # per-tensor traffic: derived from consuming-node counts it would report the
+        # schedule-granularity figure, which understates every tensor an operator
+        # re-reads once per tile.
+        if self.fetchBytes:
+            savedBytes = sum(self.fetchBytes.get(name, 0) for name, _ in promoted)
+            totalBytes = sum(self.fetchBytes.values())
+            share = 100 * savedBytes / totalBytes if totalBytes else 0.0
+            print(f"  [PromoteTensorsToL2] off-chip traffic removed: {savedBytes} B "
+                  f"of {totalBytes} B ({share:.1f}%), measured")
 
         # Per-buffer dump for CI diagnostic. Lists each promoted buffer's
         # size, kind (const/var), lifetime window, and consumer node ops so we
