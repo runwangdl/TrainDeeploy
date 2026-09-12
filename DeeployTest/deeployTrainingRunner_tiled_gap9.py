@@ -17,6 +17,9 @@ if __name__ == '__main__':
                             help = 'Keep forward convs channels-first (NCHW), binding the *_CHW kernels '
                             '(removes the NCHW<->NHWC transpose around every conv; required for '
                             'MobileNetV1 training to fit GAP9 L1).\n')
+        parser.add_argument('--identitySchedule', action='store_true',
+                            help='Deploy in the exporter node order instead of the '
+                                 'memory-minimising list schedule (scheduling baseline).')
         parser.add_argument('--recomputeSchedule',
                             type = str,
                             default = None,
