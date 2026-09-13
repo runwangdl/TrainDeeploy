@@ -86,6 +86,17 @@ jobs:
   # job, but replaying a solved recompute schedule so checkpointed activations are
   # regenerated before the backward pass rather than held live. Its own job so it
   # does not stretch the singlebuffer job's runtime and a failure is attributable.
+  # Parameter-efficient fine-tuning experiments: channel-wise selection, QLoRA,
+  # LoRA and the layerwise sweep. Its own job so it neither lengthens nor gates
+  # the l3-singlebuffer job, which already runs close to an hour.
+  gap9-training-experiments:
+    needs: select-env
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-markers: "gap9_tiled and training and experiments"
+
   gap9-training-tiled-l3-recompute:
     needs: select-env
     uses: ./.github/workflows/_runner-gap9-tiled.yml
