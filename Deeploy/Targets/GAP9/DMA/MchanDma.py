@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import math
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
-from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation, VariableBuffer
+from Deeploy.DeeployTypes import CodeSnippet, NetworkContext, NodeTemplate, OperatorRepresentation, VariableBuffer
 from Deeploy.TilingExtension.AsyncDma import AsyncDma, DmaDirection, Future, PerTensorWaitingStrategy
 
 
@@ -36,6 +36,23 @@ class GAP9MchanDma(AsyncDma):
                 "{ mchan_transfer_t __mchan_tmp = { .cmd = ${cmd}, .size = ${size}, .loc = ${loc}, .ext = ${ext}, .ext_size_1d = ${size_1d}, .ext_stride_1d = ${stride_2d} }; mchan_transfer_push_2d(__mchan_tmp); }"
             ),
     }
+    # Chunked-1D fallback. `loc`/`ext` stay raw buffer identifiers so the dynamic
+    # reference extractor in Closure.extractDynamicReferences can pick them up and
+    # propagate them through closure args; byte offsets are applied in the C
+    # expression instead of being baked into the identifier.
+    _chunkedTransferTemplate = NodeTemplate("{ mchan_transfer_t __mchan_tmp = { .cmd = ${cmd}, .size = ${size}, "
+                                            ".loc = (void *)((char *)${loc} + ${loc_offset}), "
+                                            ".ext = (void *)((char *)${ext} + ${ext_offset}) }; "
+                                            "mchan_transfer_push_1d(__mchan_tmp); }")
+
+    # The mchan cmd size field is 17 bits, so it holds 0..(2^17 - 1) = 131071.
+    # Using 1<<17 as the per-chunk max makes chunkSize carry into bit 17 and
+    # clobber the direction/INC/event flags above it, producing a size-0 DMA whose
+    # completion is scheduled at the current sim time -- which trips gvsoc's
+    # "Time must be higher than current time". Same constant and same reason as
+    # the PULPOpen backend.
+    _MAX_1D_TRANSFER_BYTES = (1 << 17) - 1  # 131071 bytes
+
     # PerTensor, NOT Direction: GAP9 mchan allocates a fresh channel on every
     # descriptor enqueue (each mchan_transfer_push_* writes a new descriptor, and
     # the hardware advances to the next channel). DirectionWaitingStrategy shares
@@ -85,10 +102,12 @@ class GAP9MchanDma(AsyncDma):
         mchanFlags += (1 << 3)  # event enable
 
         mchanTransferSize = math.prod(shape)
-        mchanTransferSizeBits = math.ceil(math.log2(mchanTransferSize)) if mchanTransferSize > 0 else 0
-        assert mchanTransferSizeBits <= 17, (
-            "The transfer size is not representable with 17 bits. "
-            f"Received transfer size {mchanTransferSize} that requires {mchanTransferSizeBits} bits")
+        # <=, not a bit-count: ceil(log2(131072)) is 17 and would pass, yet 131072
+        # does not fit a 17-bit field -- it carries into the flag bits.
+        assert mchanTransferSize <= self._MAX_1D_TRANSFER_BYTES, (
+            f"Transfer size {mchanTransferSize} exceeds the 17-bit mchan limit of "
+            f"{self._MAX_1D_TRANSFER_BYTES} B. 1D transfers are chunked in transfer(); "
+            "a 2D transfer this large needs the same treatment.")
 
         # cmd = (flags << 17) + size, matching PULPOpen MchanDma pattern
         operatorRepresentation["cmd"] = (mchanFlags << 17) + mchanTransferSize
@@ -99,3 +118,39 @@ class GAP9MchanDma(AsyncDma):
             operatorRepresentation["stride_2d"] = strideExt[0]
 
         return operatorRepresentation
+
+    def transfer(self, ctxt: NetworkContext, externalBuffer: VariableBuffer, localBuffer: VariableBuffer,
+                 shape: Tuple[int, ...], strideExt: Tuple[int, ...], strideLoc: Tuple[int, ...],
+                 direction: DmaDirection, future: Future) -> List[CodeSnippet]:
+        """Split 1D transfers that exceed the 17-bit mchan size field.
+
+        Tiled deployments never reach the limit because a tile is small, so this
+        only fires for whole-tensor moves -- an untiled configuration, or a model
+        whose tensor happens to exceed 128 KB. Without it those runs die at
+        codegen with "transfer size is not representable with 17 bits" (ResNet-8
+        147,456 B, CCT 262,144 B). The PULPOpen backend has had this since its
+        own untiled work; GAP9 did not.
+        """
+        totalSize = math.prod(shape)
+        if len(shape) == 1 and totalSize > self._MAX_1D_TRANSFER_BYTES:
+            mchanFlags = 0
+            mchanFlags += (1 << 0) if direction == "ExternalToLocal" else 0
+            mchanFlags += (1 << 1)  # increment addresses
+            mchanFlags += (1 << 3)  # event enable
+            chunks: List[CodeSnippet] = []
+            offset = 0
+            while offset < totalSize:
+                chunkSize = min(self._MAX_1D_TRANSFER_BYTES, totalSize - offset)
+                opRepr: OperatorRepresentation = {
+                    "loc": localBuffer.name,
+                    "ext": externalBuffer.name,
+                    "loc_offset": offset,
+                    "ext_offset": offset,
+                    "future": future.name,
+                    "cmd": (mchanFlags << 17) + chunkSize,
+                    "size": chunkSize,
+                }
+                chunks.append(CodeSnippet(self._chunkedTransferTemplate, opRepr))
+                offset += chunkSize
+            return chunks
+        return super().transfer(ctxt, externalBuffer, localBuffer, shape, strideExt, strideLoc, direction, future)

@@ -6,6 +6,17 @@ include_directories(${GENERATED_SOURCE})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Untiled baseline (see Platforms/GAP9/CMakeLists.txt). The define must be in
+# scope for the *generated* network code and for deeploylib, not just for the
+# test executable: the L1 allocations and the mchan calls it switches live
+# there. Directory scope here covers every target created below.
+if(DEEPLOY_L1_AS_L2)
+  add_compile_definitions(DEEPLOY_L1_AS_L2)
+  if(TARGET deeploylib)
+    target_compile_definitions(deeploylib INTERFACE DEEPLOY_L1_AS_L2)
+  endif()
+endif()
+
 if(TRAINING)
   add_library(training_network OBJECT ${GENERATED_SOURCE}/TrainingNetwork.c)
   target_link_libraries(training_network PUBLIC deeploylib)
