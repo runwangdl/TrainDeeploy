@@ -30,7 +30,15 @@ class TilingVariableReplacement(CodeTransformationPass, IntrospectiveCodeTransfo
         return f"{Tiler.arenaName}_{self.targetMemLevel}"
 
     def _arenaAllocate(self, ctxt: NetworkContext, buffer: VariableBuffer, offset: int) -> VariableBuffer:
-        arena = ctxt.lookup(self.arenaName)
+        try:
+            arena = ctxt.lookup(self.arenaName)
+        except KeyError:
+            raise KeyError(
+                f"{self.arenaName} does not exist, but {buffer.name} wants a tile staged in it at "
+                f"offset {offset}. The arena is only created when the level's memory map is "
+                f"non-empty (TilerExtension: 'if addrSpace == 0: continue'), so this means every "
+                f"tensor at {self.targetMemLevel} was allocated standalone -- e.g. promoted -- "
+                f"leaving nothing to stage, while this node still asks to stage through it.") from None
         buffer.allocTemplate = NodeTemplate(" \
         ${type.typeName} ${name} = (${type.typeName}) " + f"((char*){str(arena._instance)} + {offset});")
         buffer.deallocTemplate = NodeTemplate("")
@@ -73,6 +81,25 @@ class TilingVariableReplacement(CodeTransformationPass, IntrospectiveCodeTransfo
             assert all(intV == v for intV, v in zip(intValues, values)), f"Received non-int values"
             buff = self._hoistValues(ctxt, name, intValues, _type.referencedType)
             ref = self._hoistReference(ctxt, name + "_ref", buff)
+            operatorRepresentation[name] = ref.name
+            replacedVars.append(name)
+
+        self.dereferenceVars(template.template, replacedVars)
+
+        return ctxt
+
+    def _replaceTiledTensors(self, ctxt: NetworkContext, snippet: CodeSnippet,
+                             tilingSchedule: TilingSchedule) -> NetworkContext:
+        operatorRepresentation = snippet.operatorRepresentation
+
+        for name, offsets in itertools.chain(tilingSchedule.inputBaseOffsets.items(),
+                                             tilingSchedule.outputBaseOffsets.items()):
+            buffer = ctxt.lookup(operatorRepresentation[name])
+            assert isinstance(buffer, VariableBuffer)
+            unraveledBuffer = ctxt.unravelReference(buffer)
+
+            ref = self._hoistReference(ctxt, name + "_ref", unraveledBuffer)
+            ref = self._arenaAllocate(ctxt, ref, offsets[0])
             operatorRepresentation[name] = ref.name
             replacedVars.append(name)
 

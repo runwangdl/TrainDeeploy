@@ -495,6 +495,12 @@ class Tiler():
             maxAddr[memoryLevel] = currentMax
             self._worstCaseBufferSize[memoryLevel] = currentMax
 
+        import os as _os_dbg
+        if _os_dbg.environ.get("DEEPLOY_ARENA_DEBUG"):
+            for _lv, _pl in memoryMap.items():
+                _n = sum(len(x) for x in _pl)
+                print(f"  [arena] level={_lv} patterns={len(_pl)} blocks={_n} maxAddr={maxAddr.get(_lv)}")
+
         for level, addrSpace in maxAddr.items():
             if addrSpace == 0:
                 continue
@@ -2037,6 +2043,8 @@ def harvestFetchTraffic(ctxt, tilingSolution, layerBinding, level: str):
     """
     import math
 
+    import os as _os
+    _dbg = [] if _os.environ.get("DEEPLOY_HARVEST_DEBUG") else None
     traffic = {}
     diag = {"patterns": 0, "nodes": 0, "noTileCount": 0, "noShape": 0}
     for layer, pattern in zip(layerBinding.values(), tilingSolution):
@@ -2083,6 +2091,12 @@ def harvestFetchTraffic(ctxt, tilingSolution, layerBinding, level: str):
             diag.setdefault("tileCounts", []).append(numTiles)
 
             for name, entry in constraints.items():
+                if _dbg is not None and len(_dbg) < 40:
+                    try:
+                        _b = ctxt.lookup(name)
+                        _dbg.append((name, type(_b).__name__, getattr(_b, 'name', None)))
+                    except Exception as _e:
+                        _dbg.append((name, 'LOOKUP-FAILED', str(_e)[:40]))
                 mc = entry.memoryConstraints.get(level)
                 if mc is None or not isinstance(mc.size, int):
                     continue
@@ -2093,6 +2107,8 @@ def harvestFetchTraffic(ctxt, tilingSolution, layerBinding, level: str):
                 # multiBufferCoefficient is how many buffers are allocated, not how
                 # many times the data moves; it must not scale the traffic.
                 traffic[name] = traffic.get(name, 0) + numTiles * mc.size * width
+    if _dbg is not None:
+        diag["sample"] = _dbg
     traffic["__diag__"] = diag
     return traffic
 
@@ -2254,6 +2270,9 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         _harvestPath = os.environ.get("DEEPLOY_FETCH_HARVEST")
         if _harvestPath:
             import json as _json
+            # Only the training graph reaches this with the variable set; the
+            # optimizer codegen runs as a second subprocess with it stripped
+            # (see run_training_codegen in testUtils/trainingUtils.py).
             _out = {}
             for _lvl in self.Platform.memoryHierarchy.memoryLevels.keys():
                 _out[_lvl] = harvestFetchTraffic(self.ctxt, tilingSolution, self.layerBinding, _lvl)

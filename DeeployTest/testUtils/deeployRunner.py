@@ -179,7 +179,7 @@ class DeeployRunnerArgumentParser(argparse.ArgumentParser):
                 '--promoteToL2Strategy',
                 type = str,
                 default = 'cycle-aware',
-                choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                choices = ['traffic-per-peak', 'cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
                 help = 'Promotion selection strategy. Default: cycle-aware\n')
             self.add_argument('--promoteToL2Headroom',
                               type = int,

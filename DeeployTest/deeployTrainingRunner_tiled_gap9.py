@@ -27,6 +27,15 @@ if __name__ == '__main__':
                             'with nothing promoted (DEEPLOY_FETCH_HARVEST). Replaces the consuming-node '
                             'count in the promotion score, which counts at schedule granularity and so '
                             'misses tensors an operator re-reads once per tile.\n')
+        parser.add_argument('--promoteToL2MaxBufferBytes',
+                            type = int,
+                            default = None,
+                            help = 'Only tensors of at most this many bytes are promotion candidates. '
+                            'Used to bisect which promoted tensor breaks a network numerically.\n')
+        parser.add_argument('--promoteToL2MinBufferBytes',
+                            type = int,
+                            default = None,
+                            help = 'Only tensors of at least this many bytes are promotion candidates.\n')
         parser.add_argument('--recomputeSchedule',
                             type = str,
                             default = None,

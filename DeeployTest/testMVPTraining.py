@@ -51,8 +51,15 @@ def _loadFetchBytes(path):
     with open(path) as handle:
         payload = json.load(handle)
     traffic = payload.get("traffic", payload)
-    if isinstance(traffic, dict) and "L2" in traffic:
-        traffic = traffic["L2"]
+    # Q(t) must be the traffic that promoting t REMOVES, i.e. the bytes t moves
+    # across the off-chip boundary. Verified by re-harvesting a promoted build:
+    # promotion drives the L3 figure to ~0 (Autoencoder 685,074 -> 4) while the
+    # L2 figure only falls by the part that stopped coming from L3, and the L1
+    # figure does not move at all -- every tile is still staged into L1, only its
+    # source changes. Scoring against the L2 table therefore mis-states the
+    # objective; the level promotion empties is the one to read.
+    if isinstance(traffic, dict) and any(k in traffic for k in ("L3", "L2")):
+        traffic = traffic.get("L3") or traffic["L2"]
     return {name: value for name, value in traffic.items() if isinstance(value, int)}
 
 
@@ -324,7 +331,7 @@ if __name__ == '__main__':
     parser.add_argument('--promoteToL2Strategy',
                         type = str,
                         default = 'cycle-aware',
-                        choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                        choices = ['traffic-per-peak', 'cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
                         help = 'Selection strategy for PromoteTensorsToL2')
     parser.add_argument('--promoteToL2FetchBytes',
                         type = str,

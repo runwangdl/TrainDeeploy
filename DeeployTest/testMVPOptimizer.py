@@ -212,7 +212,7 @@ if __name__ == '__main__':
     parser.add_argument('--promoteToL2Strategy',
                         type = str,
                         default = 'cycle-aware',
-                        choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                        choices = ['traffic-per-peak', 'cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
                         help = 'Selection strategy for PromoteTensorsToL2')
     parser.add_argument('--promoteToL2IncludeActivations',
                         action = 'store_true',
