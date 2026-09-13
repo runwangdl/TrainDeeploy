@@ -5,8 +5,7 @@
 import math
 from typing import Dict, List, Tuple
 
-from Deeploy.DeeployTypes import CodeSnippet, NetworkContext, NodeTemplate, OperatorRepresentation, \
-    VariableBuffer
+from Deeploy.DeeployTypes import CodeSnippet, NetworkContext, NodeTemplate, OperatorRepresentation, VariableBuffer
 from Deeploy.TilingExtension.AsyncDma import AsyncDma, DmaDirection, Future, PerTensorWaitingStrategy
 
 
@@ -41,11 +40,10 @@ class GAP9MchanDma(AsyncDma):
     # reference extractor in Closure.extractDynamicReferences can pick them up and
     # propagate them through closure args; byte offsets are applied in the C
     # expression instead of being baked into the identifier.
-    _chunkedTransferTemplate = NodeTemplate(
-        "{ mchan_transfer_t __mchan_tmp = { .cmd = ${cmd}, .size = ${size}, "
-        ".loc = (void *)((char *)${loc} + ${loc_offset}), "
-        ".ext = (void *)((char *)${ext} + ${ext_offset}) }; "
-        "mchan_transfer_push_1d(__mchan_tmp); }")
+    _chunkedTransferTemplate = NodeTemplate("{ mchan_transfer_t __mchan_tmp = { .cmd = ${cmd}, .size = ${size}, "
+                                            ".loc = (void *)((char *)${loc} + ${loc_offset}), "
+                                            ".ext = (void *)((char *)${ext} + ${ext_offset}) }; "
+                                            "mchan_transfer_push_1d(__mchan_tmp); }")
 
     # The mchan cmd size field is 17 bits, so it holds 0..(2^17 - 1) = 131071.
     # Using 1<<17 as the per-chunk max makes chunkSize carry into bit 17 and

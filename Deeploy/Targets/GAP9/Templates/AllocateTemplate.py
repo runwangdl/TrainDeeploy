@@ -38,12 +38,11 @@ gap9L1AllocateTemplate = NodeTemplate(
 gap9L2GlobalInitTemplate = NodeTemplate(
     "static PI_L2 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n")
 
-gap9L1GlobalInitTemplate = NodeTemplate(
-    "#ifdef DEEPLOY_L1_AS_L2\n"
-    "static PI_L2 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
-    "#else\n"
-    "static PI_L1 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
-    "#endif\n")
+gap9L1GlobalInitTemplate = NodeTemplate("#ifdef DEEPLOY_L1_AS_L2\n"
+                                        "static PI_L2 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
+                                        "#else\n"
+                                        "static PI_L1 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
+                                        "#endif\n")
 
 gap9L2GlobalAllocateTemplate = NodeTemplate("")
 
