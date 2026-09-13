@@ -353,9 +353,15 @@ typedef struct {
   uint32_t *computed_bits_out; /* cluster's view of each computed loss (hex) */
 } LossCompareArgs;
 
+/* NOTE: no pi_core_id() guard here. This entry point is dispatched via
+ * pi_cluster_send_task_to_cl() *without* a fork, so it executes exactly once,
+ * on the cluster controller core. On GAP9 the CC reports pi_core_id() == 8
+ * (cores 0..7 are the workers), so the "if (pi_core_id() != 0) return;" guard
+ * this function used to carry fired unconditionally: the comparison never ran,
+ * *err_count kept its initial 0 and every training test printed a vacuous
+ * "Errors: 0 out of N". See the other *Wrapper entry points in this file --
+ * none of them guards on the core id either. */
 static void CompareLossesOnCluster(void *args) {
-  if (pi_core_id() != 0)
-    return;
   LossCompareArgs *a = (LossCompareArgs *)args;
   float tol = TRAINING_TOLERANCE_ABS;
   uint32_t errors = 0;
@@ -536,6 +542,11 @@ int main(void) {
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0) && \
     !defined(TRAINING_SKIP_INITWEIGHT_COPY)
   for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+    /* NULL slot: that weight is L3-resident and InitTrainingNetwork already
+     * loaded it from its N.hex file, so there is nothing to copy. */
+    if (testInitWeights[wi] == NULL) {
+      continue;
+    }
     uint32_t idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
     l3_aware_copy(DeeployNetwork_inputs[idx], testInitWeights[wi],
                   DeeployNetwork_inputs_bytes[idx]);
@@ -671,16 +682,21 @@ int main(void) {
    * Benchmark summary — parsed by benchmark_training.py
    * ------------------------------------------------------------------ */
 
-  uint32_t weight_sram_bytes = 0;
+  /* Total bytes of the trainable weight tensors. This is a logical sum over the
+   * weight slots of DeeployNetwork_inputs[] and says nothing about which memory
+   * level those tensors live in -- the same model reports the same number in an
+   * on-chip-L2 and an L3 configuration. Its use is as a cheap cross-check that
+   * the deployed fixture has the parameter count it should. */
+  uint32_t trainable_bytes_total = 0;
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
   for (uint32_t _wi = 0; _wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; _wi++) {
-    weight_sram_bytes +=
+    trainable_bytes_total +=
         DeeployNetwork_inputs_bytes[(uint32_t)TRAINING_NUM_DATA_INPUTS + _wi];
   }
 #endif
 
-  printf("BENCH train_cycles=%u opt_cycles=%u weight_sram=%u\r\n",
-         g_train_cycles_acc, g_opt_cycles_acc, weight_sram_bytes);
+  printf("BENCH train_cycles=%u opt_cycles=%u trainable_bytes=%u\r\n",
+         g_train_cycles_acc, g_opt_cycles_acc, trainable_bytes_total);
 
   return loss_err_count == 0 ? 0 : 1;
 }
