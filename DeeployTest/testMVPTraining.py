@@ -117,8 +117,7 @@ def generateTiledTrainingNetwork(args) -> None:
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
                            conv_channels_first = args.convChannelsFirst,
-                           scheduler = recomputeScheduler(args.recomputeSchedule)
-                           if args.recomputeSchedule else
+                           scheduler = recomputeScheduler(args.recomputeSchedule) if args.recomputeSchedule else
                            (_mockScheduler if args.identitySchedule else _memoryMinimisingScheduler))
 
     # 7. Set up memory hierarchy.
@@ -318,10 +317,11 @@ if __name__ == '__main__':
                         type = int,
                         default = 131072,
                         help = 'Bytes reserved in L2 for tile staging')
-    parser.add_argument('--identitySchedule', action='store_true',
-                        help="Deploy in the exporter's own node order -- the whole forward, then "
-                             'the whole backward -- instead of the memory-minimising list schedule. '
-                             'Baseline for measuring what the list schedule is worth.')
+    parser.add_argument('--identitySchedule',
+                        action = 'store_true',
+                        help = "Deploy in the exporter's own node order -- the whole forward, then "
+                        'the whole backward -- instead of the memory-minimising list schedule. '
+                        'Baseline for measuring what the list schedule is worth.')
     parser.add_argument('--recomputeSchedule',
                         type = str,
                         default = None,
