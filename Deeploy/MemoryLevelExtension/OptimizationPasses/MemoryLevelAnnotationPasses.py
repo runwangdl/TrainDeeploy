@@ -242,7 +242,8 @@ class PromoteTensorsToL2(SequentialPass):
         # Rejection census: why each L3 buffer never became a promotion candidate.
         # Enabled with DEEPLOY_PROMOTE_CENSUS=1. The point is to see what actually
         # caps L2 occupancy -- the budget, or the eligibility filters.
-        import os as _os0, collections as _coll
+        import collections as _coll
+        import os as _os0
         _censusOn = bool(_os0.environ.get('DEEPLOY_PROMOTE_CENSUS'))
         _censusN = _coll.Counter()
         _censusB = _coll.Counter()
@@ -438,7 +439,8 @@ class PromoteTensorsToL2(SequentialPass):
         # Experiment hooks (measurement only, read from the environment so they
         # need no plumbing through three runners). ONLY/SKIP take a regex over the
         # buffer name; NO_L1_SAFETY lifts the "activation larger than L1" rejection.
-        import os as _os, re as _re
+        import os as _os
+        import re as _re
         _onlyRe = _os.environ.get('DEEPLOY_PROMOTE_ONLY_RE')
         _skipRe = _os.environ.get('DEEPLOY_PROMOTE_SKIP_RE')
         _onlyRe = _re.compile(_onlyRe) if _onlyRe else None

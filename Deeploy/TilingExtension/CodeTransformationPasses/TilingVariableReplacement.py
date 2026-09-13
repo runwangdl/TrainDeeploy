@@ -33,12 +33,11 @@ class TilingVariableReplacement(CodeTransformationPass, IntrospectiveCodeTransfo
         try:
             arena = ctxt.lookup(self.arenaName)
         except KeyError:
-            raise KeyError(
-                f"{self.arenaName} does not exist, but {buffer.name} wants a tile staged in it at "
-                f"offset {offset}. The arena is only created when the level's memory map is "
-                f"non-empty (TilerExtension: 'if addrSpace == 0: continue'), so this means every "
-                f"tensor at {self.targetMemLevel} was allocated standalone -- e.g. promoted -- "
-                f"leaving nothing to stage, while this node still asks to stage through it.") from None
+            raise KeyError(f"{self.arenaName} does not exist, but {buffer.name} wants a tile staged in it at "
+                           f"offset {offset}. The arena is only created when the level's memory map is "
+                           f"non-empty (TilerExtension: 'if addrSpace == 0: continue'), so this means every "
+                           f"tensor at {self.targetMemLevel} was allocated standalone -- e.g. promoted -- "
+                           f"leaving nothing to stage, while this node still asks to stage through it.") from None
         buffer.allocTemplate = NodeTemplate(" \
         ${type.typeName} ${name} = (${type.typeName}) " + f"((char*){str(arena._instance)} + {offset});")
         buffer.deallocTemplate = NodeTemplate("")

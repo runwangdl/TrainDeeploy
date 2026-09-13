@@ -2042,7 +2042,6 @@ def harvestFetchTraffic(ctxt, tilingSolution, layerBinding, level: str):
     are omitted rather than guessed.
     """
     import math
-
     import os as _os
     _dbg = [] if _os.environ.get("DEEPLOY_HARVEST_DEBUG") else None
     traffic = {}
@@ -2270,6 +2269,7 @@ class TilerDeployerWrapper(NetworkDeployerWrapper):
         _harvestPath = os.environ.get("DEEPLOY_FETCH_HARVEST")
         if _harvestPath:
             import json as _json
+
             # Only the training graph reaches this with the variable set; the
             # optimizer codegen runs as a second subprocess with it stripped
             # (see run_training_codegen in testUtils/trainingUtils.py).
