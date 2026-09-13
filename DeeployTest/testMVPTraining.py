@@ -15,8 +15,7 @@ from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatf
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import TrainingDBOnlyL3Tiler, TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum, _infer_num_data_inputs, \
-    _infer_total_mb, _load_reference_losses, _memoryMinimisingScheduler, _mockScheduler, \
-    add_training_inference_args, \
+    _infer_total_mb, _load_reference_losses, _memoryMinimisingScheduler, _mockScheduler, add_training_inference_args, \
     recomputeScheduler
 from testUtils.typeMapping import inferTypeAndOffset
 
