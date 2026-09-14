@@ -567,12 +567,17 @@ class ReduceSumLayer(ONNXLayer):
     def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
                       channels_first) -> Tuple[Shape, Shape]:
         outputShapes = copy.deepcopy(inputShapes)
-        axis = operatorRepresentation['axes'][0]
+        rank = len(inputShapes[0])
+        # Every listed axis is reduced, not only the first: a bias gradient summed over
+        # axes [1, 0] of [1, 64, 128] is [128]. Keeping the leading 1 made the tiler tie
+        # the accumulator's dim 0 to a singleton, which split each such bias into
+        # one-element tiles and misaligned its tile offsets.
+        axes = {axis + rank if axis < 0 else axis for axis in operatorRepresentation['axes']}
 
         if operatorRepresentation['keepdims']:
-            outputShapes[0][axis] = 1
+            outputShapes[0] = [1 if idx in axes else dim for idx, dim in enumerate(outputShapes[0])]
         else:
-            outputShapes[0] = outputShapes[0][:axis] + outputShapes[0][axis + 1:]
+            outputShapes[0] = [dim for idx, dim in enumerate(outputShapes[0]) if idx not in axes]
         return (inputShapes, outputShapes)
 
 

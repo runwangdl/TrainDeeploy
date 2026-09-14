@@ -83,6 +83,71 @@ typedef struct {
   int ext_stride_1d;
 } mchan_transfer_t;
 
+#ifdef DEEPLOY_L1_AS_L2
+
+/* Untiled baseline. With DEEPLOY_L1_AS_L2 the "L1" buffers are allocated out of
+ * FC L2 (see gap9L1AllocateTemplate), so source and destination are both L2 and
+ * there is nothing for the DMA to do. It cannot be asked to do it either: the
+ * mchan hardware ignores the destination address and routes `loc` into the
+ * cluster L1 banks through the low bits, so a real transfer would write into L1
+ * and leave the L2 destination untouched -- the out-of-range L1 bank requests
+ * and computed=0.0 that PR #21 first ran into.
+ *
+ * Replace the transfers with memcpy and make the channel API inert. Unlike
+ * PR #21 the 2D variant is provided as well, so a model whose tiler emits
+ * strided transfers is handled rather than silently skipped.
+ *
+ * The cost this measures is real: the cluster reaches these buffers over the L2
+ * fabric instead of out of 1-cycle TCDM. */
+
+#include <string.h>
+
+static int mchan_transfer_get_id() { return 0; }
+
+static void mchan_transfer_push_1d(mchan_transfer_t trans) {
+  uint32_t size = (uint32_t)trans.cmd & ((1u << MCHAN_TRANSFER_LEN_SIZE) - 1);
+  if (trans.cmd & MCHAN_CMD_FLAG_DIRECTION_EXT2LOC) {
+    memcpy(trans.loc, trans.ext, size);
+  } else {
+    memcpy(trans.ext, trans.loc, size);
+  }
+}
+
+static void mchan_transfer_push_2d(mchan_transfer_t trans) {
+  uint32_t total = (uint32_t)trans.cmd & ((1u << MCHAN_TRANSFER_LEN_SIZE) - 1);
+  uint32_t line = (uint32_t)trans.ext_size_1d;
+  uint32_t stride = (uint32_t)trans.ext_stride_1d;
+  int ext2loc = trans.cmd & MCHAN_CMD_FLAG_DIRECTION_EXT2LOC;
+  char *loc = (char *)trans.loc;
+  char *ext = (char *)trans.ext;
+  if (line == 0) {
+    return;
+  }
+  for (uint32_t moved = 0; moved < total; moved += line) {
+    uint32_t n = (total - moved < line) ? (total - moved) : line;
+    if (ext2loc) {
+      memcpy(loc, ext, n);
+    } else {
+      memcpy(ext, loc, n);
+    }
+    loc += n;      /* local side is contiguous */
+    ext += stride; /* external side is strided */
+  }
+}
+
+static void mchan_transfer_push(mchan_transfer_t trans) {
+  if (trans.ext_size_1d < trans.size) {
+    mchan_transfer_push_2d(trans);
+  } else {
+    mchan_transfer_push_1d(trans);
+  }
+}
+
+static void mchan_transfer_wait(int id) { (void)id; }
+static void mchan_transfer_free(int id) { (void)id; }
+
+#else
+
 static int mchan_transfer_get_id() { return MCHAN_READ_CMD(); }
 
 static void mchan_transfer_push_1d(mchan_transfer_t trans) {
@@ -136,5 +201,7 @@ static void mchan_transfer_wait(int tid) {
     ;
 #endif
 }
+
+#endif /* DEEPLOY_L1_AS_L2 */
 
 #endif

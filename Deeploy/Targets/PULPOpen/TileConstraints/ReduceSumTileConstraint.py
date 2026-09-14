@@ -37,6 +37,10 @@ class ReduceSumTileConstraint(TileConstraint):
         # If keepdims=False, reduced dimensions are removed from output
 
         keepdims = parseDict.get('keepdims', True)  # Default to True if not specified
+        # ReduceParser stores the ONNX attribute as 'axes'. Looking only for 'axis' sent every
+        # ReduceSum down the "global reduction" branch, pinning each output dim to 1.
+        if 'axis' not in parseDict and 'axes' in parseDict:
+            parseDict = {**parseDict, 'axis': parseDict['axes']}
 
         if keepdims:
             # keepdims=True: output has same number of dimensions as input
