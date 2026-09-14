@@ -16,6 +16,20 @@ from Deeploy.TilingExtension.MemoryConstraints import NodeMemoryConstraint, Tens
 from Deeploy.TilingExtension.TilingCodegen import HyperRectangle, TilingSchedule, VariableReplacementScheme
 
 
+def _dropLeadingSingletons(shape, rank):
+    """Drop leading size-1 dims of `shape` down to `rank`, when that is all that differs.
+
+    Buffers can be registered with a leading batch-like singleton, e.g. a bias gradient as
+    (1, 128), while the tile rectangles use the tensor's own rank, (128,). Comparing the two
+    ranks directly misreads a sliced tensor as a full one.
+    """
+    shape = tuple(shape)
+    extra = len(shape) - rank
+    if extra > 0 and all(d == 1 for d in shape[:extra]):
+        return shape[extra:]
+    return shape
+
+
 class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
 
     def __init__(self, externalMemory: str, localMemory: str, dma: AsyncDma):
@@ -45,11 +59,11 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
             _eBuf = ctxt.lookup(_lBuf._referenceName)
             if isinstance(_eBuf, _ReferenceBuffer):
                 continue
-            _bshape = _eBuf.shape
-            _br = len(_bshape)
             _rects0 = list(_rects_list)
             if not _rects0:
                 continue
+            _bshape = _dropLeadingSingletons(_eBuf.shape, len(_rects0[0].dims))
+            _br = len(_bshape)
             _td = _rects0[0].dims[-_br:]
             if len(_td) < _br:
                 continue
@@ -77,7 +91,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
 
             if externalBuffer._memoryLevel == self.externalMemory:
                 typeWidth = localBuffer._type.referencedType.typeWidth
-                buf_shape = externalBuffer.shape
+                buf_shape = _dropLeadingSingletons(externalBuffer.shape, len(original_rectangles[0].dims))
                 buf_rank = len(buf_shape)
                 _strides = [1] * buf_rank
                 for _i, _d in enumerate(reversed(buf_shape[1:])):
@@ -161,7 +175,7 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                 # still need correct cumByteOffsets so the inner tiling pass advances
                 # through the promoted buffer on each outer iteration.
                 typeWidth = localBuffer._type.referencedType.typeWidth
-                buf_shape = externalBuffer.shape
+                buf_shape = _dropLeadingSingletons(externalBuffer.shape, len(original_rectangles[0].dims))
                 buf_rank = len(buf_shape)
                 _strides = [1] * buf_rank
                 for _i, _d in enumerate(reversed(buf_shape[1:])):
