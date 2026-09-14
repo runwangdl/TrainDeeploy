@@ -241,6 +241,9 @@ class TilingCodeGeneration(CodeTransformationPass, IntrospectiveCodeTransformati
               executionBlock: ExecutionBlock,
               name: str,
               verbose: CodeGenVerbosity = _NoVerbosity) -> Tuple[NetworkContext, ExecutionBlock]:
+        # Per-node context for promoted buffers (see _outerTileContext below); never
+        # let a previous node's value leak into this one.
+        self._outerTileContext = None
         if isinstance(executionBlock, ClosureExecutionBlock):
             baseExecutionBlock = executionBlock.baseBlock
         else:
@@ -278,6 +281,33 @@ class TilingCodeGeneration(CodeTransformationPass, IntrospectiveCodeTransformati
 
         variableReplacement, tilingSchedules = template.tileConstraint.wrapTilingSolution(
             nodeMemoryConstraint, self.localMemory, ctxt, unraveledOpRepr)
+
+        # A tensor promoted to this pass's external level has no per-tile staging
+        # buffer, yet its tiles here carry offsets relative to the outer tile (all
+        # zero). The true position inside the whole tensor lives in the OUTER level's
+        # schedule for this node, and this pass runs before that one, so re-derive it
+        # now (wrapTilingSolution only reads ctxt). Consumed by the promoted-buffer
+        # branch of the transfer codegen; None whenever there is no outer level.
+        try:
+            _outTC = next(iter(nodeMemoryConstraint.outputTensorMemoryConstraints.values()))
+            _path = list(_outTC.memoryConstraints.keys())
+            if self.externalMemory in _path and _path.index(self.externalMemory) >= 1:
+                # sanitize=False: the promoted tensor has no address at the outer level,
+                # so sanitizing would strip precisely the rectangles needed here.
+                _, _outerSchedules = template.tileConstraint.wrapTilingSolution(nodeMemoryConstraint,
+                                                                                self.externalMemory,
+                                                                                ctxt,
+                                                                                unraveledOpRepr,
+                                                                                sanitize = False)
+                self._outerTileContext = (
+                    [step for sched in _outerSchedules for step in sched.inputLoadSchedule],
+                    [step for sched in _outerSchedules for step in sched.outputLoadSchedule],
+                    [len(sched.outputLoadSchedule) for sched in tilingSchedules],
+                )
+        except Exception:
+            # No usable outer schedule: the consumer falls back to a validated
+            # reconstruction, which raises rather than emit wrong offsets.
+            self._outerTileContext = None
 
         minimalVariableReplacement, newOpRepr = minimizeVariableReplacement(variableReplacement, operatorRepresentation)
 

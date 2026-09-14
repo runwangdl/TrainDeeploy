@@ -21,6 +21,91 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
     def __init__(self, externalMemory: str, localMemory: str, dma: AsyncDma):
         super().__init__(externalMemory, localMemory, dma, 1)
 
+    def _promotedByteOffsets(self, tensorName: str, bufferName: str, rects: List[HyperRectangle],
+                             buf_shape: Tuple[int, ...], strides: Tuple[int, ...], typeWidth: int, combined_ends: list,
+                             direction: DmaDirection) -> List[int]:
+        """Byte offset of every tile into a promoted (standalone) buffer.
+
+        The tiles' own offsets are all zero here: they are relative to the outer
+        tile, which for an unpromoted tensor is a per-tile staging buffer. A promoted
+        tensor has no staging buffer, so the true position has to come from elsewhere.
+
+        1. Outer schedule -- exact. apply() re-derives the outer level's schedule for
+           this node. When every outer tile holds exactly one inner tile, the inner
+           window IS the outer window, so the outer rectangle's offset is the answer,
+           halo of overlapping conv windows and padding included.
+        2. Reconstruction -- exact only for a plain partition. Positions are rebuilt
+           as tile_index x first_tile_dims, computeTileHyperRectangles' non-overlapping
+           layout. That silently misplaced overlapping windows: a depthwise 3x3 reading
+           a promoted MobileNetV1 activation split {144, 56} B over a 192 B row got its
+           second tile at 144 instead of 136, and the forward pass was wrong from the
+           first mini-batch. Every tile's size is now checked against that layout, and
+           a mismatch is a hard error instead of wrong code.
+        """
+        N = len(rects)
+        buf_rank = len(buf_shape)
+        if buf_rank == 0:
+            # Scalar buffer (e.g. the loss). Must precede every [-buf_rank:] slice:
+            # dims[-0:] is the WHOLE tuple, not an empty one.
+            return [0] * N
+        tile_dims = rects[0].dims[-buf_rank:]
+        if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
+            # Full tensor used every outer iteration: all offsets zero.
+            return [0] * N
+
+        def flat(offset: Tuple[int, ...]) -> int:
+            return sum(o * st for o, st in zip(offset[-buf_rank:], strides)) * typeWidth // 8
+
+        ctx = getattr(self, "_outerTileContext", None)
+        if ctx is not None:
+            outerIn, outerOut, innerLengths = ctx
+            outerSteps = outerIn if direction == "ExternalToLocal" else outerOut
+            if (all(n == 1 for n in innerLengths) and len(outerSteps) == N
+                    and all(tensorName in step for step in outerSteps)):
+                outer = [step[tensorName] for step in outerSteps]
+                if all(
+                        len(o.offset) >= buf_rank and tuple(o.dims[-buf_rank:]) == tuple(r.dims[-buf_rank:])
+                        for o, r in zip(outer, rects)):
+                    return [flat(o.offset) for o in outer]
+
+        import math
+        tile_ends = [math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
+        windows = []  # same enumeration order as computeTileHyperRectangles
+        idx = [0] * buf_rank
+        for _ in range(math.prod(tile_ends)):
+            windows.append(list(idx))
+            for d in range(buf_rank):
+                if idx[d] + 1 < tile_ends[d]:
+                    idx[d] += 1
+                    break
+                idx[d] = 0
+        M = len(windows)
+        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
+        if len(nontrivial) == 1 and combined_ends:
+            period_before = math.prod(combined_ends[:nontrivial[0]])
+            sel = [(i // period_before) % M for i in range(N)]
+        elif N <= M:
+            sel = [i % M for i in range(N)]
+        elif M * M > N:
+            sel = [i // (N // M) for i in range(N)]
+        else:
+            sel = [i % M for i in range(N)]
+
+        offsets = []
+        for i, w in enumerate(sel):
+            tidx = windows[w]
+            expected = tuple(min(tile_dims[d], buf_shape[d] - tidx[d] * tile_dims[d]) for d in range(buf_rank))
+            actual = tuple(rects[i].dims[-buf_rank:])
+            if actual != expected:
+                raise RuntimeError(
+                    f"Promoted tensor '{bufferName}' ({tensorName}): tile {i} has dims {actual}, but the offset "
+                    f"reconstruction assumes a non-overlapping layout giving {expected} (buffer {tuple(buf_shape)}, "
+                    f"first tile {tuple(tile_dims)}), so the generated offsets would be wrong. Typically a kernel "
+                    f"with a halo reads this promoted tensor across several inner tiles per outer tile. "
+                    f"Exclude it from promotion, e.g. DEEPLOY_PROMOTE_SKIP_RE='^{bufferName}$'.")
+            offsets.append(sum(tidx[d] * tile_dims[d] * strides[d] for d in range(buf_rank)) * typeWidth // 8)
+        return offsets
+
     def _generateTransferScheduleCalls(
             self, ctxt: NetworkContext, operatorRepresentation: OperatorRepresentation,
             transferSchedule: List[Dict[str, HyperRectangle]], tensorMemoryConstraintDict: Dict[str,
@@ -85,57 +170,9 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                 strides = tuple(reversed(_strides))
                 all_zero = all(all(x == 0 for x in r.offset[-buf_rank:]) for r in original_rectangles)
                 if all_zero and not isinstance(externalBuffer, _ReferenceBuffer):
-                    # Standalone promoted buffer: no outer-loop pointer advance.
-                    # Detect whether the inner tiles span the full tensor (Scenario A:
-                    # same full tensor every outer iteration) or are slices of it
-                    # (Scenario B: tensor tiled across outer iterations).
-                    # Use the first tile's dims to distinguish: if tile == full tensor,
-                    # all cumulative offsets are 0; otherwise enumerate outer windows
-                    # in column-major order (matching computeTileHyperRectangles).
-                    tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
-                        # Full tensor used every outer iteration — all offsets zero.
-                        cum_byte_offsets = [0] * len(original_rectangles)
-                    else:
-                        import math as _math
-                        tile_ends = [_math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
-
-                        def _colmaj(ends):
-                            idx = [0] * len(ends)
-                            total = 1
-                            for e in ends:
-                                total *= e
-                            for _ in range(total):
-                                yield list(idx)
-                                for d in range(len(ends)):
-                                    if idx[d] + 1 < ends[d]:
-                                        idx[d] += 1
-                                        break
-                                    else:
-                                        idx[d] = 0
-
-                        base_offsets = [
-                            sum(ti * tile_dims[d] * strides[d]
-                                for d, ti in enumerate(tidx)) * typeWidth // 8
-                            for tidx in _colmaj(tile_ends)
-                        ]
-                        num_rects = len(original_rectangles)
-                        M = len(base_offsets)
-                        N = num_rects
-                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
-                        if len(nontrivial) == 1 and _combined_ends:
-                            d_tile = nontrivial[0]
-                            period_before = 1
-                            for _d in range(d_tile):
-                                period_before *= _combined_ends[_d]
-                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
-                        elif N <= M:
-                            # Fewer outer tiles than unique buffer windows: take one-to-one.
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
-                        elif M * M > N:
-                            cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
-                        else:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
+                    cum_byte_offsets = self._promotedByteOffsets(tensorName, externalBuffer.name, original_rectangles,
+                                                                 buf_shape, strides, typeWidth, _combined_ends,
+                                                                 direction)
                 elif all_zero:
                     # _ReferenceBuffer: outer UPDATE VARIABLE already advances
                     # this pointer; inner tiles use relative (0,...) offsets.
@@ -169,48 +206,9 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                 strides = tuple(reversed(_strides))
                 all_zero = all(all(x == 0 for x in r.offset[-buf_rank:]) for r in original_rectangles)
                 if all_zero and not isinstance(externalBuffer, _ReferenceBuffer):
-                    tile_dims = original_rectangles[0].dims[-buf_rank:]
-                    if len(tile_dims) < buf_rank or tuple(tile_dims) == tuple(buf_shape):
-                        cum_byte_offsets = [0] * len(original_rectangles)
-                    else:
-                        import math as _math
-                        tile_ends = [_math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
-
-                        def _colmaj(ends):
-                            idx = [0] * len(ends)
-                            total = 1
-                            for e in ends:
-                                total *= e
-                            for _ in range(total):
-                                yield list(idx)
-                                for d in range(len(ends)):
-                                    if idx[d] + 1 < ends[d]:
-                                        idx[d] += 1
-                                        break
-                                    else:
-                                        idx[d] = 0
-
-                        base_offsets = [
-                            sum(ti * tile_dims[d] * strides[d]
-                                for d, ti in enumerate(tidx)) * typeWidth // 8
-                            for tidx in _colmaj(tile_ends)
-                        ]
-                        num_rects = len(original_rectangles)
-                        M = len(base_offsets)
-                        N = num_rects
-                        nontrivial = [d for d in range(buf_rank) if tile_ends[d] > 1]
-                        if len(nontrivial) == 1 and _combined_ends:
-                            d_tile = nontrivial[0]
-                            period_before = 1
-                            for _d in range(d_tile):
-                                period_before *= _combined_ends[_d]
-                            cum_byte_offsets = [base_offsets[(i // period_before) % M] for i in range(N)]
-                        elif N <= M:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
-                        elif M * M > N:
-                            cum_byte_offsets = [base_offsets[i // (N // M)] for i in range(N)]
-                        else:
-                            cum_byte_offsets = [base_offsets[i % M] for i in range(N)]
+                    cum_byte_offsets = self._promotedByteOffsets(tensorName, externalBuffer.name, original_rectangles,
+                                                                 buf_shape, strides, typeWidth, _combined_ends,
+                                                                 direction)
                 elif all_zero:
                     cum_byte_offsets = [0] * len(original_rectangles)
                 else:
