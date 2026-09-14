@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+import math
 from typing import Dict, List, Set, Tuple
 
 from Deeploy.AbstractDataTypes import VoidType
@@ -68,7 +69,14 @@ class SingleBufferingTilingCodeGeneration(TilingCodeGeneration):
                         for o, r in zip(outer, rects)):
                     return [flat(o.offset) for o in outer]
 
-        import math
+        if N == 1 or math.prod(tile_dims) == math.prod(buf_shape):
+            # Without an outer schedule: a single tile of a standalone buffer sits at its start, and a tile
+            # with as many elements as the buffer is the whole buffer even when the
+            # rectangle carries the consuming node's view of it rather than the
+            # declared shape: a LayerNorm mean declared (64, 1) is tiled as (1, 64).
+            # Comparing dims position by position rejected exactly that case.
+            return [0] * N
+
         tile_ends = [math.ceil(buf_shape[d] / tile_dims[d]) for d in range(buf_rank)]
         windows = []  # same enumeration order as computeTileHyperRectangles
         idx = [0] * buf_rank
