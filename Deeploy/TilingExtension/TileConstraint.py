@@ -90,9 +90,12 @@ class TileConstraint():
         return tilingSchedule
 
     @classmethod
-    def wrapTilingSolution(
-            cls, tilingSolution: NodeMemoryConstraint, targetMemLevel: str, ctxt: NetworkContext,
-            operatorRepresentation: OperatorRepresentation) -> Tuple[VariableReplacementScheme, List[TilingSchedule]]:
+    def wrapTilingSolution(cls,
+                           tilingSolution: NodeMemoryConstraint,
+                           targetMemLevel: str,
+                           ctxt: NetworkContext,
+                           operatorRepresentation: OperatorRepresentation,
+                           sanitize: bool = True) -> Tuple[VariableReplacementScheme, List[TilingSchedule]]:
 
         def getMemoryTransfer(tensorConstraint: TensorMemoryConstraint, sourceCube: HyperRectangle,
                               sourceMemoryLevel: str, targetMemoryLevel: str) -> MemoryTransfer:
@@ -168,7 +171,10 @@ class TileConstraint():
 
             varReplacement, tilingSchedule = cls.serializeTilingSolution(tilingSolution, _outputCubes, targetMemLevel,
                                                                          ctxt, operatorRepresentation)
-            sanitizedTilingSchedule = cls.sanitizeTilingSchedule(tilingSchedule)
+            # sanitize=False keeps rectangles of tensors that have no address at this
+            # level. A tensor promoted past it is exactly such a tensor, and its
+            # rectangles here are the only record of where each tile sits inside it.
+            sanitizedTilingSchedule = cls.sanitizeTilingSchedule(tilingSchedule) if sanitize else tilingSchedule
 
             varReplacements.append(varReplacement)
             tilingSchedules.append(sanitizedTilingSchedule)

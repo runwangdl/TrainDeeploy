@@ -89,7 +89,7 @@ MODEL_OVERRIDES = {
 SCRIPT_DIR = Path(__file__).resolve().parent
 RUNNER = SCRIPT_DIR / "deeployTrainingRunner_tiled_siracusa.py"
 
-BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)")
+BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) trainable_bytes=(\d+)")
 ERRORS_RE = re.compile(r"Errors:\s+(\d+)\s+out of\s+(\d+)")
 ARENA_RE = re.compile(r"static const uint32_t (Deeploy(?:Opt)?Network_MEMORYARENA_\w+_len)\s*=\s*(\d+);")
 DEFINE_RE = re.compile(r"#define\s+(\w+)\s+(\d+)")
@@ -298,9 +298,9 @@ def run_model(test_rel: str,
     if bm:
         row["train_cycles_total"] = int(bm.group(1))
         row["opt_cycles_total"] = int(bm.group(2))
-        row["weight_sram"] = int(bm.group(3))
+        row["trainable_bytes"] = int(bm.group(3))
     else:
-        row["train_cycles_total"] = row["opt_cycles_total"] = row["weight_sram"] = None
+        row["train_cycles_total"] = row["opt_cycles_total"] = row["trainable_bytes"] = None
 
     em = ERRORS_RE.search(output)
     if em:
@@ -359,7 +359,7 @@ def run_model(test_rel: str,
         f"  wall={wall_s}s  rc={proc.returncode}  "
         f"train_cycles={row.get('train_cycles_total')}  "
         f"opt_cycles={row.get('opt_cycles_total')}  "
-        f"weight_sram={row.get('weight_sram')}  "
+        f"trainable_bytes={row.get('trainable_bytes')}  "
         f"errors={row.get('errors')}",
         flush = True)
 
@@ -438,7 +438,7 @@ COLUMNS = [
     "peak_l1",
     "peak_l2_max",
     "peak_l3_max",
-    "weight_sram",
+    "trainable_bytes",
     "prof_compute",
     "prof_l1_dma",
     "prof_l3_dma",
@@ -505,7 +505,7 @@ def main():
     # --- Summary table ------------------------------------------------------
     print("\n" + "=" * 100)
     hdr = (f"{'name':<22} {'mem':<4} {'ok':<5} {'wall_s':>7} {'train_cyc':>13} "
-           f"{'opt_cyc':>12} {'weight_sram':>12} {'peak_l1':>8} {'peak_l2':>8} {'peak_l3':>10}")
+           f"{'opt_cyc':>12} {'trainable_bytes':>12} {'peak_l1':>8} {'peak_l2':>8} {'peak_l3':>10}")
     print(hdr)
     print("-" * 100)
     for r in rows:
@@ -514,7 +514,7 @@ def main():
               f"{r.get('wall_s',''):>7} "
               f"{str(r.get('train_cycles_total') or ''):>13} "
               f"{str(r.get('optimizer_cycles_total') or ''):>12} "
-              f"{str(r.get('weight_sram') or ''):>12} "
+              f"{str(r.get('trainable_bytes') or ''):>12} "
               f"{str(r.get('peak_l1') or ''):>8} "
               f"{str(r.get('peak_l2_max') or ''):>8} "
               f"{str(r.get('peak_l3_max') or ''):>10}")

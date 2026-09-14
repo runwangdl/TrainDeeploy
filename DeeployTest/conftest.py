@@ -20,8 +20,53 @@ _PERF_RESULTS: List[Dict[str, Any]] = []
 
 # Inference harness format
 _RUNTIME_CYCLES_RE = re.compile(r"Runtime:\s*(\d+)\s*cycles")
-# Training harness format: train + optimizer step cycles + (optional) weight sram
-_BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s+weight_sram=(\d+))?")
+# Training harness format: train + optimizer step cycles + (optional) total bytes
+# of the trainable weight tensors. NOTE: a logical sum over the weight slots of
+# DeeployNetwork_inputs[], independent of which memory level those tensors
+# actually live in -- it is a parameter-count cross-check, not a footprint.
+_BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s+trainable_bytes=(\d+))?")
+
+# ---------------------------------------------------------------------------
+# Known failures
+#
+# These run in full -- they are compiled, simulated and numerically compared --
+# but their failure is recorded as expected. strict=True means an unexpected
+# PASS fails the run, so an entry cannot quietly rot here once the underlying
+# problem is fixed: CI will tell you to delete it.
+#
+# None of these ever passed. They only became visible when the loss comparison
+# started running at all (it had been dead code: the guard `pi_core_id() != 0`
+# never holds on GAP9, whose cluster controller reports core id 8). Marking them
+# records a pre-existing state, it does not accept a regression.
+#
+# Each entry is (test-function substring, parameter-id substring, reason).
+#
+# ResNet-8 promote (SB and DB) used to be listed here as an "FP32 accumulation
+# order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
+# SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
+# ---------------------------------------------------------------------------
+_LORA_FIXTURE_REASON = ("fixture references are wrong, not the deployment: CCT_LoRA_R1 and "
+                        "CCT_QLORA_FT ship byte-identical inputs.npz and outputs.npz "
+                        "(md5 2d0875bc../a01d0bba..) although their graphs differ -- 387 nodes with "
+                        "no quantisation vs 389 nodes with 14 Dequant. The quantised model is being "
+                        "checked against references generated from the float one; the measured error "
+                        "is 0.12-0.50, which no defensible tolerance covers. Fix is to regenerate "
+                        "the references from each graph.")
+
+_KNOWN_FAILURES = [
+    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
+    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
+    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_FIXTURE_REASON),
+]
+
+
+def pytest_collection_modifyitems(config, items):
+    """Attach xfail(strict=True) to the known failures listed above."""
+    for item in items:
+        for func_part, param_part, reason in _KNOWN_FAILURES:
+            if func_part in item.nodeid and param_part in item.nodeid:
+                item.add_marker(pytest.mark.xfail(strict = True, reason = reason))
+                break
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -191,7 +236,7 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
 
     Two harness formats are recognised:
       * inference  : ``Runtime: N cycles``
-      * training   : ``BENCH train_cycles=N opt_cycles=N weight_sram=N``
+      * training   : ``BENCH train_cycles=N opt_cycles=N trainable_bytes=N``
     """
     if report.when != "call":
         return
@@ -224,7 +269,7 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
         if bench.group(2):
             entry["opt_cycles"] = int(bench.group(2))
         if bench.group(3):
-            entry["weight_sram"] = int(bench.group(3))
+            entry["trainable_bytes"] = int(bench.group(3))
     elif runtime is not None:
         entry["runtime_cycles"] = int(runtime.group(1))
     else:
@@ -248,8 +293,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
             extras = f"train={r['train_cycles']:>12,} cyc"
             if "opt_cycles" in r:
                 extras += f"  opt={r['opt_cycles']:>10,} cyc"
-            if "weight_sram" in r:
-                extras += f"  weight_sram={r['weight_sram']:>8,} B"
+            if "trainable_bytes" in r:
+                extras += f"  trainable_bytes={r['trainable_bytes']:>8,} B"
             terminalreporter.write_line(f"  [{mark}] {r['nodeid']:60s}  {extras}")
         elif "runtime_cycles" in r:
             terminalreporter.write_line(f"  [{mark}] {r['nodeid']:60s}  runtime={r['runtime_cycles']:>12,} cyc")
@@ -268,7 +313,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
         lines += [
             "### Training",
             "",
-            "| Test | Status | train_cycles | opt_cycles | weight_sram |",
+            "| Test | Status | train_cycles | opt_cycles | trainable_bytes |",
             "|---|:---:|---:|---:|---:|",
         ]
         for r in results:
@@ -276,8 +321,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # no
                 continue
             status = ":white_check_mark:" if r["outcome"] == "passed" else ":x:"
             opt = f"{r['opt_cycles']:,}" if "opt_cycles" in r else "—"
-            sram = f"{r['weight_sram']:,}" if "weight_sram" in r else "—"
-            lines.append(f"| `{r['nodeid']}` | {status} | {r['train_cycles']:,} | {opt} | {sram} |")
+            tb = f"{r['trainable_bytes']:,}" if "trainable_bytes" in r else "—"
+            lines.append(f"| `{r['nodeid']}` | {status} | {r['train_cycles']:,} | {opt} | {tb} |")
         lines.append("")
 
     if has_inference:

@@ -23,10 +23,10 @@ __all__ = [
 # parametrised cases that share a section.
 _METRIC_SECTIONS_WRITTEN: set = set()
 
-# `BENCH train_cycles=<N> opt_cycles=<M> weight_sram=<K>` — printed once per
+# `BENCH train_cycles=<N> opt_cycles=<M> trainable_bytes=<K>` — printed once per
 # training run by the test harness; captured here so we can append a cycles
 # row to $GITHUB_STEP_SUMMARY for SB-vs-DB comparison.
-_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) weight_sram=(\d+)")
+_TRAIN_BENCH_RE = re.compile(r"BENCH train_cycles=(\d+) opt_cycles=(\d+) trainable_bytes=(\d+)")
 
 
 def get_worker_id() -> str:
@@ -68,6 +68,7 @@ def create_test_config(
     promote_to_l2: bool = False,
     promote_to_l2_strategy: str = "cycle-aware",
     promote_to_l2_headroom: int = 131072,
+    promote_to_l2_fetch_bytes: Optional[str] = None,
     gen_args: Optional[List[str]] = None,
 ) -> DeeployTestConfig:
 
@@ -119,6 +120,11 @@ def create_test_config(
             gen_args_list.append("--promoteToL2IncludeActivations")
             gen_args_list.append("--promoteToL2MaxBufferBytes=0")
             gen_args_list.append(f"--promoteToL2Headroom={promote_to_l2_headroom}")
+            if promote_to_l2_fetch_bytes is not None:
+                # Measured per-tensor L3<->L2 traffic (DEEPLOY_FETCH_HARVEST on the same
+                # deployment with nothing promoted); ranks candidates by bytes actually
+                # saved instead of by consuming-node count.
+                gen_args_list.append(f"--promoteToL2FetchBytes={promote_to_l2_fetch_bytes}")
 
     if profile_untiled and not tiling and platform == "Siracusa":
         gen_args_list.append("--profileUntiled")
@@ -196,7 +202,7 @@ def run_and_assert_test(test_name: str,
 
     cycles = getattr(result, "runtime_cycles", None)
     if cycles is None and getattr(result, "stdout", None):
-        # Training tests emit "BENCH train_cycles=N opt_cycles=M weight_sram=K"
+        # Training tests emit "BENCH train_cycles=N opt_cycles=M trainable_bytes=K"
         # instead of "Runtime: N cycles"; fall back to that format so the
         # training cycle reference table works the same as the inference one.
         import re as _re

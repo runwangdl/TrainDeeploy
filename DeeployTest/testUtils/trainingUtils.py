@@ -667,5 +667,13 @@ def run_training_codegen(config, script_dir: Path) -> None:
         opt_cmd.append("-" + "v" * config.verbose)
 
     log.debug(f"[Execution] {stage} optimizer network generation command: {' '.join(opt_cmd)}")
-    if subprocess.run(opt_cmd, check = False).returncode != 0:
+    # The residency pass wants Q(t) for the TRAINING graph. Both codegen steps
+    # inherit DEEPLOY_FETCH_HARVEST and write the same path, and the optimizer runs
+    # second -- so leaving it set here silently replaced the training graph's traffic
+    # with the optimizer graph's, which is nothing but SGD updates over weights and
+    # gradients and contains no activation at all. Harvest the optimizer graph only
+    # when asked for it explicitly.
+    opt_env = os.environ.copy()
+    opt_env.pop("DEEPLOY_FETCH_HARVEST", None)
+    if subprocess.run(opt_cmd, check = False, env = opt_env).returncode != 0:
         raise RuntimeError(f"{stage} optimizer network generation failed for {config.test_name}")
