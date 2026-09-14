@@ -146,7 +146,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 #   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,157,266  116.6
 #   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,390,595   20.0
 #   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   45,955,002  124.2
-#   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   63,296,740  171.1
+#   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   57,781,907  156.2
 #
 # DS-CNN and ResNet-8 are the L2 list above; the other three are
 # L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS below.
@@ -248,7 +248,7 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 #
 #   model        l2       headroom  promoted            traffic removed  cycles/step
 #   Autoencoder  1572864  131072    51 t, 1,064,960 B   57.8%             7,390,595
-#   CCT          1572864  600000    121 t, 929,552 B    52.8%            63,296,740
+#   CCT          1572864  600000    121 t, 929,552 B    52.8%            57,781,907
 #   MobileNetV1  1024000  500000    76 t, 523,232 B     27.6%            45,955,002
 #
 # MobileNetV1 needs the promoted-tile offset fix (SingleBufferingTilingCodeGeneration
