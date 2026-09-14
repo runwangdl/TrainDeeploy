@@ -17,8 +17,18 @@ gap9L2AllocateTemplate = NodeTemplate(
 # it, and the run continues until some load faults at a garbage address -- or
 # worse, silently reads whatever is mapped there. Abort at the point of failure
 # instead, so the log names the cause rather than an unrelated Invalid access.
+# DEEPLOY_L1_AS_L2 (the untiled baseline): allocate what the tiler calls an "L1"
+# buffer out of FC L2 instead. The cluster then computes on L2 addresses directly
+# and no tile is ever staged, which is what "untiled" means -- keeping L1 and
+# only widening L2 still tiles, just from a bigger source. PR #21 reached the
+# same end state by running sed over the generated C; emitting both branches and
+# letting the preprocessor choose keeps one codegen valid for both builds.
 gap9L1AllocateTemplate = NodeTemplate(
+    "#ifdef DEEPLOY_L1_AS_L2\n"
+    "${name} = (${type.typeName}) pi_l2_malloc(sizeof(${type.referencedType.typeName}) * ${size});\n"
+    "#else\n"
     "${name} = (${type.typeName}) pi_l1_malloc((void *) 0, sizeof(${type.referencedType.typeName}) * ${size});\n"
+    "#endif\n"
     "if (${name} == NULL) {\n"
     "  printf(\"FATAL: pi_l1_malloc failed for ${name} (%u B) -- cluster L1 exhausted; "
     "lower --l1 or the cluster stacks\\r\\n\", (unsigned)(sizeof(${type.referencedType.typeName}) * ${size}));\n"
@@ -28,8 +38,11 @@ gap9L1AllocateTemplate = NodeTemplate(
 gap9L2GlobalInitTemplate = NodeTemplate(
     "static PI_L2 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n")
 
-gap9L1GlobalInitTemplate = NodeTemplate(
-    "static PI_L1 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n")
+gap9L1GlobalInitTemplate = NodeTemplate("#ifdef DEEPLOY_L1_AS_L2\n"
+                                        "static PI_L2 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
+                                        "#else\n"
+                                        "static PI_L1 ${type.referencedType.typeName} ${name}[${size}] = {${values}};\n"
+                                        "#endif\n")
 
 gap9L2GlobalAllocateTemplate = NodeTemplate("")
 
@@ -67,7 +80,7 @@ gap9GenericAllocate = NodeTemplate("""
 % if _memoryLevel == "L1":
 ${name} = (${type.typeName}) pi_l1_malloc((void *) 0, sizeof(${type.referencedType.typeName}) * ${size});
 if (${name} == NULL) {
-  printf("FATAL: pi_l1_malloc failed for ${name} (%u B) -- cluster L1 exhausted; lower --l1 or the cluster stacks\\r\\n", (unsigned)(sizeof(${type.referencedType.typeName}) * ${size}));
+  printf("FATAL: arena allocation failed for ${name} (%u B) -- cluster L1 exhausted; lower --l1 or the cluster stacks\\r\\n", (unsigned)(sizeof(${type.referencedType.typeName}) * ${size}));
   return;
 }\n
 % elif _memoryLevel == "L2" or _memoryLevel is None:

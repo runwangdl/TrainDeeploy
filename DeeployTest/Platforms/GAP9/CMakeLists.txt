@@ -64,6 +64,14 @@ if(SLAVESTACKSIZE)
   target_compile_definitions(${ProjectId} PRIVATE SLAVESTACKSIZE=${SLAVESTACKSIZE})
 endif()
 
+# Untiled baseline: "L1" buffers come from FC L2 and the mchan transfers become
+# memcpy, so the cluster computes over the L2 fabric instead of out of TCDM.
+# Both branches are emitted by codegen; this define selects the untiled one.
+if(DEEPLOY_L1_AS_L2)
+  target_compile_definitions(${ProjectId} PRIVATE DEEPLOY_L1_AS_L2)
+  message(STATUS "[cMake  ]   DEEPLOY_L1_AS_L2       = ON (untiled: compute from L2)")
+endif()
+
 # RW: Waive sign comparison warnings from pulp_nn_utils.h
 target_compile_options(${NETWORK_LIB} PRIVATE
     -Wno-sign-compare
