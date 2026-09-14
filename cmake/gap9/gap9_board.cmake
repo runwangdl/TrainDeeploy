@@ -21,6 +21,9 @@
 #
 # Power measurement operating point (compiled in only under -DPOWER_MEASUREMENT=1):
 #   -DFREQ_FC=370 -DFREQ_CL=370 -DFREQ_PE=370 -DVOLTAGE=800
+# Captured at include time: inside the macro CMAKE_CURRENT_LIST_DIR is the caller's dir.
+set(GAP9_BOARD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR})
+
 macro(add_board_deployment name target)
 
     if(NOT DEFINED GVSOC_INSTALL_DIR)
@@ -52,6 +55,7 @@ macro(add_board_deployment name target)
     endif()
 
     make_directory(${BOARD_WORKDIR})
+
 
     # Power measurement operating point
     set(FREQ_FC "240" CACHE STRING "FC frequency in MHz (board power measurement)")
@@ -87,6 +91,19 @@ macro(add_board_deployment name target)
         --py-stack
     )
 
+    # Readfs tail padding (EVK flash tail corruption workaround, see readfs_pad.py):
+    # after the first `gapy image`, size the pad file from the resulting flash.bin,
+    # regenerate the image, then refuse an image that still ends in the bad zone.
+    set(READFS_PAD_SCRIPT ${GAP9_BOARD_CMAKE_DIR}/readfs_pad.py)
+    if(GAP9_READFS_PAD_FILE)
+        set(READFS_PAD_STEPS
+            COMMAND python3 ${READFS_PAD_SCRIPT} resize ${BOARD_WORKDIR}/flash.bin ${GAP9_READFS_PAD_FILE}
+            COMMAND ${GAPY_COMMON} image --binary=${DEEPLOY_BINARY}
+            COMMAND python3 ${READFS_PAD_SCRIPT} check ${BOARD_WORKDIR}/flash.bin)
+    else()
+        set(READFS_PAD_STEPS COMMAND python3 ${READFS_PAD_SCRIPT} check ${BOARD_WORKDIR}/flash.bin)
+    endif()
+
     # --- Target: image_<name> ---
     # Generates mram.bin + flash.bin in board_workdir without touching the board.
     # Use when the JTAG cable is on a remote machine (scp images, then flash manually).
@@ -97,6 +114,7 @@ macro(add_board_deployment name target)
             ${GAP9_SDK_HOME}/utils/efuse/GAP9/efuse_hyper_preload.data
             ${BOARD_WORKDIR}/chip.efuse_preload.data
         COMMAND ${GAPY_COMMON} image --binary=${DEEPLOY_BINARY}
+        ${READFS_PAD_STEPS}
         COMMENT "Generating flash images for ${name} in ${BOARD_WORKDIR}"
         USES_TERMINAL
         VERBATIM
@@ -104,7 +122,7 @@ macro(add_board_deployment name target)
 
     # --- Target: board_<name> ---
     # Full image + flash + run via gapy. Requires JTAG cable on this machine.
-    set(GAPY_CMD ${GAPY_COMMON} image flash run --binary=${DEEPLOY_BINARY})
+    set(GAPY_CMD ${GAPY_COMMON} flash run --binary=${DEEPLOY_BINARY})
     string(REPLACE ";" " " GAPY_CMD_STR "${GAPY_CMD}")
 
     add_custom_target(board_${name}
@@ -113,6 +131,8 @@ macro(add_board_deployment name target)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${GAP9_SDK_HOME}/utils/efuse/GAP9/efuse_hyper_preload.data
             ${BOARD_WORKDIR}/chip.efuse_preload.data
+        COMMAND ${GAPY_COMMON} image --binary=${DEEPLOY_BINARY}
+        ${READFS_PAD_STEPS}
         COMMAND ${CMAKE_COMMAND} -E echo "=========================================="
         COMMAND ${CMAKE_COMMAND} -E echo "[Deeploy GAP9] ${GAPY_CMD_STR}"
         COMMAND ${CMAKE_COMMAND} -E echo "=========================================="
