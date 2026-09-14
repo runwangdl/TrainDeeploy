@@ -124,9 +124,9 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # "Allocation failed for allocator 2" followed by an Invalid access -- randomly,
     # because a different search result fits. Same reasoning as CCT_QLORA_FT below.
     # 122000: the best-latency deployment (43,157,266 cycles/step, 116.6 ms). The
-    # 118000 this entry used before guarded against the random-max search landing
-    # on a 121,984 B arena that does not fit the 118,672 B the L1 allocator has
-    # free (paragraph above); the paper configuration takes that risk.
+    # 118000 this entry used before was needed only because the L2 job did not
+    # pass cc_stack / slave_stack to CMake, so the SDK-default cluster stacks left
+    # the L1 allocator 118,672 B; with cc 4096 + 8 x 512 the 121,984 B arena fits.
     "Models/Training/ResNet8/resnet8_train": [122000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
@@ -283,6 +283,7 @@ TRAINING_MODEL_OVERRIDES = {
         # measured effect). The -33.7% figure this comment used to quote was
         # taken on the old XS fixture (2,732 params, 0.80M cyc/step) and does
         # not carry over to DS-CNN-S (23,180 params, 10.2M cyc/step).
+        "cc_stack": 4096,  # the best-latency build (10,245,171 cyc/step) uses cc 4096 + slave 512
         "slave_stack": 512,
     },
     "Models/Training/ResNet8/resnet8_train": {

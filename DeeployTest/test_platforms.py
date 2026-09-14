@@ -1394,6 +1394,15 @@ def test_gap9_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, tool
     test_name, l1, _config_name = test_params
     overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    # Same per-model cluster stacks as the L3 jobs. Without them the SDK-default
+    # stacks eat the L1 the arena needs: ResNet-8 at 122000 asks for 121,984 B and
+    # only fits next to cc 4096 + 8 x 512 (130,176 < 131,072).
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
+    slave_stack = overrides.get("slave_stack")
+    if slave_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
