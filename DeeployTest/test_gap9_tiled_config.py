@@ -138,14 +138,15 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [116000],
 }
 
-# Best-latency deployment of the five paper networks (gvsoc, 8 cores, Errors 0/4;
+# Best-latency deployment of the five paper networks (gvsoc, 8 cores, Errors 0/4, all
+# measured on this branch at 29a5c63 through these tests;
 # per-step = (train + opt cycles) / 4, ms at 370 MHz):
 #
 #   model        deployment                                           L1      cycles/step   ms
-#   DS-CNN-S     L2 single-buffer, no promotion                       128000   10,245,171   27.7
-#   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,157,266  116.6
-#   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,390,595   20.0
-#   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   45,955,002  124.2
+#   DS-CNN-S     L2 single-buffer, no promotion                       128000   10,264,002   27.7
+#   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,173,174  116.7
+#   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,398,196   20.0
+#   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   46,017,380  124.4
 #   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   57,781,907  156.2
 #
 # DS-CNN and ResNet-8 are the L2 list above; the other three are
