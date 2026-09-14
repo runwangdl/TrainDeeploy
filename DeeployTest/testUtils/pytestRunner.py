@@ -68,6 +68,7 @@ def create_test_config(
     promote_to_l2: bool = False,
     promote_to_l2_strategy: str = "cycle-aware",
     promote_to_l2_headroom: int = 131072,
+    promote_to_l2_fetch_bytes: Optional[str] = None,
     gen_args: Optional[List[str]] = None,
 ) -> DeeployTestConfig:
 
@@ -119,6 +120,11 @@ def create_test_config(
             gen_args_list.append("--promoteToL2IncludeActivations")
             gen_args_list.append("--promoteToL2MaxBufferBytes=0")
             gen_args_list.append(f"--promoteToL2Headroom={promote_to_l2_headroom}")
+            if promote_to_l2_fetch_bytes is not None:
+                # Measured per-tensor L3<->L2 traffic (DEEPLOY_FETCH_HARVEST on the same
+                # deployment with nothing promoted); ranks candidates by bytes actually
+                # saved instead of by consuming-node count.
+                gen_args_list.append(f"--promoteToL2FetchBytes={promote_to_l2_fetch_bytes}")
 
     if profile_untiled and not tiling and platform == "Siracusa":
         gen_args_list.append("--profileUntiled")

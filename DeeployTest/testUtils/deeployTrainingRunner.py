@@ -126,6 +126,8 @@ def main(tiling_enabled: bool = False,
         gen_args.append('--identitySchedule')
     if getattr(args, 'recomputeSchedule', None):
         gen_args.append(f'--recomputeSchedule={args.recomputeSchedule}')
+    if getattr(args, 'promoteToL2FetchBytes', None):
+        gen_args.append(f'--promoteToL2FetchBytes={args.promoteToL2FetchBytes}')
 
     if tiling_enabled:
         if getattr(args, 'defaultMemLevel', None):
@@ -148,7 +150,11 @@ def main(tiling_enabled: bool = False,
             gen_args.append('--promoteToL2')
             gen_args.append(f'--promoteToL2Strategy={args.promoteToL2Strategy}')
             gen_args.append('--promoteToL2IncludeActivations')
-            gen_args.append('--promoteToL2MaxBufferBytes=0')
+            _maxBuf = getattr(args, 'promoteToL2MaxBufferBytes', None)
+            gen_args.append(f'--promoteToL2MaxBufferBytes={0 if _maxBuf is None else _maxBuf}')
+            _minBuf = getattr(args, 'promoteToL2MinBufferBytes', None)
+            if _minBuf is not None:
+                gen_args.append(f'--promoteToL2MinBufferBytes={_minBuf}')
             gen_args.append(f'--promoteToL2Headroom={args.promoteToL2Headroom}')
         if getattr(args, 'doublebuffer', False):
             gen_args.append('--doublebuffer')

@@ -21,6 +21,22 @@ if __name__ == '__main__':
                             action = 'store_true',
                             help = 'Deploy in the exporter node order instead of the '
                             'memory-minimising list schedule (scheduling baseline).')
+        parser.add_argument('--promoteToL2FetchBytes',
+                            type = str,
+                            default = None,
+                            help = 'JSON of measured per-tensor L3<->L2 traffic, harvested from a run '
+                            'with nothing promoted (DEEPLOY_FETCH_HARVEST). Replaces the consuming-node '
+                            'count in the promotion score, which counts at schedule granularity and so '
+                            'misses tensors an operator re-reads once per tile.\n')
+        parser.add_argument('--promoteToL2MaxBufferBytes',
+                            type = int,
+                            default = None,
+                            help = 'Only tensors of at most this many bytes are promotion candidates. '
+                            'Used to bisect which promoted tensor breaks a network numerically.\n')
+        parser.add_argument('--promoteToL2MinBufferBytes',
+                            type = int,
+                            default = None,
+                            help = 'Only tensors of at least this many bytes are promotion candidates.\n')
         parser.add_argument('--recomputeSchedule',
                             type = str,
                             default = None,

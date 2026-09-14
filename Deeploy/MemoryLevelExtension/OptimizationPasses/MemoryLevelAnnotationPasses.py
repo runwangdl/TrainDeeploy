@@ -4,7 +4,7 @@
 
 import math
 import random as _random
-from typing import List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import onnx_graphsurgeon as gs
 
@@ -127,8 +127,21 @@ class PromoteTensorsToL2(SequentialPass):
                  minBufferBytes: int = 0,
                  setupCycles: int = 200,
                  bandwidthBytesPerCycle: float = 4.0,
-                 seed: int = 42):
+                 seed: int = 42,
+                 fetchBytes: Optional[Dict[str, int]] = None):
         super().__init__()
+        # Measured L3<->L2 traffic per tensor, harvested from a tiling solution in
+        # which nothing was promoted -- Q(t) is the traffic saved by promoting t, so it
+        # can only be read off a run where t is still in L3.
+        #
+        # Without it the access count is len(buf._users), the number of consuming
+        # nodes, which counts at SCHEDULE granularity only. The L3->L2 DMA sits inside
+        # the per-tile loop bounded by TILING_CODEGEN_L2_<node>_numTiles, so a tensor an
+        # operator re-reads on every tile is fetched once per tile rather than once.
+        # Measured on ResNet8, 32 of 92 nodes have a trip count above 1 and one reaches
+        # 20; per tensor the correction runs to 4.9x on ResNet8, 25x on MobileNetV1 and
+        # 64.5x on CCT, and it changes the selected set on the latter two.
+        self.fetchBytes = fetchBytes or {}
         self.l2Budget = l2Size - headroom
         self.strategy = strategy
         self.includeActivations = includeActivations
@@ -145,6 +158,26 @@ class PromoteTensorsToL2(SequentialPass):
         self.setupCycles = setupCycles
         self.bw = bandwidthBytesPerCycle
         self.seed = seed
+
+    def _accesses(self, name: str, size: int, buf) -> float:
+        """How many times the tensor's own size crosses the level boundary.
+
+        With measured traffic available this is traffic/size, so the score keeps
+        its units. A tensor the harvest did not see does NOT fall back to the
+        consuming-node count: the harvest covers every tiled pattern it could
+        establish a trip count for (it reports noTileCount, which is 0 on all
+        five training graphs), so absence means the tensor never crosses the
+        boundary inside the tile loop. Falling back there mixes bytes with node
+        counts and lets tensors that save nothing outrank tensors that save real
+        traffic -- which is what made the ratio strategies pick candidates whose
+        contribution to the reported traffic removal is exactly zero.
+        """
+        if self.fetchBytes:
+            measured = self.fetchBytes.get(name)
+            if not measured or size <= 0:
+                return 0.0
+            return measured / size
+        return len(getattr(buf, '_users', []) or [])
 
     def _bufferSize(self, buf: VariableBuffer) -> int:
         # buf.size_bytes() does not exist on any Deeploy buffer class -- the
@@ -190,12 +223,35 @@ class PromoteTensorsToL2(SequentialPass):
         # buffer is frozen, accept zero new promotions for this whole call.
         any_frozen = any('allocTemplate' in b.__dict__ for b in {**ctxt.globalObjects, **ctxt.localObjects}.values())
 
+        # DEEPLOY_PROMOTE_SKIP_OPS_KEEP narrows _SKIP_OPS to the listed ops, so the
+        # exclusion can be attributed per op type instead of all-or-nothing. The set
+        # mixes two unrelated hazards: pointer-aliasing ops (Reshape/Squeeze/...) and
+        # multi-output ops whose tiling graft assumes an L3 home (BatchNormInternal,
+        # LayerNormalization and their grads).
+        import os as _os1
+        _keep = _os1.environ.get('DEEPLOY_PROMOTE_SKIP_OPS_KEEP')
+        _skipOps = set(_keep.split(',')) if _keep else self._SKIP_OPS
+
         skip_tensors: set = set()
         for node in graph.nodes:
-            if node.op in self._SKIP_OPS:
+            if node.op in _skipOps:
                 for t in list(node.inputs) + list(node.outputs):
                     if t is not None:
                         skip_tensors.add(t.name)
+
+        # Rejection census: why each L3 buffer never became a promotion candidate.
+        # Enabled with DEEPLOY_PROMOTE_CENSUS=1. The point is to see what actually
+        # caps L2 occupancy -- the budget, or the eligibility filters.
+        import collections as _coll
+        import os as _os0
+        _censusOn = bool(_os0.environ.get('DEEPLOY_PROMOTE_CENSUS'))
+        _censusN = _coll.Counter()
+        _censusB = _coll.Counter()
+
+        def _rej(reason, sz = 0):
+            if _censusOn:
+                _censusN[reason] += 1
+                _censusB[reason] += sz
 
         candidates: List[Tuple[str, VariableBuffer, int, int]] = []
 
@@ -204,7 +260,8 @@ class PromoteTensorsToL2(SequentialPass):
                 continue
             if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
                 continue
-            if name in skip_tensors:
+            if name in skip_tensors and not _os0.environ.get('DEEPLOY_PROMOTE_IGNORE_SKIP_OPS'):
+                _rej('SKIP_OPS neighbour', self._bufferSize(buf))
                 continue
             # Mirror the activation-branch f8f1508 guard: if the buffer's
             # tiling code has already been emitted (instance-level allocTemplate
@@ -212,23 +269,27 @@ class PromoteTensorsToL2(SequentialPass):
             # post-hoc leaves the tiling closures writing to the wrong arena
             # and produces silently corrupt output. Skip those.
             if 'allocTemplate' in buf.__dict__:
+                _rej('frozen allocTemplate', self._bufferSize(buf))
                 continue
             size = self._bufferSize(buf)
             if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                 continue
             if size < self.minBufferBytes:
                 continue
-            candidates.append((name, buf, size, len(buf._users)))
+            accesses = self._accesses(name, size, buf)
+            candidates.append((name, buf, size, accesses))
 
         if self.includeActivations:
             for name, buf in ctxt.localObjects.items():
                 if isinstance(buf, _ReferenceBuffer) or isinstance(buf, ConstantBuffer):
                     continue
                 if isinstance(buf, TransientBuffer):
+                    _rej('transient scratch', self._bufferSize(buf))
                     continue
                 if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
                     continue
-                if name in skip_tensors:
+                if name in skip_tensors and not _os0.environ.get('DEEPLOY_PROMOTE_IGNORE_SKIP_OPS'):
+                    _rej('SKIP_OPS neighbour', self._bufferSize(buf))
                     continue
                 # Skip buffers whose tiling code was already generated with L3 semantics.
                 # _convertCtxtToStaticSchedule sets an instance-level allocTemplate that
@@ -236,13 +297,15 @@ class PromoteTensorsToL2(SequentialPass):
                 # tile() has run leaves the tiling closures writing to the L2 arena scratch
                 # buffer instead of the actual named L2 buffer, producing corrupt output.
                 if 'allocTemplate' in buf.__dict__:
+                    _rej('frozen allocTemplate', self._bufferSize(buf))
                     continue
                 size = self._bufferSize(buf)
                 if self.maxBufferBytes > 0 and size > self.maxBufferBytes:
                     continue
                 if size < self.minBufferBytes:
                     continue
-                candidates.append((name, buf, size, len(buf._users)))
+                accesses = self._accesses(name, size, buf)
+                candidates.append((name, buf, size, accesses))
 
             # Graph I/O lives in globalObjects as VariableBuffer (not ConstantBuffer).
             # Without this loop they stay in L3 even when there is plenty of L2 budget
@@ -256,12 +319,15 @@ class PromoteTensorsToL2(SequentialPass):
                 if isinstance(buf, (ConstantBuffer, _ReferenceBuffer)):
                     continue
                 if isinstance(buf, TransientBuffer):
+                    _rej('transient scratch', self._bufferSize(buf))
                     continue
                 if not hasattr(buf, '_memoryLevel') or buf._memoryLevel != 'L3':
                     continue
-                if name in skip_tensors:
+                if name in skip_tensors and not _os0.environ.get('DEEPLOY_PROMOTE_IGNORE_SKIP_OPS'):
+                    _rej('SKIP_OPS neighbour', self._bufferSize(buf))
                     continue
                 if 'allocTemplate' in buf.__dict__:
+                    _rej('frozen allocTemplate', self._bufferSize(buf))
                     continue
                 # Skip single-use graph I/O (inference input_0 / output_0).
                 # InitNetwork allocates these with cl_ram_malloc -> hyperram
@@ -271,7 +337,8 @@ class PromoteTensorsToL2(SequentialPass):
                 # the DMA STATUS bit forever -> silent hang.
                 # Training graph I/O (weights/grads) is multi-use and remains
                 # eligible: len(_users) >= 2.
-                if len(buf._users) <= 1:
+                if len(buf._users) <= 1 and not _os0.environ.get('DEEPLOY_PROMOTE_ALLOW_SINGLE_USE_IO'):
+                    _rej('graph I/O with <=1 user', self._bufferSize(buf))
                     continue
                 size = self._bufferSize(buf)
                 # Skip tiny graph I/O (step counters, reset flags, 1-element
@@ -284,7 +351,8 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 if size < self.minBufferBytes:
                     continue
-                candidates.append((name, buf, size, len(buf._users)))
+                accesses = self._accesses(name, size, buf)
+                candidates.append((name, buf, size, accesses))
 
         if self.strategy == 'cycle-aware':
             candidates.sort(key = lambda x: x[3] * (self.setupCycles + x[2] / self.bw) / max(x[2], 1), reverse = True)
@@ -296,6 +364,8 @@ class PromoteTensorsToL2(SequentialPass):
             candidates.sort(key = lambda x: x[2])
         elif self.strategy == 'largest':
             candidates.sort(key = lambda x: x[2], reverse = True)
+        elif self.strategy == 'traffic-per-peak':
+            pass  # ordering is decided adaptively below, not by a static sort
         elif self.strategy == 'random':
             _random.Random(self.seed).shuffle(candidates)
         else:
@@ -366,6 +436,20 @@ class PromoteTensorsToL2(SequentialPass):
             else:
                 _already_const += sz
         already_l2 = _already_const + self._sweepLinePeak(_already_var_blocks)
+        # Experiment hooks (measurement only, read from the environment so they
+        # need no plumbing through three runners). ONLY/SKIP take a regex over the
+        # buffer name; NO_L1_SAFETY lifts the "activation larger than L1" rejection.
+        import os as _os
+        import re as _re
+        _onlyRe = _os.environ.get('DEEPLOY_PROMOTE_ONLY_RE')
+        _skipRe = _os.environ.get('DEEPLOY_PROMOTE_SKIP_RE')
+        _onlyRe = _re.compile(_onlyRe) if _onlyRe else None
+        _skipRe = _re.compile(_skipRe) if _skipRe else None
+        if _onlyRe is not None:
+            candidates = [c for c in candidates if _onlyRe.search(c[0])]
+        if _skipRe is not None:
+            candidates = [c for c in candidates if not _skipRe.search(c[0])]
+
         promoted = []
         # Refuse to promote anything once tile() has frozen allocations: the
         # codegen for each buffer was emitted for the level it had at tile time,
@@ -405,6 +489,11 @@ class PromoteTensorsToL2(SequentialPass):
                 except Exception:
                     pass
 
+        if _os.environ.get('DEEPLOY_PROMOTE_NO_L1_SAFETY'):
+            # Historical limitation: activations whose untiled size exceeds L1 were
+            # rejected upfront. Lifting it is the point of the experiment.
+            l1_safety = float('inf')
+
         const_used = 0  # bytes added to L2 by this call's const promotions
         var_blocks = []  # (size, lifetime) for ALL vars at L2 (prior + this call)
         # Seed var_blocks with already-promoted vars at L2 so sweep-line over
@@ -417,6 +506,7 @@ class PromoteTensorsToL2(SequentialPass):
             if getattr(buf, '_memoryLevel', None) != 'L2':
                 continue
             if 'allocTemplate' in buf.__dict__:
+                _rej('frozen allocTemplate', self._bufferSize(buf))
                 continue
             lt = getattr(buf, '_lifetime', None)
             if lt is None or _isStandaloneGraphIO(buf):
@@ -430,37 +520,204 @@ class PromoteTensorsToL2(SequentialPass):
         def trial_total(extra_const_bytes, vblocks):
             return fixed_prior + const_used + extra_const_bytes + self._sweepLinePeak(vblocks)
 
-        for name, buf, size, _ in candidates:
-            is_const = isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)
-            if is_const:
-                if trial_total(size, var_blocks) <= self.l2Budget:
-                    buf._memoryLevel = 'L2'
-                    const_used += size
-                    promoted.append((name, size))
-            else:
-                if size >= l1_safety:
-                    continue
+        def _isFlat(buf, lt):
+            """True if the candidate must be charged its full size at every step."""
+            return (isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)) \
+                or lt is None or _isStandaloneGraphIO(buf)
+
+        if self.strategy == 'traffic-per-peak':
+            # Residency as the paper states it: repeatedly admit
+            #     t* = argmax_t  Q(t) / max(Delta_P(t), eps),
+            # with Q(t) the off-chip traffic keeping t on-chip removes and
+            # Delta_P(t) = Lambda(P + t) - Lambda(P) the increase of the peak of the
+            # live resident bytes. Every admission reshapes the live profile, so all
+            # scores are recomputed before the next choice -- that is what separates
+            # this from a knapsack with fixed per-item costs, and what the older
+            # single-sort strategies do not do.
+            #
+            # Delta is read off a per-step live profile instead of re-running the
+            # sweep line for every (round, candidate): adding s over steps [lo, hi]
+            # lifts that window to max(profile[lo:hi+1]) + s, so
+            #     Delta = max(0, max(profile[lo:hi+1]) + s - peak).
+            #
+            # The ratio greedy alone is myopic, and measurably so: on the 640-wide
+            # MLperf autoencoder it admits small high-ratio tensors first, fragments
+            # the budget and stops at 82.6% of L2 having removed 47.4% of the
+            # traffic, while a plain size-descending fill reaches 97.2% and 51.6%.
+            # So we also build the descending-Q solution and keep whichever removes
+            # more traffic -- both are greedy passes over the same candidate set and
+            # the objective is measured, not estimated.
+            import numpy as _np
+            _EPS = 1.0
+
+            _pool = []
+            for name, buf, size, acc in candidates:
                 lt = getattr(buf, '_lifetime', None)
-                if lt is None or _isStandaloneGraphIO(buf):
-                    # No lifetime info -> can't measure overlap; charge full size
+                if not _isFlat(buf, lt) and size >= l1_safety:
+                    continue
+                _pool.append((name, buf, size, acc, lt))
+
+            _T = 1 + max((lt[1] for _, lt in var_blocks), default = 0)
+            for _n, _b, _sz, _acc, _lt in _pool:
+                if _lt is not None:
+                    _T = max(_T, _lt[1] + 1)
+
+            def _plan(adaptive):
+                """Return (chosen, savedQ, blocks, constBytes) without mutating state."""
+                profile = _np.zeros(_T, dtype = _np.int64)
+                for sz, (lo, hi) in var_blocks:
+                    profile[lo:hi + 1] += sz
+                peak = int(profile.max()) if _T else 0
+                constUsed = 0
+                blocks = list(var_blocks)
+                chosen = []
+                savedQ = 0
+                remaining = list(_pool)
+                if not adaptive:
+                    # Fixed order: most traffic first, ties to the larger tensor.
+                    remaining.sort(key = lambda c: (c[3] * c[2], c[2]), reverse = True)
+                while remaining:
+                    curTotal = fixed_prior + constUsed + peak
+                    best = None
+                    bestScore = 0.0
+                    bestDelta = 0
+                    for cand in remaining:
+                        nm, bf, sz, acc, lt = cand
+                        Q = acc * sz
+                        if Q <= 0:
+                            continue  # promotion stops paying once nothing saves traffic
+                        if _isFlat(bf, lt):
+                            delta = sz
+                            newTotal = curTotal + sz
+                        else:
+                            localMax = int(profile[lt[0]:lt[1] + 1].max())
+                            newPeak = max(peak, localMax + sz)
+                            delta = newPeak - peak
+                            newTotal = fixed_prior + constUsed + newPeak
+                        if newTotal > self.l2Budget:
+                            continue  # admitted only if the resulting peak still fits
+                        if adaptive:
+                            score = Q / max(delta, _EPS)
+                            if best is None or score > bestScore:
+                                best, bestScore, bestDelta = cand, score, delta
+                        else:
+                            best, bestDelta = cand, delta
+                            break
+                    if best is None:
+                        break
+                    nm, bf, sz, acc, lt = best
+                    if _isFlat(bf, lt):
+                        constUsed += sz
+                    else:
+                        profile[lt[0]:lt[1] + 1] += sz
+                        peak += bestDelta
+                        blocks.append((sz, lt))
+                    chosen.append((nm, bf, sz))
+                    savedQ += acc * sz
+                    remaining.remove(best)
+                return chosen, savedQ, blocks, constUsed
+
+            _ratio = _plan(adaptive = True)
+            _dense = _plan(adaptive = False)
+            _chosen, _savedQ, _blocks, _constUsed = _ratio if _ratio[1] >= _dense[1] else _dense
+            if _ratio[1] != _dense[1]:
+                print(f"  [PromoteTensorsToL2] traffic-per-peak: ratio-greedy saves "
+                      f"{_ratio[1]:,} B, descending-Q saves {_dense[1]:,} B -- keeping "
+                      f"{'ratio-greedy' if _ratio[1] >= _dense[1] else 'descending-Q'}")
+            for _nm, _bf, _sz in _chosen:
+                _bf._memoryLevel = 'L2'
+                promoted.append((_nm, _sz))
+            var_blocks = _blocks
+            const_used = _constUsed
+        else:
+            for name, buf, size, _ in candidates:
+                is_const = isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)
+                if is_const:
                     if trial_total(size, var_blocks) <= self.l2Budget:
                         buf._memoryLevel = 'L2'
-                        const_used += size  # charge as if const (forever-alive)
+                        const_used += size
                         promoted.append((name, size))
-                    continue
-                new_blocks = var_blocks + [(size, lt)]
-                if trial_total(0, new_blocks) <= self.l2Budget:
-                    buf._memoryLevel = 'L2'
-                    var_blocks = new_blocks
-                    promoted.append((name, size))
+                else:
+                    if size >= l1_safety:
+                        continue
+                    lt = getattr(buf, '_lifetime', None)
+                    if lt is None or _isStandaloneGraphIO(buf):
+                        # No lifetime info -> can't measure overlap; charge full size
+                        if trial_total(size, var_blocks) <= self.l2Budget:
+                            buf._memoryLevel = 'L2'
+                            const_used += size  # charge as if const (forever-alive)
+                            promoted.append((name, size))
+                        continue
+                    new_blocks = var_blocks + [(size, lt)]
+                    if trial_total(0, new_blocks) <= self.l2Budget:
+                        buf._memoryLevel = 'L2'
+                        var_blocks = new_blocks
+                        promoted.append((name, size))
 
         final_var_peak = self._sweepLinePeak(var_blocks)
         l2_used = fixed_prior + const_used + final_var_peak
+
+        if _censusOn:
+            _promotedNames = {n for n, _ in promoted}
+            _zeroQ = _zeroQB = 0
+            _unadmitted = _unadmittedB = 0
+            for _n, _b, _sz, _acc in candidates:
+                if _n in _promotedNames:
+                    continue
+                if _acc * _sz <= 0:
+                    _zeroQ += 1
+                    _zeroQB += _sz
+                else:
+                    _unadmitted += 1
+                    _unadmittedB += _sz
+            _censusN['no measured traffic (Q=0)'] = _zeroQ
+            _censusB['no measured traffic (Q=0)'] = _zeroQB
+            _censusN['eligible but did not fit'] = _unadmitted
+            _censusB['eligible but did not fit'] = _unadmittedB
+            # Coverage: how much of the graph's L3 footprint the harvest can even see,
+            # and how much is left at L3 after promotion. Without this the reported
+            # percentage is a share of the measured subset, not of the real traffic.
+            _allL3 = _allL3B = 0
+            _leftL3 = _leftL3B = 0
+            _seen = set(self.fetchBytes or {})
+            _coveredB = _uncoveredB = 0
+            for _nm, _bf in list(ctxt.globalObjects.items()) + list(ctxt.localObjects.items()):
+                if getattr(_bf, '_memoryLevel', None) != 'L3':
+                    continue
+                try:
+                    _sz = self._bufferSize(_bf)
+                except Exception:
+                    continue
+                _leftL3 += 1
+                _leftL3B += _sz
+                if _nm in _seen:
+                    _coveredB += _sz
+                else:
+                    _uncoveredB += _sz
+            print(f"  [PromoteTensorsToL2] CENSUS still-at-L3 n={_leftL3} bytes={_leftL3B:,} "
+                  f"(harvest-covered {_coveredB:,}, harvest-blind {_uncoveredB:,})")
+            print(f"  [PromoteTensorsToL2] CENSUS candidates={len(candidates)} "
+                  f"promoted={len(promoted)}")
+            for _r in sorted(_censusN, key = lambda k: -_censusB[k]):
+                if _censusN[_r]:
+                    print(f"  [PromoteTensorsToL2] CENSUS   {_r:<28} "
+                          f"n={_censusN[_r]:<5} bytes={_censusB[_r]:,}")
 
         print(f"  [PromoteTensorsToL2] promoted {len(promoted)} tensors, "
               f"{l2_used} / {self.l2Budget} bytes (already={already_l2}, "
               f"new_const={const_used}, var_peak={final_var_peak}, "
               f"strategy={self.strategy!r})")
+
+        # Off-chip traffic the promotion removes. Only meaningful against measured
+        # per-tensor traffic: derived from consuming-node counts it would report the
+        # schedule-granularity figure, which understates every tensor an operator
+        # re-reads once per tile.
+        if self.fetchBytes:
+            savedBytes = sum(self.fetchBytes.get(name, 0) for name, _ in promoted)
+            totalBytes = sum(self.fetchBytes.values())
+            share = 100 * savedBytes / totalBytes if totalBytes else 0.0
+            print(f"  [PromoteTensorsToL2] off-chip traffic removed: {savedBytes} B "
+                  f"of {totalBytes} B ({share:.1f}%), measured")
 
         # Per-buffer dump for CI diagnostic. Lists each promoted buffer's
         # size, kind (const/var), lifetime window, and consumer node ops so we

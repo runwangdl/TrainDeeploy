@@ -112,7 +112,9 @@ jobs:
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-markers: "gap9_tiled and promote and training and singlebuffer"
 
-  # L3 training + PromoteTensorsToL2 + double-buffering combined (CCT)
+  # L3 training + PromoteTensorsToL2 + double-buffering combined. This is the
+  # best-latency deployment of Autoencoder, CCT and MobileNetV1 (traffic-per-peak
+  # with measured Q(t), per-model L2 budget; see L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS).
   gap9-training-tiled-promote-doublebuffer:
     needs: select-env
     uses: ./.github/workflows/_runner-gap9-tiled.yml

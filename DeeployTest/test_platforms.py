@@ -1394,6 +1394,15 @@ def test_gap9_tiled_training_l2_singlebuffer(test_params, deeploy_test_dir, tool
     test_name, l1, _config_name = test_params
     overrides = GAP9_TRAINING_MODEL_OVERRIDES.get(test_name, {})
     gap9_cmake_args = cmake_args + [f"NUM_CORES={GAP9_TILED_DEFAULT_CORES}"]
+    # Same per-model cluster stacks as the L3 jobs. Without them the SDK-default
+    # stacks eat the L1 the arena needs: ResNet-8 at 122000 asks for 121,984 B and
+    # only fits next to cc 4096 + 8 x 512 (130,176 < 131,072).
+    cc_stack = overrides.get("cc_stack")
+    if cc_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"CC_STACK_SIZE={cc_stack}"]
+    slave_stack = overrides.get("slave_stack")
+    if slave_stack is not None:
+        gap9_cmake_args = gap9_cmake_args + [f"SLAVESTACKSIZE={slave_stack}"]
     config = create_test_config(
         test_name = test_name,
         platform = "GAP9",
@@ -1645,7 +1654,10 @@ def test_gap9_tiled_training_promote_l3_doublebuffer(test_params, deeploy_test_d
         tiling = True,
         cores = GAP9_TILED_DEFAULT_CORES,
         l1 = l1,
-        l2 = 1024000,
+        # Promotion budget = l2 - headroom. The physical L2 is 1,572,864 B but the
+        # static section (code, runtime, the L2 test data) differs per model, so
+        # models whose best deployment fills it say so in the overrides.
+        l2 = overrides.get("promote_l2", 1024000),
         default_mem_level = "L3",
         double_buffer = True,
         training = True,
@@ -1663,6 +1675,7 @@ def test_gap9_tiled_training_promote_l3_doublebuffer(test_params, deeploy_test_d
         # "Initializing TrainingNetwork" (confirmed by fc/insn ring-trace).
         # 700000 promotes less (var_peak ~272 KB) so init fits; still the full
         # DB+promote win (~336M/4-step). DB staging is fine — more free L2 helps.
-        promote_to_l2_headroom = overrides.get("promote_headroom", 700000),
+        promote_to_l2_headroom = overrides.get("promote_headroom_db", overrides.get("promote_headroom", 700000)),
+        promote_to_l2_fetch_bytes = overrides.get("promote_fetch_bytes"),
     )
     run_and_assert_test(test_name, config, skipgen, skipsim, metric_section = "GAP9 L3 training promote+DB cycles")

@@ -32,6 +32,36 @@ from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
 
 
+def _loadFetchBytes(path):
+    """Per-tensor L3<->L2 traffic measured on a run with nothing promoted.
+
+    Residency ranks candidates by traffic saved per byte of L2 occupied, and the
+    traffic a tensor causes depends on the tiling solution: the L3->L2 DMA sits
+    inside the per-tile loop, so an operand re-read on every tile is fetched once
+    per tile. That count does not exist until tiling has run, which is after
+    promotion -- so it is measured in a separate pass over the same graph with
+    every tensor still in L3, which is exactly the condition Q(t) is defined
+    under, and handed back in through this file.
+
+    Absent, promotion falls back to counting consuming nodes, as before.
+    """
+    if not path:
+        return None
+    with open(path) as handle:
+        payload = json.load(handle)
+    traffic = payload.get("traffic", payload)
+    # Q(t) must be the traffic that promoting t REMOVES, i.e. the bytes t moves
+    # across the off-chip boundary. Verified by re-harvesting a promoted build:
+    # promotion drives the L3 figure to ~0 (Autoencoder 685,074 -> 4) while the
+    # L2 figure only falls by the part that stopped coming from L3, and the L1
+    # figure does not move at all -- every tile is still staged into L1, only its
+    # source changes. Scoring against the L2 table therefore mis-states the
+    # objective; the level promotion empties is the one to read.
+    if isinstance(traffic, dict) and any(k in traffic for k in ("L3", "L2")):
+        traffic = traffic.get("L3") or traffic["L2"]
+    return {name: value for name, value in traffic.items() if isinstance(value, int)}
+
+
 def generateTiledTrainingNetwork(args) -> None:
     log.debug("Arguments: %s", args)
 
@@ -146,6 +176,7 @@ def generateTiledTrainingNetwork(args) -> None:
                 includeActivations = args.promoteToL2IncludeActivations,
                 maxBufferBytes = args.promoteToL2MaxBufferBytes,
                 minBufferBytes = args.promoteToL2MinBufferBytes,
+                fetchBytes = _loadFetchBytes(getattr(args, 'promoteToL2FetchBytes', None)),
             ))
     deployer = MemoryDeployerWrapper(deployer, annotation_passes)
 
@@ -298,8 +329,16 @@ if __name__ == '__main__':
     parser.add_argument('--promoteToL2Strategy',
                         type = str,
                         default = 'cycle-aware',
-                        choices = ['cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest', 'random'],
+                        choices = [
+                            'traffic-per-peak', 'cycle-aware', 'greedy-score', 'knapsack-ratio', 'smallest', 'largest',
+                            'random'
+                        ],
                         help = 'Selection strategy for PromoteTensorsToL2')
+    parser.add_argument('--promoteToL2FetchBytes',
+                        type = str,
+                        default = None,
+                        help = 'JSON of measured per-tensor L3<->L2 traffic (from a no-promotion run, '
+                        'DEEPLOY_FETCH_HARVEST); replaces the consuming-node count in the promotion score')
     parser.add_argument('--promoteToL2IncludeActivations',
                         action = 'store_true',
                         default = True,
