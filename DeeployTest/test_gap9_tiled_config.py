@@ -145,7 +145,8 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 #   DS-CNN-S     L2 single-buffer, no promotion                       128000   10,245,171   27.7
 #   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,157,266  116.6
 #   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,390,595   20.0
-#   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   45,955,002  124.2
+#   MobileNetV1  L3+DB+promote traffic-per-peak, l2=1572864 hr=500000  116000   45,955,002* 124.2
+#                (* measured at l2=1024000; the 1.5 MB budget is not yet measured)
 #   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   63,296,740  171.1
 #
 # DS-CNN and ResNet-8 are the L2 list above; the other three are
@@ -249,7 +250,7 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 #   model        l2       headroom  promoted            traffic removed  cycles/step
 #   Autoencoder  1572864  131072    51 t, 1,064,960 B   57.8%             7,390,595
 #   CCT          1572864  600000    121 t, 929,552 B    52.8%            63,296,740
-#   MobileNetV1  1024000  500000    76 t, 523,232 B     27.6%            45,955,002
+#   MobileNetV1  1572864  500000    (l2 1024000: 76 t, 523,232 B, 27.6%, 45,955,002)
 #
 # MobileNetV1 needs the promoted-tile offset fix (SingleBufferingTilingCodeGeneration
 # ._promotedByteOffsets): before it, promoting any activation read by a 3x3
@@ -303,9 +304,11 @@ TRAINING_MODEL_OVERRIDES = {
         # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
-        # promote+DB with the offset fix: 500000 (budget 524,000, promotes 523,232 B,
-        # 27.6% of the off-chip traffic). The arena ceiling is ~1,086,688 B
-        # (static L2 486,176 B); the budget can still grow, not swept yet.
+        # promote+DB with the offset fix: the whole 1.5 MB with 500000 headroom
+        # (budget 1,072,864 B). Measured so far at l2 1024000 / hr 500000 (budget
+        # 524,000: 523,232 B promoted, 27.6% of the off-chip traffic removed,
+        # 45,955,002 cycles/step); the larger budget is the paper configuration.
+        "promote_l2": 1572864,
         "promote_headroom_db": 500000,
         "promote_fetch_bytes": "Tests/Models/Training/MobileNetV1/mobilenetv1_train/fetch_bytes.json",
         # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
