@@ -53,14 +53,24 @@ class InPlaceAccumulatorV2TileConstraint(BOPTileConstraint):
 
     @classmethod
     def addPolicyConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
-        """Pin dim 1 full for 2D tensors → tile only along dim 0 → fewer tiles.
+        """Tile the elementwise accumulator as coarsely as its rank allows.
 
         InPlaceAccumulatorV2 is elementwise (acc += grad), each element
-        independent. Without this, the solver produces 256+ tiny tiles
-        where 91% of time is DMA overhead.
+        independent, and every tile pays a full staging round trip. Left free,
+        the solver produces tiny tiles where most of the time is DMA overhead:
+
+        - rank 1 (bias and norm gradients): keep whole. CCT-2's eight [128]
+          biases were split into single-element tiles, 81% of its accumulation
+          time. The largest rank-1 accumulator across the five benchmark models
+          is 640 elements, so accum + gradient always fit in L1.
+        - rank 2: pin dim 1, so tiles are whole rows.
         """
         accumName = parseDict[cls.dataIn1Name]
         shape = ctxt.lookup(accumName).shape
+
+        if not isinstance(shape, int) and len(shape) == 1:
+            dim0Var = tilerModel.getTensorDimVar(accumName, 0)
+            tilerModel.addConstraint(dim0Var == shape[0])
 
         if not isinstance(shape, int) and len(shape) == 2:
             dim1Var = tilerModel.getTensorDimVar(accumName, 1)
