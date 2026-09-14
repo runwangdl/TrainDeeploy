@@ -40,6 +40,10 @@ _BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s
 # records a pre-existing state, it does not accept a regression.
 #
 # Each entry is (test-function substring, parameter-id substring, reason).
+#
+# ResNet-8 promote (SB and DB) used to be listed here as an "FP32 accumulation
+# order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
+# SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
 # ---------------------------------------------------------------------------
 _LORA_FIXTURE_REASON = ("fixture references are wrong, not the deployment: CCT_LoRA_R1 and "
                         "CCT_QLORA_FT ship byte-identical inputs.npz and outputs.npz "
@@ -49,20 +53,10 @@ _LORA_FIXTURE_REASON = ("fixture references are wrong, not the deployment: CCT_L
                         "is 0.12-0.50, which no defensible tolerance covers. Fix is to regenerate "
                         "the references from each graph.")
 
-_RESNET8_PROMOTE_REASON = ("PromoteTensorsToL2 shifts ResNet-8's FP32 accumulation order: the step-0 "
-                           "forward alone is off by 8.7e-4 against a 1e-3 tolerance, where plain L3 is "
-                           "bit-exact, and steps 1-3 drift to 0.005-0.025. Reproduced 3/3 with the same "
-                           "3-of-4 count. MobileNetV1 and CCT-2 take the same promote path and stay "
-                           "within 1e-4, so this looks specific rather than inherent. Not on the "
-                           "critical path -- ResNet-8's fastest verified configuration is on-chip L2 "
-                           "(116.2 ms), which is both faster than promote and numerically clean.")
-
 _KNOWN_FAILURES = [
     ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
     ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
     ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_FIXTURE_REASON),
-    ("test_gap9_tiled_training_promote_l3_singlebuffer", "ResNet8", _RESNET8_PROMOTE_REASON),
-    ("test_gap9_tiled_training_promote_l3_doublebuffer", "ResNet8", _RESNET8_PROMOTE_REASON),
 ]
 
 
