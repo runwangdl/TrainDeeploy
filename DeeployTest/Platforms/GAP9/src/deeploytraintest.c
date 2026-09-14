@@ -377,7 +377,10 @@ static void CompareLossesOnCluster(void *args) {
     printf("  [loss %u] computed=%.6f  ref=%.6f  diff=%.6f  TOL=%.6f\r\n", i,
            (double)a->computed[i], (double)a->reference[i], (double)diff,
            (double)tol);
-    if (diff > tol) {
+    /* Written as !(diff <= tol), not (diff > tol): every comparison with NaN is
+ * false, so a NaN loss passed the old check and the board reported
+ * "Errors: 0 out of 4" over four NaN losses. */
+    if (!(diff <= tol)) {
       errors++;
     }
   }
