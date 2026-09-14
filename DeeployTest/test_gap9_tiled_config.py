@@ -123,7 +123,11 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # returns NULL, nothing checks it, and the wild pointer surfaces later as
     # "Allocation failed for allocator 2" followed by an Invalid access -- randomly,
     # because a different search result fits. Same reasoning as CCT_QLORA_FT below.
-    "Models/Training/ResNet8/resnet8_train": [118000],
+    # 122000: the best-latency deployment (43,157,266 cycles/step, 116.6 ms). The
+    # 118000 this entry used before guarded against the random-max search landing
+    # on a 121,984 B arena that does not fit the 118,672 B the L1 allocator has
+    # free (paragraph above); the paper configuration takes that risk.
+    "Models/Training/ResNet8/resnet8_train": [122000],
     # CCT-QLoRA on-chip. The frozen backbone is int8 and its Dequant is folded into
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # trainable_bytes is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
@@ -133,6 +137,19 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # fit alongside them.
     "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [116000],
 }
+
+# Best-latency deployment of the five paper networks (gvsoc, 8 cores, Errors 0/4;
+# per-step = (train + opt cycles) / 4, ms at 370 MHz):
+#
+#   model        deployment                                           L1      cycles/step   ms
+#   DS-CNN-S     L2 single-buffer, no promotion                       128000   10,245,171   27.7
+#   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,157,266  116.6
+#   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,390,595   20.0
+#   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   45,955,002  124.2
+#   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   63,296,740  171.1
+#
+# DS-CNN and ResNet-8 are the L2 list above; the other three are
+# L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS below.
 
 # L3 models: ResNet8, MobileNetV1, CCT exceed 1 MB L2 — weights spill to L3.
 # L1 budgets are the validated best-performing values with the scatter ConvGradX
@@ -222,22 +239,29 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 }
 
 # Training + PromoteTensorsToL2 + double-buffering combined.
-# Both CCT and ResNet8 pass thanks to the InitNetwork pi_l2_malloc-before-
-# cl_ram_malloc hoist (codeGenerateTraining._hoistL2AllocsBeforeL3), which fixes
-# the FC/CC pulp-os L2-allocator freelist race that previously corrupted the FC
-# RTOS event list -> os_evt_release deadlock at init (this is why ResNet8
-# promote+DB "never completed" and why CCT smallest used to hang). Per-model
-# strategy: CCT cycle-aware (~336M/4-step), ResNet8 smallest (~247.6M/4-step;
-# cycle-aware promotes 0 for ResNet8). headroom 700000 (set in the test) leaves
-# enough L2 for the doubled DB staging buffers.
+# This is the best-latency deployment of the three L3 networks, so the job doubles
+# as the performance regression for them: `traffic-per-peak` ranks candidates by
+# measured L3<->L2 traffic per byte of L2 occupied (fetch_bytes.json next to each
+# fixture, harvested with DEEPLOY_FETCH_HARVEST on the same deployment with nothing
+# promoted), and the per-model l2 / headroom in TRAINING_MODEL_OVERRIDES set the
+# promotion budget. cycles/step on gvsoc, 8 cores, Errors 0/4:
+#
+#   model        l2       headroom  promoted            traffic removed  cycles/step
+#   Autoencoder  1572864  131072    51 t, 1,064,960 B   57.8%             7,390,595
+#   CCT          1572864  600000    121 t, 929,552 B    52.8%            63,296,740
+#   MobileNetV1  1024000  500000    76 t, 523,232 B     27.6%            45,955,002
+#
+# MobileNetV1 needs the promoted-tile offset fix (SingleBufferingTilingCodeGeneration
+# ._promotedByteOffsets): before it, promoting any activation read by a 3x3
+# depthwise conv gave Errors 4/4 and the entry had to exclude the stem.
+# ResNet8 deploys on-chip (L2 list above); its entry here is a regression of the
+# promote+DB path, not its best configuration, and keeps "smallest" (cycle-aware
+# promotes 0 tensors for it).
 L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS = {
-    # Autoencoder's best measured config: 21.8M/4-step against 36.6M for L3
-    # single-buffer (-40%). "smallest" -- cycle-aware has nothing to weigh on a
-    # graph whose cost is dominated by parameter transfer, not by layer cycles.
-    "Models/Training/Autoencoder/autoencoder_train": [(122000, "smallest", True),],
-    "Models/Training/CCT/cct_train": [(122000, "cycle-aware", True),],
+    "Models/Training/Autoencoder/autoencoder_train": [(122000, "traffic-per-peak", True),],
+    "Models/Training/CCT/cct_train": [(122000, "traffic-per-peak", True),],
     "Models/Training/ResNet8/resnet8_train": [(122000, "smallest", True),],
-    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "smallest", True),],
+    "Models/Training/MobileNetV1/mobilenetv1_train": [(116000, "traffic-per-peak", True),],
 }
 
 TRAINING_MODEL_OVERRIDES = {
@@ -247,6 +271,12 @@ TRAINING_MODEL_OVERRIDES = {
         # L3 model now: arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072.
         "cc_stack": 4096,
         "slave_stack": 512,
+        # promote+DB: the whole 1.5 MB, 131072 headroom. The promoted set saturates
+        # at 1,064,960 B (hr 400000 promotes exactly the same tensors), so this is
+        # a clean upper bound, not a cliff. static L2 224,704 B leaves the room.
+        "promote_l2": 1572864,
+        "promote_headroom_db": 131072,
+        "promote_fetch_bytes": "Tests/Models/Training/Autoencoder/autoencoder_train/fetch_bytes.json",
     },
     "Models/Training/DSCNN/dscnn_train": {
         # Cluster stacks in L1 rather than L2 (see the ResNet8 entry for the
@@ -272,6 +302,11 @@ TRAINING_MODEL_OVERRIDES = {
         # keeps it below the runtime L2-staging cliff (DB doubles staging: promote+DB
         # fails ≥~500KB, promote-SB ≥~800KB) -> promote+DB ~-6.8% vs SB.
         "promote_headroom": 700000,
+        # promote+DB with the offset fix: 500000 (budget 524,000, promotes 523,232 B,
+        # 27.6% of the off-chip traffic). The arena ceiling is ~1,086,688 B
+        # (static L2 486,176 B); the budget can still grow, not swept yet.
+        "promote_headroom_db": 500000,
+        "promote_fetch_bytes": "Tests/Models/Training/MobileNetV1/mobilenetv1_train/fetch_bytes.json",
         # arena 116000 + cc 8192 + slave 512*8 = 128288 < 131072 -> L1 stacks fit.
         # L1 vs L2 stacks: 53.1M vs 68.7M cyc/step (-22.7%).
         "slave_stack": 512,
@@ -290,6 +325,12 @@ TRAINING_MODEL_OVERRIDES = {
         #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
         # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
         "slave_stack": 512,
+        # promote+DB: the whole 1.5 MB with 600000 headroom (budget 972,864 B,
+        # promotes 929,552 B). 600000 is the floor: at 400000 the pass promotes
+        # 1,126,160 B and the runtime L2 allocation fails (static L2 281,056 B).
+        "promote_l2": 1572864,
+        "promote_headroom_db": 600000,
+        "promote_fetch_bytes": "Tests/Models/Training/CCT/cct_train/fetch_bytes.json",
     },
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
         "tolerance": 5e-3,
