@@ -117,6 +117,26 @@ class PromoteTensorsToL2(SequentialPass):
         'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity', 'BatchNormInternal', 'BatchNormalizationGrad',
         'LayerNormalization', 'LayerNormalizationGrad'
     }
+    # The pointer-aliasing subset of _SKIP_OPS: output = view of input[0].
+    _ALIAS_OPS = {'Reshape', 'Squeeze', 'Unsqueeze', 'Flatten', 'Identity'}
+
+    class _AliasGroup:
+        """One promotion candidate standing for a closure of buffers that share storage."""
+
+        def __init__(self, name: str, members: List[VariableBuffer], lifetime, flat: bool):
+            self.name = name
+            self.members = members
+            self._lifetime = lifetime
+            self._flat = flat
+
+        @property
+        def _memoryLevel(self):
+            return self.members[0]._memoryLevel
+
+        @_memoryLevel.setter
+        def _memoryLevel(self, level):
+            for m in self.members:
+                m._memoryLevel = level
 
     def __init__(self,
                  l2Size: int,
@@ -230,7 +250,46 @@ class PromoteTensorsToL2(SequentialPass):
         # LayerNormalization and their grads).
         import os as _os1
         _keep = _os1.environ.get('DEEPLOY_PROMOTE_SKIP_OPS_KEEP')
-        _skipOps = set(_keep.split(',')) if _keep else self._SKIP_OPS
+        _skipOps = set(_keep.split(',')) if _keep else set(self._SKIP_OPS)
+
+        # Alias groups (DEEPLOY_PROMOTE_ALIAS_GROUPS=1). Reshape / Squeeze / Unsqueeze /
+        # Flatten / Identity emit `out = in`: the output is a view of the input's storage
+        # (the PULP ReshapeTemplate records it as out._alias = in.name at bind time).
+        # Promoting one side without the other hands a HyperRAM offset to the cluster DMA
+        # as if it were an L2 address (CCT-2 with the filter off: "Got error during
+        # transfer (addr: 0x1ff3e98)"). With grouping on, the whole alias closure is ONE
+        # candidate -- one size, the union of the lifetimes, the sum of the measured
+        # traffic -- and _memoryLevel is set on every member together; the alias ops then
+        # leave the skip set (the multi-output BatchNorm / LayerNorm entries stay unless
+        # DEEPLOY_PROMOTE_SKIP_OPS_KEEP says otherwise). The pool packer in
+        # TilerExtension gives a view the slot of its root, so a group costs its size once.
+        _groupsOn = bool(_os1.environ.get('DEEPLOY_PROMOTE_ALIAS_GROUPS'))
+        _parent: Dict[str, str] = {}
+
+        def _find(x: str) -> str:
+            while _parent.get(x, x) != x:
+                _parent[x] = _parent.get(_parent[x], _parent[x])
+                x = _parent[x]
+            return x
+
+        def _union(a: str, b: str):
+            ra, rb = _find(a), _find(b)
+            _parent.setdefault(a, a)
+            _parent.setdefault(b, b)
+            if ra != rb:
+                _parent[rb] = ra
+
+        if _groupsOn:
+            if not _keep:
+                _skipOps -= self._ALIAS_OPS
+            for node in graph.nodes:
+                if node.op in self._ALIAS_OPS and node.inputs and node.outputs \
+                        and node.inputs[0] is not None and node.outputs[0] is not None:
+                    _union(node.inputs[0].name, node.outputs[0].name)
+            for _nm, _bf in list(ctxt.globalObjects.items()) + list(ctxt.localObjects.items()):
+                _al = getattr(_bf, '_alias', None)
+                if _al:
+                    _union(_nm, _al)
 
         skip_tensors: set = set()
         for node in graph.nodes:
@@ -353,6 +412,42 @@ class PromoteTensorsToL2(SequentialPass):
                     continue
                 accesses = self._accesses(name, size, buf)
                 candidates.append((name, buf, size, accesses))
+
+        if _groupsOn:
+            # Merge the candidates of one alias closure into one candidate. Every buffer of
+            # the closure that exists in the context must itself be a candidate -- otherwise
+            # the storage would end up split across levels, which is the crash we avoid.
+            _known = set(_parent)
+            _inCtxt = lambda n: n in ctxt.globalObjects or n in ctxt.localObjects
+            _byRoot: Dict[str, list] = {}
+            for c in candidates:
+                _byRoot.setdefault(_find(c[0]), []).append(c)
+            _closure: Dict[str, set] = {}
+            for n in _known:
+                if _inCtxt(n):
+                    _closure.setdefault(_find(n), set()).add(n)
+            _merged = []
+            for root, members in _byRoot.items():
+                names = {m[0] for m in members}
+                need = _closure.get(root, names)
+                if len(members) == 1 and len(need) <= 1:
+                    _merged.append(members[0])
+                    continue
+                if names != need:
+                    for m in members:
+                        _rej('alias group partly ineligible', m[2])
+                    continue
+                size = max(m[2] for m in members)
+                Q = sum(m[3] * m[2] for m in members)
+                lts = [getattr(m[1], '_lifetime', None) for m in members]
+                lt = None if any(l is None for l in lts) else (min(l[0] for l in lts), max(l[1] for l in lts))
+                flat = any((isinstance(m[1], ConstantBuffer) and not isinstance(m[1], _ReferenceBuffer))
+                           or m[0] in ctxt.globalObjects for m in members)
+                rootName = ctxt.dealiasBuffer(members[0][0]) if hasattr(members[0][1], '_alias') else root
+                if rootName not in names:
+                    rootName = members[0][0]
+                _merged.append((rootName, self._AliasGroup(rootName, [m[1] for m in members], lt, flat), size, Q / size))
+            candidates = _merged
 
         if self.strategy == 'cycle-aware':
             candidates.sort(key = lambda x: x[3] * (self.setupCycles + x[2] / self.bw) / max(x[2], 1), reverse = True)
@@ -523,7 +618,7 @@ class PromoteTensorsToL2(SequentialPass):
         def _isFlat(buf, lt):
             """True if the candidate must be charged its full size at every step."""
             return (isinstance(buf, ConstantBuffer) and not isinstance(buf, _ReferenceBuffer)) \
-                or lt is None or _isStandaloneGraphIO(buf)
+                or lt is None or _isStandaloneGraphIO(buf) or getattr(buf, '_flat', False)
 
         if self.strategy == 'traffic-per-peak':
             # Residency as the paper states it: repeatedly admit
@@ -626,7 +721,11 @@ class PromoteTensorsToL2(SequentialPass):
                       f"{'ratio-greedy' if _ratio[1] >= _dense[1] else 'descending-Q'}")
             for _nm, _bf, _sz in _chosen:
                 _bf._memoryLevel = 'L2'
-                promoted.append((_nm, _sz))
+                if isinstance(_bf, self._AliasGroup):
+                    for _m in _bf.members:
+                        promoted.append((_m.name, self._bufferSize(_m)))
+                else:
+                    promoted.append((_nm, _sz))
             var_blocks = _blocks
             const_used = _constUsed
         else:

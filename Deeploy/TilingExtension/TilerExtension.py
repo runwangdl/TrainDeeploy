@@ -406,7 +406,25 @@ class Tiler():
             if not promoted:
                 continue
 
-            blocks = [MemoryBlock(b.name, level, b._lifetime, None) for b in promoted]
+            # A promoted view (out._alias = in.name, from Reshape-like ops) shares the storage
+            # of its root: extend the root's lifetime over its views, pack only the roots, and
+            # hand each view the root's slot afterwards. Without this every view would get its
+            # own pool slot and the group would cost its size twice.
+            byName = {b.name: b for b in promoted}
+            views: Dict[str, str] = {}
+            for b in promoted:
+                if hasattr(b, "_alias"):
+                    try:
+                        root = ctxt.dealiasBuffer(b.name)
+                    except Exception:
+                        root = None
+                    if root in byName and root != b.name:
+                        views[b.name] = root
+            lifetimes = {b.name: tuple(b._lifetime) for b in promoted}
+            for v, r in views.items():
+                lifetimes[r] = (min(lifetimes[r][0], lifetimes[v][0]), max(lifetimes[r][1], lifetimes[v][1]))
+
+            blocks = [MemoryBlock(b.name, level, lifetimes[b.name], None) for b in promoted if b.name not in views]
             capacity = self.memoryHierarchy.memoryLevels[level].size
 
             packed = self.minimalloc(blocks, ctxt, None, capacity, level)
@@ -427,6 +445,7 @@ class Tiler():
             poolBuf._memoryLevel = level
             ctxt.globalObjects.move_to_end(poolBuf.name, last = False)
 
+            packedByName = {blk.name: blk for blk in packed if blk._addrSpace is not None}
             for blk in packed:
                 if blk._addrSpace is None:
                     continue
@@ -436,6 +455,16 @@ class Tiler():
                 buf._packedIntoPool = poolName
                 buf.allocTemplate = NodeTemplate(" ${name} = (${type.typeName}) " +
                                                  f"((char*){str(poolBuf._instance)} + {offset});")
+                buf.deallocTemplate = _deallocTemplate
+            for v, r in views.items():
+                if r not in packedByName:
+                    continue
+                blk = packedByName[r]
+                buf = ctxt.lookup(v)
+                buf._addrSpace = blk._addrSpace
+                buf._packedIntoPool = poolName
+                buf.allocTemplate = NodeTemplate(" ${name} = (${type.typeName}) " +
+                                                 f"((char*){str(poolBuf._instance)} + {blk._addrSpace[0]});")
                 buf.deallocTemplate = _deallocTemplate
 
             log.info(f"  [PromotedPool] Packed {len(promoted)} activations at {level} "
