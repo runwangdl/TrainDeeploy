@@ -25,6 +25,7 @@ Usage
 """
 
 import hashlib
+import re
 import os
 import sys
 from pathlib import Path
@@ -44,7 +45,7 @@ from Deeploy.Logging import DEFAULT_LOGGER as log
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
 from Deeploy.MemoryLevelExtension.NetworkDeployers.MemoryLevelDeployer import MemoryDeployerWrapper
 from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateDefaultMemoryLevel, \
-    AnnotateIOMemoryLevel, PromoteTensorsToL2
+    AnnotateIOMemoryLevel, PinIOMemoryLevel, PromoteTensorsToL2
 from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
@@ -114,6 +115,28 @@ def generateTiledOptimizerNetwork(args) -> None:
                 maxBufferBytes = args.promoteToL2MaxBufferBytes,
                 minBufferBytes = args.promoteToL2MinBufferBytes,
             ))
+    # 6b. Share L2-resident training buffers with the optimizer. Every weight /
+    # gradient-accumulation buffer that PromoteTensorsToL2 hoisted into L2 in the
+    # TrainingNetwork is pinned to L2 here too, so the optimizer tiles it via
+    # mchan (L2<->L1) and _patch_shared_buffers can alias the pointer. Without
+    # this the harness copies each promoted weight L2->L3 before and L3->L2
+    # after every optimizer step (Autoencoder on the EVK: 3.4 ms/step).
+    l2_shared_inputs: set = set()
+    l2_shared_outputs: set = set()
+    _train_c = Path(args.dumpdir) / "TrainingNetwork.c"
+    _training_onnx = Path(args.training_dir) / "network.onnx" if args.training_dir else None
+    if (_train_c.exists() and _training_onnx and _training_onnx.exists()
+            and not os.environ.get("DEEPLOY_OPT_NO_L2_SHARE")):
+        _src = _train_c.read_text()
+        _promoted = {int(m) for m in re.findall(r"DeeployNetwork_input_(\d+)\s*=\s*\([^)]+\)\s*pi_l2_malloc\b", _src)}
+        _in_map, _out_map = build_shared_buffer_maps(str(_training_onnx), onnx_model)
+        l2_shared_inputs = {i for i, t in _in_map.items() if t in _promoted}
+        l2_shared_outputs = {j for j, t in _out_map.items() if t in _promoted}
+        pinned = [f"input_{i}" for i in sorted(l2_shared_inputs)] + [f"output_{j}" for j in sorted(l2_shared_outputs)]
+        if pinned:
+            annotation_passes.append(PinIOMemoryLevel(pinned, "L2"))
+            print(f"[TiledOptimizerNetwork] {len(l2_shared_inputs)} inputs / {len(l2_shared_outputs)} outputs "
+                  f"pinned to L2 (shared with promoted TrainingNetwork buffers)")
     deployer = MemoryDeployerWrapper(deployer, annotation_passes)
 
     # 7. Wrap with tiler. SB by default; --doublebuffer switches to TrainingDBTiler.
@@ -154,7 +177,8 @@ def generateTiledOptimizerNetwork(args) -> None:
 
     # 10. Generate OptimizerNetwork.c / OptimizerNetwork.h
     os.makedirs(args.dumpdir, exist_ok = True)
-    generateOptimizerTestNetwork(deployer, args.dumpdir, verbosityCfg, shared_input_map, shared_output_map)
+    generateOptimizerTestNetwork(deployer, args.dumpdir, verbosityCfg, shared_input_map, shared_output_map,
+                                 l2_shared_inputs = l2_shared_inputs, l2_shared_outputs = l2_shared_outputs)
 
     log.info(f"Tiled optimizer network code generated in: {args.dumpdir}")
     print(f"[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in {args.dumpdir}")
