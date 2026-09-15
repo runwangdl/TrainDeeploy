@@ -705,7 +705,9 @@ def build_shared_buffer_maps(train_onnx_path: str, opt_onnx_model) -> Tuple[Dict
 def _patch_shared_buffers(retStr: str,
                           shared_input_map: Dict[int, int],
                           shared_output_map: Dict[int, int],
-                          train_c_source: str = "") -> str:
+                          train_c_source: str = "",
+                          l2_shared_inputs=None,
+                          l2_shared_outputs=None) -> str:
     """Redirect optimizer I/O buffers to Training's already-allocated buffers.
 
     Must be called AFTER the _TRAIN_PREFIX → _OPT_PREFIX substitution so that
@@ -769,15 +771,18 @@ def _patch_shared_buffers(retStr: str,
         pat = rf'{_TRAIN_PREFIX}input_{train_idx}\s*=\s*\([^)]+\)\s*pi_l2_malloc\b'
         return bool(re.search(pat, train_c_source))
 
+    _l2_in = set(l2_shared_inputs or ())
+    _l2_out = set(l2_shared_outputs or ())
+
     def _make_replacement(symbol: str, kind: str, idx: int) -> Optional[str]:
         if kind == "input" and idx in shared_input_map:
             train_idx = shared_input_map[idx]
-            if _is_train_l2(train_idx):
-                return None  # Don't share: training buffer at L2, optimizer expects L3
+            if _is_train_l2(train_idx) and idx not in _l2_in:
+                return None  # Don't share: training buffer at L2, optimizer tiles it as L3
             return f'{symbol} = (float32_t *){_TRAIN_PREFIX}input_{train_idx};  /* shared with TrainingNetwork */'
         if kind == "output" and idx in shared_output_map:
             train_idx = shared_output_map[idx]
-            if _is_train_l2(train_idx):
+            if _is_train_l2(train_idx) and idx not in _l2_out:
                 return None
             return f'{symbol} = (float32_t *){_TRAIN_PREFIX}input_{train_idx};  /* in-place, shared with TrainingNetwork */'
         return None
@@ -1026,7 +1031,9 @@ def generateOptimizerNetworkImplementation(deployer: NetworkDeployer,
                                            verbosityCfg: CodeGenVerbosity,
                                            shared_input_map: Optional[Dict[int, int]] = None,
                                            shared_output_map: Optional[Dict[int, int]] = None,
-                                           train_c_source: Optional[str] = None) -> str:
+                                           train_c_source: Optional[str] = None,
+                                          l2_shared_inputs=None,
+                                          l2_shared_outputs=None) -> str:
     """Generate OptimizerNetwork.c.
 
     Parameters
@@ -1106,7 +1113,9 @@ void InitOptimizerNetwork(__attribute__((unused)) uint32_t core_id, __attribute_
     retStr = _patch_shared_buffers(retStr,
                                    shared_input_map or {},
                                    shared_output_map or {},
-                                   train_c_source = train_c_source or "")
+                                   train_c_source = train_c_source or "",
+                                   l2_shared_inputs = l2_shared_inputs,
+                                   l2_shared_outputs = l2_shared_outputs)
     # Redirect optimizer L1/L2 arena mallocs to reuse training arenas
     if train_c_source:
         retStr = _patch_shared_arenas(retStr, train_c_source)
@@ -1117,7 +1126,9 @@ def generateOptimizerTestNetwork(deployer: NetworkDeployer,
                                  dumpdir: str,
                                  verbosityCfg: CodeGenVerbosity,
                                  shared_input_map: Optional[Dict[int, int]] = None,
-                                 shared_output_map: Optional[Dict[int, int]] = None) -> None:
+                                 shared_output_map: Optional[Dict[int, int]] = None,
+                                 l2_shared_inputs=None,
+                                 l2_shared_outputs=None) -> None:
     """Generate OptimizerNetwork.h and OptimizerNetwork.c.
 
     Parameters
@@ -1153,7 +1164,7 @@ def generateOptimizerTestNetwork(deployer: NetworkDeployer,
         f.write(headerStr)
 
     implStr = generateOptimizerNetworkImplementation(deployer, verbosityCfg, shared_input_map, shared_output_map,
-                                                     train_c_source)
+                                                     train_c_source, l2_shared_inputs, l2_shared_outputs)
     with open(f'{dumpdir}/OptimizerNetwork.c', 'w') as f:
         f.write(implStr)
 

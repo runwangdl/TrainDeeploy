@@ -62,6 +62,28 @@ class AnnotateIOMemoryLevel(SequentialPass):
         return ctxt, graph
 
 
+class PinIOMemoryLevel(SequentialPass):
+    """Pin named graph I/O buffers to a memory level, unconditionally, on every
+    invocation of the annotation pipeline.
+
+    Used by the optimizer network: a weight or gradient-accumulation buffer that
+    PromoteTensorsToL2 hoisted into L2 in the *training* network is shared by
+    pointer with the optimizer, so the optimizer must tile it as L2-resident
+    (mchan L2<->L1) instead of staging it through L3.
+    """
+
+    def __init__(self, names, level: str):
+        super().__init__()
+        self.names = set(names)
+        self.level = level
+
+    def apply(self, ctxt: NetworkContext, graph: gs.Graph) -> Tuple[NetworkContext, gs.Graph]:
+        for name in self.names:
+            if name in ctxt.globalObjects:
+                ctxt.globalObjects[name]._memoryLevel = self.level
+        return ctxt, graph
+
+
 class PromoteTensorsToL2(SequentialPass):
     """Greedy L3→L2 tensor promotion with configurable selection strategies.
 
