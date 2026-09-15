@@ -291,6 +291,28 @@ class PromoteTensorsToL2(SequentialPass):
                 if _al:
                     _union(_nm, _al)
 
+        # Optimizer traffic (DEEPLOY_PROMOTE_OPTIMIZER_TRAFFIC=1). The harvest measures the
+        # training graph only; the optimizer is a separate network that per step reads every
+        # trainable weight and its gradient accumulator and writes the weight back. Q(t) of a
+        # trainable weight therefore gains 2 x size, that of an accumulator pair 1 x size --
+        # once the optimizer shares L2-resident graph I/O (PR #78) this traffic is really
+        # removed. The accumulator's output is an in-place view of its input
+        # (FloatInPlaceAccumulatorV2Template: data_out._alias = accum_buffer), so with alias
+        # groups the pair is one candidate; the pair has a single training-graph user, which
+        # the <=1-user rule below would reject, so accumulator I/O is exempted from it.
+        _optOn = bool(_os1.environ.get('DEEPLOY_PROMOTE_OPTIMIZER_TRAFFIC'))
+        _accIn: set = set()
+        _accIO: set = set()
+        for node in graph.nodes:
+            if 'Accumulator' in node.op and node.inputs and node.inputs[0] is not None:
+                _accIn.add(node.inputs[0].name)
+                _accIO.add(node.inputs[0].name)
+                for _o in node.outputs:
+                    if _o is not None:
+                        _accIO.add(_o.name)
+                        if _groupsOn:
+                            _union(node.inputs[0].name, _o.name)
+
         skip_tensors: set = set()
         for node in graph.nodes:
             if node.op in _skipOps:
@@ -396,7 +418,9 @@ class PromoteTensorsToL2(SequentialPass):
                 # the DMA STATUS bit forever -> silent hang.
                 # Training graph I/O (weights/grads) is multi-use and remains
                 # eligible: len(_users) >= 2.
-                if len(buf._users) <= 1 and not _os0.environ.get('DEEPLOY_PROMOTE_ALLOW_SINGLE_USE_IO'):
+                _accPair = _groupsOn and _optOn and name in _accIO
+                if len(buf._users) <= 1 and not _accPair \
+                        and not _os0.environ.get('DEEPLOY_PROMOTE_ALLOW_SINGLE_USE_IO'):
                     _rej('graph I/O with <=1 user', self._bufferSize(buf))
                     continue
                 size = self._bufferSize(buf)
@@ -411,6 +435,11 @@ class PromoteTensorsToL2(SequentialPass):
                 if size < self.minBufferBytes:
                     continue
                 accesses = self._accesses(name, size, buf)
+                if _optOn:
+                    if name in _accIn:
+                        accesses += 1.0          # SGD reads the accumulated gradient
+                    elif name not in _accIO and len(buf._users) >= 2:
+                        accesses += 2.0          # trainable weight: SGD reads and writes it
                 candidates.append((name, buf, size, accesses))
 
         if _groupsOn:
@@ -437,7 +466,12 @@ class PromoteTensorsToL2(SequentialPass):
                     for m in members:
                         _rej('alias group partly ineligible', m[2])
                     continue
-                size = max(m[2] for m in members)
+                # views packed into the pool share their root's slot (one size); graph I/O
+                # members are malloc'd individually, so a pair of them costs both
+                if all(m[0] in ctxt.globalObjects for m in members):
+                    size = sum(m[2] for m in members)
+                else:
+                    size = max(m[2] for m in members)
                 Q = sum(m[3] * m[2] for m in members)
                 lts = [getattr(m[1], '_lifetime', None) for m in members]
                 lt = None if any(l is None for l in lts) else (min(l[0] for l in lts), max(l[1] for l in lts))
