@@ -878,7 +878,18 @@ def _patch_shared_arenas(retStr: str, train_c_source: str) -> str:
     str
         Patched C source string.
     """
-    for level in ('L1',):
+    # The L2 arena is shared too when the training network is tiled from L3
+    # (MEMORYARENA_L3 present): its L2 arena is then pure tile staging, dead between
+    # kernels, and the optimizer's staging arena fits inside it. In L2-resident mode the
+    # training L2 arena holds the tensors themselves and must stay private.
+    # DEEPLOY_NO_SHARED_L2_ARENA=1 restores the L1-only behaviour.
+    levels = ['L1']
+    if 'DeeployNetwork_MEMORYARENA_L3' in train_c_source and not os.environ.get('DEEPLOY_NO_SHARED_L2_ARENA'):
+        _tr = re.search(r'DeeployNetwork_MEMORYARENA_L2\s*=.*?\*\s*(\d+)\)', train_c_source)
+        _op = re.search(r'DeeployOptNetwork_MEMORYARENA_L2\s*=.*?\*\s*(\d+)\)', retStr)
+        if _tr and _op and int(_op.group(1)) <= int(_tr.group(1)):
+            levels.append('L2')
+    for level in levels:
         train_sym = f'DeeployNetwork_MEMORYARENA_{level}'
         # Only alias if the training network actually has this arena
         if train_sym not in train_c_source:
