@@ -9,7 +9,8 @@ from typing import Dict, List, Optional, Tuple
 import onnx_graphsurgeon as gs
 
 from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import SequentialPass
-from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, TransientBuffer, VariableBuffer, _ReferenceBuffer
+from Deeploy.DeeployTypes import ConstantBuffer, NetworkContext, NodeTemplate, TransientBuffer, VariableBuffer, \
+    _ReferenceBuffer
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy
 
 
@@ -438,7 +439,7 @@ class PromoteTensorsToL2(SequentialPass):
                 if _optOn:
                     if name in _accIn:
                         accesses += 1.0          # SGD reads the accumulated gradient
-                    elif name not in _accIO and len(buf._users) >= 2:
+                    elif name not in _accIO and len(buf._users) >= 2 and getattr(buf, 'is_input', False):
                         accesses += 2.0          # trainable weight: SGD reads and writes it
                 candidates.append((name, buf, size, accesses))
 
@@ -466,12 +467,9 @@ class PromoteTensorsToL2(SequentialPass):
                     for m in members:
                         _rej('alias group partly ineligible', m[2])
                     continue
-                # views packed into the pool share their root's slot (one size); graph I/O
-                # members are malloc'd individually, so a pair of them costs both
-                if all(m[0] in ctxt.globalObjects for m in members):
-                    size = sum(m[2] for m in members)
-                else:
-                    size = max(m[2] for m in members)
+                # one size per group: pool views share their root's slot, and graph-I/O views
+                # are given the root's pointer instead of a malloc of their own (below)
+                size = max(m[2] for m in members)
                 Q = sum(m[3] * m[2] for m in members)
                 lts = [getattr(m[1], '_lifetime', None) for m in members]
                 lt = None if any(l is None for l in lts) else (min(l[0] for l in lts), max(l[1] for l in lts))
@@ -531,6 +529,8 @@ class PromoteTensorsToL2(SequentialPass):
         def _occupies_standalone_l2(buf) -> bool:
             if isinstance(buf, _ReferenceBuffer):
                 return False
+            if getattr(buf, '_aliasOfGlobal', None) is not None:
+                return False   # graph-I/O view carrying its root's pointer, no bytes of its own
             if isinstance(buf, TransientBuffer):
                 return False
             if "MEMORYARENA" in buf.name:
@@ -758,6 +758,23 @@ class PromoteTensorsToL2(SequentialPass):
                 if isinstance(_bf, self._AliasGroup):
                     for _m in _bf.members:
                         promoted.append((_m.name, self._bufferSize(_m)))
+                    # A group of graph I/O (accumulator in/out pair): the output is an in-place
+                    # view the kernel never writes, so it must carry the root's pointer rather
+                    # than a malloc of its own -- otherwise the harness reads an unwritten copy
+                    # (MobileNetV1: 2/4 wrong losses).
+                    _globals = [m for m in _bf.members if m.name in ctxt.globalObjects]
+                    if len(_globals) == len(_bf.members) and len(_globals) > 1:
+                        _roots = [m for m in _globals if m.name in _accIn] or \
+                                 [m for m in _globals if getattr(m, 'is_input', False)] or _globals[:1]
+                        _root = _roots[0]
+                        if hasattr(_root, '_instance'):
+                            for _v in _globals:
+                                if _v is _root:
+                                    continue
+                                _v.allocTemplate = NodeTemplate(" ${name} = (${type.typeName}) " +
+                                                                f"{str(_root._instance)};")
+                                _v.deallocTemplate = NodeTemplate("")
+                                _v._aliasOfGlobal = _root.name
                 else:
                     promoted.append((_nm, _sz))
             var_blocks = _blocks
