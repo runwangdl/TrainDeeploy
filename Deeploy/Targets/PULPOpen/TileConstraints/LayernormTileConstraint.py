@@ -74,8 +74,16 @@ class LayernormTileConstraint(TileConstraint):
             dataOutVar: tilingSolution.outputTensorMemoryConstraints[dataOutVar]
         }
 
-        varReplacement, tilingSchedules = super().wrapTilingSolution(singleOutputSolution, targetMemLevel, ctxt,
-                                                                     operatorRepresentation)
+        # Wrap unsanitized: when data_out is resident above targetMemLevel (PromoteTensorsToL2
+        # parked it in L2 while this wrap stages L3->L2) its base offset is [None] and
+        # sanitizeTilingSchedule removes its per-tile rectangles -- but mean / inv_std_dev may
+        # still live in L3 and need their own staging, whose rectangles are derived from the
+        # data_out tile. So derive them first, then sanitize.
+        varReplacement, tilingSchedules = super().wrapTilingSolution(singleOutputSolution,
+                                                                     targetMemLevel,
+                                                                     ctxt,
+                                                                     operatorRepresentation,
+                                                                     sanitize = False)
 
         # Extend each tiling schedule to include mean and inv_std_dev outputs.
         # Their tile rectangles are derived from data_out by dropping the features dim.
@@ -94,6 +102,8 @@ class LayernormTileConstraint(TileConstraint):
                     data_out_rect = step['data_out']
                     # mean/inv_std_dev: drop the last (features) dim from data_out tile
                     step[secondary] = HyperRectangle(data_out_rect.offset[:-1], data_out_rect.dims[:-1])
+
+        tilingSchedules = [TileConstraint.sanitizeTilingSchedule(schedule) for schedule in tilingSchedules]
 
         return varReplacement, tilingSchedules
 
