@@ -147,7 +147,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
 #   ResNet-8     on-chip L2 single-buffer, CHW, no promotion          122000   43,173,174  116.7
 #   Autoencoder  L3+DB+promote traffic-per-peak, l2=1572864 hr=131072  122000    7,398,196   20.0
 #   MobileNetV1  L3+DB+promote traffic-per-peak, hr=500000 (no skip)   116000   46,017,380  124.4
-#   CCT-2        L3+DB+promote traffic-per-peak, l2=1572864 hr=600000  122000   57,781,907  156.2
+#   CCT-2        L3+DB+promote traffic-per-peak + alias groups, hr=420000  122000   55,687,342  150.5
 #
 # DS-CNN and ResNet-8 are the L2 list above; the other three are
 # L3_DOUBLEBUFFER_TRAINING_PROMOTE_MODELS below.
@@ -249,7 +249,7 @@ L3_SINGLEBUFFER_TRAINING_PROMOTE_MODELS = {
 #
 #   model        l2       headroom  promoted            traffic removed  cycles/step
 #   Autoencoder  1572864  131072    51 t, 1,064,960 B   57.8%             7,390,595
-#   CCT          1572864  600000    121 t, 929,552 B    52.8%            57,781,907
+#   CCT          1572864  420000    280 t, 1,146,168 B  alias groups     55,687,342
 #   MobileNetV1  1024000  500000    76 t, 523,232 B     27.6%            45,955,002
 #
 # MobileNetV1 needs the promoted-tile offset fix (SingleBufferingTilingCodeGeneration
@@ -316,25 +316,40 @@ TRAINING_MODEL_OVERRIDES = {
         "slave_stack": 512,
     },
     "Models/Training/CCT/cct_train": {
-        "tolerance": 5e-3,
+        "tolerance":
+            5e-3,
         # cc_stack 4096 (was 8192): with promote_headroom 700000 the CC closure
         # chain no longer overflows at 4096 (the old 4096->os_evt_release deadlock
         # was a tighter-headroom scenario, since fixed). Dropping to 4096 frees the
         # L1 the slave stacks need: arena 122000 + cc 4096 + slave 512*8 = 130192
         # < 131072 -> L1 stacks fit, no arena cut, no tiling penalty. Verified
         # (build memcheck + sim) on SB, DB and promote+DB.
-        "cc_stack": 4096,
+        "cc_stack":
+            4096,
         # L1 slave stacks: measured cyc/step (N=2) on the CI best (promote+DB):
         #   cc8192 + L2 stacks            87.1M  (previous config)
         #   cc4096 + L1 stacks (this)     66.8M  -> -23.4%
         # Also helps single-buffer (95.8M -> 75.3M). promote+DB+L1 is CCT's best.
-        "slave_stack": 512,
-        # promote+DB: the whole 1.5 MB with 600000 headroom (budget 972,864 B,
-        # promotes 929,552 B). 600000 is the floor: at 400000 the pass promotes
-        # 1,126,160 B and the runtime L2 allocation fails (static L2 281,056 B).
-        "promote_l2": 1572864,
-        "promote_headroom_db": 600000,
-        "promote_fetch_bytes": "Tests/Models/Training/CCT/cct_train/fetch_bytes.json",
+        "slave_stack":
+            512,
+        # promote+DB, best deployment: alias-group promotion (Reshape-like views and
+        # the LayerNorm neighbours become candidates), optimizer traffic in Q, and
+        # headroom 420000 (budget 1,152,864 B, promotes 1,146,168 B). The optimizer
+        # shares the training network's L2 staging arena, which is what makes the
+        # smaller headroom fit: 23 KB of L2 left after init on gvsoc, 18 KB on the
+        # EVK. Before alias groups the floor was 600000 (at 400000 the runtime L2
+        # allocation failed).
+        "promote_l2":
+            1572864,
+        "promote_headroom_db":
+            420000,
+        "promote_fetch_bytes":
+            "Tests/Models/Training/CCT/cct_train/fetch_bytes.json",
+        "gen_args": [
+            "--promoteToL2AliasGroups",
+            "--promoteToL2OptimizerTraffic",
+            "--promoteToL2SkipOpsKeep=BatchNormInternal,BatchNormalizationGrad",
+        ],
     },
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
         "tolerance": 5e-3,
