@@ -167,9 +167,15 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     "Models/Training/ResNet8/resnet8_train": [122000],
     "Models/Training/MobileNetV1/mobilenetv1_train": [116000],
     "Models/Training/CCT/cct_train": [122000],
+    # One transformer block of the CCT-2 spec (same tokenizer, 64 tokens, frozen
+    # tokenizer). Errors 0/4 on gvsoc and on the GAP9 EVK: 46.4 M cycles per step on
+    # gvsoc, 57.8 M on the board (156 ms at 370 MHz).
+    "Models/Training/CCT_1/cct1_train": [122000],
     # Rank-4 LoRA on CCT-2 at the official spec (mlp_ratio=1), adapters on attention
-    # and FFN. 2292 KB peak, 54.5M cycles -- faster than full fine-tuning because the
-    # frozen base weights need no weight gradients.
+    # and FFN, regenerated with Onnx4Deeploy's lora_ffn/mlp_ratio keys (the adapter
+    # matrices are stored (D, r)/(r, D), so no Transpose is exported for them).
+    # 2616 KB planned L3 peak, 55.6M cycles -- faster than full fine-tuning because
+    # the frozen base weights need no weight gradients. Known failure, see conftest.
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": [122000],
     # The same model with its frozen backbone quantised to int8. Exercises the folded
     # Dequant path: without in-kernel dequantisation this model does not fit at all
@@ -351,8 +357,11 @@ TRAINING_MODEL_OVERRIDES = {
             "--promoteToL2SkipOpsKeep=BatchNormInternal,BatchNormalizationGrad",
         ],
     },
+    "Models/Training/CCT_1/cct1_train": {
+        "cc_stack": 4096,
+        "slave_stack": 512,
+    },
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": {
-        "tolerance": 5e-3,
         "cc_stack": 4096,
         "slave_stack": 512,
     },
@@ -363,11 +372,8 @@ TRAINING_MODEL_OVERRIDES = {
         # exits before producing any output.
         "cc_stack": 4096,
         "slave_stack": 512,
-        # int8 weights dequantised in-kernel; the tolerance covers per-tensor
-        # symmetric quantisation of the frozen backbone, not a looser kernel.
-        "tolerance": 5e-2,
-        "cc_stack": 4096,
-        "slave_stack": 512,
+        # The references are computed on the int8 backbone itself (weights
+        # fake-quantised before export), so no quantisation tolerance is needed.
     },
     "Models/Training/SleepConViT/sleepconvit_train": {
         "tolerance": 5e-3,

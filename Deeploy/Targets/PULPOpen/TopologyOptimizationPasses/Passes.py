@@ -40,6 +40,36 @@ class PULPConvKeepCHWPass(Pass):
 
 
 @contextagnostic
+class MaxPoolGradReadInputPass(Pass):
+    """Feed ``MaxPoolGrad`` the pooled input instead of the argmax mask.
+
+    ORT's gradient builder emits ``MaxPool(X) -> (Y, mask)`` and
+    ``MaxPoolGrad(dY, mask)``, the mask being an int64 argmax map. The PULP kernel
+    takes ``(dY, X)`` and recomputes the argmax from ``X`` instead, so the kernel test
+    and the kernel agree and only a trained graph disagrees: the mask is a second
+    MaxPool output no binding produces, and type checking stops on it. It shows up as
+    soon as a layer BEFORE a MaxPool is trained -- a CCT whose conv tokenizer is
+    fine-tuned. Reading ``X`` also keeps it cheaper: ``X`` is already live for the
+    ReLU gradient, whereas the mask would be an extra int64 map per pool.
+    """
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        producers = {o.name: n for n in graph.nodes for o in n.outputs if o is not None and o.name}
+        for node in graph.nodes:
+            if node.op != "MaxPoolGrad" or len(node.inputs) != 2:
+                continue
+            pool = producers.get(node.inputs[1].name)
+            if pool is None or pool.op != "MaxPool" or len(pool.outputs) < 2 or pool.outputs[1] is not node.inputs[1]:
+                continue
+            node.inputs[1] = pool.inputs[0]
+        for node in graph.nodes:
+            if node.op == "MaxPool" and len(node.outputs) > 1 and not any(len(o.outputs) for o in node.outputs[1:]):
+                node.outputs = node.outputs[:1]
+        graph.cleanup()
+        return graph
+
+
+@contextagnostic
 class TransposeGemmSquashPass(Pass):
     """Eliminate the materialised transposed weight ``W^T`` of a linear layer.
 

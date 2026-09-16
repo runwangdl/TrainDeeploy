@@ -45,18 +45,19 @@ _BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s
 # order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
 # SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
 # ---------------------------------------------------------------------------
-_LORA_FIXTURE_REASON = ("fixture references are wrong, not the deployment: CCT_LoRA_R1 and "
-                        "CCT_QLORA_FT ship byte-identical inputs.npz and outputs.npz "
-                        "(md5 2d0875bc../a01d0bba..) although their graphs differ -- 387 nodes with "
-                        "no quantisation vs 389 nodes with 14 Dequant. The quantised model is being "
-                        "checked against references generated from the float one; the measured error "
-                        "is 0.12-0.50, which no defensible tolerance covers. Fix is to regenerate "
-                        "the references from each graph.")
+_LORA_REASON = ("the LoRA training path is numerically wrong on GAP9. The references are right: both "
+                "fixtures were regenerated from their own graphs (the int8 one with the backbone "
+                "fake-quantised before export), and PyTorch reproduces the reference loss to 2e-7. "
+                "The device is off already at the first loss, before any update (CCT-2 LoRA: "
+                "5.7e-3 on gvsoc, 2.1e-4 on the EVK), and the error changes from build to build. "
+                "Full fine-tuning and last-block fine-tuning of the same model, which share every "
+                "op except the adapter branch, pass exactly, and the adapter branch on its own "
+                "(MatMul -> MatMul -> Mul -> Add, tiled, L2 and L3) passes too.")
 
 _KNOWN_FAILURES = [
-    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_FIXTURE_REASON),
+    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_REASON),
+    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_REASON),
+    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_REASON),
 ]
 
 
