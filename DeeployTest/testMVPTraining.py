@@ -168,6 +168,15 @@ def generateTiledTrainingNetwork(args) -> None:
     ]
     if getattr(args, 'promoteToL2', False):
         assert args.defaultMemLevel == "L3", "--promoteToL2 only makes sense when --defaultMemLevel L3"
+        # PromoteTensorsToL2 reads these switches from the environment (they started as
+        # measurement hooks); the flags make them part of the generation arguments so a CI
+        # entry can pin them. This process only generates the training network.
+        if args.promoteToL2AliasGroups:
+            os.environ['DEEPLOY_PROMOTE_ALIAS_GROUPS'] = '1'
+        if args.promoteToL2OptimizerTraffic:
+            os.environ['DEEPLOY_PROMOTE_OPTIMIZER_TRAFFIC'] = '1'
+        if args.promoteToL2SkipOpsKeep:
+            os.environ['DEEPLOY_PROMOTE_SKIP_OPS_KEEP'] = args.promoteToL2SkipOpsKeep
         annotation_passes.append(
             PromoteTensorsToL2(
                 l2Size = memoryHierarchy.memoryLevels["L2"].size,
@@ -355,6 +364,19 @@ if __name__ == '__main__':
                         type = int,
                         default = 131072,
                         help = 'Bytes reserved in L2 for tile staging')
+    parser.add_argument('--promoteToL2AliasGroups',
+                        action = 'store_true',
+                        help = 'Promote pointer-alias closures (Reshape-like views, accumulator in/out) as one '
+                        'candidate; lets their neighbours out of the _SKIP_OPS filter')
+    parser.add_argument('--promoteToL2OptimizerTraffic',
+                        action = 'store_true',
+                        help = 'Add the optimizer\'s L3 accesses to Q(t): +2x size for trainable weights, +1x for '
+                        'gradient accumulators (pays off only when the optimizer shares L2-resident buffers)')
+    parser.add_argument('--promoteToL2SkipOpsKeep',
+                        type = str,
+                        default = None,
+                        help = 'Comma-separated op types that keep excluding their neighbours from promotion '
+                        '(overrides the built-in _SKIP_OPS set)')
     parser.add_argument('--identitySchedule',
                         action = 'store_true',
                         help = "Deploy in the exporter's own node order -- the whole forward, then "
