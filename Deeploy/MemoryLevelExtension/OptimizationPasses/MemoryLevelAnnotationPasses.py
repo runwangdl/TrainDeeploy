@@ -438,9 +438,9 @@ class PromoteTensorsToL2(SequentialPass):
                 accesses = self._accesses(name, size, buf)
                 if _optOn:
                     if name in _accIn:
-                        accesses += 1.0          # SGD reads the accumulated gradient
+                        accesses += 1.0  # SGD reads the accumulated gradient
                     elif name not in _accIO and len(buf._users) >= 2 and getattr(buf, 'is_input', False):
-                        accesses += 2.0          # trainable weight: SGD reads and writes it
+                        accesses += 2.0  # trainable weight: SGD reads and writes it
                 candidates.append((name, buf, size, accesses))
 
         if _groupsOn:
@@ -478,7 +478,8 @@ class PromoteTensorsToL2(SequentialPass):
                 rootName = ctxt.dealiasBuffer(members[0][0]) if hasattr(members[0][1], '_alias') else root
                 if rootName not in names:
                     rootName = members[0][0]
-                _merged.append((rootName, self._AliasGroup(rootName, [m[1] for m in members], lt, flat), size, Q / size))
+                _merged.append((rootName, self._AliasGroup(rootName, [m[1] for m in members], lt,
+                                                           flat), size, Q / size))
             candidates = _merged
 
         if self.strategy == 'cycle-aware':
@@ -530,7 +531,7 @@ class PromoteTensorsToL2(SequentialPass):
             if isinstance(buf, _ReferenceBuffer):
                 return False
             if getattr(buf, '_aliasOfGlobal', None) is not None:
-                return False   # graph-I/O view carrying its root's pointer, no bytes of its own
+                return False  # graph-I/O view carrying its root's pointer, no bytes of its own
             if isinstance(buf, TransientBuffer):
                 return False
             if "MEMORYARENA" in buf.name:
