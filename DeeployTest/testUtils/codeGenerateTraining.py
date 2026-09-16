@@ -706,8 +706,8 @@ def _patch_shared_buffers(retStr: str,
                           shared_input_map: Dict[int, int],
                           shared_output_map: Dict[int, int],
                           train_c_source: str = "",
-                          l2_shared_inputs=None,
-                          l2_shared_outputs=None) -> str:
+                          l2_shared_inputs = None,
+                          l2_shared_outputs = None) -> str:
     """Redirect optimizer I/O buffers to Training's already-allocated buffers.
 
     Must be called AFTER the _TRAIN_PREFIX → _OPT_PREFIX substitution so that
@@ -1032,8 +1032,8 @@ def generateOptimizerNetworkImplementation(deployer: NetworkDeployer,
                                            shared_input_map: Optional[Dict[int, int]] = None,
                                            shared_output_map: Optional[Dict[int, int]] = None,
                                            train_c_source: Optional[str] = None,
-                                          l2_shared_inputs=None,
-                                          l2_shared_outputs=None) -> str:
+                                           l2_shared_inputs = None,
+                                           l2_shared_outputs = None) -> str:
     """Generate OptimizerNetwork.c.
 
     Parameters
@@ -1127,8 +1127,8 @@ def generateOptimizerTestNetwork(deployer: NetworkDeployer,
                                  verbosityCfg: CodeGenVerbosity,
                                  shared_input_map: Optional[Dict[int, int]] = None,
                                  shared_output_map: Optional[Dict[int, int]] = None,
-                                 l2_shared_inputs=None,
-                                 l2_shared_outputs=None) -> None:
+                                 l2_shared_inputs = None,
+                                 l2_shared_outputs = None) -> None:
     """Generate OptimizerNetwork.h and OptimizerNetwork.c.
 
     Parameters

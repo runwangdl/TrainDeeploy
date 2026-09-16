@@ -25,8 +25,8 @@ Usage
 """
 
 import hashlib
-import re
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -177,8 +177,13 @@ def generateTiledOptimizerNetwork(args) -> None:
 
     # 10. Generate OptimizerNetwork.c / OptimizerNetwork.h
     os.makedirs(args.dumpdir, exist_ok = True)
-    generateOptimizerTestNetwork(deployer, args.dumpdir, verbosityCfg, shared_input_map, shared_output_map,
-                                 l2_shared_inputs = l2_shared_inputs, l2_shared_outputs = l2_shared_outputs)
+    generateOptimizerTestNetwork(deployer,
+                                 args.dumpdir,
+                                 verbosityCfg,
+                                 shared_input_map,
+                                 shared_output_map,
+                                 l2_shared_inputs = l2_shared_inputs,
+                                 l2_shared_outputs = l2_shared_outputs)
 
     log.info(f"Tiled optimizer network code generated in: {args.dumpdir}")
     print(f"[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in {args.dumpdir}")
