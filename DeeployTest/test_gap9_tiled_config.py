@@ -175,7 +175,7 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     # and FFN, regenerated with Onnx4Deeploy's lora_ffn/mlp_ratio keys (the adapter
     # matrices are stored (D, r)/(r, D), so no Transpose is exported for them).
     # 2616 KB planned L3 peak, 55.6M cycles -- faster than full fine-tuning because
-    # the frozen base weights need no weight gradients. Known failure, see conftest.
+    # the frozen base weights need no weight gradients. Errors 0/4 on gvsoc.
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": [122000],
     # The same model with its frozen backbone quantised to int8. Exercises the folded
     # Dequant path: without in-kernel dequantisation this model does not fit at all

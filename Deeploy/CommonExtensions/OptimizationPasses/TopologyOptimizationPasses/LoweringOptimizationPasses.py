@@ -250,6 +250,20 @@ def _NCHWtoNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_f
         permuteOut = _transformLayoutPermutation(len(tensorOut.shape), spatialDims, channels_first)
         graph.nodes.append(_prependTranspose(tensorOut, node, permuteOut))
 
+        if node.op == "MaxPoolGrad" and len(node.inputs) > 1 and node.inputs[1].shape is not None \
+                and len(node.inputs[1].shape) == len(tensorIn.shape):
+            # MaxPoolGrad(dY, X): the kernel reads X in the same layout as dY. X is the
+            # forward pool's input, which that pool already transposed; read that copy
+            # rather than transposing the (large) activation a second time.
+            x = node.inputs[1]
+            permX = _transformLayoutPermutation(len(x.shape), spatialDims, default_channels_first)
+            shared = next((n for n in graph.nodes if n.op == "Transpose" and n.inputs and n.inputs[0] is x
+                           and list(n.attrs.get("perm", [])) == list(permX) and n.outputs), None)
+            if shared is not None:
+                node.inputs[1] = shared.outputs[0]
+            else:
+                graph.nodes.append(_appendTranspose(x, node, permX))
+
         if node.op in ["Conv", "RequantizedConv"]:
             # In the case of Conv: [weights, opt. bias], RequantizedConv: [weights, mul, add, opt. shift]
             for tensor in node.inputs[1:]:

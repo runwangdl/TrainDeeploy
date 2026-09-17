@@ -4,6 +4,8 @@
 
 from typing import Dict, List, Tuple
 
+import numpy as np
+
 from Deeploy.DeeployTypes import NetworkContext, NodeTemplate, OperatorRepresentation
 
 
@@ -26,9 +28,17 @@ class PULPFloatAddTemplate(NodeTemplate):
         shape1 = ctxt.lookup(operatorRepresentation['data_in_1']).shape
         shape2 = ctxt.lookup(operatorRepresentation['data_in_2']).shape
 
-        if _isBroadcast(shape2) and not _isBroadcast(shape1):
+        size1 = int(np.prod(shape1)) if len(shape1) else 1
+        size2 = int(np.prod(shape2)) if len(shape2) else 1
+        # Both operands can pass _isBroadcast -- a [1] scalar against a [1, N, 1]
+        # activation both have at most one non-unit axis. The smaller one is then the
+        # broadcast operand; treating neither as broadcast indexed the one-element
+        # bias by the output index (CCT's attention-pool bias once frozen: every
+        # output but the first read memory past the bias).
+        bothBroadcast = _isBroadcast(shape1) and _isBroadcast(shape2) and size1 != size2
+        if (_isBroadcast(shape2) and not _isBroadcast(shape1)) or (bothBroadcast and size2 < size1):
             broadcastShape = shape2
-        elif _isBroadcast(shape1) and not _isBroadcast(shape2):
+        elif (_isBroadcast(shape1) and not _isBroadcast(shape2)) or (bothBroadcast and size1 < size2):
             operatorRepresentation['data_in_1'], operatorRepresentation['data_in_2'] = \
                 operatorRepresentation['data_in_2'], operatorRepresentation['data_in_1']
             broadcastShape = shape1

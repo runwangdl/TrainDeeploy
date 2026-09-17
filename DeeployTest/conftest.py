@@ -45,19 +45,13 @@ _BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s
 # order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
 # SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
 # ---------------------------------------------------------------------------
-_LORA_REASON = ("the LoRA training path is numerically wrong on GAP9. The references are right: both "
-                "fixtures were regenerated from their own graphs (the int8 one with the backbone "
-                "fake-quantised before export), and PyTorch reproduces the reference loss to 2e-7. "
-                "The device is off already at the first loss, before any update (CCT-2 LoRA: "
-                "5.7e-3 on gvsoc, 2.1e-4 on the EVK), and the error changes from build to build. "
-                "Full fine-tuning and last-block fine-tuning of the same model, which share every "
-                "op except the adapter branch, pass exactly, and the adapter branch on its own "
-                "(MatMul -> MatMul -> Mul -> Add, tiled, L2 and L3) passes too.")
+_QLORA_REASON = ("not yet re-verified since the LoRA path was fixed (scalar-first broadcast Add in "
+                 "FloatAddTemplate / BOPTileConstraint): CCT_LoRA_R1 now passes 0/4, the int8 model "
+                 "with the same adapters still has to be run. Remove once it does.")
 
 _KNOWN_FAILURES = [
-    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_REASON),
+    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _QLORA_REASON),
+    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _QLORA_REASON),
 ]
 
 
