@@ -238,6 +238,16 @@ if __name__ == '__main__':
                         help = 'Accepted so the shared generation-argument list can carry it; the '
                         'optimizer network is a separate graph whose tensors do not appear in the '
                         'training-graph harvest, so it is not applied here.')
+    for _flag in ('--promoteToL2AliasGroups', '--promoteToL2OptimizerTraffic'):
+        parser.add_argument(_flag,
+                            action = 'store_true',
+                            help = 'Accepted so the shared generation-argument list can carry it; it steers '
+                            'the training-network promotion only.')
+    parser.add_argument('--promoteToL2SkipOpsKeep',
+                        type = str,
+                        default = None,
+                        help = 'Accepted so the shared generation-argument list can carry it; it steers the '
+                        'training-network promotion only.')
     parser.add_argument('--promoteToL2Strategy',
                         type = str,
                         default = 'cycle-aware',
