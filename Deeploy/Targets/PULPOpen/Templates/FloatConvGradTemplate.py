@@ -69,6 +69,9 @@ class _ConvGradWTemplate(NodeTemplate):
                                                    "${type.referencedType.typeName}* ${name} = &bu_${name};")
 
         operatorRepresentation['tileIdxPtr'] = symbol
+        # 1 = zero dW before this call. Tilers that split C_out *and* H/W
+        # replace it per tile so each C_out slab is zeroed only once.
+        operatorRepresentation.setdefault('dw_reset', 1)
         return ctxt, operatorRepresentation, []
 
 
@@ -205,6 +208,8 @@ ${data_in_type.typeName} ref_${grad_weight}_${data_in} = ${data_in};
 ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 
 ## Emit a different memset strategy depending on what the tiler chose:
+##   dw_reset tiled (C_out and H/W both tiled): memset at the first H/W tile
+##                              of each C_out slab, accumulate over the rest.
 ##   H/W tiled (but not C_out): memset once at first tile (preserves mm_add
 ##                              accumulation of HW partials across tiles).
 ##   otherwise (C_out tiled, or untiled): memset every call (each tile
@@ -212,7 +217,11 @@ ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 ##                              reused across tiles).
 ## Tiled template vars render as '*..._ref' pointer-deref strings; untiled
 ## vars render as literal ints/identifiers — see _is_tiled_expr.
-% if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
+% if isinstance(dw_reset, str):
+if (${dw_reset}) {
+    memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
+}
+% elif (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
 if ((uint32_t)*${tileIdxPtr} == 0u) {
     memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
 }
@@ -244,6 +253,8 @@ ${data_in_type.typeName} ref_${grad_weight}_${data_in} = ${data_in};
 ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 
 ## Emit a different memset strategy depending on what the tiler chose:
+##   dw_reset tiled (C_out and H/W both tiled): memset at the first H/W tile
+##                              of each C_out slab, accumulate over the rest.
 ##   H/W tiled (but not C_out): memset once at first tile (preserves mm_add
 ##                              accumulation of HW partials across tiles).
 ##   otherwise (C_out tiled, or untiled): memset every call (each tile
@@ -251,7 +262,11 @@ ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 ##                              reused across tiles).
 ## Tiled template vars render as '*..._ref' pointer-deref strings; untiled
 ## vars render as literal ints/identifiers — see _is_tiled_expr.
-% if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
+% if isinstance(dw_reset, str):
+if (${dw_reset}) {
+    memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
+}
+% elif (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
 if ((uint32_t)*${tileIdxPtr} == 0u) {
     memset(${grad_weight}, 0, (${ch_im_out} * ${ch_im_in} * ${dim_kernel_x} * ${dim_kernel_y}) * sizeof(${grad_weight_type.referencedType.typeName}));
 }
@@ -288,6 +303,8 @@ ${data_in_type.typeName} ref_${grad_weight}_${data_in} = ${data_in};
 ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 
 ## Emit a different memset strategy depending on what the tiler chose:
+##   dw_reset tiled (C_out and H/W both tiled): memset at the first H/W tile
+##                              of each C_out slab, accumulate over the rest.
 ##   H/W tiled (but not C_out): memset once at first tile (preserves mm_add
 ##                              accumulation of HW partials across tiles).
 ##   otherwise (C_out tiled, or untiled): memset every call (each tile
@@ -295,7 +312,11 @@ ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 ##                              reused across tiles).
 ## Tiled template vars render as '*..._ref' pointer-deref strings; untiled
 ## vars render as literal ints/identifiers — see _is_tiled_expr.
-% if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
+% if isinstance(dw_reset, str):
+if (${dw_reset}) {
+    memset(${grad_weight}, 0, ${ch_im_out} * ${dim_kernel_x} * ${dim_kernel_y} * sizeof(${grad_weight_type.referencedType.typeName}));
+}
+% elif (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
 if ((uint32_t)*${tileIdxPtr} == 0u) {
     memset(${grad_weight}, 0, ${ch_im_out} * ${dim_kernel_x} * ${dim_kernel_y} * sizeof(${grad_weight_type.referencedType.typeName}));
 }
@@ -373,7 +394,11 @@ ${grad_out_type.typeName} ref_${grad_weight}_${grad_out} = ${grad_out};
 ${data_in_type.typeName} ref_${grad_weight}_${data_in} = ${data_in};
 ${grad_weight_type.typeName} ref_${grad_weight}_out = ${grad_weight};
 
-% if (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
+% if isinstance(dw_reset, str):
+if (${dw_reset}) {
+    memset(${grad_weight}, 0, ${ch_im_out} * ${ch_im_in} * sizeof(${grad_weight_type.referencedType.typeName}));
+}
+% elif (isinstance(dim_im_out_x, str) or isinstance(dim_im_out_y, str) or isinstance(dim_im_in_x, str) or isinstance(dim_im_in_y, str)) and not isinstance(ch_im_out, str):
 if ((uint32_t)*${tileIdxPtr} == 0u) {
     memset(${grad_weight}, 0, ${ch_im_out} * ${ch_im_in} * sizeof(${grad_weight_type.referencedType.typeName}));
 }

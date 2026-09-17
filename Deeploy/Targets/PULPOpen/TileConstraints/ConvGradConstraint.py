@@ -1299,6 +1299,7 @@ class CoutHWSliceStrategy(GradWStrategy):
                 "padding_y_bottom",
                 "padding_x_left",
                 "padding_x_right",
+                "dw_reset",
             ]
         }
         replacementTypes = {
@@ -1312,6 +1313,7 @@ class CoutHWSliceStrategy(GradWStrategy):
             "padding_y_bottom": PointerClass(uint8_t),
             "padding_x_left": PointerClass(uint8_t),
             "padding_x_right": PointerClass(uint8_t),
+            "dw_reset": PointerClass(uint8_t),
         }
 
         Cin_full = xFull[1]
@@ -1373,6 +1375,9 @@ class CoutHWSliceStrategy(GradWStrategy):
                     replacements["padding_y_bottom"].append(tpb)
                     replacements["padding_x_left"].append(tpl)
                     replacements["padding_x_right"].append(tpr)
+                    # dW of this Cout slab accumulates over its H/W tiles: zero it
+                    # only on the slab's first H/W tile.
+                    replacements["dw_reset"].append(int(hoOff == h_tiles[0][0] and woOff == w_tiles[0][0]))
 
                     inputLoadSchedule.append({owner_cls.dataInKey: xTile, owner_cls.gradOutKey: dyTile})
                     outputLoadSchedule.append({owner_cls.weightKey: dwTile})

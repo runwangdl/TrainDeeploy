@@ -45,14 +45,12 @@ _BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s
 # order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
 # SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
 # ---------------------------------------------------------------------------
-_QLORA_REASON = ("not yet re-verified since the LoRA path was fixed (scalar-first broadcast Add in "
-                 "FloatAddTemplate / BOPTileConstraint): CCT_LoRA_R1 now passes 0/4, the int8 model "
-                 "with the same adapters still has to be run. Remove once it does.")
-
-_KNOWN_FAILURES = [
-    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _QLORA_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _QLORA_REASON),
-]
+# CCT_QLORA_FT (L2 and L3) was listed until the int8 Gemm was fixed: its template
+# passed 9 of the kernel's 12 arguments (no bias stride, scale or zero point), the
+# kernel ignored transA/transB, and GAP9 had no prototype for it, so the float scale
+# went through an implicit declaration. It passes 0/4 now.
+# ---------------------------------------------------------------------------
+_KNOWN_FAILURES = []
 
 
 def pytest_collection_modifyitems(config, items):

@@ -390,8 +390,13 @@ void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
   }
   const uint32_t has_bias = (pDstC != NULL);
 
+  // op(A)[i][k] = pSrcA[i * aRow + k * aCol], op(B)[k][j] = pSrcB[k * bK + j * bJ]:
+  // A is stored [M, N] or, with transA, [N, M]; B [N, O] or, with transB, [O, N].
+  const uint32_t aRow = transA ? 1 : N, aCol = transA ? M : 1;
+  const uint32_t bK = transB ? 1 : O, bJ = transB ? N : 1;
+
   for (uint32_t i = M_start; i < M_end; ++i) {
-    const float32_t *__restrict__ a_row = &pSrcA[i * N];
+    const float32_t *__restrict__ a_row = &pSrcA[i * aRow];
     float32_t *__restrict__ y_row = &pDstY[i * O];
     const float32_t *__restrict__ c_row =
         has_bias ? &pDstC[i * biasStride] : NULL;
@@ -399,15 +404,16 @@ void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
     float32_t sum_a = 0.0f;
     if (zeroPoint != 0) {
       for (uint32_t k = 0; k < N; ++k) {
-        sum_a += a_row[k];
+        sum_a += a_row[k * aCol];
       }
     }
     const float32_t correction = scale * (float32_t)zeroPoint * sum_a;
 
     for (uint32_t j = 0; j < O; ++j) {
+      const int8_t *__restrict__ b_col = &pSrcB[j * bJ];
       float32_t sum = 0.0f;
       for (uint32_t k = 0; k < N; ++k) {
-        sum += a_row[k] * (float32_t)pSrcB[k * O + j];
+        sum += a_row[k * aCol] * (float32_t)b_col[k * bK];
       }
       y_row[j] = scale * sum - correction + (has_bias ? c_row[j] : 0.0f);
     }

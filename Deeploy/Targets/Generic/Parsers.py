@@ -2222,6 +2222,11 @@ class GEMMParser(MatMulParser):
                 C = gs.Constant(f"{node.name}_C", np.zeros((1,)))
                 node.inputs.append(C)
 
+            # Set by FoldDequantIntoMatMulPass when the weight arrives int8. This
+            # parseNode does not chain to MatMulParser's, which reads the same keys.
+            self.operatorRepresentation['dequant_scale'] = float(node.attrs.get('dequant_scale', 1.0))
+            self.operatorRepresentation['dequant_zero_point'] = int(node.attrs.get('dequant_zero_point', 0))
+
             return True
         # This might be a matmul node -> Cast up
         else:
