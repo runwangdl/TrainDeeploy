@@ -196,6 +196,11 @@ struct pi_device cluster_dev;
 static unsigned int g_train_cycles_acc = 0;
 static unsigned int g_opt_cycles_acc = 0;
 
+/* Summary-mode tiling profile (DEEPLOY_PROFILE_SUMMARY=1 at code generation): every tile
+ * loop adds its waits here, [level*3 + {ingress wait, kernel, egress wait}], level 0 = the
+ * L2->L1 loop, 1 = the L3->L2 loop. All zero when profiling is off. */
+uint32_t deeploy_prof_acc[6] = {0};
+
 /* -------------------------------------------------------------------------
  * Loss storage (one value per forward pass)
  * ---------------------------------------------------------------------- */
@@ -700,6 +705,12 @@ int main(void) {
 
   printf("BENCH train_cycles=%u opt_cycles=%u trainable_bytes=%u\r\n",
          g_train_cycles_acc, g_opt_cycles_acc, trainable_bytes_total);
+  if (deeploy_prof_acc[1] != 0) {
+    printf("PROFSUM l2_in=%u l2_kernel=%u l2_out=%u l3_in=%u l3_kernel=%u "
+           "l3_out=%u\r\n",
+           deeploy_prof_acc[0], deeploy_prof_acc[1], deeploy_prof_acc[2],
+           deeploy_prof_acc[3], deeploy_prof_acc[4], deeploy_prof_acc[5]);
+  }
 
   return loss_err_count == 0 ? 0 : 1;
 }
