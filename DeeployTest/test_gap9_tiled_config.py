@@ -132,10 +132,9 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # the MatMul/Gemm/Conv, so the dequantised weights are never materialised:
     # trainable_bytes is 48 KB and the arena needs 923 KB, which fits GAP9's real 1.5 MB
     # L2 but not the 1000 KB runner default -- hence the l2 override below.
-    # 116000, not the 122000 the L3 entry uses: CI trains 4 mini-batches, whose
-    # accumulator buffers leave the L1 allocator 118 KB, and a 122000 arena does not
-    # fit alongside them.
-    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [116000],
+    # The frozen conv tokenizer is fully integer (W8A8) and runs the pulp-nn cluster
+    # kernels, which need slave_stack 2048; 110000 keeps arena + stacks inside L1.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [110000],
 }
 
 # Best-latency deployment of the five paper networks (gvsoc, 8 cores, Errors 0/4, all
@@ -178,9 +177,10 @@ L3_SINGLEBUFFER_TRAINING_MODELS = {
     # the frozen base weights need no weight gradients. Errors 0/4 on gvsoc.
     "Models/Training/CCT_LoRA_R1/cct_lorar1_train": [122000],
     # The same model with its frozen backbone quantised to int8. Exercises the folded
-    # Dequant path: without in-kernel dequantisation this model does not fit at all
-    # (minimalloc fails), and with it the weights reach the kernels as int8.
-    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [122000],
+    # Dequant path (without in-kernel dequantisation this model does not fit at all,
+    # minimalloc fails) and the integer tokenizer: Quant -> RequantizedConv -> uint8
+    # MaxPool -> Dequant on the pulp-nn kernels. 110000 leaves L1 for slave_stack 2048.
+    "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": [110000],
     "Models/Training/SleepConViT/sleepconvit_train": [122000],
     "Models/Training/TSDR/tsdr_train": [122000],
     "Models/Training/MCUNet/mcunet_train": [116000],
@@ -367,11 +367,11 @@ TRAINING_MODEL_OVERRIDES = {
     },
     "Models/Training/CCT_QLORA_FT/cct_qlorar1_train": {
         "l2": 1572864,  # GAP9's real 1.5 MB; the arena needs 923 KB of it
-        # arena 122000 + cc 4096 + slave 512*8 = 130192 < 131072, so the cluster
+        # arena 110000 + cc 4096 + slave 2048*8 = 130480 < 131072, so the cluster
         # stacks stay in L1. Without these the SDK defaults overflow it and gvsoc
         # exits before producing any output.
         "cc_stack": 4096,
-        "slave_stack": 512,
+        "slave_stack": 2048,  # the integer tokenizer's pulp-nn kernels overflow 512 B
         # The references are computed on the int8 backbone itself (weights
         # fake-quantised before export), so no quantisation tolerance is needed.
     },

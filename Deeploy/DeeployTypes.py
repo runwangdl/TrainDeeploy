@@ -2812,8 +2812,11 @@ class NetworkContainer():
         # #ifdef POWER_MEASUREMENT, so non-power builds are byte-for-byte
         # unchanged. Cluster core 0 (the network-function orchestrator) drives
         # GPIO 89; GPIOs is defined by the training harness (deeploytraintest.c).
+        # Board latency runs build with POWER_MEASUREMENT too, and the busy wait
+        # below costs ~2.6 M cycles per step, so the marker is opt-in (local change,
+        # same as the §2.4 board measurements).
         fwdBwdMarker = ("{\n"
-                        "#ifdef POWER_MEASUREMENT\n"
+                        "#ifdef POWER_FWDBWD_MARK\n"
                         "    extern unsigned int GPIOs;\n"
                         "    pi_gpio_pin_write(GPIOs, 0);\n"
                         "    for (volatile int _fbm = 0; _fbm < 200000; _fbm++) {\n"

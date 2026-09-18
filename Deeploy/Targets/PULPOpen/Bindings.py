@@ -605,9 +605,11 @@ BasicQuantBindings = [
                 ForkTransformer),
 ]
 
+# uint8 covers the output of an unsigned (ReLU) requant, e.g. an integer conv tokenizer
+# handing its features to a float backbone.
 BasicDequantBindings = [
-    NodeBinding(DequantChecker([PointerClass(int8_t)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
-                ForkTransformer),
+    NodeBinding(DequantChecker([PointerClass(type)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
+                ForkTransformer) for type in (int8_t, uint8_t)
 ] + [
     NodeBinding(DequantChecker([PointerClass(int32_t)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
                 ForkTransformer),
