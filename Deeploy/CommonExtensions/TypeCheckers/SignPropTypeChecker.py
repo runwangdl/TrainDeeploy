@@ -51,6 +51,14 @@ class SignPropTypeChecker(NodeTypeChecker):
             if nLevels is None or signedness is None:
                 return ctxt
             for obj, nLevel, sign in zip(outputs, nLevels, signedness):
+                if not issubclass(obj._type.referencedType, IntegerImmediate):
+                    # A float tensor has no quantisation levels; the value is only
+                    # carried so integer consumers downstream can read it. Left
+                    # unbounded it compounds along the graph -- MatMul multiplies
+                    # the levels, Add sums them -- and a LoRA chain (x @ A @ B,
+                    # then two Adds per block) pushes it past int64, which fails
+                    # the build with "Python int too large to convert to C long".
+                    nLevel = min(int(nLevel), 2**obj._type.referencedType.typeWidth)
                 obj.nLevels = nLevel
                 obj._signed = sign
 

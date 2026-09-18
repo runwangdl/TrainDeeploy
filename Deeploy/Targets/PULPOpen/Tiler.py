@@ -14,7 +14,7 @@ from Deeploy.Targets.Generic.TileConstraints.RQSiGELUTileConstraint import RQSiG
 from Deeploy.Targets.Generic.TileConstraints.RQSiHardswishTileConstraint import RQSiHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import TransposeTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTileConstraint
-from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, PULPAddBindings, PULPAveragePool2DBindings, \
+from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBindings, PULPAddBindings, PULPAveragePool2DBindings, \
     PULPAveragePoolGrad2DBindings, PULPBatchNormalizationGradBindings, PULPBatchNormInternalBindings, \
     PULPConcatBindings, PULPFloatConv2DBindings, PULPFloatConvGradBBindings, PULPFloatConvGradW2DBindings, \
     PULPFloatConvGradX2DBindings, PULPFloatDWConv2DBindings, PULPFloatDWConvGradW2DBindings, \
@@ -158,6 +158,9 @@ PULPTransposeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPTr
 # `AttributeError: '_DequantTemplate' object has no attribute 'tileConstraint'`.
 PULPDequantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicDequantBindings,
                                                          tileConstraint = UnaryTileConstraint())
+
+PULPQuantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicQuantBindings,
+                                                       tileConstraint = UnaryTileConstraint())
 
 PULPAddTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPAddBindings,
                                                      tileConstraint = PULPBroadcastAddTileConstraint())

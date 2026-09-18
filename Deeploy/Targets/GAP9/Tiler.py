@@ -20,12 +20,13 @@ from Deeploy.Targets.GAP9.Bindings import GAP9AddBindings, GAP9AveragePoolGrad2D
     GAP9FloatGEMMBindings, GAP9FloatPWConvGradW2DBindings, GAP9FloatPWConvGradX2DBindings, GAP9GatherBindings, \
     GAP9GlobalAveragePool2DBindings, GAP9GlobalAveragePoolGrad2DBindings, GAP9iHardswishBindings, \
     GAP9InPlaceAccumulatorV2Bindings, GAP9iRMSNormBindings, GAP9iRQSGELUBindings, GAP9LayernormBinding, \
-    GAP9LayernormGradBinding, GAP9MatMulBindings, GAP9MaxPool2DBindings, GAP9MSELossBindings, GAP9MSELossGradBindings, \
-    GAP9MulBindings, GAP9ReduceSumBindings, GAP9ReluBinding, GAP9ReluGradBinding, GAP9ReshapeBindings, \
-    GAP9RQAddBindings, GAP9RQSBindings, GAP9RQSConv2DBindings, GAP9RQSDWConv2DBindings, GAP9RQSGEMMBindings, \
-    GAP9RQSiHardswishBindings, GAP9RQSMatrixVecBindings, GAP9RQSTallGEMMBindings, GAP9SGDBindings, GAP9SliceBindings, \
-    GAP9SoftmaxBindings, GAP9SoftmaxCrossEntropyLossBindings, GAP9SoftmaxCrossEntropyLossGradBindings, \
-    GAP9SoftmaxGradBindings, GAP9TransposeBindings, GAP9UniformRQSBindings
+    GAP9LayernormGradBinding, GAP9MatMulBindings, GAP9MaxPool2DBindings, GAP9MaxPoolGrad2DBindings, \
+    GAP9MSELossBindings, GAP9MSELossGradBindings, GAP9MulBindings, GAP9ReduceSumBindings, GAP9ReluBinding, \
+    GAP9ReluGradBinding, GAP9ReshapeBindings, GAP9RQAddBindings, GAP9RQSBindings, GAP9RQSConv2DBindings, \
+    GAP9RQSDWConv2DBindings, GAP9RQSGEMMBindings, GAP9RQSiHardswishBindings, GAP9RQSMatrixVecBindings, \
+    GAP9RQSTallGEMMBindings, GAP9SGDBindings, GAP9SliceBindings, GAP9SoftmaxBindings, \
+    GAP9SoftmaxCrossEntropyLossBindings, GAP9SoftmaxCrossEntropyLossGradBindings, GAP9SoftmaxGradBindings, \
+    GAP9TransposeBindings, GAP9UniformRQSBindings
 from Deeploy.Targets.Generic.TileConstraints.AddTileConstraint import AddTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.ConcatTileConstraint import ConcatTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.iHardswishTileConstraint import iHardswishTileConstraint
@@ -58,6 +59,7 @@ from Deeploy.Targets.PULPOpen.TileConstraints.iSoftmaxTileConstraint import Soft
 from Deeploy.Targets.PULPOpen.TileConstraints.LayernormTileConstraint import LayernormGradTileConstraint, \
     LayernormTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MatMulTileConstraint import MatMulTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolGradTileConstraint import MaxPoolGradCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MSELossTileConstraint import MSELossGradTileConstraint, \
     MSELossTileConstraint
@@ -120,6 +122,8 @@ GAP9FlattenTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _GAP9Fla
 
 GAP9MaxPool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPool2DBindings,
                                                            tileConstraint = MaxPoolCTileConstraint())
+GAP9MaxPoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPoolGrad2DBindings,
+                                                               tileConstraint = MaxPoolGradCTileConstraint())
 
 GAP9RQSTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9RQSBindings,
                                                      tileConstraint = RequantShiftTileConstraint())

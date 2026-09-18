@@ -34,19 +34,23 @@ class BOPTileConstraint(TileConstraint):
         for bufferName in [inputBuffer1Name, inputBuffer2Name, outputBufferName]:
             tilerModel.addTensorDimToModel(ctxt, bufferName)
 
-        input1Shape = ctxt.lookup(inputBuffer1Name).shape
-        # A second operand that is a single element is not tiled with the output: tying its
+        # An operand that is a single element is not tiled with the output: tying its
         # extents to the output's is what forces it to be stored at the output's size.
+        # Either operand can be that scalar (a lowered graph may present a bias first).
+        scalarIn1 = int(np.prod(ctxt.lookup(inputBuffer1Name).shape)) == 1
         scalarIn2 = int(np.prod(ctxt.lookup(inputBuffer2Name).shape)) == 1
+        fullName, otherName = (inputBuffer2Name, inputBuffer1Name) if (scalarIn1 and not scalarIn2) else \
+            (inputBuffer1Name, inputBuffer2Name)
+        otherScalar = scalarIn1 if otherName == inputBuffer1Name else scalarIn2
 
-        for dim in range(len(input1Shape)):
-            inputDim1Var = tilerModel.getTensorDimVar(tensorName = inputBuffer1Name, dimIdx = dim)
+        for dim in range(len(ctxt.lookup(fullName).shape)):
+            fullDimVar = tilerModel.getTensorDimVar(tensorName = fullName, dimIdx = dim)
             outputDimVar = tilerModel.getTensorDimVar(tensorName = outputBufferName, dimIdx = dim)
 
-            if not scalarIn2:
-                inputDim2Var = tilerModel.getTensorDimVar(tensorName = inputBuffer2Name, dimIdx = dim)
-                tilerModel.addConstraint(inputDim1Var == inputDim2Var)
-            tilerModel.addConstraint(inputDim1Var == outputDimVar)
+            if not otherScalar:
+                otherDimVar = tilerModel.getTensorDimVar(tensorName = otherName, dimIdx = dim)
+                tilerModel.addConstraint(fullDimVar == otherDimVar)
+            tilerModel.addConstraint(fullDimVar == outputDimVar)
 
         return tilerModel
 
@@ -75,18 +79,22 @@ class BOPTileConstraint(TileConstraint):
         # The scalar is transferred once at its own extent, not once per output tile at the
         # output's extent. Asking the DMA for the output cube out of a one-element buffer is
         # the same read-past-the-end that the Gemm broadcast bias had.
+        in1Shape = ctxt.lookup(operatorRepresentation[cls.dataIn1Name]).shape
         in2Shape = ctxt.lookup(operatorRepresentation[cls.dataIn2Name]).shape
+        scalarIn1 = int(np.prod(in1Shape)) == 1 and int(np.prod(in2Shape)) != 1
         scalarIn2 = int(np.prod(in2Shape)) == 1
 
+        def _scalarCube(shape):
+            # At least rank 1: a rank-0 scalar yields an empty offset tuple, and
+            # minimizeRectangle indexes offset[0] unconditionally.
+            cubeShape = tuple(shape) if len(shape) > 0 else (1,)
+            return HyperRectangle(tuple(0 for _ in cubeShape), cubeShape)
+
         for cube in outputCubes:
-            if scalarIn2:
-                # At least rank 1: a rank-0 scalar yields an empty offset tuple, and
-                # minimizeRectangle indexes offset[0] unconditionally.
-                cubeShape = tuple(in2Shape) if len(in2Shape) > 0 else (1,)
-                scalarCube = HyperRectangle(tuple(0 for _ in cubeShape), cubeShape)
-                inputLoadSchedule.append({cls.dataIn1Name: cube, cls.dataIn2Name: scalarCube})
-            else:
-                inputLoadSchedule.append({cls.dataIn1Name: cube, cls.dataIn2Name: cube})
+            inputLoadSchedule.append({
+                cls.dataIn1Name: _scalarCube(in1Shape) if scalarIn1 else cube,
+                cls.dataIn2Name: _scalarCube(in2Shape) if scalarIn2 else cube,
+            })
 
         for out in outputCubes:
             outputLoadSchedule.append({cls.dataOutName: out})

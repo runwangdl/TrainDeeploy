@@ -59,6 +59,22 @@ class ConvGradXTileConstraintBase(TileConstraint):
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dyName, 1) == tilerModel.getTensorDimVar(wName, 0))
         tilerModel.addConstraint(tilerModel.getTensorDimVar(dxName, 1) == tilerModel.getTensorDimVar(wName, 1) * group)
 
+        # Spatial relation: a dX tile is fed by the dY halo that serializeTilingSolution
+        # derives (computeDyCubeFromDxTile), at most ceil((dx + K - 1) / s) rows/cols and
+        # never more than the whole dY. Without this the dY extents were free variables,
+        # so the memory model could size dY smaller than the halo actually transferred:
+        # a CCT tokenizer ConvGradX tiled along Cin only (dX spatially whole) was planned
+        # with a partial dY, received the whole 131 KB dY and wrote past the 122 KB L1
+        # arena.
+        wShape = ctxt.lookup(wName).shape
+        dyShape = ctxt.lookup(dyName).shape
+        strides = tuple(parseDict.get("strides", [1, 1]))
+        solver = tilerModel._model
+        for dim, kernel, stride in ((2, wShape[2], strides[0]), (3, wShape[3], strides[1])):
+            dyVar = tilerModel.getTensorDimVar(dyName, dim)
+            dxVar = tilerModel.getTensorDimVar(dxName, dim)
+            tilerModel.addConstraint(stride * dyVar >= solver.Min(dxVar + (kernel - 1), stride * dyShape[dim]))
+
         return tilerModel
 
     # -----------------------
@@ -1283,6 +1299,7 @@ class CoutHWSliceStrategy(GradWStrategy):
                 "padding_y_bottom",
                 "padding_x_left",
                 "padding_x_right",
+                "dw_reset",
             ]
         }
         replacementTypes = {
@@ -1296,6 +1313,7 @@ class CoutHWSliceStrategy(GradWStrategy):
             "padding_y_bottom": PointerClass(uint8_t),
             "padding_x_left": PointerClass(uint8_t),
             "padding_x_right": PointerClass(uint8_t),
+            "dw_reset": PointerClass(uint8_t),
         }
 
         Cin_full = xFull[1]
@@ -1357,6 +1375,9 @@ class CoutHWSliceStrategy(GradWStrategy):
                     replacements["padding_y_bottom"].append(tpb)
                     replacements["padding_x_left"].append(tpl)
                     replacements["padding_x_right"].append(tpr)
+                    # dW of this Cout slab accumulates over its H/W tiles: zero it
+                    # only on the slab's first H/W tile.
+                    replacements["dw_reset"].append(int(hoOff == h_tiles[0][0] and woOff == w_tiles[0][0]))
 
                     inputLoadSchedule.append({owner_cls.dataInKey: xTile, owner_cls.gradOutKey: dyTile})
                     outputLoadSchedule.append({owner_cls.weightKey: dwTile})

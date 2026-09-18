@@ -116,7 +116,10 @@ for(uint32_t i=0; i<${batch}; i++){
         ${N},
         ${O},
         ${transA},
-        ${transB}
+        ${transB},
+        ${C_stride},
+        ${dequant_scale}f,
+        ${dequant_zero_point}
     );
     % else:
     PULP_Gemm_fp32_i8_fp32_fp32(
@@ -128,7 +131,10 @@ for(uint32_t i=0; i<${batch}; i++){
         ${N},
         ${O},
         ${transA},
-        ${transB}
+        ${transB},
+        ${C_stride},
+        ${dequant_scale}f,
+        ${dequant_zero_point}
     );
     % endif
     % if A_batched:

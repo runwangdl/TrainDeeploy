@@ -215,6 +215,21 @@ class Tiler():
                 sz = _bufBytes(buf)
                 if sz > 0:
                     promotedConsts.append((buf.name, sz))
+            # Training graphs carry their weights and gradient accumulators as graph
+            # inputs/outputs: globalObjects of type VariableBuffer, not ConstantBuffer.
+            # When promoted they are malloc'd standalone at this level and alive for the
+            # whole schedule, exactly like promoted constants -- draw them the same way,
+            # otherwise the L2 panel hides them (Autoencoder: 603 KB of 1.07 MB).
+            for buf in ctxt.globalObjects.values():
+                if not isinstance(buf, VariableBuffer) or isinstance(buf, (ConstantBuffer, TransientBuffer, _ReferenceBuffer)):
+                    continue
+                if 'PROMOTED_POOL' in buf.name:
+                    continue  # the pool is drawn through its packed activations below
+                if not _eligible(buf):
+                    continue
+                sz = _bufBytes(buf)
+                if sz > 0:
+                    promotedConsts.append((buf.name, sz))
             for buf in ctxt.localObjects.values():
                 if not isinstance(buf, VariableBuffer):
                     continue

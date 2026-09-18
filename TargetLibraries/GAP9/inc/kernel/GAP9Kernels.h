@@ -25,6 +25,7 @@
 #ifndef __DEEPLOY_GAP9_KERNEL_HEADER_
 #define __DEEPLOY_GAP9_KERNEL_HEADER_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "types.h" // float32_t
@@ -180,5 +181,59 @@ void PULP_ReluGrad_fp32_fp32(float32_t *grad_out, float32_t *data_in,
                              float32_t *grad_in, uint32_t size);
 
 void PULP_Relu_fp32_fp32(float32_t *input, float32_t *output, uint32_t size);
+
+// Transformer and weight-only-quantised kernels. The int8 ones and Layernorm take
+// a float argument, which an implicit declaration promotes to double and the
+// ilp32f callee then reads from the wrong register: the int8 matmuls ran with a
+// garbage scale. Kept in sync with PULPOpen/inc/kernel/{Conv,gemm,GELU,Layernorm,
+// MaxPool,Softmax}.h.
+void PULP_Conv2d_Im2Col_fp32_i8_fp32_HWC(
+    const float32_t *__restrict__ pSrcA, uint32_t H, uint32_t W, uint32_t C,
+    const int8_t *__restrict__ pSrcB, uint32_t F_total, uint32_t P, uint32_t Q,
+    uint32_t SP, uint32_t SQ, const float32_t *__restrict__ pSrcBias,
+    const bool has_bias, float32_t *__restrict__ pDstC, uint32_t pad_top,
+    uint32_t pad_bottom, uint32_t pad_left, uint32_t pad_right,
+    float32_t *__restrict__ pContextBuffer, float32_t scale,
+    int32_t zeroPoint);
+
+void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
+                                 const int8_t *__restrict__ pSrcB,
+                                 const float32_t *__restrict__ pDstC,
+                                 float32_t *__restrict__ pDstY, uint32_t M,
+                                 uint32_t N, uint32_t O, uint32_t transA,
+                                 uint32_t transB, uint32_t biasStride,
+                                 float32_t scale, int32_t zeroPoint);
+
+void PULP_GELU_fp32_fp32(float32_t *data_in, float32_t *data_out,
+                         int32_t dataSize);
+
+void PULP_Softmax_fp32_fp32(float32_t *input, float32_t *output, uint32_t size,
+                            uint32_t last_dim_length);
+
+void PULP_Layernorm_fp32_fp32(float32_t *data_in, float32_t *data_out,
+                              float32_t *scale, float32_t *bias,
+                              float32_t *mean_out, float32_t *inv_std_dev_out,
+                              uint32_t size, uint32_t lastDimLength,
+                              float32_t epsilon);
+
+void PULP_LayernormGrad_fp32_fp32(const float32_t *dy, const float32_t *x,
+                                  const float32_t *mean,
+                                  const float32_t *inv_std_dev, float32_t *dx,
+                                  const float32_t *gamma, uint32_t elem_count,
+                                  uint32_t lastDimLength);
+
+void PULP_MaxPool2d_fp32_fp32_HWC(const float32_t *__restrict__ pSrcA,
+                                  uint32_t W, uint32_t H, uint32_t C,
+                                  uint32_t Q, uint32_t P, uint32_t SQ,
+                                  uint32_t SP, float32_t *__restrict__ pDstC,
+                                  uint32_t pad_top, uint32_t pad_bottom,
+                                  uint32_t pad_left, uint32_t pad_right);
+
+void PULP_MaxPoolGrad2d_fp32_fp32_HWC(
+    const float32_t *__restrict__ pGradOut,
+    const float32_t *__restrict__ pInput, uint32_t H_out, uint32_t W_out,
+    uint32_t C, uint32_t H_in, uint32_t W_in, uint32_t P, uint32_t Q,
+    uint32_t SP, uint32_t SQ, float32_t *__restrict__ pGradIn, uint32_t pad_top,
+    uint32_t pad_bottom, uint32_t pad_left, uint32_t pad_right);
 
 #endif // __DEEPLOY_GAP9_KERNEL_HEADER_

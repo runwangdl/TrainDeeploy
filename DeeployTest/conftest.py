@@ -45,19 +45,12 @@ _BENCH_RE = re.compile(r"BENCH\s+train_cycles=(\d+)(?:\s+opt_cycles=(\d+))?(?:\s
 # order" drift (3 of 4 steps off). It was the promoted-tile offset bug fixed in
 # SingleBufferingTilingCodeGeneration._promotedByteOffsets; both pass now.
 # ---------------------------------------------------------------------------
-_LORA_FIXTURE_REASON = ("fixture references are wrong, not the deployment: CCT_LoRA_R1 and "
-                        "CCT_QLORA_FT ship byte-identical inputs.npz and outputs.npz "
-                        "(md5 2d0875bc../a01d0bba..) although their graphs differ -- 387 nodes with "
-                        "no quantisation vs 389 nodes with 14 Dequant. The quantised model is being "
-                        "checked against references generated from the float one; the measured error "
-                        "is 0.12-0.50, which no defensible tolerance covers. Fix is to regenerate "
-                        "the references from each graph.")
-
-_KNOWN_FAILURES = [
-    ("test_gap9_tiled_training_l2_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_QLORA_FT", _LORA_FIXTURE_REASON),
-    ("test_gap9_tiled_training_l3_singlebuffer", "CCT_LoRA_R1", _LORA_FIXTURE_REASON),
-]
+# CCT_QLORA_FT (L2 and L3) was listed until the int8 Gemm was fixed: its template
+# passed 9 of the kernel's 12 arguments (no bias stride, scale or zero point), the
+# kernel ignored transA/transB, and GAP9 had no prototype for it, so the float scale
+# went through an implicit declaration. It passes 0/4 now.
+# ---------------------------------------------------------------------------
+_KNOWN_FAILURES = []
 
 
 def pytest_collection_modifyitems(config, items):
