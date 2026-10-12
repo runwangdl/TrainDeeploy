@@ -390,8 +390,9 @@ void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
   }
   const uint32_t has_bias = (pDstC != NULL);
 
-  // op(A)[i][k] = pSrcA[i * aRow + k * aCol], op(B)[k][j] = pSrcB[k * bK + j * bJ]:
-  // A is stored [M, N] or, with transA, [N, M]; B [N, O] or, with transB, [O, N].
+  // op(A)[i][k] = pSrcA[i * aRow + k * aCol], op(B)[k][j] = pSrcB[k * bK + j *
+  // bJ]: A is stored [M, N] or, with transA, [N, M]; B [N, O] or, with transB,
+  // [O, N].
   const uint32_t aRow = transA ? 1 : N, aCol = transA ? M : 1;
   const uint32_t bK = transB ? 1 : O, bJ = transB ? N : 1;
 

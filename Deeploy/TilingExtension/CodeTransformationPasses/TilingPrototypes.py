@@ -172,10 +172,11 @@ class ProfilingPrototypeMixIn(ABC):
             measurementsList = ["kernel_start", "kernel_end"] + measurementsList
 
         for measurements in measurementsList:
-            executionBlock.addLeft(cls._measurementArrayDeclaration, {
-                "measurements": f"{nodeName}_{measurements}_measurements",
-                "totalNumTiles": 1 if _PROFILE_SUMMARY else totalNumTiles
-            })
+            executionBlock.addLeft(
+                cls._measurementArrayDeclaration, {
+                    "measurements": f"{nodeName}_{measurements}_measurements",
+                    "totalNumTiles": 1 if _PROFILE_SUMMARY else totalNumTiles
+                })
 
         if _PROFILE_SUMMARY:
             executionBlock.addLeft(NodeTemplate("extern uint32_t deeploy_prof_acc[6];\n"), {})

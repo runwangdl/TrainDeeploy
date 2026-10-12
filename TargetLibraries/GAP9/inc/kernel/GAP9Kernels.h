@@ -182,19 +182,18 @@ void PULP_ReluGrad_fp32_fp32(float32_t *grad_out, float32_t *data_in,
 
 void PULP_Relu_fp32_fp32(float32_t *input, float32_t *output, uint32_t size);
 
-// Transformer and weight-only-quantised kernels. The int8 ones and Layernorm take
-// a float argument, which an implicit declaration promotes to double and the
-// ilp32f callee then reads from the wrong register: the int8 matmuls ran with a
-// garbage scale. Kept in sync with PULPOpen/inc/kernel/{Conv,gemm,GELU,Layernorm,
-// MaxPool,Softmax}.h.
+// Transformer and weight-only-quantised kernels. The int8 ones and Layernorm
+// take a float argument, which an implicit declaration promotes to double and
+// the ilp32f callee then reads from the wrong register: the int8 matmuls ran
+// with a garbage scale. Kept in sync with
+// PULPOpen/inc/kernel/{Conv,gemm,GELU,Layernorm, MaxPool,Softmax}.h.
 void PULP_Conv2d_Im2Col_fp32_i8_fp32_HWC(
     const float32_t *__restrict__ pSrcA, uint32_t H, uint32_t W, uint32_t C,
     const int8_t *__restrict__ pSrcB, uint32_t F_total, uint32_t P, uint32_t Q,
     uint32_t SP, uint32_t SQ, const float32_t *__restrict__ pSrcBias,
     const bool has_bias, float32_t *__restrict__ pDstC, uint32_t pad_top,
     uint32_t pad_bottom, uint32_t pad_left, uint32_t pad_right,
-    float32_t *__restrict__ pContextBuffer, float32_t scale,
-    int32_t zeroPoint);
+    float32_t *__restrict__ pContextBuffer, float32_t scale, int32_t zeroPoint);
 
 void PULP_Gemm_fp32_i8_fp32_fp32(const float32_t *__restrict__ pSrcA,
                                  const int8_t *__restrict__ pSrcB,

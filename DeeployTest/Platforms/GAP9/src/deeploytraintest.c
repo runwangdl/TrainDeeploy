@@ -196,9 +196,10 @@ struct pi_device cluster_dev;
 static unsigned int g_train_cycles_acc = 0;
 static unsigned int g_opt_cycles_acc = 0;
 
-/* Summary-mode tiling profile (DEEPLOY_PROFILE_SUMMARY=1 at code generation): every tile
- * loop adds its waits here, [level*3 + {ingress wait, kernel, egress wait}], level 0 = the
- * L2->L1 loop, 1 = the L3->L2 loop. All zero when profiling is off. */
+/* Summary-mode tiling profile (DEEPLOY_PROFILE_SUMMARY=1 at code generation):
+ * every tile loop adds its waits here, [level*3 + {ingress wait, kernel, egress
+ * wait}], level 0 = the L2->L1 loop, 1 = the L3->L2 loop. All zero when
+ * profiling is off. */
 uint32_t deeploy_prof_acc[6] = {0};
 
 /* -------------------------------------------------------------------------

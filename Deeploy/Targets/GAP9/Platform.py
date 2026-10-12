@@ -50,8 +50,8 @@ from Deeploy.Targets.Generic.Parsers import AddParser, AveragePool2DParser, Batc
     SoftmaxCrossEntropyLossGradParser, SoftmaxCrossEntropyLossParser, SoftmaxGradParser, SoftmaxParser, \
     TransposeParser, UniformRequantShiftParser, UnsqueezeParser, iHardswishParser, iRMSNormParser, iSoftmaxParser
 from Deeploy.Targets.Generic.Templates import AllocateTemplate as BasicAllocateTemplate
-from Deeploy.Targets.PULPOpen.Bindings import BasicQuantBindings, PULPDMASliceBindings, PULPDWConv1DBinding, \
-    PULPReduceMeanBindings, PULPRQSConv1DBindings
+from Deeploy.Targets.PULPOpen.Bindings import PULPDMASliceBindings, PULPDWConv1DBinding, PULPReduceMeanBindings, \
+    PULPRQSConv1DBindings
 from Deeploy.Targets.PULPOpen.Layers import PULPAddLayer, PULPGEMMLayer, PULPMulLayer, PULPRQSConvLayer, \
     PULPRQSGEMMLayer
 from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser, PULPConvGradW2DParser, \
