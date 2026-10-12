@@ -77,6 +77,13 @@ def configure_cmake(config: DeeployTestConfig) -> None:
     if cmake_cmd == "cmake" and shutil.which("cmake") is None:
         raise RuntimeError("CMake not found. Please install CMake or set CMAKE environment variable")
 
+    # Tests share one build directory per worker, and CMake keeps every -D it has ever
+    # been given in CMakeCache.txt. A per-model override such as SLAVESTACKSIZE=2048 would
+    # otherwise stay in force for every later test that does not pass it again.
+    cmake_cache = Path(config.build_dir) / "CMakeCache.txt"
+    if cmake_cache.exists():
+        cmake_cache.unlink()
+
     # Build CMake command
     cmd = [
         cmake_cmd,
