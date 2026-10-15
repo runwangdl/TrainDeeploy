@@ -91,6 +91,25 @@ elseif(platform STREQUAL GAP9)
     "${GENERATED_SOURCE}/hex/*"
   )
 
+  # Board builds: append a dummy readfs file that sorts last. The GAP9 EVK
+  # returns a corrupted tail for the last readfs file(s) when the flash image
+  # ends 48-64 KB into a 64 KB sector; cmake/gap9/readfs_pad.py resizes this
+  # file after `gapy image` so the image ends in a safe spot (see
+  # gap9_board.cmake). Placeholder here so it is part of the readfs file list.
+  option(GAP9_READFS_PAD "Pad the GAP9 board readfs image tail (EVK flash tail corruption workaround)" ON)
+  if(HEXLIST AND GAP9_READFS_PAD AND SIMULATOR STREQUAL "board")
+    set(GAP9_READFS_PAD_FILE "${GENERATED_SOURCE}/hex/zzz_readfs_pad.hex")
+    if(NOT EXISTS ${GAP9_READFS_PAD_FILE})
+      file(WRITE ${GAP9_READFS_PAD_FILE} "")
+      # 64 KB placeholder; readfs_pad.py rewrites it to the final size
+      execute_process(COMMAND ${CMAKE_COMMAND} -E env python3 -c
+        "open('${GAP9_READFS_PAD_FILE}','wb').write(b'Z'*65536)")
+    endif()
+    list(APPEND HEXLIST ${GAP9_READFS_PAD_FILE})
+    list(REMOVE_DUPLICATES HEXLIST)
+    message(STATUS "[Deeploy GAP9] readfs tail pad enabled: ${GAP9_READFS_PAD_FILE}")
+  endif()
+
   if (NOT HEXLIST)
     # L2 mode: No flash/readfs files
     # Data lives in L2 memory only
