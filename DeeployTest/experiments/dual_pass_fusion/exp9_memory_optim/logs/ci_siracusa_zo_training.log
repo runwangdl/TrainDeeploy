@@ -1,0 +1,12 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /app/ETH/TrainDeeploy
+configfile: pytest.ini
+plugins: xdist-3.8.0
+collecting ... collected 693 items / 691 deselected / 2 selected
+
+test_platforms.py::test_siracusa_tiled_zo_single_step[SpeechNet_ZO_single_step] PASSED [ 50%]
+test_platforms.py::test_siracusa_tiled_zo_single_step[SpeechNet_QZO_single_step] PASSED [100%]
+
+====================== 2 passed, 691 deselected in 52.69s ======================

@@ -113,6 +113,12 @@ void PULP_BatchNormGrad_fp32(const float32_t *dY, const float32_t *X,
 // --- Forward + non-conv gradient kernels also linked from PULPOpen/src but
 //     not surfaced by any GAP9-reachable header (same implicit-decl risk). ---
 // RW 2026-10-13: channels-last frozen-stat BatchNormInternal (PULPOpen/src/BatchNorm.c)
+// QW exp9: frozen BN + MaxPool + Relu + Quant in one pass (FrozenBNPoolReluQuant), see BatchNorm.c
+void PULP_FrozenBNPoolReluQuantHWC_i8_i8(const int8_t *X, const float32_t *gamma, const float32_t *beta,
+                                         const float32_t *running_mean, const float32_t *running_var, int8_t *Y,
+                                         uint32_t H_out, uint32_t W_in, uint32_t W_out, uint32_t C, uint32_t kh,
+                                         uint32_t kw, float32_t epsilon, float32_t dq_scale, float32_t dq_zero_point,
+                                         float32_t q_mul, float32_t q_zero_point, int32_t q_min, int32_t q_max);
 // RW 2026-10-15: int8 input (folded Dequant), see BatchNorm.c
 void PULP_BatchNormInternalHWC_i8_fp32(const int8_t *X, const float32_t *gamma, const float32_t *beta,
                                        const float32_t *running_mean, const float32_t *running_var, float32_t *Y,

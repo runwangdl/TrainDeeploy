@@ -179,7 +179,14 @@ def zoDualPassFusion(graph: gs.Graph, ne16_convs: Optional[Set[int]] = None) -> 
 
         raise NotImplementedError(f"zoDualPassFusion: no dual-pass rewrite for {node.op} ({node.name})")
 
+    # for n in remove:
+    #     graph.nodes.remove(n)
+    # QW exp9: also disconnect the inputs. Removing a node from graph.nodes leaves it in its input tensors' consumer
+    # lists (gs keeps tensor.outputs in sync with node.inputs only), so the replaced Conv / RequantShift stayed a
+    # phantom consumer of x through lowering -- invisible to cleanup(), but enough to fail single-consumer matches.
     for n in remove:
+        n.inputs.clear()
+        n.outputs.clear()
         graph.nodes.remove(n)
     graph.nodes.extend(new_nodes)
     graph.cleanup().toposort()

@@ -1,6 +1,7 @@
 # 05 — Dual-pass fusion from the per-block kernels to the full QZO(+ECO) network on GAP9 + NE16
 
-Written 2026-10-14. Part of the handover set indexed by `TrainDeeploy/HandoverDocuments/00_Overview.md`.
+Written 2026-10-14; updated 2026-10-21 with exp9, the memory optimisation of the fused graph (§4.8, §6.10, §7.7).
+Part of the handover set indexed by `TrainDeeploy/HandoverDocuments/00_Overview.md`.
 Paths are relative to `/Users/qiwenwu/ETH/`; in-container paths appear only inside command blocks.
 This guide continues `04_FusedQZO_NE16_Guide.md`, which covers the block-0 kernels (exp5, exp6); read its §1 first
 if the idea of fusing the two ε-passes is new.
@@ -23,6 +24,13 @@ first convolution (block 0) into one kernel. This guide documents the two steps 
 
   The result is bit-exact against the unfused run on Siracusa, the GAP9 cluster and GAP9 + NE16 (identical losses and
   weights after 4 device steps).
+- **exp9** (memory, branch `feat/memory_opt`, on top of Run's board work `fe1ffa2`) fuses the fp32 tail of each frozen-BN
+  block into one HWC kernel. A lowering pass, `FuseFrozenBNTailPass`, replaces
+  `BN → [MaxPool] → Transpose → Relu → Quant → Transpose` with one node, `FrozenBNPoolReluQuant` (int8 in, int8 out):
+  - the fp32 tensors between BN and Quant are never stored;
+  - the fused QZO+ECO training arena on GAP9 + NE16 drops from 854,452 to **265,612 B** (−68.9 %);
+  - the training part of a step drops by 13.0 %, as a side effect;
+  - the result is bit-exact on GAP9 and Siracusa (same losses, same weight hash).
 
 **Speedups of the training cycles:**
 
@@ -44,7 +52,7 @@ The rest of a step is unchanged, which caps the gain. Per conv block, the networ
 ECO (Run's error-feedback implementation, `-D ZO_ECO=ON`) composes with the fusion without code changes. It only
 needed a correct size for its momentum buffers.
 
-## Status as of 2026-10-14
+## Status as of 2026-10-21
 
 | item | state |
 |---|---|
@@ -55,8 +63,9 @@ needed a correct size for its momentum buffers.
 | QZO + ECO on the fused graph (GAP9 + NE16, n_accum 4, one update step) | works; all 4 mini-batches equal the host reference (`Errors: 0 out of 8`) |
 | Fused graph over 14 update steps of round 1 (54 windows in L3, direct QZO) | works; `Errors: 0 out of 112` (§6.9) |
 | Fixtures | per-block `TrainDeeploy/SpeechNet_Test/speechnet_{unfused,fused}_b{1..4}_{cluster,NE16}`; whole-network entry fixtures `speechnet_{train,update}_QZOECO_full_fused_{single_update_step,round1}` (§5) |
-| Full fine-tuning round with the fused graph | not run (on GVSoC it would take many hours); on the board fused QZO fits L2, fused QZO+ECO is 15 KB short (§9) |
-| Non-conv nodes (BN, Quant/Dequant, pool, ReLU) | not fused; now the majority of the fused step (§6.5) |
+| Full fine-tuning round with the fused graph | not run on GVSoC (many hours). On the board Run ran it (`fe1ffa2`, before exp9): QZO 35.1 s, QZO+ECO 36.1 s per 120-epoch round @ 370 MHz (§9 item 3) |
+| Frozen-BN tail fusion `FrozenBNPoolReluQuant` (exp9) | works on GAP9, GAP9 + NE16 and Siracusa, bit-exact; fused QZO+ECO L2 arena 854,452 → 265,612 B, training −13.0 % (§4.8, §6.10); **not yet run on the board** |
+| Non-conv nodes (BN, Quant/Dequant, pool, ReLU) | Run folded Dequant into BN; exp9 fused BN + MaxPool + ReLU + Quant per block (for memory, arithmetic unchanged). Folding BN into the conv requant is still open (§9 item 1) |
 | Exporter support | not needed: the fusion is a Deeploy pass over the ordinary QZO export |
 | Checkpoint | all numbers derive from `artifacts_reference` weights (paper-comparable): the per-block kernel fixtures from `Tests/Models/Training/SpeechNet/speechnet_qzo19_train` (pooled@99.99 calibration), the whole-network runs from `SpeechNet_Test/speechnet_train_QZO_single_step` and the new QZOECO fixtures (pooled@99.9) |
 
@@ -189,6 +198,8 @@ computation through the Onnx4Deeploy oracle.
 | exp8 step 9 | why block 0 is 4.74× in the network but 2.71× in exp6 | the exp6 number included the fixture's NCHW transposes | `exp8_whole_network/results/step9_block0_gap9.txt` |
 | exp8 step 10 | GAP9 + NE16, n_accum 4, one update step | 8,855,589 cycles; round 38.8 s | `exp8_whole_network/results/step10_round_prediction.txt` |
 | exp8 step 11 | the same step with ECO | 9,129,644 cycles; round 40.0 s | `exp8_whole_network/results/step11_eco_round_prediction.txt` |
+| (Run, `eabbb0b`) | NE16 silicon fix (job width multiple of 3); `FoldDequantIntoFrozenBNPass` | fused arena 1,317,012 → 854,452 B; fused QZO+ECO fits the board L2; board rounds 35.1 s / 36.1 s | §9 item 3 |
+| exp9 | `FuseFrozenBNTailPass` + `PULP_FrozenBNPoolReluQuantHWC_i8_i8`; `ZODualPassFusion` phantom-consumer fix | fused QZO+ECO arena 854,452 → **265,612 B**, train 7.54 M → 6.56 M cycles, bit-exact | `exp9_memory_optim/logs/`, `verify/`, `memcompare/summary.txt` (§6.10) |
 
 ### 2.1 Decisions and why
 
@@ -214,6 +225,10 @@ computation through the Onnx4Deeploy oracle.
 | FC tail via a new `DualHalf` node | Deeploy `Slice`; zero-padded FC weights | tiled `Slice` mis-strides; zero padding was exact on Siracusa but not on GAP9 (§8) |
 | De-interleave the stacked input tile once inside `DualConv2In` (1×K kernels) | per-tap strided reads; change the upstream layout | block 1 has 8 channels per pass = 2 words per tap, so per-tap reads pay the loop overhead every 2 words; one copy per tile restores the in-place path |
 | ECO momentum sized per element | `inputs_bytes × 4` (Run's original) | 4× over-allocation for int32 / fp32 tensors no longer fitted next to the fused graph's larger L2 arena |
+| exp9: fuse the BN tail as computation only, each step with the expression of the kernel it replaces | fold BN into the conv requant (fewer ops, but different fp32 arithmetic) | stays bit-exact against the unfused graph and the existing CI hashes; the memory gain does not need the arithmetic change |
+| exp9: pass at the end of lowering, run again in the NE16 deployer | fuse in `ZODualPassFusion`; fuse before lowering | the chain only exists after lowering (Run's channels-last BN and Dequant fold, the layout transposes); NE16's own transposes are added after the PULP lowering chain has run |
+| exp9: only frozen-stat BN with a folded Dequant (`DEEPLOY_BN_FROZEN_NHWC=1`, `dq_scale` present), zero points 0, 8 bit | a general BN tail | the only configuration the board uses; zero points 0 keep the fused `x·s + zp` rounding identical to the unfused code |
+| exp9: output pixels split across cores, channel loop outside | channels across cores | same order as the BN kernel, so the per-channel constants stay in registers |
 
 ---
 
@@ -508,6 +523,91 @@ before and after lowering. Open them in Netron to see exactly what the pass prod
 | `siracusa_fused_train_middleware_{pre,post}_lowering.onnx` | Siracusa fused |
 | `gap9_fused_cluster_train_middleware_{pre,post}_lowering.onnx` | GAP9, all convs on the cluster |
 | `gap9_fused_ne16_b012_train_middleware_{pre,post}_lowering.onnx` | GAP9, blocks 0–2 on NE16 |
+
+exp9 adds `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/graphs/`, both GAP9 + NE16
+(blocks 0–2), fused QZO+ECO:
+
+| file | configuration |
+|---|---|
+| `before_fused_ne16_b012_train_post_lowering.onnx` | Run's `fe1ffa2` (Dequant folded into BN) |
+| `after_fused_ne16_b012_train_post_lowering.onnx` | with `FuseFrozenBNTailPass`: one `FrozenBNPoolReluQuant` per block 0–3 |
+
+### 4.8 Memory: the frozen-BN tail fusion (exp9)
+
+**The problem.** After Run's `FoldDequantIntoFrozenBNPass` (`eabbb0b`), every frozen-stat QZO block reads, after
+lowering:
+
+```
+BN(int8 HWC -> fp32 HWC) -> [MaxPool HWC] -> Transpose(0,3,1,2) -> Relu -> Quant(int8) -> Transpose(0,2,3,1)
+```
+
+The input and output are int8 HWC, but up to four fp32 tensors lie in between. In block 0 the fp32 BN output of the
+dual pass is 628,096 B, i.e. 73 % of the 857,732 B L2 peak. Every step is elementwise or a max over a window, so one
+kernel can compute the chain per output element in registers, and the fp32 tensors never exist.
+
+**The pass** `FuseFrozenBNTailPass` (`TrainDeeploy/Deeploy/Targets/PULPOpen/FrozenBNTail.py:97`):
+- **When it runs:** at the end of lowering:
+  - in the PULP deployer (`Deeploy/Targets/PULPOpen/Deployer.py:71`);
+  - again in the NE16 deployer (`Deeploy/Targets/NE16/Deployer.py:61`), because NE16's own transposes are added
+    after the PULP chain has run.
+- **When it fires:** only if `DEEPLOY_BN_FROZEN_NHWC=1`, which the MeZO runner sets for `-D BN_FROZEN_STATS=ON`
+  (§4.5).
+- **Opt-out:** `DEEPLOY_FUSE_BN_TAIL=0` turns it off, for A/B runs.
+- **Matcher** (`_match_tail`, `:61`), conditions:
+  - the BN has `bn_nhwc = 1` and a folded Dequant (`dq_scale`);
+  - its four statistics outputs are unused;
+  - each link has exactly one consumer;
+  - the MaxPool has stride = kernel, no padding and no dilation;
+  - the transposes have exactly the perms shown above;
+  - both zero points are 0 and the Quant is 8 bit.
+- **Rewrite:** the chain becomes one node `FrozenBNPoolReluQuant(x, γ, β, mean, var) -> y [1, Ho, Wo, C] int8`.
+- **Coverage:**
+  - blocks 0–2 match with MaxPool, block 3 without;
+  - block 4 (Relu → GlobalAveragePool, no Quant) does not match and is left unchanged.
+
+**The kernel** `PULP_FrozenBNPoolReluQuantHWC_i8_i8` (`TrainDeeploy/TargetLibraries/PULPOpen/src/BatchNorm.c:502`). It
+lives in the same file as the BN kernel, so it gets the same compile flags (the strict-fp32 list on Siracusa, `-O3` on
+GAP9).
+- **Bit-exactness:** every step uses the exact expression of the kernel it replaces:
+
+  | step | expression | replaced kernel |
+  |---|---|---|
+  | BN | `dq = ((float)q − dq_zp)·dq_scale`, then `(dq − mean)·inv_std·γ + β` | `PULP_BatchNormInternalHWC_i8_fp32` |
+  | pool | `fmax.s` over the window | `PULP_MaxPool2d_fp32_fp32_HWC` |
+  | ReLU | `MAX(m, 0)` | `PULP_Relu_fp32_fp32` |
+  | Quant | round half away from zero, then clamp | `PULPQuantTemplate` |
+
+  - Empty `asm volatile` barriers after `dq` and after the BN result keep each a rounded fp32 value, as it was when
+    it was stored. This stops clang from contracting across the former node boundaries.
+  - The two transposes only moved data, so dropping them changes nothing.
+- **Parallelisation:** cores split the output pixels; the channel loop is outermost, as in the BN kernel, so that γ, β,
+  mean and `inv_std` stay in registers.
+- **Tiling** (`FrozenBNPoolReluQuantTileConstraint`, `FrozenBNTail.py:218`):
+  - only the H dimension is tiled; each input tile is `kh` × the output tile's rows, at full W and C;
+  - the four per-channel vectors are loaded whole.
+- **Registration:**
+  - mappers in `PULPOpen/Platform.py` and `GAP9/Platform.py`;
+  - bindings from `tilingReadyBindings()` (`FrozenBNTail.py:260`);
+  - prototype in `PULPOpen/inc/kernel/BatchNorm.h` and `GAP9/inc/kernel/GAP9Kernels.h`.
+
+**A fix in `ZODualPassFusion`** (`ZODualPassFusion.py:184`). The nodes the pass replaces (the original
+`Conv` / `RequantShift`) were removed from `graph.nodes`, but onnx-graphsurgeon keeps a tensor's consumer list in sync
+only with `node.inputs`.
+- **Effect:** the removed nodes stayed in their input tensors' consumer lists as phantom consumers through lowering.
+  `cleanup()` could not see them, but they made single-consumer matches fail.
+- **Fix:** the pass now clears their inputs and outputs.
+- **Only visible change in the lowered graph:** three per-channel `mul` constants are no longer duplicated
+  (`..._DUPLICATE_FOR_...`); the values are the same.
+- **Extra guard:** `FrozenBNTail._only_consumer` (`:48`) skips consumers that have no outputs.
+
+**Where it fires and where it does not:**
+
+| configuration | fires? |
+|---|---|
+| QZO / QZO+ECO, fused or unfused, MeZO runner with `-D BN_FROZEN_STATS=ON`; the fused pytest gates | yes |
+| ZO fp32 (no Dequant, so no `dq_scale`) | no |
+| BP (the flag is never set, no Quant) | no |
+| unfused pytest MeZO gates (they do not set the flag) | no |
 
 ---
 
@@ -817,6 +917,67 @@ weight updates, all within the reference tolerance. A 120-epoch round at the 14-
 1,620 × 8,870,841 = 14.37 G cycles = **38.8 s @ 370 MHz**, the same as the prediction. The L3 → L2 window copies
 happen outside the `BENCH` timer, so they are still not included.
 
+### 6.10 Memory: the frozen-BN tail fusion (exp9, 2026-10-15)
+
+**Setting.** GVSoC, GAP9 + NE16 for blocks 0–2, fused QZO+ECO, one update step, n_accum 4, lr 3e-3. This is Run's
+board configuration plus `--plotMemAlloc`:
+- fixture: `..._QZOECO_full_fused_single_update_step`;
+- flags: `--l1 114000 --l2 1340000 -D BN_FROZEN_STATS=ON GAP9_NETWORK_O3=ON ZO_ECO=ON ZO_EXPECT_WSUM=0xb11cc64f`.
+
+"Before" is `fe1ffa2`, which equals a run with `DEEPLOY_FUSE_BN_TAIL=0`. Sources: logs
+`exp9_memory_optim/logs/{before,after}_fused_ne16_eco_step.log`; memory plots `results/{before,after}_memory_alloc.html`
+(local, not tracked).
+
+| | before | after |
+|---|--:|--:|
+| training L2 arena (`pi_l2_malloc` in `TrainingNetwork.c`) | 854,452 B | **265,612 B** (−588,840, −68.9 %) |
+| peak live L2 (incl. 3,344 B constants) | 857,732 B @ block-0 BN | **268,956 B** @ block-0 conv |
+| L1 arena | 113,664 B | 113,728 B |
+| training cycles per update step | 7,540,615 | **6,560,579** (−13.0 %) |
+| update-graph cycles | 508,659 | 508,301 |
+| Errors / `[WSUM]` | 0 / 8, `0xb11cc64f` | 0 / 8, `0xb11cc64f`; all 8 loss bit patterns identical |
+
+**What makes up the peak:**
+
+| | contents |
+|---|---|
+| before | BN output, fp32, dual pass 628,096 B + BN input int8 157,024 B + window 39,200 B + ~33 KB |
+| after | block-0 conv output int8 157,024 B + im2col column 39,256 B + window 39,200 B + ~33 KB |
+
+**All board configurations, code generation only** (`scripts/mem_compare.sh`, round-1 fixtures, lr 3e-6, ECO with SR;
+`exp9_memory_optim/memcompare/summary.txt`):
+
+| configuration | training L2 arena, tail0 | tail1 (exp9) |
+|---|--:|--:|
+| BP (`deeployTrainingRunner_tiled_gap9.py`, L3 default level) | 687,488 B (+ 1,005,648 B in L3) | pass does not fire |
+| ZO fp32 | 791,216 B | pass does not fire |
+| QZO+ECO unfused (cluster) | 466,464 B | **162,152 B** |
+| QZO+ECO fused, NE16 blocks 0–2 | 854,452 B | **265,612 B** |
+
+So with exp9 the fused QZO+ECO graph needs less L2 than the unfused one did before.
+
+**Regression; all bit-exact.** `tail0` means `DEEPLOY_FUSE_BN_TAIL=0`. Scripts `scripts/verify_{gap9,siracusa}.sh`;
+logs in `exp9_memory_optim/verify/` and `logs/`.
+
+| run | result | L2 arena tail0 → tail1 | training cycles tail0 → tail1 |
+|---|---|--:|--:|
+| GAP9 + NE16 fused + ECO, 1 update step | 0 / 8, same WSUM, 8 loss bit patterns identical | 854,452 → 265,612 | 7,539,511 → 6,559,071 |
+| GAP9 + NE16 fused, round-1 fixture, 14 update steps, direct QZO lr 1e-5 | 0 / 112; 112 loss bit patterns and `[WSUM]` identical | 854,452 → 265,612 | 105,515,019 → 91,854,554 (−12.9 %) |
+| GAP9 unfused QZO, 1 step | 0 / 2, WSUM `0x97e57471` both | 466,464 → 162,152 | 3,662,191 → 3,332,852 |
+| GAP9 unfused QZO+ECO, 5 steps | 0 / 2, WSUM `0x6706ea8a` (the CI value) | → 162,152 | → 16,726,310 |
+| GAP9 ZO fp32 | 0 / 2, WSUM `0xc14819e6` (the CI value); pass does not fire | 791,216 | 6,724,646 |
+| Siracusa fused, 4 steps, `-D DUMP_WEIGHTS=ON` (setting of §7.3) | losses + 110 WDUMP lines identical | 855,516 → 237,108 | 10,778,198 → 8,798,767 (−18.4 %) |
+| Siracusa unfused QZO, 4 steps | losses + WDUMP identical | 466,464 → 162,152 | 18,245,535 → 15,999,369 |
+| GAP9 CI `gap9_tiled and speechnet_gap9` | **6 / 6 pass** (both fused weight-hash gates included) | | |
+| Siracusa CI `-k "siracusa and SpeechNet"` | **13 / 13 pass** (kernel fixtures at the exp7 cycles) | | |
+
+No Siracusa CI test sets `BN_FROZEN_STATS`, so CI never runs the pass on Siracusa; the 4-step runs above are the
+Siracusa check.
+
+**Board estimate (inferred, not measured).** From the 14-step run: (91.85 M + 3.42 M update) / 14 × 1,620 = 11.0 G
+cycles per round, against 12.6 G before. That is about −13 % on Run's measured 35.1 s board round, so roughly 31 s.
+The board run is open (§9 item 3).
+
 ---
 
 ## 7. How to reproduce
@@ -952,6 +1113,37 @@ To refresh the expected hash after an intended numerical change, run the same st
 (`deeployMezoRunner_tiled_GAP9.py … --lr 3e-3 -D ZO_ECO=ON -D ZO_EXPECT_WSUM=0x0`), read `[WSUM] final 0x…`, and
 confirm the fused run prints the same value.
 
+The fused gate also covers exp9: it builds with frozen BN, so `FrozenBNPoolReluQuant` is in the gated graph, and the
+hash it checks is unchanged (`0xb11cc64f`).
+
+### 7.7 Memory: the frozen-BN tail fusion (exp9)
+
+The scripts are in `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/scripts/`. Every run is
+done twice, without (`DEEPLOY_FUSE_BN_TAIL=0`) and with the pass. Each run keeps three outputs: the log, the generated
+`TrainingNetwork.c` and the lowered graph. Each script ends with the CI gates.
+
+```bash
+# GAP9 (container deeploy_gap9; the script sources the SDK itself) -> verify/*.log, *.TrainingNetwork.c, *.post_lowering.onnx
+docker exec deeploy_gap9 bash -lc "bash /app/Deeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/scripts/verify_gap9.sh"
+# Siracusa (container traindeeploy)
+docker exec traindeeploy bash -lc "bash /app/ETH/TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/scripts/verify_siracusa.sh"
+# L2 plans of the four board configurations, code generation only (--skipsim --plotMemAlloc) -> memcompare/<tag>/
+docker exec deeploy_gap9 bash -lc "bash /app/Deeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/scripts/mem_compare.sh"
+cd /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim
+for t in bp zo eco_unf_t0 eco_unf_t1 eco_fus_t0 eco_fus_t1; do echo "== $t"; \
+  python3 scripts/mem_plot_summary.py memcompare/$t/deeployStates/memory_alloc.html; done   # peak live bytes per level
+```
+
+**What to check:**
+- the per-run line prints `Errors`, `[WSUM]`, `fused_calls` (the number of `PULP_FrozenBNPoolReluQuantHWC_i8_i8`
+  calls in the generated C: 4 = blocks 0–3 for every QZO graph with tail1, 0 for tail0 and for ZO fp32), the
+  `pi_l2_malloc` size and `train_cycles_lo`;
+- tail0 and tail1 must print the same `Errors` and WSUM.
+
+For a single run by hand, take §7.4's command and set the variable in front of it:
+`DEEPLOY_FUSE_BN_TAIL=0` (before) or nothing (after); the pass is on by default whenever frozen BN is on. Add
+`--plotMemAlloc` for the L2 plot in `TEST_GAP9_W_NE16/<fixture>/deeployStates/`.
+
 ## 8. Known pitfalls and lessons
 
 | # | symptom | cause | fix |
@@ -972,15 +1164,21 @@ confirm the fused run prints the same value.
 | 14 | `No space left on device` during builds | the Docker VM disk (59 GB) was full | `pip cache purge` in `agitated_hugle` freed 9.5 GB; watch `docker exec agitated_hugle df -h /` |
 | 15 | Kernel-fixture cycles differ by up to ~1.5 % between builds | the tiler's `random-max` search strategy randomises buffer placement | compare node times, not single `Runtime` values; outputs stay exact |
 | 16 | GAP9 + NE16 training build: `Allocation failed for allocator 1` at `InitTrainingNetwork` with a multi-window fixture | `codeGenerateTraining.py` detected GAP9 by `"GAP9" in type(Platform).__name__`; the NE16 wrapper `MemoryNE16PlatformWrapper` failed the test, so all windows and initial weights were baked into L2 | also match "NE16" (`codeGenerateTraining.py:610-614`); check the log for `[testData->L3]` |
+| 17 | exp9: a single-consumer pattern did not match after `ZODualPassFusion` although the graph showed one consumer | the pass removed the replaced `Conv` / `RequantShift` from `graph.nodes` only; onnx-graphsurgeon keeps tensor consumer lists in sync with `node.inputs`, so they stayed as phantom consumers through lowering (invisible to `cleanup()`, gone at export) | clear the removed nodes' inputs and outputs (`ZODualPassFusion.py:184`); new matchers should skip consumers without outputs (`FrozenBNTail._only_consumer`) |
+| 18 | exp9: kernel does not compile with a local variable `inf` | `inf` is a macro in `TargetLibraries/Generic/inc/macros.h` (`1.0f / 0.0f`) | do not name variables `inf`; use the macro |
 
 ---
 
 ## 9. Open items and next steps
 
-1. **Non-conv nodes** (63 % of the fused node time on GAP9). Options: fold frozen BN + Dequant into the conv requant,
-   fuse ReLU / MaxPool, drop Quant / Dequant pairs. **A decision is needed** on the reference: folding changes fp32
-   arithmetic, so the result is no longer bit-exact against today's unfused graph. The alternative is to fuse only the
-   computation and keep the arithmetic.
+1. **Non-conv nodes** (63 % of the fused node time on GAP9).
+   - **Done:**
+     - Run folded Dequant into the frozen BN;
+     - exp9 fused BN + MaxPool + ReLU + Quant with the arithmetic kept (§4.8). That took the training part of a step
+       down 13 %.
+   - **Still open:** folding the frozen BN into the conv requant, which would remove the fp32 tail entirely.
+     **A decision is needed** on the reference: that changes the fp32 arithmetic, so the result would no longer be
+     bit-exact against today's unfused graph.
 2. **The ~0.3 M cycles per step outside the nodes** (closures, cluster offload).
 3. **Board status** (measured on a `-s board` build of the fused NE16 QZO+ECO round, 2026-10-14; build log
    `TrainDeeploy/SpeechNet_Test/logs/smoke/board_build_fused_ne16_eco_round1_l2_1340000.log`). An L2 malloc failure
@@ -1007,13 +1205,20 @@ confirm the fused run prints the same value.
      conv output (the fp32 dequantized tensor was half of the peak): training arena 1,317,012 -> 854,452 B, so fused
      QZO+ECO fits. Board, 120-epoch round 1, `--zo-fused-dual-ne16 0,1,2`, weights == unfused board rounds:
      QZO 12.99 G cycles = **35.1 s**, QZO+ECO (SR) 13.37 G = **36.1 s** @ 370 MHz.
+   - **exp9 on the board (open).** With `FuseFrozenBNTailPass` the fused QZO+ECO arena is 265,612 B, about 1.1 MB
+     below the board heap, so L2 is no longer a constraint. The step is −13 % on GVSoC (§6.10). Not yet run on the
+     board; first run round 1 for 14 steps (`Errors: 0 out of 112`, same `[WSUM]` as without the pass), then a full
+     round.
 4. **Stack depth.** Worst slave-stack chain 576 B of the 768 B L1 slave stack (`silentwear-zo/scripts/stack_depth.py`
    on the board ELF): `PULP_DualConv2d_2in_i8_i8_i8_HWC` [336] -> `dc_perturb_i8_chw` [96] -> `lrintf` [16] under a
    128 B closure. The NE16 prep chains are 304–336 B. The tool covers worker-core entries only; `NE16DualConv2in` runs
    on the cluster controller (4 KB stack).
+   The exp9 kernel `PULP_FrozenBNPoolReluQuantHWC_i8_i8` has not been measured yet;
+   run `stack_depth.py` on the exp9 board ELF before the first board run.
    NE16 has not yet run on the board (the board rounds so far used the cluster-only runner); the first board run
    should be fused QZO for 14 steps of the round-1 fixture (`Errors: 0 out of 112`, `[WCHK]`).
 5. **Time the per-window L3 → L2 copy** of the 54-window pool, which the round prediction does not include.
+   - **Next memory lever:** the block-0 conv peak (int8 output 157 KB + im2col column 39 KB + window 39 KB).
 6. **Block-0 NE16 double buffering.** Block 0 still uses exp6's unpipelined form (im2col 120 k + NE16 130 k
    sequential); the exp7 pipeline would hide most of the im2col.
 7. **NE16 preparation costs.** The encode is now the largest prep item (32 k on block 1). The bias prep grows to 32 k
@@ -1036,7 +1241,8 @@ Paths are relative to `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/` u
 | exp7 Siracusa per block | `exp7_remaining_blocks/results_step5.txt` (final, wall clock), `results_step5{a,b,c,d}_nodes.txt`, `results_step5d_wall.txt`, `results_step6.txt`; per block `exp7_remaining_blocks/exp7{a,b,c,d}_block*/block*_{unfused,mid,fused_cluster}/{logs,results,codegen}/`; scripts `run_block.sh`, `node_table.py`, `wall_table.py`, `probe_block.sh` |
 | exp7 GAP9 per block | `exp7_remaining_blocks/results_step7_gap9.txt`; `exp7*_block*/block*_fused_NE16/{logs,results,codegen}/` (block 1 also `results/summary_optimised.txt`, `results/summary.txt` with the `-Os` comparison); scripts `run_gap9_block.sh`, `gap9_table.py` |
 | exp8 whole network | `exp8_whole_network/results/step{0,3,8,9,10,11}_*.txt`; logs `exp8_whole_network/logs/` (`step0_*` baseline, `step4_*` / `step6_*` / `step8_*` 4-step runs, `step7_*` GAP9 profiles, `step9_*` exp6 re-runs, `step10_*` / `step11_*` n_accum 4, `bisect_*`, `regression_*`); tools `compare_dumps.py`, `bisect_dual.py`, `run_bisect.sh`, `categorize.py`, `oracle_check_dual.py` |
-| lowered graphs | `exp8_whole_network/graphs/*.onnx` (§4.7) |
+| lowered graphs | `exp8_whole_network/graphs/*.onnx`, `exp9_memory_optim/graphs/*.onnx` (§4.7) |
+| exp9 memory | `exp9_memory_optim/logs/` (before / after step, 14-step round, Siracusa 4 steps, CI); `exp9_memory_optim/verify/*.log` (tail0 / tail1 per configuration, CI); `exp9_memory_optim/memcompare/summary.txt` (L2 plan of the four board configurations); scripts `exp9_memory_optim/scripts/{verify_gap9.sh, verify_siracusa.sh, mem_compare.sh, mem_plot_summary.py}`. Local only (too large, or `.html` ignored): `results/*_memory_alloc.html`, `verify/*.TrainingNetwork.c`, `verify/*.post_lowering.onnx`, `memcompare/<tag>/` |
 | Run's GAP9 work this builds on | TrainDeeploy commits on `silentwear-zo/gap9-on-devel` (ECO `886c948`); board rounds and constraints in the `silentwear-zo` repository (`rounds/summary.md`, `rounds/export_qzo999_rounds.sh`, `scripts/stack_depth.py`, `notes/README.md` §4.13) |
 
 **Code map** (all marked `-- QW`):
@@ -1049,6 +1255,7 @@ Paths are relative to `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/` u
 | tile constraints | `TrainDeeploy/Deeploy/Targets/PULPOpen/TileConstraints/{DualConv2InTileConstraint.py, UntiledTileConstraint.py}`; `TrainDeeploy/Deeploy/Targets/NE16/TileConstraints/NE16DualConv2inConstraint.py` |
 | bindings, tiler, platform | `TrainDeeploy/Deeploy/Targets/PULPOpen/{Bindings.py, Tiler.py, Platform.py}`; `TrainDeeploy/Deeploy/Targets/GAP9/Platform.py`; `TrainDeeploy/Deeploy/Targets/NE16/{Engine.py, Tiler.py}`; layout pass `LoweringOptimizationPasses.py:326` |
 | kernels | `TrainDeeploy/TargetLibraries/PULPOpen/src/{DualConv2In.c, Conv4x2.c}`, `TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/{DualPerturb.h, DualConv2In.h, Conv4x2.h}`; `TrainDeeploy/TargetLibraries/GAP9/src/{NE16DualConv2in.c, NE16DualPrep.c}` |
+| exp9 (memory) | pass, parser, layer, template, tile constraint, bindings: `TrainDeeploy/Deeploy/Targets/PULPOpen/FrozenBNTail.py`; called from `TrainDeeploy/Deeploy/Targets/{PULPOpen,NE16}/Deployer.py`; mappers in `TrainDeeploy/Deeploy/Targets/{PULPOpen,GAP9}/Platform.py`; kernel `TrainDeeploy/TargetLibraries/PULPOpen/src/BatchNorm.c:502`, prototypes `TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/BatchNorm.h`, `TrainDeeploy/TargetLibraries/GAP9/inc/kernel/GAP9Kernels.h`; phantom-consumer fix `ZODualPassFusion.py:184` |
 | harness, runner, build | `TrainDeeploy/DeeployTest/Platforms/{Siracusa,GAP9}/src/deeploymezotest.c`, `TrainDeeploy/DeeployTest/Platforms/{Siracusa,GAP9}/CMakeLists.txt`, `TrainDeeploy/DeeployTest/testUtils/deeployMezoRunner.py`, `TrainDeeploy/Deeploy/DeeployTypes.py` (`inputs_elems`), `TrainDeeploy/TargetLibraries/GAP9/CMakeLists.txt` (`-O3` list) |
 
 **Commits** (branch `feat/fusion_full_network` on TKCW-W/TrainDeeploy, based on Run's `gap9-on-devel` at `a16a16d`):
@@ -1062,6 +1269,15 @@ Paths are relative to `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/` u
 | `7ec96b7` | this guide, SpeechNet_Test fixtures, NE16 L3 test-data fix, CI gates |
 | `82dca6e` | clearer variable names in the kernels (machine code unchanged) |
 
+Run's board work on top of it is on `silentwear-zo/gap9-on-devel` (`204a92a` … `fe1ffa2`: NE16 silicon fix, Dequant →
+BN fold, board harness, power window). exp9 is on branch `feat/memory_opt` on TKCW-W/TrainDeeploy, based on
+`fe1ffa2`:
+
+| commit | content |
+|---|---|
+| `9f45baa` | exp9: `FuseFrozenBNTailPass` + `PULP_FrozenBNPoolReluQuantHWC_i8_i8`, `ZODualPassFusion` phantom-consumer fix, exp9 scripts and lowered graphs |
+| (this update) | this guide's exp9 sections, exp9 logs and summaries |
+
 Each commit message lists the details (files, decisions, bugs, verified numbers).
 
 ---
@@ -1069,4 +1285,4 @@ Each commit message lists the details (files, decisions, bugs, verified numbers)
 **Companion guides.** `00_Overview.md` (entry point, environment, checkpoint rule, experiment index),
 `01_BP_Guide.md` (back-propagation), `02_ZO_Guide.md` (float zeroth-order), `03_QZO_Guide.md`
 (quantized zeroth-order), `04_FusedQZO_NE16_Guide.md` (fused dual-pass kernels and NE16, block 0),
-`05_Fusion_Full_Network_Guide.md` (this guide: blocks 1–4 and the full dual-pass network).
+`05_Fusion_Full_Network_Guide.md` (this guide: blocks 1–4, the full dual-pass network and its memory optimisation).

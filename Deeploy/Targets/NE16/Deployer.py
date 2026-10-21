@@ -9,6 +9,7 @@ import onnx_graphsurgeon as gs
 from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.DeeployTypes import DeploymentPlatform, TopologyOptimizer
 from Deeploy.Targets.GAP9.Deployer import GAP9Deployer
+from Deeploy.Targets.PULPOpen.FrozenBNTail import FuseFrozenBNTailPass  # -- QW exp9
 from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import TransposeConstOptPass, TransposeMergePass, \
     TransposeNoPermOptPass, TransposeSplitPass
 from Deeploy.Targets.NE16.TopologyOptimizationPasses.Passes import ConvEngineDiscolorationPass, NE16OptimizationPass
@@ -57,4 +58,5 @@ class NE16Deployer(GAP9Deployer):
             TransposeMergePass(),
             TransposeConstOptPass(),
             TransposeNoPermOptPass(),
+            FuseFrozenBNTailPass(),  # QW exp9: again after NE16's transposes (the PULP-chain run cannot see them) -- QW
         ]

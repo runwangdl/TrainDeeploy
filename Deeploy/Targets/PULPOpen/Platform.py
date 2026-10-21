@@ -164,6 +164,8 @@ PerturbRademacherFixedMapper = NodeMapper(_PRFixedParser(), _PRFixedTRB)  # -- Q
 from Deeploy.Targets.PULPOpen.Parsers import DualHalfParser as _DualHalfParser  # -- QW exp8
 from Deeploy.Targets.PULPOpen.Tiler import PULPDualHalfTilingReadyBindings as _DualHalfTRB  # -- QW exp8
 DualHalfMapper = NodeMapper(_DualHalfParser(), _DualHalfTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen import FrozenBNTail as _FBT  # -- QW exp9
+FrozenBNPoolReluQuantMapper = NodeMapper(_FBT.FrozenBNPoolReluQuantParser(), _FBT.tilingReadyBindings())  # -- QW exp9
 # -- QW: RQSPerturbRademacher mapper (quantized ZO), ported from shipped Deeploy
 from Deeploy.Targets.Generic.Parsers import RQSPerturbRademacherParser as _RQSPRParser  # -- QW
 from Deeploy.Targets.Generic.Layers import RQSPerturbRademacherLayer as _RQSPRLayer  # -- QW
@@ -256,6 +258,7 @@ PULPMapping = {
     'PerturbRademacher': PerturbRademacherLayer([PerturbRademacherMapper]),  # -- QW (FP32 ZO op)
     'PerturbRademacherFixed': PerturbRademacherLayer([PerturbRademacherFixedMapper]),  # -- QW exp8 (dual-pass graph)
     'DualHalf': PerturbRademacherLayer([DualHalfMapper]),  # -- QW exp8 (dual-pass tail; generic layer, size-based ops)
+    _FBT.OP: _FBT.FrozenBNPoolReluQuantLayer([FrozenBNPoolReluQuantMapper]),  # -- QW exp9 (frozen BN tail, memory)
     'RQSPerturbRademacher': _RQSPRLayer([RQSPerturbRademacherMapper]),  # -- QW (quantized ZO)
 }
 

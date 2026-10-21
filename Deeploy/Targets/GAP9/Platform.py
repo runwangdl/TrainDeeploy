@@ -167,6 +167,8 @@ GAP9_PerturbRademacherFixedMapper = NodeMapper(_PRFixedParser(), _PRFixedTRB)  #
 from Deeploy.Targets.PULPOpen.Parsers import DualHalfParser as _DualHalfParser  # -- QW exp8
 from Deeploy.Targets.PULPOpen.Tiler import PULPDualHalfTilingReadyBindings as _DualHalfTRB  # -- QW exp8
 GAP9_DualHalfMapper = NodeMapper(_DualHalfParser(), _DualHalfTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen import FrozenBNTail as _FBT  # -- QW exp9
+GAP9_FrozenBNPoolReluQuantMapper = NodeMapper(_FBT.FrozenBNPoolReluQuantParser(), _FBT.tilingReadyBindings())  # -- QW exp9
 GAP9_RQSPerturbRademacherMapper = NodeMapper(RQSPerturbRademacherParser(), PULPRQSPerturbRademacherTilingReadyBindings)  # -- QW (quantized ZO)
 
 # -- QW (exp16c / blocker 1b): NE16WeightEncode runs on the CLUSTER cores (plain data movement),
@@ -323,6 +325,8 @@ GAP9Mapping = {
         PerturbRademacherLayer([GAP9_PerturbRademacherFixedMapper]),  # -- QW exp8 (dual-pass graph)
     'DualHalf':
         PerturbRademacherLayer([GAP9_DualHalfMapper]),  # -- QW exp8 (dual-pass tail; generic layer, size-based ops)
+    _FBT.OP:
+        _FBT.FrozenBNPoolReluQuantLayer([GAP9_FrozenBNPoolReluQuantMapper]),  # -- QW exp9 (frozen BN tail, memory)
     'RQSPerturbRademacher':
         RQSPerturbRademacherLayer([GAP9_RQSPerturbRademacherMapper]),  # -- QW (quantized ZO perturb)
     'NE16WeightEncode':

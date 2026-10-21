@@ -483,3 +483,66 @@ void PULP_BatchNormInternalHWC_i8_fp32(const int8_t *X, const float32_t *gamma, 
     }
   }
 }
+
+/*
+ * QW (dual_pass_fusion exp9, memory): FrozenBNPoolReluQuant -- the fp32 tail of a frozen-stat quantized block in one
+ * pass, int8 HWC in, int8 HWC out:
+ *   x [H_out*kh, W_in, C] i8  ->  BN (folded Dequant)  ->  MaxPool kh x kw, stride = kernel, no pad  ->  Relu
+ *     ->  Quant  ->  y [H_out, W_out, C] i8
+ * Replaces PULP_BatchNormInternalHWC_i8_fp32 + PULP_MaxPool2d_fp32_fp32_HWC + 2 Transposes + PULP_Relu_fp32_fp32 +
+ * the Quant template, whose fp32 tensors (block 0: 628 KB BN output) are never stored. Bit-identical: every step is
+ * written with the expression of the kernel it replaces --
+ *   BN     dq = ((float)q - dq_zp) * dq_scale (barrier), y = (dq - mean) * inv_std * g + b   (as above, same file)
+ *   pool   m = -inf; m = fmax.s(v, m) over the window                        (PULP_MaxPool2d_fp32_fp32_HWC)
+ *   Relu   r = MAX(m, 0.0f)                                                  (PULP_Relu_fp32_fp32)
+ *   Quant  s = r * q_mul + q_zp; q = (int32)(s + 0.5f * (s >= 0 ? 1 : -1)), clamped   (PULPQuantTemplate)
+ * The y barrier keeps BN's result a rounded fp32 value, as it was when stored. Cores split the output pixels; the
+ * channel loop is outside, as in the BN kernel, so the per-channel constants stay in registers.
+ */
+void PULP_FrozenBNPoolReluQuantHWC_i8_i8(const int8_t *X, const float32_t *gamma, const float32_t *beta,
+                                         const float32_t *running_mean, const float32_t *running_var, int8_t *Y,
+                                         uint32_t H_out, uint32_t W_in, uint32_t W_out, uint32_t C, uint32_t kh,
+                                         uint32_t kw, float32_t epsilon, float32_t dq_scale, float32_t dq_zero_point,
+                                         float32_t q_mul, float32_t q_zero_point, int32_t q_min, int32_t q_max) {
+  const int32_t core_id = pi_core_id();
+  const uint32_t n_pix = H_out * W_out;
+  const uint32_t chunk = (n_pix + NUM_CORES - 1) / NUM_CORES;
+  const uint32_t p0 = MIN(chunk * (uint32_t)core_id, n_pix), p1 = MIN(p0 + chunk, n_pix);
+  for (uint32_t c = 0; c < C; c++) {
+    const float32_t mean = running_mean[c];
+    const float32_t inv_std = 1.0f / sqrtf(running_var[c] + epsilon);
+    const float32_t g = gamma[c], b = beta[c];
+    for (uint32_t pix = p0; pix < p1; pix++) {
+      const uint32_t ho = pix / W_out, wo = pix % W_out;
+      float32_t m = -inf;
+      for (uint32_t dy = 0; dy < kh; dy++) {
+        const int8_t *x = X + ((ho * kh + dy) * W_in + wo * kw) * C + c;
+        for (uint32_t dx = 0; dx < kw; dx++) {
+          float32_t dq = ((float32_t)(int32_t)*x - dq_zero_point) * dq_scale;
+#if defined(__riscv_flen) && !defined(__riscv_zfinx)
+          __asm__ volatile("" : "+f"(dq));
+#else
+          __asm__ volatile("" : "+r"(dq));
+#endif
+          float32_t v = (dq - mean) * inv_std * g + b;
+#if defined(__riscv_flen) && !defined(__riscv_zfinx)
+          __asm__ volatile("" : "+f"(v));
+          __asm__("fmax.s %0, %1, %2" : "=f"(m) : "f"(v), "f"(m));
+#else
+          __asm__ volatile("" : "+r"(v));
+          m = v > m ? v : m;
+#endif
+          x += C;
+        }
+      }
+      const float32_t r = MAX(m, 0.0f);
+      const float32_t s = r * q_mul + q_zero_point;
+      int32_t q = (int32_t)(s + 0.5f * (s >= 0 ? 1 : -1));
+      if (q < q_min)
+        q = q_min;
+      if (q > q_max)
+        q = q_max;
+      Y[pix * C + c] = (int8_t)q;
+    }
+  }
+}

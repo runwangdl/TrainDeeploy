@@ -1,0 +1,18 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0 -- /app/install/gap9-sdk/.gap9-venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /app/Deeploy
+configfile: pytest.ini
+plugins: xdist-3.8.0
+collecting ... collected 693 items / 687 deselected / 6 selected
+
+test_platforms.py::test_gap9_tiled_speechnet_mezo[SpeechNet_ZO_single_step] PASSED [ 16%]
+test_platforms.py::test_gap9_tiled_speechnet_mezo[SpeechNet_QZO_single_step] PASSED [ 33%]
+test_platforms.py::test_gap9_tiled_speechnet_mezo[SpeechNet_QZO_ECO_5steps] PASSED [ 50%]
+test_platforms.py::test_gap9_tiled_speechnet_bp_single_step PASSED       [ 66%]
+test_platforms.py::test_gap9_tiled_speechnet_fused[SpeechNet_QZO_ECO_fused_NE16b0_single_update_step] PASSED [ 83%]
+test_platforms.py::test_gap9_tiled_speechnet_fused[SpeechNet_QZO_ECO_fused_NE16_single_update_step] PASSED [100%]
+
+============================= Performance Summary ==============================
+  [PASS] DeeployTest/test_platforms.py::test_gap9_tiled_speechnet_bp_single_step  train=  20,437,031 cyc  opt=   270,475 cyc  trainable_bytes=  61,956 B
+================ 6 passed, 687 deselected in 317.44s (0:05:17) =================
