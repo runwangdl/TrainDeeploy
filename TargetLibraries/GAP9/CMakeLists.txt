@@ -64,8 +64,13 @@ set(_KERNEL_O3_FILES
   #    (under the SDK's -Os the fused cluster kernel ran 914 k vs 451 k on Siracusa). -- QW
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/DualConv2In.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Conv4x2.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/PerturbConv4x2.c  # QW exp11: single-pass in-kernel-perturbation conv
   ${CMAKE_CURRENT_LIST_DIR}/src/NE16DualPrep.c
   ${CMAKE_CURRENT_LIST_DIR}/src/NE16DualConv2in.c
+  # QW (exp11, 2026-10-23): the on-device NE16 weight encode (exp16c), the one compute kernel of the NE16 path left at
+  #    the SDK's -Os (5.3-5.5 cycles per weight element; block 4: 76 k of the step). Same output (integer bit packing);
+  #    +56 B code, +32 B worker stack (64 -> 96 B), measured with the board flags. -- QW
+  ${CMAKE_CURRENT_LIST_DIR}/src/NE16WeightEncode.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c
@@ -73,6 +78,32 @@ set(_KERNEL_O3_FILES
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c
 )
 set_source_files_properties(${_KERNEL_O3_FILES} PROPERTIES COMPILE_OPTIONS "-O3")
+
+# -- QW (2026-10-22, per-block breakdown on GAP9): the same measurement switches as TargetLibraries/PULPOpen for the
+#    PULPOpen kernels compiled into this library. DUALCONV2IN_PROBE=ON (core-0 cycles of phase 1 / phase 2 of
+#    DualConv2In.c), DUALCONV2IN_SPLIT=1|2, CONV4X2_STEP2A=ON (original step-2a Conv4x2), CONV4X2_SPLIT=1|2. -- QW
+if(DUALCONV2IN_PROBE)
+  target_compile_definitions(deeploygap9 PUBLIC DUALCONV2IN_PROBE)
+  message(STATUS "[QW] DUALCONV2IN_PROBE: DualConv2In.c prints per-phase cycles")
+endif()
+if(DUALCONV2IN_SPLIT)
+  target_compile_definitions(deeploygap9 PUBLIC DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT})
+  message(STATUS "[QW] DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT}")
+endif()
+# -- QW exp11: NE16DUAL_PROBE=ON: per-core phase cycles of NE16DualPerturbEncode / NE16DualBias and the master-core split
+#    of NE16DualConv2in (column builds / NE16 waits / rest), as perf records. -- QW
+if(NE16DUAL_PROBE)
+  target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE)
+  message(STATUS "[QW] NE16DUAL_PROBE: NE16 prep / conv node phase cycles")
+endif()
+if(CONV4X2_STEP2A)
+  target_compile_definitions(deeploygap9 PUBLIC CONV4X2_STEP2A)
+  message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")
+endif()
+if(CONV4X2_SPLIT)
+  target_compile_definitions(deeploygap9 PUBLIC CONV4X2_SPLIT=${CONV4X2_SPLIT})
+  message(STATUS "[QW] CONV4X2_SPLIT=${CONV4X2_SPLIT}")
+endif()
 
 target_link_libraries(deeploygap9 PUBLIC pmsis)
 

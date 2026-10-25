@@ -44,6 +44,7 @@
 #include "kernel/FlatConv.h" // -- QW (exp6)
 #include "kernel/Conv4x2.h"  // -- QW (exp7a step 2a)
 #include "kernel/DualConv2In.h" // -- QW (exp7 step 3)
+#include "kernel/PerturbConv4x2.h" // -- QW (exp11): single-pass in-kernel-perturbation conv
 
 /* -- QW (dual_pass_fusion exp6, task 2): cluster-side preparation for the FUSED dual-pass conv on NE16.
  * Implementation and derivation: TargetLibraries/GAP9/src/NE16DualPrep.c */

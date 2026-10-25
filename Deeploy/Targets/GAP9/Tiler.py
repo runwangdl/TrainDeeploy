@@ -264,3 +264,11 @@ GAP9RQSConv2DFlatTilingReadyBindings = TilingReadyNodeBindings(
     nodeBindings = [_NB(_PCC([_PC(_i8), _PC(_i8), _PC(_i32), _PC(_i32), _PC(_i32)], [_PC(_i8)]),
                         _FCT.referenceTemplate, _G9T)],
     tileConstraint = RQConv2DTileConstraint())
+
+# -- QW (2026-10-22, per-block breakdown on GAP9): the Conv4x2 control kernel (PULPOpen Conv4x2.c / Conv4x2Template)
+#    with the GAP9 transformer; same tile constraint as pulp-nn's binding, so only the kernel call differs. -- QW
+from Deeploy.Targets.PULPOpen.Templates import Conv4x2Template as _C42T  # -- QW
+GAP9RQSConv2D4x2TilingReadyBindings = TilingReadyNodeBindings(  # -- QW
+    nodeBindings = [_NB(_PCC([_PC(_i8), _PC(_i8), _PC(_i32), _PC(_i32), _PC(_i32)], [_PC(_i8)]),
+                        _C42T.referenceTemplate, _G9T)],
+    tileConstraint = RQConv2DTileConstraint())

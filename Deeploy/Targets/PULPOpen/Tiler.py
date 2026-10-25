@@ -298,6 +298,12 @@ PULPDualConv2D2InTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _P
 from Deeploy.Targets.PULPOpen.Bindings import PULPDualConv2DStackedBindings as _PULPDualConv2DStackedBindings  # -- QW exp8
 PULPDualConv2DStackedTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPDualConv2DStackedBindings,  # -- QW
                                                                    tileConstraint = _DualConv2D2InTC())  # -- QW exp8
+# -- QW (dual_pass_fusion exp11): single-pass in-kernel-perturbation conv. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPPerturbConv2DBindings as _PULPPerturbConv2DBindings  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.DualConv2InTileConstraint import \
+    PerturbConv2DTileConstraint as _PerturbConv2DTC  # -- QW
+PULPPerturbConv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPPerturbConv2DBindings,  # -- QW
+                                                               tileConstraint = _PerturbConv2DTC())  # -- QW
 
 # -- QW (dual_pass_fusion exp5a): single-pass control kernel on the ordinary RequantizedConv; same tile constraint
 #    as pulp-nn's binding (RQConv2DTileConstraint), so the tiling is identical -- only the kernel call differs. -- QW

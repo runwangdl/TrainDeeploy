@@ -245,4 +245,103 @@ static inline void dc_perturb_i32(const int32_t *b, int32_t *bp, int32_t *bm, co
   }
 }
 
+/* QW (exp11, 2026-10-23): SINGLE-sign counterparts of dc_perturb_i8_chw / dc_perturb_i32 for the single-pass
+ * in-kernel-perturbation conv (PerturbConv4x2.c, the unfused reference with every non-fusion optimisation). Same
+ * stream, chunking, rounding and clamp; `sign` = perturbation_sign (1: +eps, 0: -eps). Per channel the noise is one of
+ * two values (up for z = +1, dn for z = -1); for the - pass they swap. dc_perturb1_i8_chw is dc_perturb_i8_chw with
+ * one output; bit-identical to ApplyPerturbQuantRademacher_CHW of that sign. -- QW */
+static inline __attribute__((noinline)) void dc_perturb1_i8_chw(const int8_t *w, int8_t *wo, const int32_t *noise_mul,
+                                                         uint32_t ch_in, uint32_t kh, uint32_t kw, uint32_t seed,
+                                                         uint32_t start, uint32_t count, uint32_t shift,
+                                                         float eps_scale, uint32_t sign) {
+  if (!count)
+    return;
+  const uint32_t taps = kh * kw;
+  const uint32_t K = ch_in * taps;
+  uint32_t co = start / K;
+  uint32_t rem = start - co * K; /* CHW: rem = ci*taps + tap */
+  uint32_t ci = rem / taps;
+  uint32_t tap = rem - ci * taps;
+  const int32_t rounding = (shift > 0u) ? (int32_t)(1u << (shift - 1u)) : 0;
+  int32_t mul = noise_mul[co];
+  if (eps_scale != 1.0f)
+    mul = (int32_t)lrintf((float)mul * eps_scale);
+  int32_t up = (mul + rounding) >> (int32_t)shift;
+  int32_t dn = (rounding - mul) >> (int32_t)shift;
+  if (!sign) { /* - pass: z = +1 gets dn, z = -1 gets up */
+    const int32_t t = up;
+    up = dn;
+    dn = t;
+  }
+  const int8_t *src = w + start;
+  int8_t *pW = wo + co * K + tap * ch_in + ci;
+  uint32_t rng = seed * 1664525u + 1013904223u;
+  uint32_t bits = 0, bits_left = 0, remaining = count;
+  while (remaining) {
+    if (bits_left == 0u) {
+      rng = dc_xorshift32(rng);
+      bits = rng;
+      bits_left = 32u;
+    }
+    uint32_t run_len = taps - tap;
+    if (run_len > bits_left)
+      run_len = bits_left;
+    if (run_len > remaining)
+      run_len = remaining;
+    const int32_t up_xor_dn = up ^ dn;
+    for (uint32_t k = 0; k < run_len; k++) {
+      const int32_t w_val = (int32_t)*src++;
+      const int32_t noise = dn ^ (up_xor_dn & -(int32_t)(bits & 1u));
+      *pW = (int8_t)DC_CLAMP(w_val + noise, -127, 127);
+      pW += ch_in;
+      bits >>= 1;
+    }
+    remaining -= run_len;
+    bits_left -= run_len;
+    tap += run_len;
+    if (tap == taps && remaining) { /* next (co, ci) row */
+      tap = 0;
+      if (++ci == ch_in) {
+        ci = 0;
+        ++co;
+        mul = noise_mul[co];
+        if (eps_scale != 1.0f)
+          mul = (int32_t)lrintf((float)mul * eps_scale);
+        up = (mul + rounding) >> (int32_t)shift;
+        dn = (rounding - mul) >> (int32_t)shift;
+        if (!sign) {
+          const int32_t t = up;
+          up = dn;
+          dn = t;
+        }
+      }
+      pW = wo + co * K + ci;
+    }
+  }
+}
+static inline void dc_perturb1_i32(const int32_t *b, int32_t *bo, const int32_t *noise_mul, uint32_t channel_width,
+                                   uint32_t seed, uint32_t start, uint32_t count, uint32_t shift, float eps_scale,
+                                   uint32_t sign) {
+  uint32_t rng = seed * 1664525u + 1013904223u;
+  const int32_t rounding = (shift > 0u) ? (int32_t)(1u << (shift - 1u)) : 0;
+  uint32_t i = start;
+  const uint32_t end = start + count;
+  while (i < end) {
+    rng = dc_xorshift32(rng);
+    uint32_t bits = rng;
+    uint32_t run_len = end - i;
+    if (run_len > 32u)
+      run_len = 32u;
+    for (uint32_t k = 0; k < run_len; k++, i++) {
+      const int32_t z = (bits & 1u) ? 1 : -1;
+      int32_t mul = noise_mul[i / channel_width];
+      if (eps_scale != 1.0f)
+        mul = (int32_t)lrintf((float)mul * eps_scale);
+      const int32_t prod = z * mul;
+      bo[i] = b[i] + (sign ? ((prod + rounding) >> (int32_t)shift) : ((rounding - prod) >> (int32_t)shift));
+      bits >>= 1;
+    }
+  }
+}
+
 #endif

@@ -109,6 +109,11 @@ import os as _os
 if _os.environ.get("DEEPLOY_RQCONV_FLAT", "0") == "1":
     from Deeploy.Targets.GAP9.Tiler import GAP9RQSConv2DFlatTilingReadyBindings
     GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2DFlatTilingReadyBindings)
+# -- QW (2026-10-22, per-block breakdown): DEEPLOY_RQCONV_KERNEL=4x2 binds every RequantizedConv to the Conv4x2 control
+#    kernel, as on PULPOpen (Platform.py there). -- QW
+if _os.environ.get("DEEPLOY_RQCONV_KERNEL", "pulpnn") == "4x2":  # -- QW
+    from Deeploy.Targets.GAP9.Tiler import GAP9RQSConv2D4x2TilingReadyBindings  # -- QW
+    GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2D4x2TilingReadyBindings)  # -- QW
 GAP9_FPDWConv2DMapper = NodeMapper(PULPFPDWConv2DParser(), GAP9DWConv2DTilingReadyBindings)
 GAP9_DWConv2DMapper = NodeMapper(PULPDWConv2DParser(), GAP9RQSDWConv2DTilingReadyBindings)
 GAP9_GEMMMapper = NodeMapper(PULPGEMMParser(), GAP9RQSGEMMTilingReadyBindings)
@@ -195,6 +200,9 @@ GAP9_DualConv2DMapper = NodeMapper(_PULPDualConv2DParser(), _PULPDualConv2DTRB) 
 from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2D2InParser as _PULPDualConv2D2InParser  # -- QW
 from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2D2InTilingReadyBindings as _PULPDualConv2D2InTRB  # -- QW
 GAP9_DualConv2D2InMapper = NodeMapper(_PULPDualConv2D2InParser(), _PULPDualConv2D2InTRB)  # -- QW
+from Deeploy.Targets.PULPOpen.Parsers import PULPPerturbConv2DParser as _PULPPerturbConv2DParser  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbConv2DTilingReadyBindings as _PULPPerturbConv2DTRB  # -- QW exp11
+GAP9_PerturbConv2DMapper = NodeMapper(_PULPPerturbConv2DParser(), _PULPPerturbConv2DTRB)  # -- QW exp11
 from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DStackedParser as _PULPDualConv2DStackedParser  # -- QW exp8
 from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DStackedTilingReadyBindings as _PULPDualConv2DStackedTRB  # -- QW exp8
 GAP9_DualConv2DStackedMapper = NodeMapper(_PULPDualConv2DStackedParser(), _PULPDualConv2DStackedTRB)  # -- QW exp8
@@ -337,7 +345,9 @@ GAP9Mapping = {
         NE16Im2ColU8Layer([GAP9_NE16Im2ColU8Mapper]),  # -- QW (exp6: column buffer for the NE16 im2col route)
     'RequantizedDualConv':
         # _PULPDualConvLayer([GAP9_DualConv2DMapper]),  # -- QW (exp6: exp5's fused cluster kernel, baseline C_cl)
-        _PULPDualConvLayer([GAP9_DualConv2DMapper, GAP9_DualConv2D2InMapper, GAP9_DualConv2DStackedMapper]),  # -- QW exp6 + exp7 (7-input, blocks 1-4)
+        # _PULPDualConvLayer([GAP9_DualConv2DMapper, GAP9_DualConv2D2InMapper, GAP9_DualConv2DStackedMapper]),  # -- QW exp6 + exp7 (7-input, blocks 1-4)
+        _PULPDualConvLayer([GAP9_DualConv2DMapper, GAP9_DualConv2D2InMapper, GAP9_DualConv2DStackedMapper,
+                            GAP9_PerturbConv2DMapper]),  # -- QW exp6 + exp7 + exp11 (single-pass in-kernel perturbation)
     'NE16DualPerturbEncode':
         NE16DualPerturbEncodeLayer([GAP9_NE16DualPerturbEncodeMapper]),  # -- QW (exp6 task 2)
     'NE16DualBias':

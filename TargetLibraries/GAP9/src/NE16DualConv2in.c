@@ -39,6 +39,21 @@
 #include "pulp_nnx_util.h"
 
 #define N16D_PAD_WORD 0x80808080u
+#ifdef NE16DUAL_PROBE /* -- QW exp11: master-core (= wall) cycles of the node: column builds, NE16 waits, the rest */
+#include "perf_utils.h"
+static inline uint32_t n16d_now(void) { return pi_perf_read(PI_PERF_CYCLES); }
+static inline void n16d_rec(const char *label, uint32_t v) {
+  if (perf_record_count < PERF_MAX_RECORDS) {
+    perf_records[perf_record_count].label = label;
+    perf_records[perf_record_count].stats = (perf_stats_t){0};
+    perf_records[perf_record_count].stats.cycles = v;
+    perf_record_count++;
+  }
+}
+#define N16D_T0() uint32_t _n16d_t = n16d_now()
+#define N16D_ACC(acc) do { const uint32_t _n = n16d_now(); (acc) += _n - _n16d_t; _n16d_t = _n; } while (0)
+#define N16D_SKIP() (_n16d_t = n16d_now())
+#endif
 
 typedef struct {
   const int8_t *in;
@@ -225,32 +240,76 @@ void PULP_NE16DualConv2in(const int8_t *pInP, const int8_t *pInM, const uint8_t 
                               .ch_in = ch_in, .dim_out_x = dim_out_x, .kh = dim_kernel_y, .kw = dim_kernel_x,
                               .pad_top = pad_top, .pad_left = pad_left, .stride_y = stride_y, .stride_x = stride_x};
   ne16_task_t task;
+#ifdef NE16DUAL_PROBE /* -- QW exp11 */
+  pi_perf_conf(1 << PI_PERF_CYCLES);
+  pi_perf_reset();
+  pi_perf_start();
+  const uint32_t n16d_t_begin = n16d_now();
+  uint32_t n16d_col = 0, n16d_wait = 0;
+  N16D_T0();
+#endif
 
   /* columns of job 0 */
   pi_cl_team_fork(num_cores, n16d_build_col, &col_args);
+#ifdef NE16DUAL_PROBE
+  N16D_ACC(n16d_col);
+#endif
 
   for (uint32_t j = 0; j < n_jobs; j++) {
     const uint32_t pass = j / jobs_per_pass;
     n16d_job_geometry(j - pass * jobs_per_pass, n_out_px, job_cols_full, &px_begin, &job_rows, &job_cols);
     n16d_task(&task, col[j & 1u], pWEnc2 + pass * wenc_pass_bytes, pOut + px_begin * out_px_stride + pass * ch_out,
               pMul, pAdd2 + pass * ch_out, job_rows, job_cols, K, ch_out, out_px_stride, conf0, weight_offset);
+#ifdef NE16DUAL_PROBE
+    N16D_SKIP();
+#endif
     ne16_nnx_dispatch_wait(dev);
+#ifdef NE16DUAL_PROBE
+    N16D_ACC(n16d_wait);
+#endif
     ne16_nnx_dispatch(dev, &task);
+#ifdef NE16DUAL_PROBE
+    N16D_SKIP();
+#endif
     if (!pipelined)
       ne16_nnx_resolve_wait(dev, &task); /* sequential: job j done before its successor's columns are built */
+#ifdef NE16DUAL_PROBE
+    N16D_ACC(n16d_wait);
+#endif
     if (j + 1u < n_jobs) {
       if (pipelined)
         ne16_nnx_dispatch_wait(dev); /* a free slot => job j-1 done => col[(j+1)&1] is free; job j keeps running */
+#ifdef NE16DUAL_PROBE
+      N16D_ACC(n16d_wait);
+#endif
       const uint32_t next_pass = (j + 1u) / jobs_per_pass;
       n16d_job_geometry(j + 1u - next_pass * jobs_per_pass, n_out_px, job_cols_full, &px_begin, &job_rows, &job_cols);
       col_args.in = next_pass ? pInM : pInP;
       col_args.px_begin = px_begin;
       col_args.px_count = job_rows * job_cols;
       col_args.col = col[(j + 1u) & 1u];
+#ifdef NE16DUAL_PROBE
+      N16D_SKIP();
+#endif
       pi_cl_team_fork(num_cores, n16d_build_col, &col_args);
+#ifdef NE16DUAL_PROBE
+      N16D_ACC(n16d_col);
+#endif
     }
   }
+#ifdef NE16DUAL_PROBE
+  N16D_SKIP();
+#endif
   ne16_nnx_resolve_wait(dev, &task); /* GVSoC: waits until the queue is empty */
+#ifdef NE16DUAL_PROBE /* -- QW exp11: wall = col + wait + rest (task set-up, dispatch, loop) */
+  N16D_ACC(n16d_wait);
+  const uint32_t n16d_total = n16d_now() - n16d_t_begin;
+  n16d_rec("N16PROBE_conv_jobs", n_jobs);
+  n16d_rec("N16PROBE_conv_colbuild", n16d_col);
+  n16d_rec("N16PROBE_conv_ne16wait", n16d_wait);
+  n16d_rec("N16PROBE_conv_rest", n16d_total - n16d_col - n16d_wait);
+  n16d_rec("N16PROBE_conv_total", n16d_total);
+#endif
 }
 
 #endif /* pulp-nnx present */

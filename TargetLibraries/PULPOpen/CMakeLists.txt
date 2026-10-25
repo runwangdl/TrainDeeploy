@@ -63,6 +63,17 @@ if(DUALCONV2IN_SPLIT)
   target_compile_definitions(deeploypulp PUBLIC DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT})
   message(STATUS "[QW] DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT}")
 endif()
+# -- QW (2026-10-22, per-block breakdown): Conv4x2.c switches. -D CONV4X2_STEP2A=ON builds the original step-2a
+#    kernel (byte gather, pixel split only); -D CONV4X2_SPLIT=1 (pixels) | 2 (output channels) overrides the split
+#    of the default (step-5) kernel. Unset = step-5 kernel with the automatic split. -- QW
+if(CONV4X2_STEP2A)
+  target_compile_definitions(deeploypulp PUBLIC CONV4X2_STEP2A)
+  message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")
+endif()
+if(CONV4X2_SPLIT)
+  target_compile_definitions(deeploypulp PUBLIC CONV4X2_SPLIT=${CONV4X2_SPLIT})
+  message(STATUS "[QW] CONV4X2_SPLIT=${CONV4X2_SPLIT}")
+endif()
 
 add_subdirectory(../third_party/pulp-nn-mixed ${CMAKE_CURRENT_BINARY_DIR}/pulp-nn-mixed)
 target_include_directories(pulp-nn-mixed PUBLIC ${PULP_SDK_INCLUDES})

@@ -183,6 +183,9 @@ DualConv2D2InMapper = NodeMapper(_PULPDualConv2D2InParser(), _PULPDualConv2D2InT
 from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DStackedParser as _PULPDualConv2DStackedParser  # -- QW exp8
 from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DStackedTilingReadyBindings as _PULPDualConv2DStackedTRB  # -- QW exp8
 DualConv2DStackedMapper = NodeMapper(_PULPDualConv2DStackedParser(), _PULPDualConv2DStackedTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Parsers import PULPPerturbConv2DParser as _PULPPerturbConv2DParser  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbConv2DTilingReadyBindings as _PULPPerturbConv2DTRB  # -- QW exp11
+PerturbConv2DMapper = NodeMapper(_PULPPerturbConv2DParser(), _PULPPerturbConv2DTRB)  # -- QW exp11
 from Deeploy.Targets.PULPOpen.Tiler import PULPQuantTilingReadyBindings, PULPDequantTilingReadyBindings  # -- QW
 QuantMapper = NodeMapper(QuantParser(), PULPQuantTilingReadyBindings)      # -- QW (tiling-ready for mixed quant graph)
 DequantMapper = NodeMapper(DequantParser(), PULPDequantTilingReadyBindings)  # -- QW
@@ -203,7 +206,8 @@ PULPMapping = {
     'ConvGradB': ConvGradBLayer([ConvGradBMapper]),
     'RequantizedConv': PULPRQSConvLayer([Conv2DMapper, DWConv2DMapper, Conv1DMapper, DWConv1DMapper]),
     # 'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper]),  # -- QW (dual_pass_fusion exp5)
-    'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper, DualConv2D2InMapper, DualConv2DStackedMapper]),  # -- QW exp5 + exp7
+    # 'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper, DualConv2D2InMapper, DualConv2DStackedMapper]),  # -- QW exp5 + exp7
+    'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper, DualConv2D2InMapper, DualConv2DStackedMapper, PerturbConv2DMapper]),  # -- QW exp5 + exp7 + exp11
     'RequantizedGemm': PULPRQSGEMMLayer([MatrixVecMapper, TallGEMMMapper, GEMMMapper]),
     'Gemm': PULPGEMMLayer([FloatGEMMMapper, GEMMDequantMapper]),
     'Gelu': GELULayer([GELUMapper]),

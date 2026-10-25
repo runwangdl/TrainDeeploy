@@ -698,6 +698,14 @@ PULPDualConv2D2InBindings = [  # -- QW
                          PointerClass(int32_t), PointerClass(int32_t), PointerClass(int8_t)], [PointerClass(int8_t)]),
         _DualConv2InTemplate.referenceTemplate, ForkTransformer)
 ]
+# -- QW (dual_pass_fusion exp11): single-pass in-kernel-perturbation conv (RequantizedDualConv, single_pass = 1). -- QW
+from Deeploy.Targets.PULPOpen.Templates import PerturbConv4x2Template as _PerturbConv4x2Template  # -- QW
+PULPPerturbConv2DBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t), PointerClass(int32_t)], [PointerClass(int8_t)]),
+        _PerturbConv4x2Template.referenceTemplate, ForkTransformer)
+]
 # -- QW (dual_pass_fusion exp8): stacked-input form (6 inputs). -- QW
 PULPDualConv2DStackedBindings = [  # -- QW
     NodeBinding(

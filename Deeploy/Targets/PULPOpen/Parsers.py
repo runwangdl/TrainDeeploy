@@ -867,6 +867,34 @@ class PULPDualConv2D2InParser(PULPDualConv2DParser):  # -- QW (dual_pass_fusion 
         return ctxt, False
 
 
+class PULPPerturbConv2DParser(PULPDualConv2DParser):  # -- QW (dual_pass_fusion exp11)
+    """`RequantizedDualConv` with attr `single_pass` = 1: ONE pass of the QZO conv with the perturbation in the kernel
+    (PULP_PerturbConv4x2_i8_i8_i8_HWC) -- the unfused reference of the fused node without the dual-pass fusion.
+    Inputs as the 6-input form [x, weight (raw CHW, `weight_chw` = 1), mul, add, wmul, bmul]; output ch_out channels
+    (one pass); the sign is the runtime perturbation_sign, as for RQSPerturbRademacher."""
+
+    _n_inputs = 6
+    _weight_chw = 1
+
+    def parseNode(self, node: gs.Node) -> (bool):
+        if int(node.attrs.get('single_pass', 0)) != 1 or int(node.attrs.get('stacked_input', 0)) != 0:
+            return False
+        return super().parseNode(node)
+
+    def parseNodeCtxt(self, ctxt: NetworkContext, node: gs.Node,
+                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:
+        newCtxt, ret = super().parseNodeCtxt(ctxt, node, channels_first)
+        if ret:
+            r = self.operatorRepresentation
+            r['in_ch'] = r['ch_im_in']
+            r['in_stride'] = r['ch_im_in']
+            # test hook: attr force_sign (1 / 0) fixes the pass at codegen; default = the runtime perturbation_sign
+            fs = int(node.attrs.get('force_sign', -1))
+            r['sign_expr'] = 'perturbation_sign' if fs < 0 else f'{fs}u'
+            return newCtxt, True
+        return ctxt, False
+
+
 class PULPDualConv2DStackedParser(PULPDualConv2D2InParser):  # -- QW (dual_pass_fusion exp8)
     """The stacked-input form of the blocks 1-4 node (dual-pass graph): SIX inputs [x, W, mul, add, wmul, bmul], attr
     stacked_input = 1, x the channel-stacked [x+ | x-] tensor. A separate parser / template so no template references a

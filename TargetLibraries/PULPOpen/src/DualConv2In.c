@@ -41,6 +41,17 @@
 #include <math.h>
 
 #include "kernel/DualPerturb.h"
+#ifdef DUALCONV2IN_PROBE /* -- QW exp11: GAP9 replays cluster-side records from the FC (perf_utils.h) */
+#include "perf_utils.h"
+/* per-core WORK cycles of each phase, read before the closing barrier (so a core's counter never runs while it
+ * sleeps in the barrier): [0][c] = phase 1 (perturbation (+ de-interleave)), [1][c] = phase 2 (conv). -- QW exp11 */
+static uint32_t dc2_probe_work[2][8];
+static const char *const dc2_probe_label[2][8] = {
+    {"DC2PROBE_p1_core0", "DC2PROBE_p1_core1", "DC2PROBE_p1_core2", "DC2PROBE_p1_core3", "DC2PROBE_p1_core4",
+     "DC2PROBE_p1_core5", "DC2PROBE_p1_core6", "DC2PROBE_p1_core7"},
+    {"DC2PROBE_p2_core0", "DC2PROBE_p2_core1", "DC2PROBE_p2_core2", "DC2PROBE_p2_core3", "DC2PROBE_p2_core4",
+     "DC2PROBE_p2_core5", "DC2PROBE_p2_core6", "DC2PROBE_p2_core7"}};
+#endif
 
 typedef signed char d2_v4s __attribute__((vector_size(4)));
 
@@ -137,7 +148,8 @@ void PULP_DualConv2d_2in_i8_i8_i8_HWC(
 
 #ifdef DUALCONV2IN_PROBE /* -D DUALCONV2IN_PROBE=ON: core-0 cycles of each phase (incl. its closing barrier) */
   uint32_t probe_t0 = 0, probe_t1 = 0;
-  if (core_id == 0) {
+  // if (core_id == 0) {   -- QW exp11: every core counts, for the per-core work cycles below
+  {
     pi_perf_conf(1 << PI_PERF_CYCLES);
     pi_perf_reset();
     pi_perf_start();
@@ -175,10 +187,14 @@ void PULP_DualConv2d_2in_i8_i8_i8_HWC(
     pInM = (const int8_t *)deintM;
     in_stride = ch_in;
   }
+#ifdef DUALCONV2IN_PROBE /* -- QW exp11: this core's phase-1 work, before the barrier */
+  if (core_id < 8u)
+    dc2_probe_work[0][core_id] = pi_perf_read(PI_PERF_CYCLES) - probe_t0;
+#endif
   pi_cl_team_barrier();
 #ifdef DUALCONV2IN_PROBE
-  if (core_id == 0)
-    probe_t1 = pi_perf_read(PI_PERF_CYCLES);
+  // if (core_id == 0)   -- QW exp11: every core
+  probe_t1 = pi_perf_read(PI_PERF_CYCLES);
 #endif
 
   /* ---------------- phase 2: flat pixel range (or channel range, 5c), two pixels at a time, both passes -- */
@@ -342,12 +358,26 @@ void PULP_DualConv2d_2in_i8_i8_i8_HWC(
       }
     }
   }
+#ifdef DUALCONV2IN_PROBE /* -- QW exp11: this core's phase-2 work, before the barrier */
+  if (core_id < 8u)
+    dc2_probe_work[1][core_id] = pi_perf_read(PI_PERF_CYCLES) - probe_t1;
+#endif
   pi_cl_team_barrier();
 #ifdef DUALCONV2IN_PROBE
   if (core_id == 0) {
     const uint32_t probe_t2 = pi_perf_read(PI_PERF_CYCLES);
     printf("[DC2PROBE] phase1 %u phase2 %u (core-0 cycles, K=%u ch_out=%u)\n", (unsigned)(probe_t1 - probe_t0),
            (unsigned)(probe_t2 - probe_t1), (unsigned)K, (unsigned)ch_out);
+    /* -- QW exp11: per-core work cycles as records (perf_records, replayed by the GAP9 FC: cluster printf is
+     *    invisible there). Only `cycles` is meaningful. */
+    for (uint32_t ph = 0; ph < 2u; ph++)
+      for (uint32_t c = 0; c < num_cores && c < 8u; c++)
+        if (perf_record_count < PERF_MAX_RECORDS) {
+          perf_records[perf_record_count].label = dc2_probe_label[ph][c];
+          perf_records[perf_record_count].stats = (perf_stats_t){0};
+          perf_records[perf_record_count].stats.cycles = dc2_probe_work[ph][c];
+          perf_record_count++;
+        }
   }
 #endif
 }

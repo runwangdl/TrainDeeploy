@@ -35,8 +35,11 @@ def _inputs(rep: Dict) -> List[str]:
 
 class DualConv2D2InTileConstraint(TileConstraint):
 
-    @staticmethod
-    def addGeometricalConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+    _out_factor = 2  # -- QW exp11: output channels per weight row (2: [A+ | A-]; 1: single-pass PerturbConv)
+
+    # @staticmethod  -- QW exp11: classmethod for _out_factor
+    @classmethod
+    def addGeometricalConstraint(cls, tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
         names = {k: parseDict[k] for k in _inputs(parseDict)}
         outName = parseDict['data_out']
         strides, padding = parseDict["strides"], parseDict["pads"]
@@ -56,7 +59,8 @@ class DualConv2D2InTileConstraint(TileConstraint):
         outC = tilerModel.getTensorDimVar(tensorName = outName, dimIdx = 3)
 
         tilerModel.addConstraint(outB == inB)
-        tilerModel.addConstraint(outC == 2 * wO)  # A+ and A- stacked on the channel axis
+        # tilerModel.addConstraint(outC == 2 * wO)  # A+ and A- stacked on the channel axis  -- QW exp11
+        tilerModel.addConstraint(outC == cls._out_factor * wO)  # A+ and A- stacked on the channel axis
         for k in ('mul', 'add', 'wmul', 'bmul'):
             tilerModel.addConstraint(tilerModel.getTensorDimVar(tensorName = names[k], dimIdx = 0) == wO)
         for d in range(4 if 'data_in_m' in names else 0):  # x- is tiled exactly like x+
@@ -136,7 +140,8 @@ class DualConv2D2InTileConstraint(TileConstraint):
         for cube in outputCubes:
             (_, HOffset, WOffset, COffset) = cube.offset
             (_, HSize, WSize, CSize) = cube.dims
-            assert COffset == 0 and CSize == 2 * wN, "RequantizedDualConv: output channels must not be tiled"
+            # assert COffset == 0 and CSize == 2 * wN, "RequantizedDualConv: output channels must not be tiled"  -- QW exp11
+            assert COffset == 0 and CSize == cls._out_factor * wN, "RequantizedDualConv: output channels must not be tiled"
             InCube, (pl, pr, pt, pb) = Conv2DTileConstraint.computeInputCube(kernelShape = (wH, wW),
                                                                             pads = pads,
                                                                             strides = strides,
@@ -165,3 +170,8 @@ class DualConv2D2InTileConstraint(TileConstraint):
 
         tilingSchedule = TilingSchedule(inputBaseOffsets, outputBaseOffsets, inputLoadSchedule, outputLoadSchedule)
         return VariableReplacementScheme(replacements, replacementTypes), tilingSchedule
+
+
+class PerturbConv2DTileConstraint(DualConv2D2InTileConstraint):  # -- QW (dual_pass_fusion exp11)
+    """Single-pass in-kernel-perturbation conv: same tiling as the fused node, output = ch_out channels (one pass)."""
+    _out_factor = 1
