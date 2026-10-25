@@ -1,0 +1,23 @@
+exp9 memsim (2026-10-23, feat/memory_opt f535fb9 = state 3, FuseFrozenBNTailPass on): ONE update step (n_accum 4) per
+recipe, GVSoC GAP9, Run's BOARD settings (silentwear-zo/scripts/pw_sw_build_all.sh), --plotMemAlloc. All bit-exact
+(MeZO: Errors 0/8; BP: 0/4). scripts/mem_single_step.sh; per config memsim/<cfg>/{run.log, *Network.c, deeployStates/}.
+
+L2 = every pi_l2_malloc in TrainingNetwork.c + static L2 constants (plot "const", MeZO only; BP's are its 7 input
+mallocs) + harness buffers (ECO momentum, run.log "[ECO] ... B momentum"). OptimizerNetwork.c allocates nothing (shares
+the training graph's L1 arena and weight tensors; BP also its L2 arena).
+
+cfg       settings                                  arena(s) L2                       const   ECO mom.   L2 total    L3        train cyc    opt cyc
+bp        --l1 122000 --l2 1300000, L3 + promotion  237,312 + 687,488 + 99,752 inputs   -        -       1,024,552   1,006,480  81,738,236   269,691
+zo        --l1 114000 --l2 1300000                  791,216                             848      -         792,064         0  26,737,803    60,639
+qzo       --l1 114000 --l2 1340000, unfused         162,152                           2,096      -         164,248         0  13,255,099   245,165
+eco       same, ZO_ECO=ON ZO_ECO_SR=ON, unfused     162,152                           2,096   61,956       226,204         0  13,266,794   558,310
+eco_fus   same + --zo-fused-dual (cluster only)     237,108                           2,928   61,956       301,992         0   8,564,124   550,883
+eco_fus_ne16  + --zo-fused-dual-ne16 0,1,2 (board) 265,612                           3,344   61,956       330,912         0   6,567,942   550,742
+
+plot peaks (scripts/mem_plot_summary.py, L2 const+var): bp 787,240 (+ the 237,312 tile arena, not in the plot) | zo 792,032 |
+qzo 164,248 | eco 164,248 | eco_fus 240,004 | eco_fus_ne16 268,956.
+
+L3 (BP): cl_ram_malloc in TrainingNetwork.c = L3 arena 1,005,648 + 10 BN running-stat buffers (832 B) = 1,006,480 B
+(corrected 2026-10-23: the first count matched only the sizeof(T)*N form and missed cl_ram_malloc(32) etc.).
+How the columns are counted: sum of every pi_l2_malloc / cl_ram_malloc call in the generated TrainingNetwork.c (bytes =
+sizeof(T) x N); OptimizerNetwork.c has none; + plot L2 constants (MeZO); + the harness's ECO momentum (run.log).
