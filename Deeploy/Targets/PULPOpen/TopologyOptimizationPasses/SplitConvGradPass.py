@@ -7,6 +7,44 @@ import onnx_graphsurgeon as gs
 from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import Pass, contextagnostic
 
 
+def _classifyOutputs(node: gs.Node, x: gs.Tensor, w: gs.Tensor):
+    """Sort a ConvGrad's outputs into (dX, dW, dB) by SHAPE, not by position.
+
+    ORT emits dX only when something downstream needs it. A trainable layer whose input
+    needs no gradient -- the first trainable layer of a network -- emits dW alone, and a
+    positional read then takes that dW to be dX. Nothing downstream can recover: the
+    parser binds it as the input gradient, the tiler slices it along its output channels,
+    and ConvGradXTileConstraintBase reads those cube offsets as batch offsets, deriving a
+    dY offset of (k, 0, 0, 0) on a tensor whose batch extent is 1.
+
+    dX carries X's shape and dW carries W's shape, which tells them apart whatever order
+    they arrive in. Falls back to the positional reading when shapes are unavailable, so
+    graphs that never had shape annotations behave exactly as before.
+    """
+    outs = [o for o in node.outputs if o is not None]
+    xShape = list(x.shape) if x.shape is not None else None
+    wShape = list(w.shape) if w.shape is not None else None
+
+    if xShape is None or wShape is None or xShape == wShape:
+        # No way to tell them apart; keep the historical positional assignment.
+        return (outs[0] if len(outs) > 0 else None, outs[1] if len(outs) > 1 else None,
+                outs[2] if len(outs) > 2 else None)
+
+    dx = dw = db = None
+    for o in outs:
+        shape = list(o.shape) if o.shape is not None else None
+        if shape == wShape and dw is None:
+            dw = o
+        elif shape == xShape and dx is None:
+            dx = o
+        elif shape is not None and len(shape) == 1 and db is None:
+            db = o
+        elif dx is None and shape is None:
+            # An unannotated output can only be placed positionally; dX comes first.
+            dx = o
+    return dx, dw, db
+
+
 def _split_single_conv_grad(graph: gs.Graph, node: gs.Node, counter: int):
     """Split one ConvGrad node → ConvGradX + ConvGradW [+ ConvGradB].
 
@@ -30,7 +68,7 @@ def _split_single_conv_grad(graph: gs.Graph, node: gs.Node, counter: int):
     x = node.inputs[1]  # X:  forward input       [N, C_in,  H_in,  W_in]
     w = node.inputs[2]  # W:  weight              [C_out, C_in/group, kH, kW]
 
-    dx = node.outputs[0]  # dX: input gradient       [N, C_in,  H_in,  W_in]
+    dx, dw, db = _classifyOutputs(node, x, w)
 
     # Copy attrs; add kernel_shape from the weight tensor to avoid
     # Conv2DParser.parseNode computing wrong kernel_shape from inputs[1].
@@ -42,18 +80,19 @@ def _split_single_conv_grad(graph: gs.Graph, node: gs.Node, counter: int):
 
     base_name = node.name if node.name else f'ConvGrad_{counter}'
 
-    # ConvGradX: compute dX from dY and W
-    conv_grad_x = gs.Node(
-        op = 'ConvGradX',
-        name = f'{base_name}_ConvGradX',
-        inputs = [dy, w],
-        outputs = [dx],
-        attrs = attrs_x,
-    )
-    graph.nodes.append(conv_grad_x)
+    # ConvGradX: compute dX from dY and W. Skipped when the node has no dX at all --
+    # a trainable layer whose input needs no gradient emits dW only.
+    if dx is not None:
+        conv_grad_x = gs.Node(
+            op = 'ConvGradX',
+            name = f'{base_name}_ConvGradX',
+            inputs = [dy, w],
+            outputs = [dx],
+            attrs = attrs_x,
+        )
+        graph.nodes.append(conv_grad_x)
 
-    if len(node.outputs) >= 2:
-        dw = node.outputs[1]  # dW: weight gradient  [C_out, C_in/group, kH, kW]
+    if dw is not None:
 
         # Propagate shape and dtype from W → dW (same shape; ONNX shape inference misses ConvGrad)
         if dw.shape is None and w.shape is not None:
@@ -76,8 +115,7 @@ def _split_single_conv_grad(graph: gs.Graph, node: gs.Node, counter: int):
         )
         graph.nodes.append(conv_grad_w)
 
-        if len(node.outputs) >= 3:
-            db = node.outputs[2]  # dB: bias gradient  [C_out]
+        if db is not None:
 
             # Propagate bias shape and dtype: dB shape == B shape (or [C_out] from W)
             if db.shape is None:
