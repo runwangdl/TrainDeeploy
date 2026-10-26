@@ -1,0 +1,41 @@
+{
+ "reference": "C-order emulator exp21e/fix/scripts/bp_emu.py + libm_emu.c (device picolibc expf/logf)",
+ "src_fixture": "/Users/qiwenwu/ETH/TrainDeeploy/.worktrees/exp21e_bp_debug/SpeechNet_Test/speechnet_train_BP_round1",
+ "gen_c": "/private/tmp/claude-501/-Users-qiwenwu-ETH/a029715b-5e7b-46eb-9809-f41eb3505c21/scratchpad/emu/gap9_TrainingNetwork_strict.c",
+ "gen_c_sha256": "ea62f23241b949f12a5d635678adef4fc5d38082c67b8dc6507f3981f708086b",
+ "convgradw_wtiles": {
+  "0": [
+   166,
+   166,
+   166,
+   166,
+   37
+  ],
+  "1": [
+   11,
+   11,
+   11,
+   11,
+   11,
+   11,
+   11,
+   11
+  ],
+  "2": [
+   23
+  ],
+  "3": [
+   5
+  ],
+  "4": [
+   5
+  ]
+ },
+ "steps": 540,
+ "n_accum": 4,
+ "lr": 0.0003,
+ "vs_pytorch_ref": {
+  "max_abs": 0.0009561106562614441,
+  "n_gt_1e3": 0
+ }
+}
