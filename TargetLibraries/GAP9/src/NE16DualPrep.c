@@ -191,9 +191,19 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
   uint32_t x21c_tw = 0, x21c_t1 = 0, x21c_t2 = 0;
 #endif
 
+  /* -- QW exp21c (opt B): with input_offset == 0 (stacked input behind a Relu, ZODualPassFusion._nonnegative: network
+   *    blocks 1-4) the row-sum correction below is `add - 0 * sum * mul` == add, so the W re-perturbation that only
+   *    feeds the row sums is dead work (~93 % of the wenc perturbation, exp21c E_breakdown). Skip it and the row sums.
+   *    Bit-identical: the dropped term is exactly 0 in int32. -D NE16DUAL_NOOPT_B=ON restores the original. -- QW exp21c */
+#ifndef NE16DUAL_NOOPT_B
+  const uint32_t skip_w = (input_offset == 0);
+#else
+  const uint32_t skip_w = 0u;
+#endif
   uint32_t chunk_begin, chunk_len;
   dc_chunk(wsize, num_cores, core_id, &chunk_begin, &chunk_len);
-  if (chunk_len) {
+  // if (chunk_len) {   -- QW exp21c: original condition
+  if (chunk_len && !skip_w) { /* -- QW exp21c (opt B) */
     /* exp7: the faster helper (identity map in runs of K, same values) unless sign_sel == 0 with K < 16 -- block 0
      * (K = 4) keeps exp6's code path; there the runs would be 4 elements long. */
     if (sign_sel == 0u && K < 16u)
@@ -231,6 +241,12 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
   uint32_t row_end = row_begin + row_chunk;
   if (row_end > rows)
     row_end = rows;
+  if (skip_w) { /* -- QW exp21c (opt B): input_offset == 0 -> add2 = add+/add- unchanged */
+    for (uint32_t out_row = row_begin; out_row < row_end; out_row++) {
+      const uint32_t stacked_row = out_row + row_base;
+      pAddOut[out_row] = (stacked_row < ch_out) ? addp[stacked_row] : addm[stacked_row - ch_out];
+    }
+  } else
   for (uint32_t out_row = row_begin; out_row < row_end; out_row++) {
     const uint32_t stacked_row = out_row + row_base;
     const uint32_t co = (stacked_row < ch_out) ? stacked_row : stacked_row - ch_out;

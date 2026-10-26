@@ -103,6 +103,15 @@ if(NE16DUAL_PROBE_WALL)
   target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE_WALL)
   message(STATUS "[QW] NE16DUAL_PROBE_WALL: NE16 prep phase walls, Runtime-preserving conv split (exp21c)")
 endif()
+# -- QW exp21c: opt-OUT switches of the NE16 prep optimisations (all default off = optimisations ON). Each restores
+#    the checkpoint (exp21) behaviour of one optimisation, for A/B comparisons:
+#    NE16DUAL_NOOPT_B=ON  NE16DualBias re-perturbs W and forms row sums even when input_offset == 0 -- QW exp21c
+foreach(_x21c_opt NE16DUAL_NOOPT_B)
+  if(${_x21c_opt})
+    target_compile_definitions(deeploygap9 PUBLIC ${_x21c_opt})
+    message(STATUS "[QW] ${_x21c_opt}: exp21c NE16 prep optimisation disabled")
+  endif()
+endforeach()
 if(CONV4X2_STEP2A)
   target_compile_definitions(deeploygap9 PUBLIC CONV4X2_STEP2A)
   message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")
