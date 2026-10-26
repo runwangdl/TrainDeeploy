@@ -63,7 +63,22 @@ void PULP_BatchNormInternal_fp32(
       }
       e = seg_end;
     }
+    /* -- QW exp21e: the core-strided loop below is miscompiled by the Siracusa LLVM (Xpulp hardware loop): the trip
+     * count is emitted as (C - core_id) >> 3 instead of ceil((C - core_id) / 8), so cores 1..7 skip their last
+     * channel (seen in the disassembly: sub; srli 3; lp.setup). saved_mean/saved_inv_std of those channels kept stale
+     * L1 contents, which BatchNormGrad (BP only; ZO/QZO never read the stats) then used: BN4's dgamma was wrong for
+     * channels 25..31 and every gradient upstream of it (BP regression B, from da8cb63f; device probe: per-core
+     * readback 0 for c = 25..31). Same compiler issue as exp8's DualHalfTemplate. GAP9 (gcc) was not affected.
+     * Contiguous per-core chunk instead (plain unit-stride loop, as in the channel-parallel path).
     for (uint32_t c = core_id; c < C; c += NUM_CORES) {
+      saved_mean[c] = running_mean[c];
+      saved_inv_std[c] = 1.0f / sqrtf(running_var[c] + epsilon);
+    }
+    */
+    const uint32_t chunk_c = (C + NUM_CORES - 1) / NUM_CORES;
+    const uint32_t c0 = MIN(chunk_c * (uint32_t)core_id, C);
+    const uint32_t c1 = MIN(c0 + chunk_c, C);
+    for (uint32_t c = c0; c < c1; c++) {
       saved_mean[c] = running_mean[c];
       saved_inv_std[c] = 1.0f / sqrtf(running_var[c] + epsilon);
     }
