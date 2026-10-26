@@ -17,6 +17,8 @@ TrainDeeploy feat/exp21e_bp_debug (from bb7deadb) | Onnx4Deeploy fix/zo_ref_out_
    (exact ZO_EXPECT_WSUM); Siracusa ZO/QZO single + full-net QZO fused & unfused: trained weights bit-identical to
    bb7deadb; block-0 kernels 0 errors. (The BP single-step gate cannot see a wrong update: it checks the pre-update
    loss only; base bp_single weights were off by 0.997 x update.)
+   Complete round, default (fast-math) build of the fixed branch vs the exp17 PyTorch fixture: Errors 0/2160
+   (max 9.56e-4, onsets fwd 639 / 1195; within 3.3e-6 of the strict C-order trajectory).
 
 3. ZO drift fixed in the reference (Onnx4Deeploy 71dacbc, out-of-place perturbation). Fixture 120 epochs = 1620 steps
    (deployed round; exp18 used 200 -- the trajectory prefix is identical) = exp21e's out-of-place replica bit for bit.
@@ -28,7 +30,8 @@ TrainDeeploy feat/exp21e_bp_debug (from bb7deadb) | Onnx4Deeploy fix/zo_ref_out_
    picolibc for Siracusa, newlib for GAP9) + strict-fp32 device build (-D DEEPLOY_STRICT_FP32=ON DEEPLOY_STRICT_FP32_ALL=ON).
    COMPLETE Siracusa BP round (540 steps, 2160 forwards, exp17 settings): Errors: 0 out of 2160,
    2160/2160 loss bits and 15489/15489 final weight words equal to the reference.
-   GAP9 (board settings): 2-step 8/8 + 15489/15489 bit-exact; complete round: GAP9_ROUND_SUMMARY
+   GAP9 (board settings): 2-step 8/8 + 15489/15489 bit-exact; COMPLETE GAP9 round (board settings, 540 steps):
+   Errors: 0 out of 2160, 2160/2160 loss bits and 15489/15489 final weight words equal.
 
 5. Cycles: fixes A+B no measurable cost (BP 2-step within GVSoC's +-1 % run-to-run spread; ZO/QZO identical).
    Strict fp32 (opt-in, only for the bit-exact check): +5.3 % BP train cycles on Siracusa, +6.8 % on GAP9.

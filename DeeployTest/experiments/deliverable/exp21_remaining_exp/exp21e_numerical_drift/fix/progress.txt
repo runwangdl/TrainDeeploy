@@ -15,3 +15,6 @@
 2026-10-26 12:30:33 Task4 DONE (Siracusa): full BP round strict vs C-order fixture: Errors 0/2160, 2160/2160 loss bits equal, 15489/15489 final weight words equal
 2026-10-26 12:41:22 GAP9 strict round in progress: live losses 889/889 bit-equal to GAP9 C-order fixture so far. ZO round at update 1441/1620.
 2026-10-26 13:18:10 Task3 DONE: Siracusa complete ZO round 1620 steps vs out-of-place fixture: Errors 0/12960, max 6.2e-6, median 2.1e-7, flat; final w max 8.9e-8, median 3 ulp. Old in-place ref on same run: max 9.7e-4, grows 1.1e-6->1.1e-4.
+2026-10-26 13:20:17 launched Siracusa default (fast-math) fixed-branch full BP round vs exp17 PyTorch fixture (context run)
+2026-10-26 16:03:59 default-build fixed-branch full BP round vs PyTorch fixture: Errors 0/2160, max 9.56e-4, onsets 639/1195; within 3.3e-6 of strict C-order trajectory
+2026-10-26 16:53:20 Task4 GAP9 DONE: complete GAP9 BP round strict vs GAP9 C-order fixture: Errors 0/2160, 2160/2160 loss bits, 15489/15489 weights
