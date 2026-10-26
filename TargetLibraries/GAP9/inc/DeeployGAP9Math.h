@@ -52,12 +52,14 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
                                 uint32_t seed_w_base, uint32_t tile_seed_xor, uint32_t log2D_w,
                                 float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K,
                                 uint32_t sign_sel, /* exp7: 0 stacked [W+;W-], 1 W+, 2 W- */
-                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw); /* exp7: rows in (ky,kx,ci) order */
+                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw, /* exp7: rows in (ky,kx,ci) order */
+                                uint32_t *pHCache); /* -- QW exp21c (opt H): per-node L2 cache, NULL = none */
 void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pAdd, const int32_t *pBMul,
                        const int32_t *pMul, int32_t *pAddOut, int8_t *pScratch, uint32_t seed_w_base,
                        uint32_t seed_b_base, uint32_t tile_seed_xor, uint32_t log2D_w, uint32_t log2D_b,
                        float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K, int32_t input_offset,
-                       uint32_t sign_sel); /* exp7: 0 stacked, 1 +, 2 - */
+                       uint32_t sign_sel, /* exp7: 0 stacked, 1 +, 2 - */
+                       uint32_t *pHCache); /* -- QW exp21c (opt H): per-node L2 cache, NULL = none */
 
 /* -- QW (dual_pass_fusion exp7 step 7): both ZO passes of a 1xK / Kx1 conv on NE16 in ONE node, SDK-style pipeline --
  * word-wise HWC column per output row, double-buffered against NE16 via its 2-deep job queue. Runs on the cluster

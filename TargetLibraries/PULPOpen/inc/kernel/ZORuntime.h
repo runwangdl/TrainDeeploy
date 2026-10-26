@@ -28,6 +28,12 @@ extern uint32_t perturb_eps_use_override;
 // runner sets it to ZO_EPS so integer perturb kernels can scale mul by (override/baked) when the
 // override is active (the zo_update coefficient -lr*g_proj). Default 1.0 = no scaling. -- QW
 extern float32_t perturb_eps_baked;
+// -- QW exp21c (NE16 prep hoisting, opt H): bumped by the ZO harness every time the trainable weights change (after
+//    each zo_update run, after a resume). Kernels that cache work derived from the weights (NE16DualPrep.c: the
+//    perturbed+encoded weight and the perturbed bias of an update step) key their cache on it together with the
+//    seeds and the eps scale. Default 0; a harness that never bumps it must not change the weights between two runs
+//    of the training graph that use the same perturb_seed_base. -- QW exp21c
+extern volatile uint32_t zo_weight_version;
 
 
 /* RW 2026-10-13: ECO error feedback for (quantized) ZO, arXiv 2601.22101, memory-free form, as in Qiwen's host

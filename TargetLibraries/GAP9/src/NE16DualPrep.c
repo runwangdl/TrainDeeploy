@@ -90,6 +90,46 @@ static inline void n16p_records(uint32_t kernel, uint32_t num_cores) { /* core 0
 }
 #endif
 
+/* -- QW exp21c (opt H): hoist the prep to once per UPDATE STEP.
+ *    Both prep nodes are pure functions of (W, add, wmul, bmul, mul, seeds, eps scale, input_offset). z is drawn from
+ *    perturb_seed_base, which the harness sets once per update step (deeploymezotest.c: seed_base outside the
+ *    accumulation loop), and W / add change only in the update graph. So the outputs are identical in the n_accum
+ *    windows of an update step. Each node owns an L2 cache `uint32_t hc[X21C_HC_HDR + out_bytes/4]` (a static global
+ *    emitted by DualPrep.py): header = {valid, seed_w, seed_b, tile_xor, eps bits, zo_weight_version, out_bytes}.
+ *    Hit (all fields equal): copy the cached output and return. Miss: compute as before, then copy the output into the
+ *    cache and commit the header (core 0, after a barrier). Everything the output depends on that can change at run
+ *    time is in the key (weights via zo_weight_version, which the harness bumps after every zo_update / resume).
+ *    -D NE16DUAL_NOOPT_H=ON compiles the cache out (recompute every window). -- QW exp21c */
+#define X21C_HC_HDR 7u
+static inline uint32_t x21c_f2u(float f) {
+  uint32_t u;
+  __builtin_memcpy(&u, &f, 4);
+  return u;
+}
+static inline uint32_t x21c_hc_hit(const uint32_t *hc, uint32_t sw, uint32_t sb, uint32_t tx, uint32_t eb,
+                                   uint32_t bytes) {
+  return hc && hc[0] == 1u && hc[1] == sw && hc[2] == sb && hc[3] == tx && hc[4] == eb &&
+         hc[5] == zo_weight_version && hc[6] == bytes;
+}
+static inline void x21c_hc_commit(uint32_t *hc, uint32_t sw, uint32_t sb, uint32_t tx, uint32_t eb, uint32_t bytes) {
+  hc[1] = sw, hc[2] = sb, hc[3] = tx, hc[4] = eb, hc[5] = zo_weight_version, hc[6] = bytes;
+  hc[0] = 1u; /* last */
+}
+static inline void x21c_copy(void *dst, const void *src, uint32_t bytes, uint32_t core_id, uint32_t num_cores) {
+  uint32_t b, n;
+  if (((((uintptr_t)dst) | ((uintptr_t)src) | bytes) & 3u) == 0u) {
+    dc_chunk(bytes >> 2, num_cores, core_id, &b, &n);
+    uint32_t *d = (uint32_t *)dst + b;
+    const uint32_t *s = (const uint32_t *)src + b;
+    for (uint32_t i = 0; i < n; i++)
+      d[i] = s[i];
+  } else {
+    dc_chunk(bytes, num_cores, core_id, &b, &n);
+    for (uint32_t i = 0; i < n; i++)
+      ((uint8_t *)dst)[b + i] = ((const uint8_t *)src)[b + i];
+  }
+}
+
 /* QW (dual_pass_fusion exp7, step 7): `sign_sel` selects what is encoded -- 0: the stacked [W+; W-] (2*ch_out rows,
  * block 0, exp6, unchanged); 1: W+ only; 2: W- only (ch_out rows). Blocks 1-4 have x+ != x-, so the two passes are two
  * NE16 jobs over two column buffers, each with its own weight. The raw weight is CHW [co][ci][ky][kx] and the im2col
@@ -99,11 +139,21 @@ static inline void n16p_records(uint32_t kernel, uint32_t num_cores) { /* core 0
 void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t *pWEnc, int8_t *pScratch,
                                 uint32_t seed_w_base, uint32_t tile_seed_xor, uint32_t log2D_w,
                                 float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K, uint32_t sign_sel,
-                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw) {
+                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw, uint32_t *pHCache) {
   const uint32_t core_id = pi_core_id();
   const uint32_t wsize = ch_out * K;
   int8_t *wp = pScratch;         /* rows [0, ch_out)        */
   int8_t *wm = pScratch + wsize; /* rows [ch_out, 2*ch_out) */
+#ifndef NE16DUAL_NOOPT_H /* -- QW exp21c (opt H): cached output of this update step? */
+  const uint32_t x21c_bytes = ((sign_sel == 0u) ? 2u * ch_out : ch_out) * ((K + 15u) / 16u) * 16u;
+  const uint32_t x21c_eb = x21c_f2u(eps_scale);
+  if (x21c_hc_hit(pHCache, seed_w_base, 0u, tile_seed_xor, x21c_eb, x21c_bytes)) {
+    x21c_copy(pWEnc, pHCache + X21C_HC_HDR, x21c_bytes, core_id, num_cores);
+    return; /* the fork's join is the barrier */
+  }
+#else
+  (void)pHCache;
+#endif
 #ifdef NE16DUAL_PROBE /* -- QW exp11 */
   uint32_t n16p_t;
   n16p_start(&n16p_t);
@@ -162,6 +212,14 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
     x21c_rec("X21C_wenc_encode_wall", x21c_t2 - x21c_t1);
   }
 #endif
+#ifndef NE16DUAL_NOOPT_H /* -- QW exp21c (opt H): fill the cache for the remaining windows of this update step */
+  if (pHCache) {
+    x21c_copy(pHCache + X21C_HC_HDR, pWEnc, x21c_bytes, core_id, num_cores);
+    pi_cl_team_barrier();
+    if (core_id == 0)
+      x21c_hc_commit(pHCache, seed_w_base, 0u, tile_seed_xor, x21c_eb, x21c_bytes);
+  }
+#endif
 // #ifdef NE16DUAL_PROBE   -- QW exp21c: original guard, replaced by the line below
 #if defined(NE16DUAL_PROBE) && !defined(NE16DUAL_PROBE_WALL) /* -- QW exp21c: the wall probe skips exp11's 16 per-core
                                                                records (their L2 writes cost ~17 k cycles in the node) */
@@ -174,11 +232,21 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
                        const int32_t *pMul, int32_t *pAddOut, int8_t *pScratch, uint32_t seed_w_base,
                        uint32_t seed_b_base, uint32_t tile_seed_xor, uint32_t log2D_w, uint32_t log2D_b,
                        float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K, int32_t input_offset,
-                       uint32_t sign_sel) {
+                       uint32_t sign_sel, uint32_t *pHCache) {
   const uint32_t core_id = pi_core_id();
   const uint32_t wsize = ch_out * K;
   int8_t *wp = pScratch;
   int8_t *wm = pScratch + wsize;
+#ifndef NE16DUAL_NOOPT_H /* -- QW exp21c (opt H): cached add2 of this update step? (input_offset is a per-node constant) */
+  const uint32_t x21c_bytes = ((sign_sel == 0u) ? 2u * ch_out : ch_out) * 4u;
+  const uint32_t x21c_eb = x21c_f2u(eps_scale);
+  if (x21c_hc_hit(pHCache, seed_w_base, seed_b_base, tile_seed_xor, x21c_eb, x21c_bytes)) {
+    x21c_copy(pAddOut, pHCache + X21C_HC_HDR, x21c_bytes, core_id, num_cores);
+    return;
+  }
+#else
+  (void)pHCache;
+#endif
   const uint32_t off_add = (2u * wsize + 3u) & ~3u;
   int32_t *addp = (int32_t *)(pScratch + off_add);
   int32_t *addm = addp + ch_out;
@@ -267,6 +335,14 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
     x21c_rec("X21C_bias_wrepert_work", x21c_tw - x21c_t0);
     x21c_rec("X21C_bias_perturb_wall", x21c_t1 - x21c_t0);
     x21c_rec("X21C_bias_rowsum_wall", x21c_t2 - x21c_t1);
+  }
+#endif
+#ifndef NE16DUAL_NOOPT_H /* -- QW exp21c (opt H) */
+  if (pHCache) {
+    x21c_copy(pHCache + X21C_HC_HDR, pAddOut, x21c_bytes, core_id, num_cores);
+    pi_cl_team_barrier();
+    if (core_id == 0)
+      x21c_hc_commit(pHCache, seed_w_base, seed_b_base, tile_seed_xor, x21c_eb, x21c_bytes);
   }
 #endif
 // #ifdef NE16DUAL_PROBE   -- QW exp21c: original guard, replaced by the line below
