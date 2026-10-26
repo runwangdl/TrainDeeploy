@@ -79,6 +79,15 @@ set(_KERNEL_O3_FILES
 )
 set_source_files_properties(${_KERNEL_O3_FILES} PROPERTIES COMPILE_OPTIONS "-O3")
 
+# -- QW exp21e/fix: opt-in STRICT fp32 for the whole GAP9 kernel library (PULPOpen kernels + pulp-trainlib compiled in):
+#    gcc contracts a*b+c into fmadd.s by default (-ffp-contract=fast for GNU C); off here so every fp32 kernel evaluates
+#    in C-source order with one rounding per operation (device side of the bit-exact BP reference, exp21e fix/).
+#    Usage: -D DEEPLOY_STRICT_FP32_ALL=ON (with -D DEEPLOY_STRICT_FP32=ON for the generated networks). OFF by default.
+if(DEEPLOY_STRICT_FP32_ALL)
+  target_compile_options(deeploygap9 PRIVATE -fno-fast-math -ffp-contract=off)
+  message(STATUS "[QW strict-fp32] deeploygap9 (all sources): -fno-fast-math -ffp-contract=off")
+endif()
+
 # -- QW (2026-10-22, per-block breakdown on GAP9): the same measurement switches as TargetLibraries/PULPOpen for the
 #    PULPOpen kernels compiled into this library. DUALCONV2IN_PROBE=ON (core-0 cycles of phase 1 / phase 2 of
 #    DualConv2In.c), DUALCONV2IN_SPLIT=1|2, CONV4X2_STEP2A=ON (original step-2a Conv4x2), CONV4X2_SPLIT=1|2. -- QW
