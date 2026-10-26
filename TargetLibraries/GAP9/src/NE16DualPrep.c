@@ -31,6 +31,26 @@
 #include "kernel/DualPerturb.h"
 #include "pmsis.h"
 
+/* -- QW exp21c: NE16DUAL_PROBE_WALL=ON (default off) = exp11's NE16DUAL_PROBE plus the WALL time of every phase of the
+ *    two prep kernels, measured on worker core 0 from kernel entry / barrier to barrier (so it includes the per-core
+ *    imbalance and the barrier), and the W re-perturbation of NE16DualBias separated from its add perturbation (core-0
+ *    work). Only worker counters are reset here; the master core's Runtime counter is untouched. NE16DualConv2in.c
+ *    reads the master counter without resetting it under this switch, so the fixture Runtime stays valid. -- QW exp21c */
+#if defined(NE16DUAL_PROBE_WALL) && !defined(NE16DUAL_PROBE)
+#define NE16DUAL_PROBE
+#endif
+#ifdef NE16DUAL_PROBE_WALL
+#include "perf_utils.h"
+static inline void x21c_rec(const char *label, uint32_t v) { /* -- QW exp21c: one record, core 0 only; 2 stores (the
+                                                              * zero-initialised table needs no struct clear) */
+  if (perf_record_count < PERF_MAX_RECORDS) {
+    perf_records[perf_record_count].label = label;
+    perf_records[perf_record_count].stats.cycles = v;
+    perf_record_count++;
+  }
+}
+#endif
+
 #ifdef NE16DUAL_PROBE /* -- QW exp11: per-core work cycles of the two phases of each prep kernel, as perf records */
 #include "perf_utils.h"
 static uint32_t n16p_work[2][8];
@@ -88,6 +108,10 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
   uint32_t n16p_t;
   n16p_start(&n16p_t);
 #endif
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c: wall marks on core 0 */
+  const uint32_t x21c_t0 = n16p_t;
+  uint32_t x21c_t1 = 0, x21c_t2 = 0;
+#endif
 
   uint32_t chunk_begin, chunk_len;
   dc_chunk(wsize, num_cores, core_id, &chunk_begin, &chunk_len);
@@ -111,6 +135,9 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
 #ifdef NE16DUAL_PROBE
   n16p_t = pi_perf_read(PI_PERF_CYCLES);
 #endif
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c */
+  x21c_t1 = n16p_t;
+#endif
 
   /* encode the stacked [2*ch_out][K] matrix (or one half of it) as a 1x1 weight with K input channels */
   const uint32_t rows = (sign_sel == 0u) ? 2u * ch_out : ch_out;
@@ -128,7 +155,16 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
   n16p_mark(1, core_id, &n16p_t);
 #endif
   pi_cl_team_barrier();
-#ifdef NE16DUAL_PROBE
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c: phase walls (core 0, entry -> barrier 1 -> barrier 2) */
+  x21c_t2 = pi_perf_read(PI_PERF_CYCLES);
+  if (core_id == 0) {
+    x21c_rec("X21C_wenc_perturb_wall", x21c_t1 - x21c_t0);
+    x21c_rec("X21C_wenc_encode_wall", x21c_t2 - x21c_t1);
+  }
+#endif
+// #ifdef NE16DUAL_PROBE   -- QW exp21c: original guard, replaced by the line below
+#if defined(NE16DUAL_PROBE) && !defined(NE16DUAL_PROBE_WALL) /* -- QW exp21c: the wall probe skips exp11's 16 per-core
+                                                               records (their L2 writes cost ~17 k cycles in the node) */
   if (core_id == 0)
     n16p_records(0, num_cores);
 #endif
@@ -150,6 +186,10 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
   uint32_t n16p_t;
   n16p_start(&n16p_t);
 #endif
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c */
+  const uint32_t x21c_t0 = n16p_t;
+  uint32_t x21c_tw = 0, x21c_t1 = 0, x21c_t2 = 0;
+#endif
 
   uint32_t chunk_begin, chunk_len;
   dc_chunk(wsize, num_cores, core_id, &chunk_begin, &chunk_len);
@@ -163,6 +203,9 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
       dc_perturb_i8_chw(pW, wp, wm, pWMul, 1u, 1u, K, (seed_w_base + core_id) ^ tile_seed_xor, chunk_begin, chunk_len,
                         log2D_w, eps_scale);
   }
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c: core-0 work of the W re-perturbation alone */
+  x21c_tw = pi_perf_read(PI_PERF_CYCLES);
+#endif
   dc_chunk(ch_out, num_cores, core_id, &chunk_begin, &chunk_len);
   if (chunk_len)
     dc_perturb_i32(pAdd, addp, addm, pBMul, 1u, (seed_b_base + core_id) ^ tile_seed_xor, chunk_begin, chunk_len,
@@ -173,6 +216,9 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
   pi_cl_team_barrier();
 #ifdef NE16DUAL_PROBE
   n16p_t = pi_perf_read(PI_PERF_CYCLES);
+#endif
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c */
+  x21c_t1 = n16p_t;
 #endif
 
   /* exp7: sign_sel 0 = stacked [add+'; add-'] (2*ch_out rows); 1 / 2 = add+' / add-' only (ch_out rows) */
@@ -199,7 +245,17 @@ void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pA
   n16p_mark(1, core_id, &n16p_t);
 #endif
   pi_cl_team_barrier();
-#ifdef NE16DUAL_PROBE
+#ifdef NE16DUAL_PROBE_WALL /* -- QW exp21c: W re-perturb (core-0 work), phase-1 wall, row-sum phase wall */
+  x21c_t2 = pi_perf_read(PI_PERF_CYCLES);
+  if (core_id == 0) {
+    x21c_rec("X21C_bias_wrepert_work", x21c_tw - x21c_t0);
+    x21c_rec("X21C_bias_perturb_wall", x21c_t1 - x21c_t0);
+    x21c_rec("X21C_bias_rowsum_wall", x21c_t2 - x21c_t1);
+  }
+#endif
+// #ifdef NE16DUAL_PROBE   -- QW exp21c: original guard, replaced by the line below
+#if defined(NE16DUAL_PROBE) && !defined(NE16DUAL_PROBE_WALL) /* -- QW exp21c: the wall probe skips exp11's 16 per-core
+                                                               records (their L2 writes cost ~17 k cycles in the node) */
   if (core_id == 0)
     n16p_records(1, num_cores);
 #endif

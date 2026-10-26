@@ -1,0 +1,36 @@
+A2_sgdm_rtn S02: QZO-ablation opt=sgdm beta=0.9 round=rtn ef=none lr=3e-06 eps=0.01 n_accum=4 (MEAN) epochs=120 per_class=6 seed=42 order=cyclic draw=device rng=device mode=direct
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+/app/Onnx4Deeploy/QZO_exp/exp_calibration/calib_pooled.py:122: RuntimeWarning: overflow encountered in cast
+  self.pool[name].append(a.astype(np.float16))
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+  b1 eval: acc=77.78 loss=0.6830
+    round1 step    0: train acc 70.37 loss 0.8127 | next(b2) acc 70.00
+    round1 step  810: train acc 68.52 loss 0.8043 | next(b2) acc 71.67
+    round1 step 1620: train acc 70.37 loss 0.7922 | next(b2) acc 71.67
+  round 1 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [357s]
+  b2 eval: acc=71.67 loss=0.8299
+    round2 step    0: train acc 74.07 loss 0.7380 | next(b3) acc 65.56
+    round2 step  810: train acc 75.93 loss 0.7289 | next(b3) acc 66.11
+    round2 step 1620: train acc 75.93 loss 0.7328 | next(b3) acc 66.67
+  round 2 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [649s]
+  b3 eval: acc=66.67 loss=0.8717
+    round3 step    0: train acc 72.22 loss 0.8293 | next(b4) acc 66.67
+    round3 step  810: train acc 70.37 loss 0.8203 | next(b4) acc 66.67
+    round3 step 1620: train acc 70.37 loss 0.8110 | next(b4) acc 68.33
+  round 3 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [938s]
+  b4 eval: acc=68.33 loss=0.8821
+    round4 step    0: train acc 66.67 loss 0.9099 | next(b5) acc 52.78
+    round4 step  810: train acc 64.81 loss 0.9034 | next(b5) acc 51.11
+    round4 step 1620: train acc 68.52 loss 0.8880 | next(b5) acc 53.89
+  round 4 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [1262s]
+  b5 eval: acc=53.89 loss=1.0789
+DONE A2_sgdm_rtn S02: b1=77.78 b2=71.67 b3=66.67 b4=68.33 b5=53.89 mean(b2-b5)=65.14 [1266s]

@@ -1,0 +1,1 @@
+fus_prof: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=21438936 opt_cycles_hi=0 opt_cycles_lo=2274683

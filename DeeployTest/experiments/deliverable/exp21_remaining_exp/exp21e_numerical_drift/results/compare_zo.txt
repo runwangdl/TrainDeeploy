@@ -1,0 +1,12 @@
+ZO: device vs host variants (both passes, 21600 losses)
+reference                     median|d|       p99       max  >1e-3   ep0 med ep199 med  ep0 ulp | final w: max|dw| median ulp
+orig (exp18 fixture ref)       3.39e-05  5.94e-04  1.37e-03      5  4.77e-07  7.68e-05       28 | 8.57e-05 440
+oop                            2.29e-07  2.44e-06  6.20e-06      0  1.79e-07  2.08e-07       10 | 1.04e-07 4
+oopdev                         2.38e-07  3.10e-06  7.03e-06      0  1.77e-07  2.42e-07       10 | 1.64e-07 4
+f64                            5.36e-07  9.06e-06  2.60e-05      0  2.38e-07  9.24e-07       12 | 3.95e-06 11
+
+host variant vs f64 'exact' trajectory (L-):
+  orig (exp18 fixture ref)     ep0 med 4.40e-07  ep199 med 7.72e-05  max 1.37e-03
+  oop                          ep0 med 2.68e-07  ep199 med 9.46e-07  max 2.36e-05
+  oopdev                       ep0 med 2.68e-07  ep199 med 8.75e-07  max 2.50e-05
+  DEVICE                       ep0 med 2.38e-07  ep199 med 9.24e-07  max 2.60e-05

@@ -1,0 +1,74 @@
+{
+ "experiment": "exp21d_70%data",
+ "recipe": "qzo",
+ "arm": "p30_e120",
+ "subject": "S03",
+ "fold": 3,
+ "condition": "vocalized",
+ "generated_utc": "2026-10-26T01:38:47Z",
+ "recipe_settings": {
+  "learning_rate": 1e-05,
+  "epsilon": 0.01,
+  "n_accum": 4,
+  "epochs": 120,
+  "q": 1,
+  "per_class": 6,
+  "seed": 42,
+  "order": "cyclic",
+  "draw": "device",
+  "mode": "direct",
+  "rng": "device",
+  "max_steps": 0
+ },
+ "artifacts": "artifacts_reference",
+ "calib_percentile": 99.9,
+ "per_round": {
+  "1": {
+   "val_next": 70.55555555555554,
+   "val_in": 76.98412698412697,
+   "train": 75.92592592592592,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "2": {
+   "val_next": 64.99999999999999,
+   "val_in": 73.01587301587303,
+   "train": 74.07407407407408,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "3": {
+   "val_next": 64.44444444444444,
+   "val_in": 68.25396825396825,
+   "train": 66.66666666666667,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "4": {
+   "val_next": 63.33333333333333,
+   "val_in": 61.111111111111114,
+   "train": 70.37037037037037,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  }
+ },
+ "update_steps_per_round": [
+  1620,
+  1620,
+  1620,
+  1620
+ ],
+ "train_forwards_per_round": [
+  12960,
+  12960,
+  12960,
+  12960
+ ],
+ "mean_val_next": 65.83333333333333,
+ "mean_val_in": 69.84126984126985,
+ "seconds": 1447.0706758499146
+}

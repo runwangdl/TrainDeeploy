@@ -1,0 +1,5 @@
+ulp1         onset1e-5   636 1e-4  1010 1e-3  1209 max 1.21e-03  max|d| fwd<636 6.9e-06 fwd636-1009 5.8e-05
+ulp1F        onset1e-5    -1 1e-4    -1 1e-3    -1 max 3.10e-06  max|d| fwd<636 3.1e-06 fwd636-1009 7.0e-07
+ulp1F_w0     onset1e-5    -1 1e-4    -1 1e-3    -1 max 3.10e-06  max|d| fwd<636 3.1e-06 fwd636-1009 6.7e-07
+ulp1F_w600   onset1e-5   639 1e-4  1195 1e-3    -1 max 9.56e-04  max|d| fwd<636 3.1e-06 fwd636-1009 2.3e-05
+ulp1F_w940   onset1e-5   636 1e-4  1010 1e-3  1209 max 1.22e-03  max|d| fwd<636 6.9e-06 fwd636-1009 5.8e-05

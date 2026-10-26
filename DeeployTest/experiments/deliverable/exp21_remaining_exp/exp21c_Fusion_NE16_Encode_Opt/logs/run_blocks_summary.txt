@@ -1,0 +1,5 @@
+b1 E_plain: Errors: 0 out of 39424 Runtime: 294787 cycles
+b1 E_mb: Errors: 0 out of 39424 Runtime: 40638 cycles
+b1 E_wall: Errors: 0 out of 39424 Runtime: 298334 cycles
+b1 E_seqplain: Errors: 0 out of 39424 Runtime: 389696 cycles
+b1 E_wallseq: Errors: 0 out of 39424 Runtime: 392657 cycles

@@ -1,0 +1,6 @@
+bp p70_eq540 S04: SGD lr=0.0003 n_accum=4 (SUM) epochs=18 per_class=14 seed=42 order=cyclic draw=device dropout=0.0 | frozen pretraining BN stats, batch-1 | max_steps=540
+      r1: next  82.78  held-out  87.04  train  93.65
+      r2: next  83.89  held-out  79.63  train  97.62
+      r3: next  92.78  held-out  87.04  train  94.44
+      r4: next  86.11  held-out  96.30  train  99.21
+DONE bp p70_eq540 S04: mean val_next 86.39  val_in 87.50  steps [540, 540, 540, 540]  (16s)

@@ -1,0 +1,22 @@
+47299:  DeeployNetwork_MEMORYARENA_L1 = (int8_t *)pi_l1_malloc((void *)0, sizeof(int8_t) * 121984);
+47306:  // [GAP9 FC/CC pos_alloc race fix] all pi_l2_malloc before cl_ram_malloc
+47307:  DeeployNetwork_MEMORYARENA_L2 = (int8_t *)pi_l2_malloc(sizeof(int8_t) * 237312);
+47308:  DeeployNetwork_PROMOTED_POOL_L2 = (int8_t *)pi_l2_malloc(sizeof(int8_t) * 687488);
+47309:  DeeployNetwork_input_0 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 9800);
+47310:  DeeployNetwork_input_1 = (int64_t *)pi_l2_malloc(sizeof(int64_t) * 1);
+47311:  DeeployNetwork_input_6 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 2048);
+47312:  DeeployNetwork_input_10 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 2048);
+47313:  DeeployNetwork_input_14 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 3584);
+47314:  DeeployNetwork_input_18 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 7168);
+47315:  DeeployNetwork_input_22 = (float32_t *)pi_l2_malloc(sizeof(float32_t) * 288);
+47316:  DeeployNetwork_MEMORYARENA_L3 = (int8_t *)cl_ram_malloc(sizeof(int8_t) * 1005648);
+47536:  DeeployNetwork_blocks_0_1_running_mean_tensor = cl_ram_malloc(32);
+47540:  DeeployNetwork_blocks_0_1_running_var_tensor = cl_ram_malloc(32);
+47544:  DeeployNetwork_blocks_1_1_running_mean_tensor = cl_ram_malloc(64);
+47548:  DeeployNetwork_blocks_1_1_running_var_tensor = cl_ram_malloc(64);
+47552:  DeeployNetwork_blocks_2_1_running_mean_tensor = cl_ram_malloc(64);
+47556:  DeeployNetwork_blocks_2_1_running_var_tensor = cl_ram_malloc(64);
+47560:  DeeployNetwork_blocks_3_1_running_mean_tensor = cl_ram_malloc(128);
+47564:  DeeployNetwork_blocks_3_1_running_var_tensor = cl_ram_malloc(128);
+47568:  DeeployNetwork_blocks_4_1_running_mean_tensor = cl_ram_malloc(128);
+47572:  DeeployNetwork_blocks_4_1_running_var_tensor = cl_ram_malloc(128);

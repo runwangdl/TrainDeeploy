@@ -1,0 +1,19 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+/app/Onnx4Deeploy/QZO_exp/exp_calibration/calib_pooled.py:122: RuntimeWarning: overflow encountered in cast
+  self.pool[name].append(a.astype(np.float16))
+qzo p70_eq1620 S01: QZO lr=1e-05 eps=0.01 q=1 n_accum=4 (MEAN) epochs=52 per_class=14 seed=42 order=cyclic draw=device mode=direct rng=device | int8 conv + float fc, Rademacher, frozen BN stats, batch-1, forward-only | max_steps=1620
+      r1: next  86.11  held-out  85.19  train  82.54
+      r2: next  82.78  held-out  81.48  train  91.27
+      r3: next  88.89  held-out  88.89  train  84.92
+      r4: next  83.89  held-out  92.59  train  87.30
+DONE qzo p70_eq1620 S01: mean val_next 85.42  val_in 87.04  steps [1620, 1620, 1620, 1620]  (957s)

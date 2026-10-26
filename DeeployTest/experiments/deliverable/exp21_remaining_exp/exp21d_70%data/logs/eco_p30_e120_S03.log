@@ -1,0 +1,17 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+eco p30_e120 S03: ECO-QZO lr=3e-06 beta=0.9 ef=memoryfree round=sr eps=0.01 n_accum=4 (MEAN) epochs=120 per_class=6 seed=42 order=cyclic draw=device rng=device | int8 conv + float fc, frozen BN stats, batch-1, forward-only | max_steps=0
+      r1: next  70.56  held-out  81.75  train  85.19
+      r2: next  66.11  held-out  73.81  train  79.63
+      r3: next  69.44  held-out  79.37  train  74.07
+      r4: next  65.56  held-out  65.08  train  81.48
+DONE eco p30_e120 S03: mean val_next 67.92  val_in 75.00  steps [1620, 1620, 1620, 1620]  (1226s)

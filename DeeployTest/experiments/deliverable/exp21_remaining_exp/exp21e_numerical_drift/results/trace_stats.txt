@@ -1,0 +1,128 @@
+================ ZO (exp18) raw-bit comparison ================
+L+: exact 0.0%  | first 54 fwd: exact 0%, median ulp 38, max ulp 838 | first 4 fwd ulps [838, 3, 15, 10] | last 54: median ulp 4055
+     median|d| 3.42e-05  max 9.890e-04 at fwd 9340  breaches>1e-3: 0
+L-: exact 0.0%  | first 54 fwd: exact 2%, median ulp 22, max ulp 1266 | first 4 fwd ulps [47, 3, 102, 6] | last 54: median ulp 4230
+     median|d| 3.32e-05  max 1.369e-03 at fwd 10265  breaches>1e-3: 5
+first non-zero ulp diff: L+ fwd 0 (838 ulp), L- fwd 0 (47 ulp)
+epoch-0 median ulp L+ 37.5 vs L- 21.5;  mean |d| L+ 1.12e-06 L- 1.11e-06
+--- ZO L+: per-epoch (54 fwd) median|d|, median rel |d|/|L|, max|d|
+  epoch    0: med 3.44e-07  rel 2.96e-06  max 8.34e-06
+  epoch    1: med 7.71e-07  rel 5.76e-06  max 2.38e-05
+  epoch    2: med 1.62e-06  rel 8.52e-06  max 2.62e-05
+  epoch    3: med 2.38e-06  rel 1.31e-05  max 5.25e-05
+  epoch    4: med 3.52e-06  rel 1.79e-05  max 6.13e-05
+  epoch    5: med 3.15e-06  rel 1.87e-05  max 8.46e-05
+  epoch    6: med 4.50e-06  rel 1.95e-05  max 8.23e-05
+  epoch   22: med 9.79e-06  rel 6.41e-05  max 1.44e-04
+  epoch   38: med 1.31e-05  rel 1.05e-04  max 2.99e-04
+  epoch   54: med 5.11e-05  rel 1.46e-04  max 3.25e-04
+  epoch   70: med 3.52e-05  rel 2.30e-04  max 4.77e-04
+  epoch   86: med 3.12e-05  rel 2.05e-04  max 3.94e-04
+  epoch  102: med 2.90e-05  rel 2.55e-04  max 5.04e-04
+  epoch  118: med 5.87e-05  rel 3.14e-04  max 7.00e-04
+  epoch  134: med 5.97e-05  rel 2.83e-04  max 6.12e-04
+  epoch  150: med 6.94e-05  rel 3.40e-04  max 5.94e-04
+  epoch  166: med 6.01e-05  rel 3.62e-04  max 5.43e-04
+  epoch  182: med 6.26e-05  rel 4.05e-04  max 5.07e-04
+  epoch  198: med 1.05e-04  rel 3.49e-04  max 6.73e-04
+  epoch  199: med 4.61e-05  rel 3.36e-04  max 6.45e-04
+  log-log slope median|d| ~ epoch^0.87 ; rel ~ epoch^0.87   (0.5 = random walk, 1 = linear)
+--- ZO L-: per-epoch (54 fwd) median|d|, median rel |d|/|L|, max|d|
+  epoch    0: med 4.77e-07  rel 1.77e-06  max 6.32e-06
+  epoch    1: med 1.21e-06  rel 5.04e-06  max 1.67e-05
+  epoch    2: med 1.82e-06  rel 7.69e-06  max 3.08e-05
+  epoch    3: med 1.35e-06  rel 8.93e-06  max 6.39e-05
+  epoch    4: med 2.85e-06  rel 1.39e-05  max 4.96e-05
+  epoch    5: med 2.32e-06  rel 1.57e-05  max 6.87e-05
+  epoch    6: med 2.77e-06  rel 1.61e-05  max 5.77e-05
+  epoch   22: med 1.29e-05  rel 7.03e-05  max 2.84e-04
+  epoch   38: med 1.79e-05  rel 1.13e-04  max 3.74e-04
+  epoch   54: med 1.34e-05  rel 1.51e-04  max 4.24e-04
+  epoch   70: med 3.90e-05  rel 2.13e-04  max 4.63e-04
+  epoch   86: med 4.64e-05  rel 2.18e-04  max 5.34e-04
+  epoch  102: med 5.97e-05  rel 2.02e-04  max 6.36e-04
+  epoch  118: med 4.00e-05  rel 2.25e-04  max 6.55e-04
+  epoch  134: med 3.86e-05  rel 2.78e-04  max 9.40e-04
+  epoch  150: med 6.88e-05  rel 3.36e-04  max 6.40e-04
+  epoch  166: med 5.97e-05  rel 3.92e-04  max 6.00e-04
+  epoch  182: med 8.51e-05  rel 3.80e-04  max 5.83e-04
+  epoch  198: med 7.41e-05  rel 3.29e-04  max 8.54e-04
+  epoch  199: med 7.68e-05  rel 3.82e-04  max 1.02e-03
+  log-log slope median|d| ~ epoch^0.88 ; rel ~ epoch^0.90   (0.5 = random walk, 1 = linear)
+(L+ - L-) device-minus-ref: median |.| 4.06e-05  (vs median |L+-L-| 1.84e-01)
+same-window |d| L- across epochs (window 0..3): w0: 1.8e-07,8.0e-07,6.4e-07,5.5e-07,1.7e-06,1.9e-06,1.9e-06; w1: 8.9e-08,4.2e-07,2.2e-05,4.3e-05,1.0e-04,5.0e-06,1.9e-05; w2: 9.5e-08,2.0e-07,4.1e-06,8.7e-06,1.8e-05,1.2e-05,1.6e-05
+
+================ BP (exp17), 6-decimal printed values ================
+first 54 fwd: nonzero printed diffs 3/54 (>1.5e-6), max 2.0e-06, loss range 0.001..3.304
+first fwd with |d|>=2e-6: 6;  >=1e-5: 636;  >=1e-4: 1010; >=1e-3: 1209
+--- BP: per-epoch (54 fwd) median|d|, median rel |d|/|L|, max|d|
+  epoch    0: med 0.00e+00  rel 0.00e+00  max 2.00e-06
+  epoch    1: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    2: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    3: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    4: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    5: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    6: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch    9: med 0.00e+00  rel 0.00e+00  max 1.00e-06
+  epoch   12: med 1.00e-06  rel 1.36e-05  max 1.90e-05
+  epoch   15: med 1.00e-06  rel 3.18e-05  max 1.60e-05
+  epoch   18: med 2.00e-06  rel 5.96e-05  max 1.92e-04
+  epoch   21: med 1.50e-05  rel 7.97e-04  max 2.14e-04
+  epoch   24: med 2.80e-05  rel 1.86e-03  max 9.69e-04
+  epoch   27: med 3.10e-05  rel 1.53e-03  max 6.53e-04
+  epoch   30: med 1.25e-05  rel 9.38e-04  max 2.91e-04
+  epoch   33: med 1.30e-05  rel 1.42e-03  max 2.85e-04
+  epoch   36: med 3.70e-05  rel 2.23e-03  max 4.48e-04
+  epoch   39: med 1.05e-05  rel 1.14e-03  max 2.89e-04
+  epoch   39: med 1.05e-05  rel 1.14e-03  max 2.89e-04
+  log-log slope median|d| ~ epoch^3.12 ; rel ~ epoch^4.96   (0.5 = random walk, 1 = linear)
+largest epoch-to-epoch jump of median rel diff: x13623588.0 at epoch 12; median ratio x1.00/epoch
+same-window |d| across epochs (window 0..3): w0: 0.0e+00,1.0e-06,0.0e+00,0.0e+00,0.0e+00,1.0e-06,1.0e-06; w1: 1.0e-06,0.0e+00,1.0e-06,0.0e+00,4.0e-06,1.3e-05,1.0e-05; w2: 0.0e+00,0.0e+00,0.0e+00,0.0e+00,0.0e+00,3.0e-06,0.0e+00
+
+=== final weights device vs ref (bp) : per tensor  max|dw|, median ulp, max rel ===
+  blocks_0_0_weight      n=   32  max|dw| 3.05e-05  median ulp      338  max rel 3.5e-04
+  blocks_0_0_bias        n=    8  max|dw| 3.21e-07  median ulp     8601  max rel 4.3e-03
+  blocks_0_1_weight      n=    8  max|dw| 7.51e-06  median ulp       42  max rel 7.9e-06
+  blocks_0_1_bias        n=    8  max|dw| 1.09e-05  median ulp      703  max rel 5.2e-04
+  blocks_1_0_weight      n= 2048  max|dw| 2.51e-05  median ulp      728  max rel 4.8e-01
+  blocks_1_0_bias        n=   16  max|dw| 1.35e-05  median ulp    23370  max rel 3.7e-02
+  blocks_1_1_weight      n=   16  max|dw| 1.03e-05  median ulp       31  max rel 8.7e-06
+  blocks_1_1_bias        n=   16  max|dw| 2.60e-05  median ulp      906  max rel 8.4e-04
+  blocks_2_0_weight      n= 2048  max|dw| 4.07e-05  median ulp      849  max rel 2.1e-01
+  blocks_2_0_bias        n=   16  max|dw| 2.50e-05  median ulp     9856  max rel 8.3e-03
+  blocks_2_1_weight      n=   16  max|dw| 1.62e-05  median ulp       18  max rel 1.6e-05
+  blocks_2_1_bias        n=   16  max|dw| 1.05e-05  median ulp      856  max rel 8.2e-04
+  blocks_3_0_weight      n= 3584  max|dw| 5.99e-05  median ulp      485  max rel 7.1e-02
+  blocks_3_0_bias        n=   32  max|dw| 1.60e-05  median ulp    14977  max rel 2.9e-02
+  blocks_3_1_weight      n=   32  max|dw| 4.71e-06  median ulp       11  max rel 5.5e-06
+  blocks_3_1_bias        n=   32  max|dw| 8.94e-06  median ulp      226  max rel 1.2e-03
+  blocks_4_0_weight      n= 7168  max|dw| 1.38e-05  median ulp      201  max rel 1.0e-01
+  blocks_4_0_bias        n=   32  max|dw| 7.08e-06  median ulp     5984  max rel 1.2e-02
+  blocks_4_1_weight      n=   32  max|dw| 1.19e-06  median ulp        5  max rel 7.9e-07
+  blocks_4_1_bias        n=   32  max|dw| 2.65e-06  median ulp       22  max rel 9.6e-06
+  fc_weight              n=  288  max|dw| 3.52e-06  median ulp       31  max rel 1.2e-03
+  fc_bias                n=    9  max|dw| 1.28e-06  median ulp       59  max rel 1.8e-05
+
+=== final weights device vs ref (zo) : per tensor  max|dw|, median ulp, max rel ===
+  blocks_0_0_weight      n=   32  max|dw| 5.02e-06  median ulp       41  max rel 7.8e-05
+  blocks_0_0_bias        n=    8  max|dw| 2.15e-06  median ulp     3545  max rel 5.1e-03
+  blocks_0_1_weight      n=    8  max|dw| 2.62e-06  median ulp       17  max rel 2.6e-06
+  blocks_0_1_bias        n=    8  max|dw| 2.61e-06  median ulp      116  max rel 1.8e-04
+  blocks_1_0_weight      n= 2048  max|dw| 8.18e-05  median ulp      452  max rel 1.8e-02
+  blocks_1_0_bias        n=   16  max|dw| 1.96e-06  median ulp     7662  max rel 2.6e-03
+  blocks_1_1_weight      n=   16  max|dw| 5.96e-06  median ulp        5  max rel 4.9e-06
+  blocks_1_1_bias        n=   16  max|dw| 4.37e-06  median ulp      141  max rel 8.3e-05
+  blocks_2_0_weight      n= 2048  max|dw| 8.39e-05  median ulp      432  max rel 2.7e-02
+  blocks_2_0_bias        n=   16  max|dw| 2.26e-06  median ulp     2218  max rel 2.7e-03
+  blocks_2_1_weight      n=   16  max|dw| 8.26e-05  median ulp        9  max rel 8.3e-05
+  blocks_2_1_bias        n=   16  max|dw| 8.90e-06  median ulp      804  max rel 1.8e-02
+  blocks_3_0_weight      n= 3584  max|dw| 8.57e-05  median ulp      450  max rel 1.6e-02
+  blocks_3_0_bias        n=   32  max|dw| 2.73e-06  median ulp     4136  max rel 9.1e-03
+  blocks_3_1_weight      n=   32  max|dw| 8.36e-05  median ulp       16  max rel 8.4e-05
+  blocks_3_1_bias        n=   32  max|dw| 5.95e-05  median ulp      162  max rel 4.4e-04
+  blocks_4_0_weight      n= 7168  max|dw| 8.40e-05  median ulp      488  max rel 3.6e-02
+  blocks_4_0_bias        n=   32  max|dw| 1.83e-06  median ulp     4171  max rel 1.9e-02
+  blocks_4_1_weight      n=   32  max|dw| 5.96e-06  median ulp       14  max rel 4.1e-06
+  blocks_4_1_bias        n=   32  max|dw| 8.02e-05  median ulp       35  max rel 6.4e-04
+  fc_weight              n=  288  max|dw| 7.37e-05  median ulp       55  max rel 5.8e-04
+  fc_bias                n=    9  max|dw| 6.68e-06  median ulp       92  max rel 2.0e-04

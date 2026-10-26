@@ -1,0 +1,6 @@
+zo p70_eq1620 S04: MeZO lr=3e-06 eps=0.01 q=1 n_accum=4 (MEAN) epochs=52 per_class=14 seed=42 order=cyclic rng=device draw=device | Rademacher, frozen pretraining BN stats, batch-1, forward-only | max_steps=1620
+      r1: next  84.44  held-out  92.59  train  88.89
+      r2: next  85.00  held-out  75.93  train  88.89
+      r3: next  90.56  held-out  83.33  train  87.30
+      r4: next  86.67  held-out  92.59  train  88.10
+DONE zo p70_eq1620 S04: mean val_next 86.67  val_in 86.11  steps [1620, 1620, 1620, 1620]  (50s)

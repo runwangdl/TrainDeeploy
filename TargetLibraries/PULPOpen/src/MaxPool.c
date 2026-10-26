@@ -278,6 +278,38 @@ void PULP_MaxPoolArgmax2d_fp32_fp32_HWC(const float32_t *__restrict__ pSrcA,
       }
     }
   }
+#ifdef DEEPLOY_ARGMAX_MASK_SIG
+  /* -- QW exp21e: argmax-flip evidence for the ARGMAX-MASK path (the recompute-kernel signature above is
+   * dead code under --maxpool-argmax-mask). Core 0 re-scans ALL channels of this tile and adds the
+   * within-window winner offset (+1) and its square into the same global signature that the training
+   * harness prints as [AMSIG mb] under DUMP_ARGMAX. Tile- and order-invariant, same strict '>' tie-break.
+   * Default OFF: compiled only with -D ARGMAX_MASK_SIG=ON. -- QW exp21e */
+  if (core_id == 0 && g_maxpool_argmax_en) {
+    for (uint32_t h_out = 0; h_out < H_out; ++h_out) {
+      for (uint32_t w_out = 0; w_out < W_out; ++w_out) {
+        int32_t h0 = (int32_t)(h_out * SP) - (int32_t)pad_top;
+        int32_t w0 = (int32_t)(w_out * SQ) - (int32_t)pad_left;
+        for (uint32_t c = 0; c < C; ++c) {
+          float32_t mv = -inf;
+          uint32_t off = 0u, found = 0u;
+          for (uint32_t p = 0; p < P; ++p) {
+            int32_t hi = h0 + (int32_t)p;
+            if (hi < 0 || hi >= (int32_t)H) continue;
+            for (uint32_t q = 0; q < Q; ++q) {
+              int32_t wi = w0 + (int32_t)q;
+              if (wi < 0 || wi >= (int32_t)W) continue;
+              float32_t v = pSrcA[((uint32_t)hi * W + (uint32_t)wi) * C + c];
+              if (v > mv) { mv = v; off = p * Q + q; found = 1u; }
+            }
+          }
+          uint32_t o1 = found ? off + 1u : 0u;
+          g_maxpool_argmax_sig  += o1;
+          g_maxpool_argmax_sig2 += o1 * o1;
+        }
+      }
+    }
+  }
+#endif /* DEEPLOY_ARGMAX_MASK_SIG -- QW exp21e */
 }
 
 /* QW: Part-4 mask-consuming MaxPoolGrad ------------------------------------- QW

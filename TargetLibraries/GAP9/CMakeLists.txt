@@ -96,6 +96,13 @@ if(NE16DUAL_PROBE)
   target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE)
   message(STATUS "[QW] NE16DUAL_PROBE: NE16 prep / conv node phase cycles")
 endif()
+# -- QW exp21c: NE16DUAL_PROBE_WALL=ON (default off): NE16DUAL_PROBE plus the wall time of each prep phase (worker core
+#    0, barrier to barrier) and the W re-perturbation of NE16DualBias on its own; the conv-node split reads the master
+#    counter WITHOUT resetting it, so Runtime stays valid. Measurement only. -- QW exp21c
+if(NE16DUAL_PROBE_WALL)
+  target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE_WALL)
+  message(STATUS "[QW] NE16DUAL_PROBE_WALL: NE16 prep phase walls, Runtime-preserving conv split (exp21c)")
+endif()
 if(CONV4X2_STEP2A)
   target_compile_definitions(deeploygap9 PUBLIC CONV4X2_STEP2A)
   message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")

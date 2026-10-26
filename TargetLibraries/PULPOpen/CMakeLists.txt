@@ -51,6 +51,13 @@ if(DEEPLOY_STRICT_FP32_FILES)
   endforeach()
 endif()
 
+# -- QW exp21e: opt-in argmax signature inside PULP_MaxPoolArgmax2d (argmax-mask BP path), printed by the
+#    training harness as [AMSIG mb] when also built with -D DUMP_ARGMAX=ON. Usage: -D ARGMAX_MASK_SIG=ON. OFF by default.
+if(ARGMAX_MASK_SIG)
+  target_compile_definitions(deeploypulp PUBLIC DEEPLOY_ARGMAX_MASK_SIG)
+  message(STATUS "[QW exp21e] ARGMAX_MASK_SIG: PULP_MaxPoolArgmax2d accumulates the argmax signature")
+endif()
+
 # -- QW (dual_pass_fusion exp7 step 5b): opt-in phase timing in DualConv2In.c (core 0 prints the cycles of phase 1
 #    and phase 2, each including its closing barrier). Usage: -D DUALCONV2IN_PROBE=ON. OFF by default. -- QW
 if(DUALCONV2IN_PROBE)

@@ -1,0 +1,58 @@
+{
+ "experiment": "exp21f_BP_ep",
+ "recipe": "bp",
+ "subject": "S03",
+ "fold": 3,
+ "condition": "vocalized",
+ "epochs": 0,
+ "seed": 44,
+ "generated_utc": "2026-10-26T01:19:17Z",
+ "recipe_settings": {
+  "learning_rate": 0.0003,
+  "n_accum": 4,
+  "epochs": 0,
+  "per_class": 6,
+  "seed": 44,
+  "order": "cyclic",
+  "draw": "device",
+  "dropout": 0.0
+ },
+ "artifacts": "artifacts_reference",
+ "checkpoint": "/Users/qiwenwu/ETH/SilentWear/SilentWear/artifacts_reference/models/inter_session_ft/S03/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt",
+ "per_round": {
+  "1": {
+   "val_next": 75.0,
+   "val_in": 73.01587301587303,
+   "train": 81.48148148148148,
+   "update_steps": 0
+  },
+  "2": {
+   "val_next": 67.22222222222221,
+   "val_in": 73.01587301587303,
+   "train": 79.62962962962963,
+   "update_steps": 0
+  },
+  "3": {
+   "val_next": 63.888888888888886,
+   "val_in": 65.87301587301587,
+   "train": 70.37037037037037,
+   "update_steps": 0
+  },
+  "4": {
+   "val_next": 62.77777777777778,
+   "val_in": 64.28571428571428,
+   "train": 62.96296296296296,
+   "update_steps": 0
+  }
+ },
+ "update_steps_per_round": [
+  0,
+  0,
+  0,
+  0
+ ],
+ "mean_val_next": 67.22222222222223,
+ "mean_val_in": 69.04761904761905,
+ "mean_train": 73.61111111111111,
+ "seconds": 1.6092638969421387
+}

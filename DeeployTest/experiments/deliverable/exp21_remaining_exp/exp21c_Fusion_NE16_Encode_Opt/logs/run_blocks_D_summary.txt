@@ -1,0 +1,12 @@
+b1 D_plain: Errors: 0 out of 39424 Runtime: 482228 cycles
+b1 D_mb: Errors: 0 out of 39424 Runtime: 40732 cycles
+b1 D_probe: Errors: 0 out of 39424 Runtime: 505034 cycles
+b2 D_plain: Errors: 0 out of 10304 Runtime: 146242 cycles
+b2 D_mb: Errors: 0 out of 10304 Runtime: 8166 cycles
+b2 D_probe: Errors: 0 out of 10304 Runtime: 168176 cycles
+b3 D_plain: Errors: 0 out of 2560 Runtime: 56006 cycles
+b3 D_mb: Errors: 0 out of 2560 Runtime: 3591 cycles
+b3 D_probe: Errors: 0 out of 2560 Runtime: 78064 cycles
+b4 D_plain: Errors: 0 out of 640 Runtime: 47395 cycles
+b4 D_mb: Errors: 0 out of 640 Runtime: 1749 cycles
+b4 D_probe: Errors: 0 out of 640 Runtime: 68798 cycles

@@ -1,0 +1,30 @@
+exp21c task 3 -- whole network vs per-block fixtures, per window (training graph; /4 of one update step)
+
+1) conv chain per block (wall clock, --profileTiling, logs/net_<cfg>_prof.log)
+block  unfused (eco)   fused NE16  speedup  fused cluster  speedup |  fixture A  fixture D  fixture E    A/D    A/E     used
+    0      1,206,217      254,593    4.74x        578,099    2.09x |  1,209,582               255,923         4.73x     NE16
+    1        655,394      263,066    2.49x        426,764    1.54x |    666,306    425,022    241,698  1.57x  2.76x     NE16
+    2        209,321      101,068    2.07x        127,924    1.64x |    219,690    128,916    105,569  1.70x  2.08x     NE16
+    3        100,641       48,219    2.09x         48,153    2.09x |    110,394     50,042     94,920  2.21x  1.16x  cluster
+    4        151,730       40,371    3.76x         40,407    3.76x |    165,110     42,673    153,949  3.87x  1.07x  cluster
+  0-4      2,323,303      707,316    3.28x      1,221,348    1.90x
+
+2) everything else, per window
+                                                           eco          ne16           fus
+BN perturbation (fp32)                                  16,904        10,360         9,372
+BN+pool+ReLU+Quant tail                                809,628       795,862       797,374
+BN/ReLU/pool (block 4, untailed)                        22,441        19,777        19,655
+FC + loss (+ fc perturbation)                           21,822        22,639        22,306
+input quant + transpose                                 44,634        18,756        18,717
+sum non-conv                                           915,428       867,393       867,425
+
+3) totals per window
+eco   conv   2,323,303 (69.9 %)  non-conv     915,428 (27.6 %)  outside nodes    83,438 ( 2.5 %)  BENCH/4   3,322,168  [plain BENCH (this run): 13,288,673]
+ne16  conv     707,316 (43.2 %)  non-conv     867,393 (53.0 %)  outside nodes    61,226 ( 3.7 %)  BENCH/4   1,635,935  [plain BENCH (this run): 6,543,740]
+fus   conv   1,221,348 (57.0 %)  non-conv     867,425 (40.5 %)  outside nodes    52,258 ( 2.4 %)  BENCH/4   2,141,031  [exp9 memsim BENCH: 8,564,124]
+
+whole step: 13,288,673 -> 6,543,740 = 2.031x (exp9: 13,266,794 -> 6,567,942 = 2.020x)
+Amdahl: conv 2,323,303 -> 707,316 (3.28x), non-conv 915,428 -> 867,393 (1.055x), outside 83,438 -> 61,226
+  if ONLY the convs changed: 3,322,168 / 1,706,182 = 1.947x
+  conv share of the unfused window: 69.9 %; of the fused window: 43.2 %
+  unfused conv-cycle weight per block: b0 51.9 %, b1 28.2 %, b2 9.0 %, b3 4.3 %, b4 6.5 %

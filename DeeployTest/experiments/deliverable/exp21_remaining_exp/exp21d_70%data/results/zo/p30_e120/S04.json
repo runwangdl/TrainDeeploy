@@ -1,0 +1,73 @@
+{
+ "experiment": "exp21d_70%data",
+ "recipe": "zo",
+ "arm": "p30_e120",
+ "subject": "S04",
+ "fold": 3,
+ "condition": "vocalized",
+ "generated_utc": "2026-10-26T00:07:58Z",
+ "recipe_settings": {
+  "learning_rate": 3e-06,
+  "epsilon": 0.01,
+  "n_accum": 4,
+  "epochs": 120,
+  "q": 1,
+  "per_class": 6,
+  "seed": 42,
+  "order": "cyclic",
+  "rng": "device",
+  "draw": "device",
+  "max_steps": 0
+ },
+ "artifacts": "artifacts_reference",
+ "calib_percentile": null,
+ "per_round": {
+  "1": {
+   "val_next": 83.33333333333334,
+   "val_in": 87.3015873015873,
+   "train": 94.44444444444444,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "2": {
+   "val_next": 85.55555555555556,
+   "val_in": 83.33333333333334,
+   "train": 85.18518518518519,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "3": {
+   "val_next": 91.66666666666666,
+   "val_in": 86.5079365079365,
+   "train": 90.74074074074073,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "4": {
+   "val_next": 86.11111111111111,
+   "val_in": 94.44444444444444,
+   "train": 88.88888888888889,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  }
+ },
+ "update_steps_per_round": [
+  1620,
+  1620,
+  1620,
+  1620
+ ],
+ "train_forwards_per_round": [
+  12960,
+  12960,
+  12960,
+  12960
+ ],
+ "mean_val_next": 86.66666666666666,
+ "mean_val_in": 87.8968253968254,
+ "seconds": 53.79819917678833
+}

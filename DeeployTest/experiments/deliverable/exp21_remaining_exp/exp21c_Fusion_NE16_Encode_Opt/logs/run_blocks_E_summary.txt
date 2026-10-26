@@ -1,0 +1,15 @@
+b2 E_plain: Errors: 0 out of 10304 Runtime: 121087 cycles
+b2 E_mb: Errors: 0 out of 10304 Runtime: 8107 cycles
+b2 E_wall: Errors: 0 out of 10304 Runtime: 123071 cycles
+b2 E_seqplain: Errors: 0 out of 10304 Runtime: 145017 cycles
+b2 E_wallseq: Errors: 0 out of 10304 Runtime: 146943 cycles
+b3 E_plain: Errors: 0 out of 2560 Runtime: 99011 cycles
+b3 E_mb: Errors: 0 out of 2560 Runtime: 3590 cycles
+b3 E_wall: Errors: 0 out of 2560 Runtime: 101027 cycles
+b3 E_seqplain: Errors: 0 out of 2560 Runtime: 104441 cycles
+b3 E_wallseq: Errors: 0 out of 2560 Runtime: 106202 cycles
+b4 E_plain: Errors: 0 out of 640 Runtime: 156192 cycles
+b4 E_mb: Errors: 0 out of 640 Runtime: 1709 cycles
+b4 E_wall: Errors: 0 out of 640 Runtime: 158520 cycles
+b4 E_seqplain: Errors: 0 out of 640 Runtime: 158916 cycles
+b4 E_wallseq: Errors: 0 out of 640 Runtime: 161380 cycles

@@ -1,0 +1,4 @@
+default  n=16: ==exp18 device bits 16/16 | ulp vs host-oop fp32: median 10 max 838 | rel err vs f64: median 8.4e-07 max 4.8e-05
+strict   n=16: ==exp18 device bits 1/16 | ulp vs host-oop fp32: median 6 max 510 | rel err vs f64: median 3.5e-07 max 2.5e-05
+host PyTorch fp32 (oop) rel err vs f64 on the same 16 losses: median 6.2e-07 max 9.9e-06
+default vs strict device: ulp median 4 max 328  identical 1/16

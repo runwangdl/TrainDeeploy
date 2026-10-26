@@ -1,0 +1,74 @@
+{
+ "experiment": "exp21d_70%data",
+ "recipe": "qzo",
+ "arm": "p30_e120",
+ "subject": "S04",
+ "fold": 3,
+ "condition": "vocalized",
+ "generated_utc": "2026-10-26T01:39:50Z",
+ "recipe_settings": {
+  "learning_rate": 1e-05,
+  "epsilon": 0.01,
+  "n_accum": 4,
+  "epochs": 120,
+  "q": 1,
+  "per_class": 6,
+  "seed": 42,
+  "order": "cyclic",
+  "draw": "device",
+  "mode": "direct",
+  "rng": "device",
+  "max_steps": 0
+ },
+ "artifacts": "artifacts_reference",
+ "calib_percentile": 99.9,
+ "per_round": {
+  "1": {
+   "val_next": 83.33333333333334,
+   "val_in": 85.71428571428572,
+   "train": 88.88888888888889,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "2": {
+   "val_next": 80.0,
+   "val_in": 87.3015873015873,
+   "train": 85.18518518518519,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "3": {
+   "val_next": 85.55555555555556,
+   "val_in": 80.15873015873017,
+   "train": 83.33333333333334,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  },
+  "4": {
+   "val_next": 81.11111111111111,
+   "val_in": 85.71428571428572,
+   "train": 83.33333333333334,
+   "n_windows": 54,
+   "update_steps": 1620,
+   "train_forwards": 12960
+  }
+ },
+ "update_steps_per_round": [
+  1620,
+  1620,
+  1620,
+  1620
+ ],
+ "train_forwards_per_round": [
+  12960,
+  12960,
+  12960,
+  12960
+ ],
+ "mean_val_next": 82.5,
+ "mean_val_in": 84.72222222222223,
+ "seconds": 1443.7718706130981
+}

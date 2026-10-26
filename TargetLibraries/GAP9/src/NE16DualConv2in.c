@@ -39,13 +39,21 @@
 #include "pulp_nnx_util.h"
 
 #define N16D_PAD_WORD 0x80808080u
+/* -- QW exp21c: NE16DUAL_PROBE_WALL=ON (default off) = the exp11 NE16DUAL_PROBE split below, but WITHOUT resetting the
+ *    master core's cycle counter (it is the fixture's Runtime counter, started by the harness), so a probe run's Runtime
+ *    stays comparable to an unprobed run. -- QW exp21c */
+#if defined(NE16DUAL_PROBE_WALL) && !defined(NE16DUAL_PROBE)
+#define NE16DUAL_PROBE
+#endif
 #ifdef NE16DUAL_PROBE /* -- QW exp11: master-core (= wall) cycles of the node: column builds, NE16 waits, the rest */
 #include "perf_utils.h"
 static inline uint32_t n16d_now(void) { return pi_perf_read(PI_PERF_CYCLES); }
 static inline void n16d_rec(const char *label, uint32_t v) {
   if (perf_record_count < PERF_MAX_RECORDS) {
     perf_records[perf_record_count].label = label;
+#ifndef NE16DUAL_PROBE_WALL /* -- QW exp21c: the wall probe skips the struct clear (table is zero-initialised) */
     perf_records[perf_record_count].stats = (perf_stats_t){0};
+#endif
     perf_records[perf_record_count].stats.cycles = v;
     perf_record_count++;
   }
@@ -241,9 +249,11 @@ void PULP_NE16DualConv2in(const int8_t *pInP, const int8_t *pInM, const uint8_t 
                               .pad_top = pad_top, .pad_left = pad_left, .stride_y = stride_y, .stride_x = stride_x};
   ne16_task_t task;
 #ifdef NE16DUAL_PROBE /* -- QW exp11 */
+#ifndef NE16DUAL_PROBE_WALL /* -- QW exp21c: the wall probe reads the running master counter, never resets it */
   pi_perf_conf(1 << PI_PERF_CYCLES);
   pi_perf_reset();
   pi_perf_start();
+#endif
   const uint32_t n16d_t_begin = n16d_now();
   uint32_t n16d_col = 0, n16d_wait = 0;
   N16D_T0();
