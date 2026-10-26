@@ -1,0 +1,23 @@
+exp21e/fix -- regression A evidence: ConvGradW tile tables of block 0 in the generated Siracusa TrainingNetwork.c
+(BP oracle, speechnet_train_fullfrozen_b1_fold3_ref, --l1 128000 --l2 1500000 --defaultMemLevel L2)
+
+node_1_blocks_0 ... ConvGradW (CoutHWSliceStrategy, 5 W-tiles, one Cout slab)
+                         tile:      0    1    2    3    4
+  dim_im_out_y (dY W)        :    175  175  175  175    1      (sum 701)
+  dim_im_in_y  (X W)         :    176  178  178  177    2
+  padding_x_left             :      2    0    0    0    0
+  padding_x_right  bb7deadb  :      0    0    0    0    2      <- tile 3: X[523..700) = 177 cols, needs 178 -> pad 1 missing
+  padding_x_right  fixed     :      0    0    0    1    2      (edc15ec1)
+  dw_reset                   :      1    0    0    0    0
+
+pulp-trainlib pulp_im2row_fp32: Wtot = (W_in - Wk + Lpad + Rpad + Wstr) / Wstr
+  tile 3, bb7deadb : (177 - 4 + 0 + 0 + 1) / 1 = 174 im2col columns written
+  GEMM (mm_add)    : K = H_out * W_out = 14 * 175 -> reads 175 columns: the 175th is stale (previous tile's buffer)
+  tile 3, fixed    : (177 - 4 + 0 + 1 + 1) / 1 = 175
+
+node_5_blocks_1 ConvGradW (8 W-tiles of 12,12,12,12,12,12,12,4; pad 8/8, k=16): padding_x_right bb7deadb = {0,0,0,0,0,0,0,8},
+  the needed one is {0,0,0,0,0,0,4,8} (tile 6: wo 72..83 -> X[64..91) of an 87-wide X) -> blocks_1_0 also affected.
+
+1-step WDUMP vs PyTorch at 40ab0e1d (A only, logs/varA_40ab0e1d_1step_wdump.log, scripts/wdump_compare.py):
+  blocks_0_0_weight max|dev-host| 1.77e-04 = 0.117 x update; blocks_1_0_weight 2.76e-05 = 0.021 x update; all other 20 tensors <= 7.45e-09
+GAP9 board tiling (166,166,166,166,37 / 11 x 8): no non-last tile reaches past X -> GAP9 unaffected.

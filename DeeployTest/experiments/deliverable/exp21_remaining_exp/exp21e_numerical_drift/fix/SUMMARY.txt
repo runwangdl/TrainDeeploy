@@ -1,0 +1,34 @@
+exp21e/fix -- SUMMARY (2026-10-26)                                    details: README.md, evidence: logs/ results/
+TrainDeeploy feat/exp21e_bp_debug (from bb7deadb) | Onnx4Deeploy fix/zo_ref_out_of_place (from 1abd167)
+
+1. GAP9 BP at Run's board settings (2 steps x n_accum 4): NOT affected. Errors 0/8, fwd 4..7 = reference, two runs
+   identical loss bits (logs/gap9_bp_2steps_head_run{1,2}). Fixes below leave GAP9's bits unchanged.
+
+2. Siracusa BP regression = TWO bugs (bisect over 85 first-parent commits, 2-step oracle):
+   A  devel merge ce75da00/599f3c1e (first buildable bad 599f3c1e; 669065cb good): ConvGradW CoutHW tiling gave a
+      non-boundary tile pad 0 although its window ran past X (block 0: tile 3 needs pad_right 1). pulp-trainlib im2row
+      built 174 columns, the GEMM read 175 -> stale column in dW (blocks_0_0 / blocks_1_0 grads 12 % / 2 % wrong).
+      Fix edc15ec1: per-tile pad = what the clamp cut off (ConvGradConstraint.py:1581-1586).
+   B  da8cb63f (element-parallel frozen BN): saved_mean/inv_std written in `for (c = core_id; c < C; c += 8)`;
+      Siracusa LLVM emits trip count (C-core_id)>>3 (sub; srli 3; lp.setup) -> cores 1..7 skip their last channel,
+      BatchNormGrad reads stale L1 (device probe: read-back 0 for BN4 channels 25..31). BP only (ZO never reads them).
+      Fix 4f409ce1: contiguous per-core chunk (BatchNorm.c:66-82).
+   Verified: Siracusa 2-step Errors 0/8, fwd 4..7 = exp17, two builds -> identical weights. Gates: GAP9 CI 6/6 passed
+   (exact ZO_EXPECT_WSUM); Siracusa ZO/QZO single + full-net QZO fused & unfused: trained weights bit-identical to
+   bb7deadb; block-0 kernels 0 errors. (The BP single-step gate cannot see a wrong update: it checks the pre-update
+   loss only; base bp_single weights were off by 0.997 x update.)
+
+3. ZO drift fixed in the reference (Onnx4Deeploy 71dacbc, out-of-place perturbation). Fixture 120 epochs = 1620 steps
+   (deployed round; exp18 used 200 -- the trajectory prefix is identical) = exp21e's out-of-place replica bit for bit.
+   COMPLETE Siracusa ZO round: Errors: 0 out of 12960; max |d| 6.2e-6, median 2.1e-7, flat over the round; final weights
+   median 3 ulp (max 8.9e-8). Same device run vs the old in-place reference: max 9.7e-4, growing linearly.
+
+4. BP made bit-exact: C-order host reference (scripts/bp_emu.py, numpy, device reduction order incl. tile-wise ConvGradW
+   partial sums, one rounding per op) + the device's own expf/logf transliterated from the image (scripts/libm_emu.c;
+   picolibc for Siracusa, newlib for GAP9) + strict-fp32 device build (-D DEEPLOY_STRICT_FP32=ON DEEPLOY_STRICT_FP32_ALL=ON).
+   COMPLETE Siracusa BP round (540 steps, 2160 forwards, exp17 settings): Errors: 0 out of 2160,
+   2160/2160 loss bits and 15489/15489 final weight words equal to the reference.
+   GAP9 (board settings): 2-step 8/8 + 15489/15489 bit-exact; complete round: GAP9_ROUND_SUMMARY
+
+5. Cycles: fixes A+B no measurable cost (BP 2-step within GVSoC's +-1 % run-to-run spread; ZO/QZO identical).
+   Strict fp32 (opt-in, only for the bit-exact check): +5.3 % BP train cycles on Siracusa, +6.8 % on GAP9.
