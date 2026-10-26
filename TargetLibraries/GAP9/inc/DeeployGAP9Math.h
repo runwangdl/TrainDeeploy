@@ -78,6 +78,9 @@ void PULP_NE16DualConv2in(const int8_t *pInP, const int8_t *pInM, const uint8_t 
 void NE16WeightEncode_i8_u8(const int8_t *__restrict__ src, uint8_t *__restrict__ dst,
                             const uint32_t cout, const uint32_t cin, const uint32_t taps,
                             const uint32_t row_start, const uint32_t row_count);
+/* -- QW exp21c (opt S): taps == 1 word-wise variant (8x8 bit transpose), bit-identical to the above */
+void NE16WeightEncode_i8_u8_t1(const int8_t *__restrict__ src, uint8_t *__restrict__ dst, const uint32_t cout,
+                               const uint32_t cin, const uint32_t row_start, const uint32_t row_count);
 
 /* -- QW (exp16c phase 4 / BLOCKER 3): per-output-channel bias correction for signed activations
  * fed to NE16 as x+128. See TargetLibraries/GAP9/src/NE16WeightEncode.c for the derivation. */

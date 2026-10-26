@@ -106,8 +106,9 @@ endif()
 # -- QW exp21c: opt-OUT switches of the NE16 prep optimisations (all default off = optimisations ON). Each restores
 #    the checkpoint (exp21) behaviour of one optimisation, for A/B comparisons:
 #    NE16DUAL_NOOPT_B=ON  NE16DualBias re-perturbs W and forms row sums even when input_offset == 0
-#    NE16DUAL_NOOPT_H=ON  no hoisting: the prep is recomputed in every window (no per-update cache hit) -- QW exp21c
-foreach(_x21c_opt NE16DUAL_NOOPT_B NE16DUAL_NOOPT_H)
+#    NE16DUAL_NOOPT_H=ON  no hoisting: the prep is recomputed in every window (no per-update cache hit)
+#    NE16DUAL_NOOPT_S=ON  bit-by-bit weight encoder instead of the word-wise 8x8 bit transpose -- QW exp21c
+foreach(_x21c_opt NE16DUAL_NOOPT_B NE16DUAL_NOOPT_H NE16DUAL_NOOPT_S)
   if(${_x21c_opt})
     target_compile_definitions(deeploygap9 PUBLIC ${_x21c_opt})
     message(STATUS "[QW] ${_x21c_opt}: exp21c NE16 prep optimisation disabled")

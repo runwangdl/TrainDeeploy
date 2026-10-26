@@ -200,7 +200,11 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
   if (row_end > rows)
     row_end = rows;
   if (row_end > row_begin)
+#ifdef NE16DUAL_NOOPT_S /* -- QW exp21c: original bit-by-bit encoder */
     NE16WeightEncode_i8_u8(src, pWEnc, rows, K, 1u, row_begin, row_end - row_begin);
+#else /* -- QW exp21c (opt S): word-wise 8x8 bit transpose, same bytes */
+    NE16WeightEncode_i8_u8_t1(src, pWEnc, rows, K, row_begin, row_end - row_begin);
+#endif
 #ifdef NE16DUAL_PROBE /* -- QW exp11: phase 2 = bit-plane encode */
   n16p_mark(1, core_id, &n16p_t);
 #endif
