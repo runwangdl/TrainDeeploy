@@ -264,6 +264,9 @@ static void CompareLossesOnCluster(void *args) {
     printf("  [loss %u] computed=%.6f  ref=%.6f  diff=%.6f  TOL=%.6f\r\n", i,
            (double)a->computed[i], (double)a->reference[i], (double)diff,
            (double)tol);
+#ifdef DUMP_LOSS_HEX /* -- QW exp21e: raw fp32 bits of device and reference loss (bit-exactness check) */
+    printf("  [losshex %u] %08x %08x\r\n", i, *(uint32_t *)&a->computed[i], *(uint32_t *)&a->reference[i]);
+#endif
     if (diff > tol) {
       errors++;
     }

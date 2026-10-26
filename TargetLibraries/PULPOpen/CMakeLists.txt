@@ -51,6 +51,15 @@ if(DEEPLOY_STRICT_FP32_FILES)
   endforeach()
 endif()
 
+# -- QW exp21e/fix: opt-in STRICT fp32 for the WHOLE kernel library (every src/ file + the pulp-trainlib sources it
+#    compiles, e.g. the ConvGradW GEMM), so every fp32 kernel evaluates in C-source order with one rounding per
+#    operation (no fmadd.s, no reassociation). Together with -D DEEPLOY_STRICT_FP32=ON (generated networks) this is
+#    the device side of the bit-exact BP reference (exp21e fix/). Usage: -D DEEPLOY_STRICT_FP32_ALL=ON. OFF by default.
+if(DEEPLOY_STRICT_FP32_ALL)
+  target_compile_options(deeploypulp PRIVATE -fno-fast-math -ffp-contract=off)
+  message(STATUS "[QW strict-fp32] deeploypulp (all sources): -fno-fast-math -ffp-contract=off")
+endif()
+
 # -- QW exp21e: opt-in argmax signature inside PULP_MaxPoolArgmax2d (argmax-mask BP path), printed by the
 #    training harness as [AMSIG mb] when also built with -D DUMP_ARGMAX=ON. Usage: -D ARGMAX_MASK_SIG=ON. OFF by default.
 if(ARGMAX_MASK_SIG)
