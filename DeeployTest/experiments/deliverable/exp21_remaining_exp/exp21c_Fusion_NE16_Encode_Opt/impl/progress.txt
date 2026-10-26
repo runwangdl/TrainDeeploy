@@ -1,0 +1,8 @@
+exp21c impl progress (branch feat/exp21c_ne16_encode_opt, worktree .worktrees/exp21c_ne16_encode_opt)
+2026-10-26
+- review of the previous analysis done (corrections in README.md §1)
+- commits: b2cc3c75 opt B, e7ed4d06 opt H, 8f9f6fb4 opt S (opt-out -D NE16DUAL_NOOPT_{B,H,S}=ON)
+- host check of the word-wise encoder: results/enc_host_test.txt IDENTICAL
+- next: block fixtures (scripts/run_blocks.sh), network (scripts/run_network.sh)
+- 05:19-06:50 all block (37 runs, Errors 0) and network runs (15 runs) done; parse_impl.py -> results/
+- recommendation: merge B, H, S; board recipe --zo-fused-dual-ne16 0,1,2,3 (2.132x vs unfused); H+ not implemented

@@ -1,0 +1,14 @@
+conv chain (prep + im2col + conv node(s), incl. the x_hwc/out transposes classified to the block) per UPDATE STEP
+(sum of 4 windows), cycles; block 'other' rows are the transposes P.block_of does not classify
+
+base ne16=012 (exp21c log):  b0 1,018,372  b1 1,052,263  b2 404,272  b3 192,876  b4 161,483
+
+fused cluster only (exp21c log):  b0 2,312,397  b1 1,707,054  b2 511,697  b3 192,613  b4 161,629
+
+BH ne16=012:  b0 1,011,762  b1 939,001  b2 291,424  b3 192,682  b4 161,430
+
+BHS ne16=012:  b0 1,011,740  b1 923,848  b2 275,045  b3 192,712  b4 161,361
+
+BHS ne16=0123:  b0 1,011,971  b1 922,140  b2 274,958  b3 130,229  b4 161,677
+
+BHS ne16=01234:  b0 1,011,710  b1 920,708  b2 274,461  b3 130,587  b4 145,187
