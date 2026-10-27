@@ -612,6 +612,7 @@ int main(void) {                 // -- QW
 
 #if defined(ZO_RESUME) && defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
   zop_resume();  // RW 2026-10-13: previous round's device weights from flash, if present
+  zo_weight_version++;  // -- QW exp21c: weights replaced -> invalidate the NE16 prep cache (opt H)
 #endif
   ZTRACE("Starting ZO training (%u update steps x %u accum steps)...\r\n",  // -- QW
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);                 // -- QW
@@ -793,6 +794,7 @@ int main(void) {                 // -- QW
     StopTimer();                                                // -- QW
     ZTRACE("[PHASE] update (zo_update) DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
     g_opt_cycles_acc += getCycles();                            // -- QW
+    zo_weight_version++;             // -- QW exp21c: the weights changed -> invalidate the NE16 prep cache (opt H)
     perturb_eps_use_override = 0u;   // -- QW  restore neutral default
 #if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
     if ((update_step + 1u) % ZO_WCHK_EVERY == 0u || update_step + 1u == (uint32_t)N_TRAIN_STEPS)        // RW

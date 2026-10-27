@@ -94,6 +94,76 @@ void NE16WeightEncode_i8_u8(const int8_t *__restrict__ src, uint8_t *__restrict_
   }
 }
 
+/* -- QW exp21c (opt S): the same encoding for taps == 1 (the NE16 dual-prep case: one contiguous row of `cin` int8 per
+ *    output row), word-wise instead of bit by bit. Per 16-lane subtile:
+ *      1. four word loads (lanes 0-3, 4-7, 8-11, 12-15), XOR 0x80808080 (the +128 offset of every lane);
+ *      2. one 8x8 bit-matrix transpose per 8 lanes (Hacker's Delight transpose8, 3 delta-swap stages on two words):
+ *         with lo = lanes 0-3 and hi = lanes 4-7 loaded little-endian, the result holds plane b of the 8 lanes in byte
+ *         b of (lo, hi), lane L at bit L -- exactly `plane<b>` of the loop above;
+ *      3. interleave the two half-subtiles bytewise (dst byte b*2 + half) and store four words.
+ *    About 7 instead of ~42 cycles per element per core (exp21c E_breakdown). Bit-identical: a fixed permutation, checked
+ *    on the host against NE16WeightEncode_i8_u8 on 3.7 M random elements, every value in every lane, K in {1, 4, 15,
+ *    16, 17, 20, 33, 112, 128, 224} (impl/scripts/enc_host_test). Partial subtiles (cin % 16 != 0, block 0: cin = 4)
+ *    gather their lanes bytewise with the zero padding; unaligned src/dst/cin fall back to the bit loop. -- QW exp21c */
+static inline void x21c_t8x8(uint32_t *lo, uint32_t *hi) {
+  uint32_t x = *hi, y = *lo, t;
+  t = (x ^ (x >> 7)) & 0x00AA00AAu;
+  x = x ^ t ^ (t << 7);
+  t = (y ^ (y >> 7)) & 0x00AA00AAu;
+  y = y ^ t ^ (t << 7);
+  t = (x ^ (x >> 14)) & 0x0000CCCCu;
+  x = x ^ t ^ (t << 14);
+  t = (y ^ (y >> 14)) & 0x0000CCCCu;
+  y = y ^ t ^ (t << 14);
+  t = (x & 0xF0F0F0F0u) | ((y >> 4) & 0x0F0F0F0Fu);
+  y = ((x << 4) & 0xF0F0F0F0u) | (y & 0x0F0F0F0Fu);
+  *hi = t;
+  *lo = y;
+}
+static inline uint32_t x21c_zip(uint32_t a, uint32_t b) { /* bytes (a0, b0, a1, b1) from the low halves */
+  a = (a & 0xFFu) | ((a & 0xFF00u) << 8);
+  b = (b & 0xFFu) | ((b & 0xFF00u) << 8);
+  return a | (b << 8);
+}
+
+void NE16WeightEncode_i8_u8_t1(const int8_t *__restrict__ src, uint8_t *__restrict__ dst, const uint32_t cout,
+                               const uint32_t cin, const uint32_t row_start, const uint32_t row_count) {
+  if (((((uintptr_t)src) | ((uintptr_t)dst) | cin) & 3u) != 0u) { /* word loads/stores need alignment */
+    NE16WeightEncode_i8_u8(src, dst, cout, cin, 1u, row_start, row_count);
+    return;
+  }
+  const uint32_t cinMajor = (cin + NE16_CIN_SUBTILE - 1) / NE16_CIN_SUBTILE;
+  const uint32_t cinFull = cin / NE16_CIN_SUBTILE;
+  for (uint32_t row = row_start; row < row_start + row_count; row++) {
+    const uint32_t *s = (const uint32_t *)(src + row * cin);
+    uint32_t *d = (uint32_t *)(dst + row * cinMajor * 16u);
+    for (uint32_t cm = 0; cm < cinMajor; cm++) {
+      uint32_t a0, a1, b0, b1;
+      if (cm < cinFull) {
+        a0 = s[0] ^ 0x80808080u;
+        a1 = s[1] ^ 0x80808080u;
+        b0 = s[2] ^ 0x80808080u;
+        b1 = s[3] ^ 0x80808080u;
+      } else { /* partial subtile: lanes past cin are 0 (the host pads after the offset) */
+        const int8_t *sb = (const int8_t *)s;
+        const uint32_t n = cin - cm * NE16_CIN_SUBTILE;
+        uint32_t w[4] = {0u, 0u, 0u, 0u};
+        for (uint32_t i = 0; i < n; i++)
+          w[i >> 2] |= ((uint32_t)((uint8_t)sb[i] ^ 0x80u)) << (8u * (i & 3u));
+        a0 = w[0], a1 = w[1], b0 = w[2], b1 = w[3];
+      }
+      x21c_t8x8(&a0, &a1); /* a0: planes 0-3 of lanes 0-7, a1: planes 4-7 */
+      x21c_t8x8(&b0, &b1); /* lanes 8-15 */
+      d[0] = x21c_zip(a0, b0);
+      d[1] = x21c_zip(a0 >> 16, b0 >> 16);
+      d[2] = x21c_zip(a1, b1);
+      d[3] = x21c_zip(a1 >> 16, b1 >> 16);
+      d += 4;
+      s += 4;
+    }
+  }
+}
+
 /* QW (exp16c phase 4 / BLOCKER 3): signed-activation bias correction.
  *
  * NE16 reads input activations as UNSIGNED. SpeechNet block 0's activation is genuinely signed

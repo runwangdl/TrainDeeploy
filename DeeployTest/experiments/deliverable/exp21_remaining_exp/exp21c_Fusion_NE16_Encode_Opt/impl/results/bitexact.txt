@@ -1,0 +1,53 @@
+block fixture B0 base:0/157024
+block fixture B0 base-wall:0/157024
+block fixture B0 BH:0/157024
+block fixture B0 BHS:0/157024
+block fixture B0 BHS-wall:0/157024
+block fixture off0_B1 base:0/39424
+block fixture off0_B1 base-wall:0/39424
+block fixture off0_B1 B:0/39424
+block fixture off0_B1 B-wall:0/39424
+block fixture off0_B1 BH:0/39424
+block fixture off0_B1 BHS:0/39424
+block fixture off0_B1 BHS-wall:0/39424
+block fixture off0_B2 base:0/10304
+block fixture off0_B2 base-wall:0/10304
+block fixture off0_B2 B:0/10304
+block fixture off0_B2 B-wall:0/10304
+block fixture off0_B2 BH:0/10304
+block fixture off0_B2 BHS:0/10304
+block fixture off0_B2 BHS-wall:0/10304
+block fixture off0_B3 base:0/2560
+block fixture off0_B3 base-wall:0/2560
+block fixture off0_B3 B:0/2560
+block fixture off0_B3 B-wall:0/2560
+block fixture off0_B3 BH:0/2560
+block fixture off0_B3 BHS:0/2560
+block fixture off0_B3 BHS-wall:0/2560
+block fixture off0_B4 base:0/640
+block fixture off0_B4 base-wall:0/640
+block fixture off0_B4 B:0/640
+block fixture off0_B4 B-wall:0/640
+block fixture off0_B4 BH:0/640
+block fixture off0_B4 BHS:0/640
+block fixture off0_B4 BHS-wall:0/640
+block fixture B1 BHS:0/39424
+block fixture B1 base(exp21c log):0/39424
+block fixture B2 BHS:0/10304
+block fixture B2 base(exp21c log):0/10304
+block fixture B3 BHS:0/2560
+block fixture B3 base(exp21c log):0/2560
+block fixture B4 BHS:0/640
+block fixture B4 base(exp21c log):0/640
+network 1 step base (exp21c checkpoint log) ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step base run1 ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step base run2 ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step B ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step BH ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step BHS ne16=0,1,2: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step base ne16=0,1,2,3: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step BHS ne16=0,1,2,3: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+network 1 step BHS ne16=0,1,2,3,4: Errors 0/8, WSUM s=0 0xfa1f7dd2, 8 losses+WSUM vs exp21c checkpoint log: identical losses+WSUM
+3 update steps x n_accum 4, ne16=012: BHS vs base: losses 24/24 identical; WSUM [('init', '0xe1ca5c8d'), ('2', '0xbd46a3d8')] identical; WDUMP lines 88/88 identical; Errors 14/24 (base 14/24); train cycles 18,881,773 vs base 19,645,846
+3 update steps x n_accum 4: BHS ne16=0,1,2,3 vs base ne16=0,1,2: losses+WSUM+WDUMP identical
+2 update steps x n_accum 2, ne16=012: BHS vs base: losses 8/8 identical; WSUM [('init', '0xe1ca5c8d'), ('1', '0xda32f6c6')] identical; WDUMP lines 66/66 identical; Errors 4/8 (base 4/8); train cycles 6,330,176 vs base 6,556,494

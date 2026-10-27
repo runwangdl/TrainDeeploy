@@ -1,0 +1,74 @@
+exp21c impl -- NE16 dual-prep optimisations B, H, S on GAP9 (fused QZO+ECO SpeechNet)       2026-10-26
+Branch feat/exp21c_ne16_encode_opt (from tag exp21-checkpoint-2026-10-26), worktree .worktrees/exp21c_ne16_encode_opt.
+Full write-up: README.md (git-ignored by experiments/**/*.md, so this file carries the essentials). Tables:
+results/{network.md, blocks.md, conv_chain.txt, bitexact.txt, enc_host_test.txt}. Logs: logs/. Scripts: scripts/.
+
+COMMITS (each opt-out-able with a CMake switch, default = optimisation ON)
+  b2cc3c75  opt B  NE16DualBias skips the W re-perturbation + row sums when input_offset == 0   -D NE16DUAL_NOOPT_B=ON
+  e7ed4d06  opt H  prep (perturb+encode, add2) once per update step: per-node static L2 cache,  -D NE16DUAL_NOOPT_H=ON
+                   key (seed_w, seed_b, tile_xor, eps bits, zo_weight_version, bytes); harness bumps zo_weight_version
+                   after every zo_update and after ZO_RESUME (deeploymezotest.c:797, :615)
+  8f9f6fb4  opt S  word-wise encoder NE16WeightEncode_i8_u8_t1 (8x8 bit transpose)              -D NE16DUAL_NOOPT_S=ON
+  H+ NOT implemented (see below). Code: TargetLibraries/GAP9/src/NE16DualPrep.c, NE16WeightEncode.c (already -O3),
+  Deeploy/Targets/NE16/DualPrep.py, TargetLibraries/PULPOpen/{inc/kernel/ZORuntime.h,src/ZORuntime.c}.
+
+REVIEW CORRECTIONS TO THE exp21c ANALYSIS
+  1 Hoisting is exact in the shipped recipe (seed_base set once per update step, deeploymezotest.c:667, outside the
+    accum loop :669; only the MeZO harness writes perturb_seed_base; W/add change only in the update graph / resume).
+    WRONG before: "the single-update-step fixture catches a stale cache" -- it cannot (staleness appears from step 2);
+    multi-step runs were added (below).
+  2 n_accum != 4: saving = (n_accum-1)/n_accum of the prep; n_accum = 1 only pays the cache fill.
+  3 q > 1: the harness evaluates one direction per step whatever ZO_Q; a per-direction seed would be a separate key.
+  4 Kernel fixtures run the graph once -> H is always a miss there (+fill: 2.7 k / 3.7 k / 4.8 k / 8.6 k on B1-B4);
+    H can only be measured in the network.
+  5 input_offset = 0 holds for network blocks 1-4 (stacked, Relu upstream: ZODualPassFusion.py:232), NOT block 0
+    (128), and NOT the exp11 fixtures (128) -> new fixtures impl/fixtures/QZO_DualConv2in_NE16P_off0_B<i>.
+  6 The H estimate (whole prep gone in 3 of 4 windows) was optimistic: a hit still costs the node fork, the tiled DMA of
+    W in / output out and the cache copy: 1.2-1.4 k (bias, block-0 wenc), 3.7-3.9 k (block 1/2 wenc), 5.7 k (b3), 10.5 k (b4).
+  7 Same code, different cycles: the tiler (random-max) generates slightly different code per run; base 6,543,740 (exp21c)
+    / 6,562,634 / 6,554,297 (this tree) -> noise ~ +-0.15 %. Speedups below are vs the mean 6,558,466.
+
+WHOLE NETWORK, one update step (n_accum 4, board settings, --zo-fused-dual), training cycles (BENCH)
+  config                    NE16 blocks   cycles       vs base     vs unfused 13,288,673   estimate (exp21c)
+  base (checkpoint code)    0,1,2         6,558,466    1.000x      2.026x
+  B                         0,1,2         6,483,614    1.012x      2.050x                  2.051x
+  B+H                       0,1,2         6,318,369    1.038x      2.103x
+  B+H+S                     0,1,2         6,292,263    1.042x      2.112x                  2.133x
+  base                      0,1,2,3       6,719,509    0.976x      1.978x   (block 3 on NE16 LOSES before the opts)
+  B+H+S                     0,1,2,3       6,234,177    1.052x      2.132x   (block 3 on NE16 WINS after: -58 k)
+  B+H+S                     0,1,2,3,4     6,224,111    1.054x      2.135x   (-10 k more = within noise)
+  Prep nodes per update step (profileTiling): 348,676 -> 116,185 (B+H) -> 83,468 (B+H+S), blocks 0-2.
+  Conv chain per update step: block 3 192,712 (cluster) -> 130,229 (NE16, B+H+S); block 4 161,361 -> 145,187.
+  Update graph unchanged (550-559 k). Measured saving -266 k vs estimated -314 k (H hit is not free, item 6).
+
+PER-BLOCK FIXTURES (--l1 86000 --l2 1500000), input_offset 0 versions (as in the network), Runtime base -> B+H+S
+  B1 295,316 -> 273,874 (1.08x)   B2 121,082 -> 99,468 (1.22x)   B3 98,431 -> 60,880 (1.62x)   B4 155,734 -> 79,909 (1.95x)
+  B0 428,744 -> 430,412 (block 0: offset 128, K = 4, prep ~2.3 k; only the fill cost shows)
+  Encode phase (wall): 21,868 -> 5,813 (b1), 21,855 -> 5,823 (b2), 37,790 -> 9,340 (b3), 74,213 -> 16,705 (b4) =
+  3.7-4.4x, ~9-11 cycles per element per core incl. barrier (est. 6). Bias W re-perturbation 7.0-22.6 k -> 0.16-0.19 k.
+  Block 0 (cin = 4, one partial subtile): S encode 1,483 -> 1,683 (+200, bytewise gather) -- negligible.
+
+BIT-EXACTNESS (all 37 block runs Errors 0; all network runs Errors 0/8 and WSUM s=0 0xfa1f7dd2 = checkpoint)
+  - host: word-wise encoder == bit loop on 5.65 M random elements + every value in every lane (results/enc_host_test.txt)
+  - blocks: B0 0/157024, B1-B4 (offset 128 and 0) 0/39424, 0/10304, 0/2560, 0/640 in every config
+  - 1 update step: 8 losses (lp/lm bits) + WSUM identical to the exp21c checkpoint log for base, B, B+H, B+H+S, and for
+    NE16 on 0-3 and 0-4
+  - 3 update steps x n_accum 4: B+H+S vs base: 24/24 losses, WSUM s=2 0xbd46a3d8, 88/88 weight-dump lines identical;
+    B+H+S with NE16 on 0-3 also identical to base 0-2 (losses, WSUM, dumps)
+  - 2 update steps x n_accum 2: 8/8 losses, WSUM s=1 0xda32f6c6, 66/66 dump lines identical
+  (multi-step Errors 14/24 and 4/8 are the same in base: the fixture's host refs only track update step 1)
+
+MEMORY
+  Training L2 arena unchanged: 265,612 B (blocks 0-2). Cache statics (outside the arena): 8,936 B (blocks 0-2),
+  16,416 B with block 3 (arena 273,036 B), 31,064 B with blocks 3+4 (arena 287,628 B). L1 arena 113,728 B unchanged.
+  With NOOPT_H the statics stay allocated (unused).
+
+H+ (hoist the other per-window perturbations): not implemented. With block 3 on NE16 only block 4's DualConv2In phase 1
+  (~25 k/window) plus fp32 BN (~10 k) and FC (~4.5 k) perturbation remain: <= ~0.11 M/update step (~1.7 %) at best,
+  in shared PULPOpen kernels (also Siracusa) with a new pre-perturbed-weight interface. Not clearly worth it.
+
+RECOMMENDATION
+  Merge all three (b2cc3c75, e7ed4d06, 8f9f6fb4) and switch the board recipe to --zo-fused-dual-ne16 0,1,2,3
+  (2.03x -> 2.13x vs unfused, bit-identical, +16 KB L2 statics +7.4 KB arena). Blocks 0-4 is a tie within noise
+  (+15 KB more L2) -- keep block 4 on the cluster. H relies on the harness bumping zo_weight_version whenever weights
+  change outside the update graph (documented in ZORuntime.h).

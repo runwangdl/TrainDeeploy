@@ -23,6 +23,7 @@ emitted here is the one DualConvTemplate.py emits, so the device draws exp5's no
 Kernels: TargetLibraries/GAP9/src/NE16DualPrep.c. -- QW
 """
 
+import re
 from typing import Dict, List, Tuple, Union
 
 import numpy as np
@@ -37,6 +38,17 @@ from Deeploy.Targets.Generic.TypeCheckers import SignPropTypeChecker
 from Deeploy.Targets.PULPOpen.Bindings import ForkTransformer
 
 NE16_CIN_SUBTILE = 16
+
+
+def _hoistPrepCache(ctxt: NetworkContext, node: gs.Node, out_bytes: int) -> str:
+    """-- QW exp21c (opt H): a per-node L2 cache for the prep output of the current update step (header of 7 words +
+    the output), emitted as a static global like Layernorm's stash (Generic/Parsers.py). The kernel keys it on the
+    seeds, the eps scale and zo_weight_version (NE16DualPrep.c); -D NE16DUAL_NOOPT_H=ON compiles its use out (the
+    buffer is then unused). -- QW exp21c"""
+    name = ctxt._mangle(re.sub(r'[^A-Za-z0-9_]', '_', node.name)) + "_x21c_hcache"
+    if name not in ctxt.globalObjects:
+        ctxt.hoistGlobalDefinition(name, f"static PI_L2 uint32_t {name}[{7 + (out_bytes + 3) // 4}];")
+    return name
 
 
 def _log2(v: int) -> int:
@@ -87,6 +99,7 @@ class NE16DualPerturbEncodeParser(NodeParser):
         r['w_ci'], r['w_kh'], r['w_kw'] = wShape[1], wShape[2], wShape[3]  # -- QW exp7 (CHW weight)
         r['size'] = cout * K
         r['nodeName'] = node.name  # the tiler sizes the scratch (computeTransientBuffersSize) before binding fills this in
+        r['hcache'] = _hoistPrepCache(ctxt, node, rows * cinMajor * 16)  # -- QW exp21c (opt H)
         return ctxt, True
 
 
@@ -148,7 +161,7 @@ uint32_t ${nodeName}_tile_xor = (${tile_seed_offset} * 0x9E3779B1u);
 float32_t ${nodeName}_eps_scale = perturb_eps_use_override ? (perturb_eps_override / perturb_eps_baked) : 1.0f;
 PULP_NE16DualPerturbEncode((const int8_t *) ${weight}, (const int32_t *) ${wmul}, (uint8_t *) ${data_out},
     (int8_t *) ${ctxtBuffer}, ${nodeName}_seed_w, ${nodeName}_tile_xor, ${log2D_w}, ${nodeName}_eps_scale,
-    NUM_CORES, ${ch_out}, ${K}, ${sign_sel}, ${hwc}, ${w_ci}, ${w_kh}, ${w_kw});
+    NUM_CORES, ${ch_out}, ${K}, ${sign_sel}, ${hwc}, ${w_ci}, ${w_kh}, ${w_kw}, (uint32_t *) ${hcache});
 }
 """)
 
@@ -220,6 +233,7 @@ class NE16DualBiasParser(NodeParser):
         r['ch_out'], r['K'] = cout, K
         r['size'] = rows
         r['nodeName'] = node.name
+        r['hcache'] = _hoistPrepCache(ctxt, node, rows * 4)  # -- QW exp21c (opt H)
         return ctxt, True
 
 
@@ -233,7 +247,7 @@ float32_t ${nodeName}_eps_scale = perturb_eps_use_override ? (perturb_eps_overri
 PULP_NE16DualBias((const int8_t *) ${weight}, (const int32_t *) ${wmul}, (const int32_t *) ${add},
     (const int32_t *) ${bmul}, (const int32_t *) ${mul}, (int32_t *) ${data_out}, (int8_t *) ${ctxtBuffer},
     ${nodeName}_seed_w, ${nodeName}_seed_b, ${nodeName}_tile_xor, ${log2D_w}, ${log2D_b}, ${nodeName}_eps_scale,
-    NUM_CORES, ${ch_out}, ${K}, ${input_offset}, ${sign_sel});
+    NUM_CORES, ${ch_out}, ${K}, ${input_offset}, ${sign_sel}, (uint32_t *) ${hcache});
 }
 """)
 

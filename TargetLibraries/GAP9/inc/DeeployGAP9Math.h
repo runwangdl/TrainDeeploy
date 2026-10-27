@@ -52,12 +52,14 @@ void PULP_NE16DualPerturbEncode(const int8_t *pW, const int32_t *pWMul, uint8_t 
                                 uint32_t seed_w_base, uint32_t tile_seed_xor, uint32_t log2D_w,
                                 float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K,
                                 uint32_t sign_sel, /* exp7: 0 stacked [W+;W-], 1 W+, 2 W- */
-                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw); /* exp7: rows in (ky,kx,ci) order */
+                                uint32_t hwc, uint32_t ch_in, uint32_t kh, uint32_t kw, /* exp7: rows in (ky,kx,ci) order */
+                                uint32_t *pHCache); /* -- QW exp21c (opt H): per-node L2 cache, NULL = none */
 void PULP_NE16DualBias(const int8_t *pW, const int32_t *pWMul, const int32_t *pAdd, const int32_t *pBMul,
                        const int32_t *pMul, int32_t *pAddOut, int8_t *pScratch, uint32_t seed_w_base,
                        uint32_t seed_b_base, uint32_t tile_seed_xor, uint32_t log2D_w, uint32_t log2D_b,
                        float eps_scale, uint32_t num_cores, uint32_t ch_out, uint32_t K, int32_t input_offset,
-                       uint32_t sign_sel); /* exp7: 0 stacked, 1 +, 2 - */
+                       uint32_t sign_sel, /* exp7: 0 stacked, 1 +, 2 - */
+                       uint32_t *pHCache); /* -- QW exp21c (opt H): per-node L2 cache, NULL = none */
 
 /* -- QW (dual_pass_fusion exp7 step 7): both ZO passes of a 1xK / Kx1 conv on NE16 in ONE node, SDK-style pipeline --
  * word-wise HWC column per output row, double-buffered against NE16 via its 2-deep job queue. Runs on the cluster
@@ -76,6 +78,9 @@ void PULP_NE16DualConv2in(const int8_t *pInP, const int8_t *pInM, const uint8_t 
 void NE16WeightEncode_i8_u8(const int8_t *__restrict__ src, uint8_t *__restrict__ dst,
                             const uint32_t cout, const uint32_t cin, const uint32_t taps,
                             const uint32_t row_start, const uint32_t row_count);
+/* -- QW exp21c (opt S): taps == 1 word-wise variant (8x8 bit transpose), bit-identical to the above */
+void NE16WeightEncode_i8_u8_t1(const int8_t *__restrict__ src, uint8_t *__restrict__ dst, const uint32_t cout,
+                               const uint32_t cin, const uint32_t row_start, const uint32_t row_count);
 
 /* -- QW (exp16c phase 4 / BLOCKER 3): per-output-channel bias correction for signed activations
  * fed to NE16 as x+128. See TargetLibraries/GAP9/src/NE16WeightEncode.c for the derivation. */
