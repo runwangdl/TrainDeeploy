@@ -1,0 +1,83 @@
+{
+    "model": {
+        "kind": "dl",
+        "kwargs": {
+            "blocks_config": [
+                {
+                    "kernel": [
+                        1,
+                        4
+                    ],
+                    "out_channels": 8,
+                    "pool": [
+                        1,
+                        8
+                    ]
+                },
+                {
+                    "kernel": [
+                        1,
+                        16
+                    ],
+                    "out_channels": 16,
+                    "pool": [
+                        1,
+                        4
+                    ]
+                },
+                {
+                    "kernel": [
+                        1,
+                        8
+                    ],
+                    "out_channels": 16,
+                    "pool": [
+                        1,
+                        4
+                    ]
+                },
+                {
+                    "kernel": [
+                        7,
+                        1
+                    ],
+                    "out_channels": 32,
+                    "pool": [
+                        1,
+                        1
+                    ]
+                },
+                {
+                    "kernel": [
+                        7,
+                        1
+                    ],
+                    "out_channels": 32,
+                    "pool": [
+                        1,
+                        1
+                    ]
+                }
+            ],
+            "global_pool": "avg",
+            "p_dropout": 0.5,
+            "train_cfg": {
+                "lr": 0.001,
+                "num_epochs": 50,
+                "optimizer_cfg": {
+                    "lr": 0.001,
+                    "name": "adam"
+                },
+                "scheduler": {
+                    "factor": 0.1,
+                    "mode": "min",
+                    "name": "ReduceLROnPlateau",
+                    "patience": 2
+                },
+                "weight_decay": "1e-4",
+                "early_stop_patience": 10
+            }
+        },
+        "name": "speechnet"
+    }
+}

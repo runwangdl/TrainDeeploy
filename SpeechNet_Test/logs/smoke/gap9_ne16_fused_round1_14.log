@@ -1,0 +1,982 @@
+[Deeploy] Test path /app/Deeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_round1 is outside base directory. Using /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1
+  [testData->L3] 2117232 B of baked test inputs moved out of L2 to L3 (hex-loaded)
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1
+-- Building for platform 'GAP9_w_NE16'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9_w_NE16
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L3 mode: Found 130 hex file(s)
+-- ==== HEXLIST ====
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex
+-- GAPY_RUNNER_ARGS: --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex@flash:readfs_flash:files
+-- [Deeploy GAP9] L3 mode: using gapy with readfs
+-- [Deeploy GAP9] Adding 130 readfs file(s)
+-- [Deeploy GAP9] Board deployment target: speechnet_train_QZOECO_full_fused_round1
+-- [Log] none
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- [PULP-NNX] Using the NE16 accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    GVSOC_INSTALL_DIR
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_wn_round1_14
+[  0%] Building C object pmsis/printf/CMakeFiles/pmsis_printf.dir/printf.c.obj
+[  1%] Linking C static library ../../lib/libpmsis_printf.a
+[  1%] Built target pmsis_printf
+[  1%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc_pool.c.obj
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc.c.obj
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/pi_malloc.c.obj
+[  3%] Linking C static library ../../../lib/libpulp_allocator.a
+[  3%] Built target pulp_allocator
+[  4%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/errno.c.obj
+[  4%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/stdlib.c.obj
+[  5%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/string.c.obj
+[  5%] Linking C static library ../../../../lib/libfreertos_libs.a
+[  5%] Built target freertos_libs
+[  6%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/fll/fll.c.obj
+[  6%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/pmu/maestro_voltage.c.obj
+[  7%] Linking C static library ../../lib/libfll_pmu_lib.a
+[  7%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+[  7%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro_irq.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio.c.obj
+[  9%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio_asm.S.obj
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/efuse/driver/efuse.c.obj
+[ 10%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gap_iet.S.obj
+[ 10%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes.c.obj
+[ 11%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes_internal.c.obj
+[ 11%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes_dual_core/driver/aes_dual_core_internal.c.obj
+[ 12%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/quiddikey/driver/quiddikey_internal.c.obj
+[ 12%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-cc.S.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster.c.obj
+[ 14%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-team.S.obj
+[ 14%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-workgroup.S.obj
+[ 15%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/malloc/pi_cl_malloc.c.obj
+[ 15%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_core/driver/udma_core.c.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/fc_event/driver/fc_event.c.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/pad/driver/pad.c.obj
+[ 18%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/asm_util.S.obj
+[ 18%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/ctors_dtors.c.obj
+[ 19%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/host_sync_access.c.obj
+[ 19%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/pi_log.c.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/time.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/device.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/os/system_gap.c.obj
+[ 22%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/startup_gap.S.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/timer/driver/pi_timer.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi.c.obj
+[ 24%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi_asm.S.obj
+[ 24%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/fs.c.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[ 26%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[ 26%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9evk_v1_3.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9mod_v1_0_b.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/crc/crc32/crc32.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/api/flash.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mram/mram-v2.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mx25u51245g/mx25u51245g.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/api/powersupply.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/powersupplygpio/powersupplygpio.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/ram.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/alloc_extern.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/aps256xxn/aps256xxn.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[ 35%] Linking C static library ../lib/libpmsis.a
+[ 35%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+[ 36%] Building ASM object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/main.S.obj
+[ 36%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/custom_list.c.obj
+[ 37%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_evt.c.obj
+[ 37%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_task.c.obj
+[ 38%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/sync_obj.c.obj
+[ 38%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/os.c.obj
+[ 39%] Linking C static library ../../../../../lib/libpmsis_backend.a
+[ 39%] Built target pmsis_backend
+Scanning dependencies of target freertos
+[ 39%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port_asm.S.obj
+[ 40%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port.c.obj
+[ 40%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/list.c.obj
+[ 41%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/queue.c.obj
+[ 41%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/tasks.c.obj
+[ 42%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/freertos_task.S.obj
+[ 42%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/timers.c.obj
+[ 43%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event_groups.c.obj
+[ 43%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/stream_buffer.c.obj
+[ 44%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event.c.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/scheduler.c.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/sync_obj-v3.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/semaphore-v2.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/task-v3.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer.c.obj
+[ 47%] Building ASM object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer_asm.S.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/config/FreeRTOS_util.c.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/freertos_it.c.obj
+[ 50%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/gap_it.c.obj
+[ 50%] Linking C static library ../lib/libfreertos.a
+[ 50%] Built target freertos
+[ 51%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/util/pulp_nnx_util.c.obj
+[ 51%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/util/hwpe.c.obj
+[ 52%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/bsp/ne16_pulp_bsp.c.obj
+[ 52%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/hal/ne16.c.obj
+[ 53%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/hal/ne16_task.c.obj
+[ 53%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/src/pulp_nnx_ne16.c.obj
+[ 54%] Linking C static library ../../../lib/libpulp-nnx.a
+[ 54%] Built target pulp-nnx
+[ 54%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/BatchNorm_fp32.c.obj
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c: In function 'BatchNorm_fp32':
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c:13:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ #pragma omp parallel for
+ 
+[ 55%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/ConvTranspose1d_fp32.c.obj
+[ 55%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_fp32.c.obj
+[ 56%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_s8.c.obj
+[ 56%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_fp32.c.obj
+[ 57%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_s8.c.obj
+[ 57%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_fp32.c.obj
+[ 58%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_s32.c.obj
+[ 58%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_fp32.c.obj
+[ 59%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_s8.c.obj
+[ 59%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_fp32.c.obj
+[ 60%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_s8.c.obj
+[ 60%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Hardswish_s8.c.obj
+[ 61%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_fp32.c.obj
+[ 62%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_s8.c.obj
+[ 62%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_fp32.c.obj
+[ 63%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_s8.c.obj
+[ 63%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_fp32.c.obj
+[ 64%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_s8.c.obj
+[ 64%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Pow_fp32.c.obj
+[ 65%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQDiv_s8.c.obj
+[ 65%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQGELU_s8.c.obj
+[ 67%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQHardswish.c.obj
+[ 67%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Relu_fp32.c.obj
+[ 68%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RequantShift_s8.c.obj
+[ 68%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_fp32.c.obj
+[ 69%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_s8.c.obj
+[ 69%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Sqrt_fp32.c.obj
+[ 70%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Util.c.obj
+[ 71%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/iRMSNorm_s8.c.obj
+[ 71%] Linking C static library ../../lib/libdeeploybasic.a
+[ 71%] Built target deeploybasic
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualConv2in.c.obj
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualPrep.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Conv4x2.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv2In.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/FlatConv.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Im2ColU8.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 84%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 84%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerfRecords.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZOEco.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c.obj
+[ 96%] Linking C static library ../../lib/libdeeploygap9.a
+[ 96%] Built target deeploygap9
+[ 97%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_0_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5181:11: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+           }}};
+           ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+[ 97%] Built target training_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function 'InitOptimizerNetwork':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4611:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_0 = (float32_t *)DeeployNetwork_input_12;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4612:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_1 = (float32_t *)DeeployNetwork_input_17;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4613:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_2 = (float32_t *)DeeployNetwork_input_13;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4614:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_3 = (float32_t *)DeeployNetwork_input_18;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4615:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_4 = (float32_t *)DeeployNetwork_input_14;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4616:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_5 = (float32_t *)DeeployNetwork_input_19;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4617:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_6 = (float32_t *)DeeployNetwork_input_15;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4618:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_7 = (float32_t *)DeeployNetwork_input_20;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4619:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_8 = (float32_t *)DeeployNetwork_input_16;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4620:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_9 = (float32_t *)DeeployNetwork_input_21;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4633:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_0 = (float32_t *)DeeployNetwork_input_12;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4634:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_1 = (float32_t *)DeeployNetwork_input_17;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4635:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_2 = (float32_t *)DeeployNetwork_input_13;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4636:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_3 = (float32_t *)DeeployNetwork_input_18;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4637:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_4 = (float32_t *)DeeployNetwork_input_14;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4638:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_5 = (float32_t *)DeeployNetwork_input_19;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4639:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_6 = (float32_t *)DeeployNetwork_input_15;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4640:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_7 = (float32_t *)DeeployNetwork_input_20;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4641:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_8 = (float32_t *)DeeployNetwork_input_16;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4642:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_9 = (float32_t *)DeeployNetwork_input_21;  /* in-place, shared with TrainingNetwork */
+                              ^
+[ 98%] Built target optimizer_network
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZOECO_full_fused_round1.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZOECO_full_fused_round1.dir/src/deeploymezotest.c.obj
+[100%] Linking C executable ../../../speechnet_train_QZOECO_full_fused_round1
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3564 B      65532 B      5.44%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:      146032 B      1536 KB      9.28%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target speechnet_train_QZOECO_full_fused_round1
+Consolidate compiler generated dependencies of target pmsis_printf
+[  1%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  3%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  5%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  7%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 35%] Built target pmsis
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 39%] Built target pmsis_backend
+Consolidate compiler generated dependencies of target freertos
+[ 50%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 54%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[ 71%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 96%] Built target deeploygap9
+Consolidate compiler generated dependencies of target training_network
+[ 97%] Built target training_network
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target speechnet_train_QZOECO_full_fused_round1
+[100%] Built target speechnet_train_QZOECO_full_fused_round1
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_QZOECO_full_fused_round1
+  Test Directory      : /app/Deeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_round1
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_wn_round1_14
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DSIMULATOR=gvsoc -DBN_FROZEN_STATS=ON -DGAP9_NETWORK_O3=ON -DZO_FUSED_DUAL=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --zo-fused-dual --zo-fused-dual-ne16=0,1,2 --defaultMemLevel=L2 --l1=114000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  7%] Built target fll_pmu_lib
+[ 35%] Built target pmsis
+[ 39%] Built target pmsis_backend
+[ 50%] Built target freertos
+[ 54%] Built target pulp-nnx
+[ 71%] Built target deeploybasic
+[ 96%] Built target deeploygap9
+[ 97%] Built target training_network
+[ 98%] Built target optimizer_network
+[100%] Built target speechnet_train_QZOECO_full_fused_round1
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gapy command (L3 mode with readfs):
+/app/install/gap9-sdk/utils/gapy_v2/bin/gapy --target=gap9.evk --target-dir=/app/install/gap9-sdk/install/workstation/generators --model-dir=/app/install/gap9-sdk/install/workstation/models --platform=gvsoc --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_wn_round1_14/gvsoc_workdir --target-property=boot.flash_device=mram --target-property=boot.mode=flash --multi-flash-content=/app/install/gap9-sdk/utils/layouts/default_layout_multi_readfs.json --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_wn_round1_14/speechnet_train_QZOECO_full_fused_round1@mram:app:binary --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb10_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb11_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb12_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb13_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb14_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb15_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb16_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb17_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb18_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb19_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb20_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb21_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb22_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb23_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb24_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb25_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb26_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb27_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb28_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb29_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb30_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb31_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb32_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb33_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb34_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb35_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb36_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb37_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb38_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb39_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb40_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb41_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb42_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb43_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb44_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb45_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb46_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb47_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb48_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb49_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb4_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb50_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb51_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb52_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb53_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb5_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb6_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb7_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb8_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb9_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex@flash:readfs_flash:files --flash-property=/app/install/gap9-sdk/install/target/bin/fsbl@mram:fsbl:binary --flash-property=/app/install/gap9-sdk/install/target/bin/ssbl@mram:ssbl:binary --py-stack image flash run --binary=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_wn_round1_14/speechnet_train_QZOECO_full_fused_round1
+==========================================
+=== GAP9 MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=14  N_ACCUM_STEPS=4  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.000010000  ZO_Q=1  ZO_SEED=42
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Initializing TrainingNetwork (zo_train)...
+[PHASE] InitTrainingNetwork done
+[PHASE] LoadTestDataL3 done
+Initializing OptimizerNetwork (zo_update)...
+[PHASE] InitOptimizerNetwork done
+Starting ZO training (14 update steps x 4 accum steps)...
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+[WSUM s=init] 0xe1ca5c8d
+update 1/14  accum 1/4  (mini-batch 0)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157720 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d1df660
+[PHASE] fused dual pass: lm_bits=0x3cbc996f
+update 1/14  accum 2/4  (mini-batch 1)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157173 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e3307ec
+[PHASE] fused dual pass: lm_bits=0x3f364fef
+update 1/14  accum 3/4  (mini-batch 2)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156922 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c272ee5
+[PHASE] fused dual pass: lm_bits=0x3da5e5c9
+update 1/14  accum 4/4  (mini-batch 3)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157190 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4022b37b
+[PHASE] fused dual pass: lm_bits=0x4012c406
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (244881 cyc)
+update 2/14  accum 1/4  (mini-batch 4)  seed_base=1
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156145 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3eae0b4a
+[PHASE] fused dual pass: lm_bits=0x3e962a17
+update 2/14  accum 2/4  (mini-batch 5)  seed_base=1
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155759 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f3815bd
+[PHASE] fused dual pass: lm_bits=0x3d8985ee
+update 2/14  accum 3/4  (mini-batch 6)  seed_base=1
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156050 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x40785e14
+[PHASE] fused dual pass: lm_bits=0x405e63b3
+update 2/14  accum 4/4  (mini-batch 7)  seed_base=1
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157745 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f903837
+[PHASE] fused dual pass: lm_bits=0x40182251
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (245325 cyc)
+update 3/14  accum 1/4  (mini-batch 8)  seed_base=2
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2159726 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f446828
+[PHASE] fused dual pass: lm_bits=0x3e3ba8a6
+update 3/14  accum 2/4  (mini-batch 9)  seed_base=2
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155710 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3ff0cc25
+[PHASE] fused dual pass: lm_bits=0x3eff1426
+update 3/14  accum 3/4  (mini-batch 10)  seed_base=2
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156605 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4041a700
+[PHASE] fused dual pass: lm_bits=0x404c0298
+update 3/14  accum 4/4  (mini-batch 11)  seed_base=2
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2154260 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d21e151
+[PHASE] fused dual pass: lm_bits=0x3bacf1f5
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (243142 cyc)
+update 4/14  accum 1/4  (mini-batch 12)  seed_base=3
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2153902 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3bb7a405
+[PHASE] fused dual pass: lm_bits=0x3c159b9a
+update 4/14  accum 2/4  (mini-batch 13)  seed_base=3
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156241 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d6348a9
+[PHASE] fused dual pass: lm_bits=0x3ed81797
+update 4/14  accum 3/4  (mini-batch 14)  seed_base=3
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2158451 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d46046d
+[PHASE] fused dual pass: lm_bits=0x3d5fc45f
+update 4/14  accum 4/4  (mini-batch 15)  seed_base=3
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155595 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3fce0c84
+[PHASE] fused dual pass: lm_bits=0x406bf3ec
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (245077 cyc)
+update 5/14  accum 1/4  (mini-batch 16)  seed_base=4
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2161244 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3b315e80
+[PHASE] fused dual pass: lm_bits=0x3bb37eea
+update 5/14  accum 2/4  (mini-batch 17)  seed_base=4
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155478 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3cc742cd
+[PHASE] fused dual pass: lm_bits=0x3dc7fd97
+update 5/14  accum 3/4  (mini-batch 18)  seed_base=4
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156413 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3dec4115
+[PHASE] fused dual pass: lm_bits=0x3a9defa2
+update 5/14  accum 4/4  (mini-batch 19)  seed_base=4
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156351 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4032ed01
+[PHASE] fused dual pass: lm_bits=0x409d4d2c
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (245006 cyc)
+update 6/14  accum 1/4  (mini-batch 20)  seed_base=5
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2159202 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3cb6c236
+[PHASE] fused dual pass: lm_bits=0x3c1bcebe
+update 6/14  accum 2/4  (mini-batch 21)  seed_base=5
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157304 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3ff6a707
+[PHASE] fused dual pass: lm_bits=0x3fd0b830
+update 6/14  accum 3/4  (mini-batch 22)  seed_base=5
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156500 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3fcf21c8
+[PHASE] fused dual pass: lm_bits=0x3fed8886
+update 6/14  accum 4/4  (mini-batch 23)  seed_base=5
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155614 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c4ed462
+[PHASE] fused dual pass: lm_bits=0x3c03d658
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (243248 cyc)
+update 7/14  accum 1/4  (mini-batch 24)  seed_base=6
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156845 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x400f9cca
+[PHASE] fused dual pass: lm_bits=0x3fa56c6e
+update 7/14  accum 2/4  (mini-batch 25)  seed_base=6
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157315 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e2c55c1
+[PHASE] fused dual pass: lm_bits=0x3db15764
+update 7/14  accum 3/4  (mini-batch 26)  seed_base=6
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2154528 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3cedfaf4
+[PHASE] fused dual pass: lm_bits=0x3d02a7b2
+update 7/14  accum 4/4  (mini-batch 27)  seed_base=6
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157466 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3bada502
+[PHASE] fused dual pass: lm_bits=0x3b84f9d5
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (243239 cyc)
+update 8/14  accum 1/4  (mini-batch 28)  seed_base=7
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155371 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d53e173
+[PHASE] fused dual pass: lm_bits=0x3bc88f8d
+update 8/14  accum 2/4  (mini-batch 29)  seed_base=7
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156115 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3ef5d70a
+[PHASE] fused dual pass: lm_bits=0x402d312c
+update 8/14  accum 3/4  (mini-batch 30)  seed_base=7
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156724 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e3d400c
+[PHASE] fused dual pass: lm_bits=0x3cbd5ba7
+update 8/14  accum 4/4  (mini-batch 31)  seed_base=7
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156030 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f669b15
+[PHASE] fused dual pass: lm_bits=0x3f21c9c9
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (244989 cyc)
+update 9/14  accum 1/4  (mini-batch 32)  seed_base=8
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155788 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x40851be8
+[PHASE] fused dual pass: lm_bits=0x407ff672
+update 9/14  accum 2/4  (mini-batch 33)  seed_base=8
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157274 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3b55b8b1
+[PHASE] fused dual pass: lm_bits=0x3f125fbd
+update 9/14  accum 3/4  (mini-batch 34)  seed_base=8
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2159828 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3faf0f9e
+[PHASE] fused dual pass: lm_bits=0x4022e09b
+update 9/14  accum 4/4  (mini-batch 35)  seed_base=8
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156141 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e09dd2a
+[PHASE] fused dual pass: lm_bits=0x3f9c3773
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (245075 cyc)
+update 10/14  accum 1/4  (mini-batch 36)  seed_base=9
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156775 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3eba16a2
+[PHASE] fused dual pass: lm_bits=0x401175fe
+update 10/14  accum 2/4  (mini-batch 37)  seed_base=9
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156960 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e315f9c
+[PHASE] fused dual pass: lm_bits=0x3d13bef2
+update 10/14  accum 3/4  (mini-batch 38)  seed_base=9
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155536 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3dd8b5ab
+[PHASE] fused dual pass: lm_bits=0x3eabf348
+update 10/14  accum 4/4  (mini-batch 39)  seed_base=9
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2158192 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d1fbd43
+[PHASE] fused dual pass: lm_bits=0x3c0a4da5
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (244959 cyc)
+update 11/14  accum 1/4  (mini-batch 40)  seed_base=10
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2158221 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4065f464
+[PHASE] fused dual pass: lm_bits=0x4085ca4f
+update 11/14  accum 2/4  (mini-batch 41)  seed_base=10
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156270 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x400071ff
+[PHASE] fused dual pass: lm_bits=0x3f1f86c8
+update 11/14  accum 3/4  (mini-batch 42)  seed_base=10
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156480 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4006b8bc
+[PHASE] fused dual pass: lm_bits=0x3f198b09
+update 11/14  accum 4/4  (mini-batch 43)  seed_base=10
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156657 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d91f856
+[PHASE] fused dual pass: lm_bits=0x3b47cff1
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (243027 cyc)
+update 12/14  accum 1/4  (mini-batch 44)  seed_base=11
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155573 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d9b3f2c
+[PHASE] fused dual pass: lm_bits=0x3a89758b
+update 12/14  accum 2/4  (mini-batch 45)  seed_base=11
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155809 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x40698266
+[PHASE] fused dual pass: lm_bits=0x40df6abc
+update 12/14  accum 3/4  (mini-batch 46)  seed_base=11
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155086 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c5254e5
+[PHASE] fused dual pass: lm_bits=0x3dc12012
+update 12/14  accum 4/4  (mini-batch 47)  seed_base=11
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2154589 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c18cf02
+[PHASE] fused dual pass: lm_bits=0x3d6fce15
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (244748 cyc)
+update 13/14  accum 1/4  (mini-batch 48)  seed_base=12
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2153488 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e743659
+[PHASE] fused dual pass: lm_bits=0x3e7c78e4
+update 13/14  accum 2/4  (mini-batch 49)  seed_base=12
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2156890 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3fe08185
+[PHASE] fused dual pass: lm_bits=0x3f4a0930
+update 13/14  accum 3/4  (mini-batch 50)  seed_base=12
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2154564 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f0860d1
+[PHASE] fused dual pass: lm_bits=0x3fd128f1
+update 13/14  accum 4/4  (mini-batch 51)  seed_base=12
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157058 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3da57621
+[PHASE] fused dual pass: lm_bits=0x3f58afb8
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (245011 cyc)
+update 14/14  accum 1/4  (mini-batch 52)  seed_base=13
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157575 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f16cee4
+[PHASE] fused dual pass: lm_bits=0x3ebe71d3
+update 14/14  accum 2/4  (mini-batch 53)  seed_base=13
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2158662 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3cd8485e
+[PHASE] fused dual pass: lm_bits=0x3e29bcd8
+update 14/14  accum 3/4  (mini-batch 54)  seed_base=13
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2155872 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d6c43b1
+[PHASE] fused dual pass: lm_bits=0x3cc316d1
+update 14/14  accum 4/4  (mini-batch 55)  seed_base=13
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (2157799 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f55a01b
+[PHASE] fused dual pass: lm_bits=0x3dc2fdd5
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (243266 cyc)
+[WSUM s=13] 0xa8fdf1f3
+[loss+ 0] computed=0.038565  ref=0.038565  diff=0.000000  TOL=0.001000
+[loss+ 1] computed=0.174835  ref=0.174835  diff=0.000000  TOL=0.001000
+[loss+ 2] computed=0.010204  ref=0.010204  diff=0.000000  TOL=0.001000
+[loss+ 3] computed=2.542205  ref=2.542204  diff=0.000000  TOL=0.001000
+[loss+ 4] computed=0.339930  ref=0.339930  diff=0.000000  TOL=0.001000
+[loss+ 5] computed=0.719082  ref=0.719082  diff=0.000000  TOL=0.001000
+[loss+ 6] computed=3.880742  ref=3.880742  diff=0.000000  TOL=0.001000
+[loss+ 7] computed=1.126716  ref=1.126716  diff=0.000000  TOL=0.001000
+[loss+ 8] computed=0.767214  ref=0.767214  diff=0.000000  TOL=0.001000
+[loss+ 9] computed=1.881230  ref=1.881230  diff=0.000000  TOL=0.001000
+[loss+ 10] computed=3.025818  ref=3.025817  diff=0.000000  TOL=0.001000
+[loss+ 11] computed=0.039522  ref=0.039522  diff=0.000000  TOL=0.001000
+[loss+ 12] computed=0.005604  ref=0.005604  diff=0.000000  TOL=0.001000
+[loss+ 13] computed=0.055489  ref=0.055489  diff=0.000000  TOL=0.001000
+[loss+ 14] computed=0.048344  ref=0.048344  diff=0.000000  TOL=0.001000
+[loss+ 15] computed=1.609757  ref=1.609757  diff=0.000000  TOL=0.001000
+[loss+ 16] computed=0.002706  ref=0.002706  diff=0.000000  TOL=0.001000
+[loss+ 17] computed=0.024324  ref=0.024324  diff=0.000000  TOL=0.001000
+[loss+ 18] computed=0.115359  ref=0.115359  diff=0.000000  TOL=0.001000
+[loss+ 19] computed=2.795716  ref=2.795716  diff=0.000000  TOL=0.001000
+[loss+ 20] computed=0.022309  ref=0.022309  diff=0.000000  TOL=0.001000
+[loss+ 21] computed=1.926972  ref=1.926972  diff=0.000000  TOL=0.001000
+[loss+ 22] computed=1.618218  ref=1.618218  diff=0.000000  TOL=0.001000
+[loss+ 23] computed=0.012624  ref=0.012624  diff=0.000000  TOL=0.001000
+[loss+ 24] computed=2.243945  ref=2.243945  diff=0.000000  TOL=0.001000
+[loss+ 25] computed=0.168296  ref=0.168296  diff=0.000000  TOL=0.001000
+[loss+ 26] computed=0.029050  ref=0.029050  diff=0.000000  TOL=0.001000
+[loss+ 27] computed=0.005299  ref=0.005299  diff=0.000000  TOL=0.001000
+[loss+ 28] computed=0.051729  ref=0.051729  diff=0.000000  TOL=0.001000
+[loss+ 29] computed=0.480156  ref=0.480156  diff=0.000000  TOL=0.001000
+[loss+ 30] computed=0.184815  ref=0.184815  diff=0.000000  TOL=0.001000
+[loss+ 31] computed=0.900804  ref=0.900804  diff=0.000000  TOL=0.001000
+[loss+ 32] computed=4.159657  ref=4.159657  diff=0.000000  TOL=0.001000
+[loss+ 33] computed=0.003261  ref=0.003261  diff=0.000000  TOL=0.001000
+[loss+ 34] computed=1.367664  ref=1.367664  diff=0.000000  TOL=0.001000
+[loss+ 35] computed=0.134633  ref=0.134633  diff=0.000000  TOL=0.001000
+[loss+ 36] computed=0.363454  ref=0.363454  diff=0.000000  TOL=0.001000
+[loss+ 37] computed=0.173216  ref=0.173216  diff=0.000000  TOL=0.001000
+[loss+ 38] computed=0.105815  ref=0.105815  diff=0.000000  TOL=0.001000
+[loss+ 39] computed=0.038999  ref=0.038999  diff=0.000000  TOL=0.001000
+[loss+ 40] computed=3.593041  ref=3.593041  diff=0.000000  TOL=0.001000
+[loss+ 41] computed=2.006958  ref=2.006958  diff=0.000000  TOL=0.001000
+[loss+ 42] computed=2.105025  ref=2.105026  diff=0.000000  TOL=0.001000
+[loss+ 43] computed=0.071274  ref=0.071274  diff=0.000000  TOL=0.001000
+[loss+ 44] computed=0.075804  ref=0.075804  diff=0.000000  TOL=0.001000
+[loss+ 45] computed=3.648584  ref=3.648584  diff=0.000000  TOL=0.001000
+[loss+ 46] computed=0.012838  ref=0.012838  diff=0.000000  TOL=0.001000
+[loss+ 47] computed=0.009327  ref=0.009327  diff=0.000000  TOL=0.001000
+[loss+ 48] computed=0.238489  ref=0.238489  diff=0.000000  TOL=0.001000
+[loss+ 49] computed=1.753953  ref=1.753953  diff=0.000000  TOL=0.001000
+[loss+ 50] computed=0.532727  ref=0.532727  diff=0.000000  TOL=0.001000
+[loss+ 51] computed=0.080792  ref=0.080792  diff=0.000000  TOL=0.001000
+[loss+ 52] computed=0.589094  ref=0.589094  diff=0.000000  TOL=0.001000
+[loss+ 53] computed=0.026402  ref=0.026402  diff=0.000000  TOL=0.001000
+[loss+ 54] computed=0.057682  ref=0.057682  diff=0.000000  TOL=0.001000
+[loss+ 55] computed=0.834474  ref=0.834475  diff=0.000000  TOL=0.001000
+[loss- 0] computed=0.023022  ref=0.023022  diff=0.000000  TOL=0.001000
+[loss- 1] computed=0.712157  ref=0.712157  diff=0.000000  TOL=0.001000
+[loss- 2] computed=0.081005  ref=0.081005  diff=0.000000  TOL=0.001000
+[loss- 3] computed=2.293214  ref=2.293214  diff=0.000000  TOL=0.001000
+[loss- 4] computed=0.293290  ref=0.293290  diff=0.000000  TOL=0.001000
+[loss- 5] computed=0.067150  ref=0.067150  diff=0.000000  TOL=0.001000
+[loss- 6] computed=3.474835  ref=3.474835  diff=0.000000  TOL=0.001000
+[loss- 7] computed=2.377095  ref=2.377094  diff=0.000000  TOL=0.001000
+[loss- 8] computed=0.183261  ref=0.183260  diff=0.000000  TOL=0.001000
+[loss- 9] computed=0.498201  ref=0.498201  diff=0.000000  TOL=0.001000
+[loss- 10] computed=3.187658  ref=3.187658  diff=0.000000  TOL=0.001000
+[loss- 11] computed=0.005278  ref=0.005278  diff=0.000000  TOL=0.001000
+[loss- 12] computed=0.009131  ref=0.009131  diff=0.000000  TOL=0.001000
+[loss- 13] computed=0.422055  ref=0.422055  diff=0.000000  TOL=0.001000
+[loss- 14] computed=0.054631  ref=0.054631  diff=0.000000  TOL=0.001000
+[loss- 15] computed=3.686763  ref=3.686762  diff=0.000000  TOL=0.001000
+[loss- 16] computed=0.005478  ref=0.005478  diff=0.000000  TOL=0.001000
+[loss- 17] computed=0.097652  ref=0.097652  diff=0.000000  TOL=0.001000
+[loss- 18] computed=0.001205  ref=0.001205  diff=0.000000  TOL=0.001000
+[loss- 19] computed=4.915670  ref=4.915670  diff=0.000000  TOL=0.001000
+[loss- 20] computed=0.009510  ref=0.009510  diff=0.000000  TOL=0.001000
+[loss- 21] computed=1.630621  ref=1.630621  diff=0.000000  TOL=0.001000
+[loss- 22] computed=1.855729  ref=1.855729  diff=0.000000  TOL=0.001000
+[loss- 23] computed=0.008047  ref=0.008047  diff=0.000000  TOL=0.001000
+[loss- 24] computed=1.292372  ref=1.292372  diff=0.000000  TOL=0.001000
+[loss- 25] computed=0.086592  ref=0.086592  diff=0.000000  TOL=0.001000
+[loss- 26] computed=0.031898  ref=0.031898  diff=0.000000  TOL=0.001000
+[loss- 27] computed=0.004058  ref=0.004058  diff=0.000000  TOL=0.001000
+[loss- 28] computed=0.006121  ref=0.006121  diff=0.000000  TOL=0.001000
+[loss- 29] computed=2.706126  ref=2.706126  diff=0.000000  TOL=0.001000
+[loss- 30] computed=0.023115  ref=0.023115  diff=0.000000  TOL=0.001000
+[loss- 31] computed=0.631985  ref=0.631985  diff=0.000000  TOL=0.001000
+[loss- 32] computed=3.999417  ref=3.999417  diff=0.000000  TOL=0.001000
+[loss- 33] computed=0.571773  ref=0.571773  diff=0.000000  TOL=0.001000
+[loss- 34] computed=2.544959  ref=2.544959  diff=0.000000  TOL=0.001000
+[loss- 35] computed=1.220442  ref=1.220442  diff=0.000000  TOL=0.001000
+[loss- 36] computed=2.272827  ref=2.272827  diff=0.000000  TOL=0.001000
+[loss- 37] computed=0.036071  ref=0.036071  diff=0.000000  TOL=0.001000
+[loss- 38] computed=0.335840  ref=0.335840  diff=0.000000  TOL=0.001000
+[loss- 39] computed=0.008441  ref=0.008441  diff=0.000000  TOL=0.001000
+[loss- 40] computed=4.180946  ref=4.180946  diff=0.000000  TOL=0.001000
+[loss- 41] computed=0.623150  ref=0.623151  diff=0.000000  TOL=0.001000
+[loss- 42] computed=0.599778  ref=0.599778  diff=0.000000  TOL=0.001000
+[loss- 43] computed=0.003049  ref=0.003049  diff=0.000000  TOL=0.001000
+[loss- 44] computed=0.001049  ref=0.001049  diff=0.000000  TOL=0.001000
+[loss- 45] computed=6.981779  ref=6.981779  diff=0.000000  TOL=0.001000
+[loss- 46] computed=0.094299  ref=0.094300  diff=0.000000  TOL=0.001000
+[loss- 47] computed=0.058546  ref=0.058546  diff=0.000000  TOL=0.001000
+[loss- 48] computed=0.246555  ref=0.246555  diff=0.000000  TOL=0.001000
+[loss- 49] computed=0.789203  ref=0.789203  diff=0.000000  TOL=0.001000
+[loss- 50] computed=1.634062  ref=1.634062  diff=0.000000  TOL=0.001000
+[loss- 51] computed=0.846431  ref=0.846431  diff=0.000000  TOL=0.001000
+[loss- 52] computed=0.371962  ref=0.371962  diff=0.000000  TOL=0.001000
+[loss- 53] computed=0.165759  ref=0.165759  diff=0.000000  TOL=0.001000
+[loss- 54] computed=0.023815  ref=0.023814  diff=0.000000  TOL=0.001000
+[loss- 55] computed=0.095211  ref=0.095211  diff=0.000000  TOL=0.001000
+[WCHK] changed 16/22 trainable tensors after 14 updates
+Errors: 0 out of 112
+BENCH train_cycles_hi=0 train_cycles_lo=120770781 opt_cycles_hi=0 opt_cycles_lo=3420993
+[100%] Built target gvsoc_speechnet_train_QZOECO_full_fused_round1
+
+[92m✓ Test speechnet_train_QZOECO_full_fused_round1 PASSED - No errors found[0m

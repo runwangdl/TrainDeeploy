@@ -1,0 +1,20 @@
+exp5b -- exp5's fused dual-pass conv (QZO_DualConv) on Siracusa with --profileTiling (per-tile cycle stamps).
+Run: 913,350 cycles, Errors 0/157024 (profiling adds ~2.6 k over the plain 910,763). Full print: tiling_profile.txt.
+
+conv node (dualconv_blocks0), 2 tiles                   pre-kernel   kernel    post-kernel   total    pixels (all cores)   kernel cyc/px
+  tile 0  (536 cols x 14 rows = 7,504 px)                   1,176   472,756      15,692    489,624        7,504              63.0
+  tile 1  (165 cols x 14 rows = 2,310 px)                     443   146,619       4,844    151,906        2,310              63.5
+  both                                                       1,619   619,375      20,536    641,530        9,814
+    -> two tiles, two equations: kernel = F + c*pixels  ->  c = 62.8 cycles/px, F = ~1,600 cycles fixed per tile
+       (phase-1 perturbation, barriers, and ANY cold-start fetches). F is 0.3 % of the node; a full cold refetch of the
+       kernel (115 lines x 2-3 cycles) would fit inside it, so the profile cannot say whether tile 1 started warm --
+       only that it does not matter at this scale. The trace cut at the tile boundary is what decides it.
+       Pre-kernel = DMA-in wait, post-kernel = DMA-out wait (3.4 %).
+    -> microbenchmark figure for the node (614,979) ~ kernel sum (619,375) minus wrapper differences.
+
+output transpose (3 tiles)        pre     kernel    post     total
+  tile 0                        9,993    72,361   7,716    90,070
+  tile 1                        9,989    67,267   7,691    84,947
+  tile 2                        9,965    67,290   5,160    82,415
+  sum                          29,947   206,918  20,567   257,432     (19-21 % overhead per tile: the DMA waits)
+input transpose  10,080 (7,344 kernel) ; weight transpose 648.

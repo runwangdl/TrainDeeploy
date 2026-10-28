@@ -1,0 +1,16 @@
+exp8 step 9 -- why block 0 on GAP9 is 4.74x in the network but 2.71x in exp6.  2026-10-14
+exp6 fixtures re-run on today's build (GAP9, --l1 86000, --profileTiling wall clock): logs/step9_exp6_{A,C}_rerun_prof.log
+(A = QZO_Conv, ONE pass, x2 below; C = QZO_DualConv_NE16). Both exact (0/78512, 0/157024).
+
+node-level (conv + perturb/prep + weight transpose)     fixture today      network (step7 logs)
+  unfused  2 x (pulp-nn 601,859 + perturb 2,478 + wT 454)      1,209,582      1,209,647
+  fused    im2col 119,666 + NE16 130,067 + encode/bias 6,190     255,923        255,321
+  ratio                                                          4.73x          4.74x
+fixture boundary transposes (not in the network: downstream runs channels-last)
+  A  input NCHW->NHWC 2 x 14,140, output NHWC->NCHW 2 x 100,643  = 229,566
+  C  output NHWC->NCHW 201,020
+fixture totals today: A 2 x 767,262 = 1,534,524, C 549,018 -> 2.80x  (exp6: 2.71x)
+
+=> The network matches the fixture node for node. exp6's headline 2.71x was a FIXTURE total: the NHWC->NCHW output
+   transpose was 47 % of C (and the same size as the fused conv itself), and it does not exist in the network.
+   exp6's own node-level number was 1,214,148 / 287,380 = 4.22x; today's im2col is 142,171 -> 119,666 (not isolated why).

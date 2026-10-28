@@ -1,0 +1,2 @@
+train  : Tests/Models/Training/SpeechNet/speechnet_zo_train_b1_fold3_ref  (network.onnx 24 inputs / 10 inits)
+update : Tests/Models/Training/SpeechNet/speechnet_zo_update_b1_fold3_ref (network.onnx 22 inputs / 22 outputs)

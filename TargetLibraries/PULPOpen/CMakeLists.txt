@@ -39,6 +39,58 @@ target_compile_options(deeploypulp PRIVATE
 target_include_directories(deeploypulp PUBLIC ${PULP_SDK_INCLUDES})
 target_compile_options(deeploypulp PUBLIC ${PULP_SDK_COMPILE_FLAGS})
 
+# -- QW exp13/14 (2026-09-07): opt-in STRICT fp32 for selected fp32 kernels. Under the PULP SDK's -ffast-math clang
+#    fuses mul+add into fmadd.s and reassociates (BatchNorm.c: 13 fused, Gemm.c: 154), so the device's fp32 result
+#    is not the C source order and a host reference cannot match it bit-for-bit. Only -fno-fast-math -ffp-contract=off
+#    together give fused=0 (measured). Per-source (appended after the target flags, so it wins), OFF by default.
+#    Usage: -D DEEPLOY_STRICT_FP32_FILES="BatchNorm.c;Gemm.c"  (basenames under src/). -- QW
+if(DEEPLOY_STRICT_FP32_FILES)
+  foreach(_f IN LISTS DEEPLOY_STRICT_FP32_FILES)
+    set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/${_f} PROPERTIES COMPILE_OPTIONS "-fno-fast-math;-ffp-contract=off")
+    message(STATUS "[QW strict-fp32] ${_f}: -fno-fast-math -ffp-contract=off")
+  endforeach()
+endif()
+
+# -- QW exp21e/fix: opt-in STRICT fp32 for the WHOLE kernel library (every src/ file + the pulp-trainlib sources it
+#    compiles, e.g. the ConvGradW GEMM), so every fp32 kernel evaluates in C-source order with one rounding per
+#    operation (no fmadd.s, no reassociation). Together with -D DEEPLOY_STRICT_FP32=ON (generated networks) this is
+#    the device side of the bit-exact BP reference (exp21e fix/). Usage: -D DEEPLOY_STRICT_FP32_ALL=ON. OFF by default.
+if(DEEPLOY_STRICT_FP32_ALL)
+  target_compile_options(deeploypulp PRIVATE -fno-fast-math -ffp-contract=off)
+  message(STATUS "[QW strict-fp32] deeploypulp (all sources): -fno-fast-math -ffp-contract=off")
+endif()
+
+# -- QW exp21e: opt-in argmax signature inside PULP_MaxPoolArgmax2d (argmax-mask BP path), printed by the
+#    training harness as [AMSIG mb] when also built with -D DUMP_ARGMAX=ON. Usage: -D ARGMAX_MASK_SIG=ON. OFF by default.
+if(ARGMAX_MASK_SIG)
+  target_compile_definitions(deeploypulp PUBLIC DEEPLOY_ARGMAX_MASK_SIG)
+  message(STATUS "[QW exp21e] ARGMAX_MASK_SIG: PULP_MaxPoolArgmax2d accumulates the argmax signature")
+endif()
+
+# -- QW (dual_pass_fusion exp7 step 5b): opt-in phase timing in DualConv2In.c (core 0 prints the cycles of phase 1
+#    and phase 2, each including its closing barrier). Usage: -D DUALCONV2IN_PROBE=ON. OFF by default. -- QW
+if(DUALCONV2IN_PROBE)
+  target_compile_definitions(deeploypulp PUBLIC DUALCONV2IN_PROBE)
+  message(STATUS "[QW] DUALCONV2IN_PROBE: DualConv2In.c prints per-phase cycles")
+endif()
+# -- QW (exp7 step 5c): measurement override of DualConv2In.c's phase-2 split: -D DUALCONV2IN_SPLIT=1 (pixels) | 2
+#    (output channels). Unset = automatic (cost model). -- QW
+if(DUALCONV2IN_SPLIT)
+  target_compile_definitions(deeploypulp PUBLIC DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT})
+  message(STATUS "[QW] DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT}")
+endif()
+# -- QW (2026-10-22, per-block breakdown): Conv4x2.c switches. -D CONV4X2_STEP2A=ON builds the original step-2a
+#    kernel (byte gather, pixel split only); -D CONV4X2_SPLIT=1 (pixels) | 2 (output channels) overrides the split
+#    of the default (step-5) kernel. Unset = step-5 kernel with the automatic split. -- QW
+if(CONV4X2_STEP2A)
+  target_compile_definitions(deeploypulp PUBLIC CONV4X2_STEP2A)
+  message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")
+endif()
+if(CONV4X2_SPLIT)
+  target_compile_definitions(deeploypulp PUBLIC CONV4X2_SPLIT=${CONV4X2_SPLIT})
+  message(STATUS "[QW] CONV4X2_SPLIT=${CONV4X2_SPLIT}")
+endif()
+
 add_subdirectory(../third_party/pulp-nn-mixed ${CMAKE_CURRENT_BINARY_DIR}/pulp-nn-mixed)
 target_include_directories(pulp-nn-mixed PUBLIC ${PULP_SDK_INCLUDES})
 target_compile_options(pulp-nn-mixed PUBLIC ${PULP_SDK_COMPILE_FLAGS})

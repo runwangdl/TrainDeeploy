@@ -8,13 +8,16 @@
 
 #include "CycleCounter.h"
 #include "Network.h"
+#include "perf_utils.h" // -- QW (exp6): perf_bench_dump_records
 #include "dory_mem.h"
 #include "pmsis.h"
 #include "testinputs.h"
 #include "testoutputs.h"
 
 // RW: Remove MAINSTACKSIZE because gap9-sdk does not use it
+#ifndef SLAVESTACKSIZE  // RW 2026-10-13: overridable (-D SLAVESTACKSIZE=N); size it with stack_depth.py
 #define SLAVESTACKSIZE 3800
+#endif
 
 /* On-chip memory windows. HyperRAM/L3 (cl_ram_malloc) is NOT CPU-addressable,
  * so a raw memcpy / CPU-deref of an L3 pointer faults ("Invalid fetch") on real
@@ -110,6 +113,9 @@ int main(void) {
 
   pi_cluster_conf_init(&conf);
   conf.id = 0;
+#ifdef CC_STACK_SIZE  // RW 2026-10-13: optional, as in deeploytraintest.c (default: SDK value)
+  conf.cc_stack_size = CC_STACK_SIZE;
+#endif
   pi_open_from_conf(&cluster_dev, &conf);
   if (pi_cluster_open(&cluster_dev))
     return -1;
@@ -157,6 +163,10 @@ int main(void) {
 #ifdef POWER_MEASUREMENT
   WRITE_GPIO(0);
 #endif
+
+  // -- QW (exp6): cluster printf is invisible on GAP9 GVSoC; replay the per-node counters from the FC.
+  printf("[perf] records=%u\r\n", (unsigned)perf_record_count);
+  perf_bench_dump_records();
 
 #ifndef CI
   printf("Output:\r\n");

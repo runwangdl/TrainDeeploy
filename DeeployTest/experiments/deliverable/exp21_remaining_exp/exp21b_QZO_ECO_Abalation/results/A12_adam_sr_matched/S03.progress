@@ -1,0 +1,23 @@
+03:04:30 A12_adam_sr_matched S03: QZO-ablation opt=adam beta=0.9 beta2=0.999 adam_eps=1e-08 round=sr ef=none lr=7e-05 eps=0.01 n_accum=4 (MEAN) epochs=120 per_class=6 seed=42 order=cyclic draw=device rng=device mode=direct
+03:04:55   b1 eval: acc=77.22 loss=0.7124
+03:04:58     round1 step    0: train acc 77.78 loss 0.7458 | next(b2) acc 75.56
+03:06:13     round1 step  810: train acc 79.63 loss 0.5962 | next(b2) acc 76.11
+03:07:24     round1 step 1620: train acc 83.33 loss 0.5376 | next(b2) acc 71.11
+03:07:24   round 1 done: moved_steps=100.0% differ(round)=89.77% ever=100.00% cum=89.77% flips=205707 [174s]
+03:07:26   b2 eval: acc=71.11 loss=0.9442
+03:07:28     round2 step    0: train acc 68.52 loss 0.9744 | next(b3) acc 63.89
+03:08:38     round2 step  810: train acc 75.93 loss 0.8458 | next(b3) acc 66.67
+03:09:50     round2 step 1620: train acc 77.78 loss 0.7859 | next(b3) acc 67.78
+03:09:50   round 2 done: moved_steps=100.0% differ(round)=89.87% ever=99.99% cum=94.29% flips=194995 [320s]
+03:09:52   b3 eval: acc=67.78 loss=0.8480
+03:09:54     round3 step    0: train acc 64.81 loss 0.8909 | next(b4) acc 65.56
+03:11:05     round3 step  810: train acc 70.37 loss 0.7912 | next(b4) acc 67.78
+03:12:15     round3 step 1620: train acc 70.37 loss 0.7571 | next(b4) acc 67.78
+03:12:15   round 3 done: moved_steps=100.0% differ(round)=89.97% ever=100.00% cum=95.61% flips=202637 [465s]
+03:12:17   b4 eval: acc=67.78 loss=0.9949
+03:12:19     round4 step    0: train acc 75.93 loss 0.6624 | next(b5) acc 66.11
+03:13:29     round4 step  810: train acc 79.63 loss 0.6444 | next(b5) acc 63.89
+03:14:46     round4 step 1620: train acc 81.48 loss 0.6392 | next(b5) acc 63.33
+03:14:46   round 4 done: moved_steps=100.0% differ(round)=90.07% ever=99.99% cum=96.27% flips=204133 [615s]
+03:14:48   b5 eval: acc=63.33 loss=1.0214
+03:14:48 DONE A12_adam_sr_matched S03: b1=77.22 b2=71.11 b3=67.78 b4=67.78 b5=63.33 mean(b2-b5)=67.50 [618s]

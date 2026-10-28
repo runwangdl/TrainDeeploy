@@ -1,0 +1,35 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /app/ETH/TrainDeeploy
+configfile: pytest.ini
+plugins: xdist-3.8.0
+collecting ... collected 693 items / 680 deselected / 13 selected
+
+test_platforms.py::test_siracusa_tiled_training_l2_singlebuffer[Models/Training/SpeechNet/speechnet_train-128000-L2-singlebuffer-training] PASSED [  7%]
+test_platforms.py::test_siracusa_tiled_zo_single_step[SpeechNet_ZO_single_step] PASSED [ 15%]
+test_platforms.py::test_siracusa_tiled_zo_single_step[SpeechNet_QZO_single_step] PASSED [ 23%]
+test_platforms.py::test_siracusa_tiled_qzo_block0_kernels[SpeechNet_unfused_b0_cluster] PASSED [ 30%]
+test_platforms.py::test_siracusa_tiled_qzo_block0_kernels[SpeechNet_fused_b0_cluster] PASSED [ 38%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b1_cluster] PASSED [ 46%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b1_cluster] PASSED [ 53%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b2_cluster] PASSED [ 61%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b2_cluster] PASSED [ 69%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b3_cluster] PASSED [ 76%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b3_cluster] PASSED [ 84%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b4_cluster] PASSED [ 92%]
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b4_cluster] PASSED [100%]
+
+============================= Performance Summary ==============================
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_block0_kernels[SpeechNet_fused_b0_cluster]  runtime=     796,164 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_block0_kernels[SpeechNet_unfused_b0_cluster]  runtime=     769,345 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b1_cluster]  runtime=     529,284 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b2_cluster]  runtime=     162,895 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b3_cluster]  runtime=      60,699 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b4_cluster]  runtime=      48,656 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b1_cluster]  runtime=     469,934 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b2_cluster]  runtime=     170,216 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b3_cluster]  runtime=     103,558 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b4_cluster]  runtime=     173,803 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_training_l2_singlebuffer[Models/Training/SpeechNet/speechnet_train-128000-L2-singlebuffer-training]  train=1,979,968,565 cyc  opt= 2,071,100 cyc  trainable_bytes=   1,188 B
+=============== 13 passed, 680 deselected in 2958.69s (0:49:18) ================

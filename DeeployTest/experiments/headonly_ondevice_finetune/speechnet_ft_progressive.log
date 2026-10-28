@@ -1,0 +1,20 @@
+pretrained zero-shot per eval batch: {2: 78.33, 3: 63.33, 4: 78.89, 5: 66.11}
+CALIBRATION (exact fixture batch1 -> batch2): 82.78%  (on-device verified 82.78%)
+==============================================================================
+INDEPENDENT (each round from pretrained):
+  FT batch1 -> eval batch2 : zero-shot 78.33% -> FT 80.00%  (Δ +1.67 pp)
+  FT batch2 -> eval batch3 : zero-shot 63.33% -> FT 80.00%  (Δ +16.67 pp)
+  FT batch3 -> eval batch4 : zero-shot 78.89% -> FT 83.33%  (Δ +4.44 pp)
+  FT batch4 -> eval batch5 : zero-shot 66.11% -> FT 75.00%  (Δ +8.89 pp)
+PROGRESSIVE (carry head forward across batches):
+  round1: FT batch1 -> eval batch2 : before 78.33% -> after 80.00%  (vs pretrained-zs 78.33%, Δ +1.67 pp)
+  round2: FT batch2 -> eval batch3 : before 77.22% -> after 80.00%  (vs pretrained-zs 63.33%, Δ +16.67 pp)
+  round3: FT batch3 -> eval batch4 : before 84.44% -> after 86.11%  (vs pretrained-zs 78.89%, Δ +7.22 pp)
+  round4: FT batch4 -> eval batch5 : before 82.78% -> after 76.11%  (vs pretrained-zs 66.11%, Δ +10.00 pp)
+==============================================================================
+SUMMARY (balanced acc on eval batch; Δ vs that batch's pretrained zero-shot):
+  FT->eval       pretrn-zs  independent    progressive   
+  b1->b2          78.33%     80.00% (+1.67) 80.00% (+1.67)
+  b2->b3          63.33%     80.00% (+16.67) 80.00% (+16.67)
+  b3->b4          78.89%     83.33% (+4.44) 86.11% (+7.22)
+  b4->b5          66.11%     75.00% (+8.89) 76.11% (+10.00)

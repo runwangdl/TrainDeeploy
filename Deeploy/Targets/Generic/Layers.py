@@ -158,7 +158,15 @@ class RequantShiftLayer(ONNXLayer):
     def computeShapes(self, inputShapes: List[Shape], outputShapes: Shape, operatorRepresentation,
                       channels_first) -> Tuple[Shape, Shape]:
 
-        channel_dim = inputShapes[0][1]
+        # QW (exp16a): honour `channels_first` instead of hardcoding dim 1. The signature already
+        #     receives it and every other layer respects it; RequantShift did not, so a
+        #     CHANNELS-LAST standalone RequantShift always died with e.g.
+        #     "Could not broadcast rqs_mul_tensor from (16,) to [1, 14]" -- it read the H extent
+        #     as the channel count. This only ever arises when a RequantShift is NOT fused into a
+        #     RequantizedConv; our NE16 1xK path un-fuses it deliberately (streamin forces int32
+        #     output), and keeping it channels-last is what lets the int32 tensor avoid being
+        #     materialised in two layouts. Channels-first behaviour is byte-for-byte unchanged.
+        channel_dim = inputShapes[0][1] if channels_first else inputShapes[0][-1]  # -- QW
         inputShapes[2] = [inputShapes[0][0], channel_dim] + list(inputShapes[2][1:])
         inputShapes[1] = [inputShapes[0][0], channel_dim] + list(inputShapes[1][1:])
 
@@ -358,7 +366,7 @@ class ConvLayer(ONNXLayer):
     def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
                       channels_first) -> Tuple[Shape, Shape]:
         if len(inputShapes) == 3:
-            inputShapes[2] = inputShapes[1][0]
+            inputShapes[2] = (inputShapes[1][0],)
         return (inputShapes, outputShapes)
 
     def computeOps(self):
@@ -660,6 +668,16 @@ class InPlaceAccumulatorV2Layer(ONNXLayer):
         return self.mapper.parser.operatorRepresentation['size']
 
 
+# Ported from Deeploy zo-support (FP32 PerturbRademacher ZO op). -- QW
+class PerturbRademacherLayer(ONNXLayer):  # -- QW
+
+    def __init__(self, maps: List[NodeMapper]):  # -- QW
+        super().__init__(maps)  # -- QW
+
+    def computeOps(self):  # -- QW
+        return self.mapper.parser.operatorRepresentation['size']  # -- QW
+
+
 class LinearAttentionLayer(ONNXLayer):
 
     def __init__(self, maps: List[NodeMapper]):
@@ -909,3 +927,11 @@ class ConvTransposeLayer(ONNXLayer):
             numPx = opRep['dim_im_out_x']
 
         return numPx * opsPerPx
+
+
+class RQSPerturbRademacherLayer(ONNXLayer):  # -- QW: ported from shipped Deeploy (quantized-ZO RQSPerturb)
+    def __init__(self, maps):
+        super().__init__(maps)
+
+    def computeOps(self):
+        return self.mapper.parser.operatorRepresentation['size']

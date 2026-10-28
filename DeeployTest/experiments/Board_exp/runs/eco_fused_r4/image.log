@@ -1,0 +1,15 @@
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  7%] Built target fll_pmu_lib
+[ 36%] Built target pmsis
+[ 40%] Built target pmsis_backend
+[ 50%] Built target freertos
+[ 54%] Built target pulp-nnx
+[ 71%] Built target deeploybasic
+[ 95%] Built target deeploygap9
+[ 96%] Built target training_network
+[ 97%] Built target optimizer_network
+[ 98%] Built target speechnet_train_QZO_r4
+[100%] Generating flash images for speechnet_train_QZO_r4 in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_brd_eco_fused_r4/board_workdir
+[100%] Built target image_speechnet_train_QZO_r4

@@ -1,0 +1,64 @@
+The target board you have sourced is : gap9_evk, GAP9_V2.
+Release version: 0.0.0
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVP.py", line 335, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3449, in frontEnd
+    self.graph = self.lower(self.graph)  # This lowers the graph to a deployable format
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 58, in lower
+    return self._innerObject.lower(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 58, in lower
+    return self._innerObject.lower(graph)
+  File "/app/Deeploy/Deeploy/EngineExtension/NetworkDeployers/EngineColoringDeployer.py", line 43, in lower
+    graph = super().lower(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 58, in lower
+    return self._innerObject.lower(graph)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3270, in lower
+    return self.loweringOptimizer.optimize(graph)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2215, in optimize
+    graph = _pass.apply(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/OptimizationPasses/PassClasses.py", line 171, in apply
+    graph = self.run_pass(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/OptimizationPasses/PassClasses.py", line 197, in run_pass
+    graph = p.apply(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/OptimizationPasses/PassClasses.py", line 170, in apply
+    graph = self.retarget(graph)
+  File "/app/Deeploy/Deeploy/CommonExtensions/OptimizationPasses/PassClasses.py", line 260, in retarget
+    graph = self.replacement_fn(graph, m, f"{self.name}_{i}", **self.kwargs)
+  File "/app/Deeploy/Deeploy/CommonExtensions/OptimizationPasses/TopologyOptimizationPasses/LoweringOptimizationPasses.py", line 273, in _NCHWtoNHWC_fun
+    permuteIn = _transformLayoutPermutation(len(tensorIn.shape), spatialDims, default_channels_first)
+TypeError: object of type 'NoneType' has no len()
+[Deeploy] Network generation failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : b1_pw2_ne16
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/NE16/b1_pw2_ne16
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/NE16/b1_pw2_ne16
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test b1_pw2_ne16 FAILED with exception: Network generation failed for b1_pw2_ne16[0m
+RUNNER_EXIT=1  ELAPSED=2s

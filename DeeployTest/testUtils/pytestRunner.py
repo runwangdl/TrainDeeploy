@@ -70,9 +70,11 @@ def create_test_config(
     promote_to_l2_headroom: int = 131072,
     promote_to_l2_fetch_bytes: Optional[str] = None,
     gen_args: Optional[List[str]] = None,
+    test_dir: Optional[str] = None,  # -- QW: fixture outside Tests/ (e.g. ../SpeechNet_Test/<name>)
 ) -> DeeployTestConfig:
 
-    test_dir = f"Tests/{test_name}"
+    # test_dir = f"Tests/{test_name}"
+    test_dir = test_dir if test_dir is not None else f"Tests/{test_name}"  # -- QW
 
     gen_dir, test_dir_abs, test_name_clean = get_test_paths(test_dir, platform, base_dir = deeploy_test_dir)
 
@@ -209,6 +211,10 @@ def run_and_assert_test(test_name: str,
         m = _re.search(r'BENCH\s+train_cycles=(\d+)', result.stdout)
         if m:
             cycles = int(m.group(1))
+        else:  # -- QW: the MeZO harness prints a 64-bit count as hi/lo words
+            m = _re.search(r'BENCH\s+train_cycles_hi=(\d+)\s+train_cycles_lo=(\d+)', result.stdout)
+            if m:
+                cycles = (int(m.group(1)) << 32) + int(m.group(2))
 
     if report_metric is not None:
         labels = " ".join(f"{k}={v}" for k, v in report_metric.items())

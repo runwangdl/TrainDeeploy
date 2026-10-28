@@ -1,0 +1,56 @@
+[Deeploy] Test path /app/ETH/Onnx4Deeploy/onnx/model/mp_zo_train is outside base directory. Using /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/mp_zo_train
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : mp_zo_train
+  Test Directory      : /app/ETH/Onnx4Deeploy/onnx/model/mp_zo_train
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/mp_zo_train
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[W] colored module is not installed, will not use colors when logging. To enable colors, please install the colored module: python3 -m pip install colored
+[W] Inference failed. You may want to try enabling partitioning to see better results. Note: Error was:
+[ONNXRuntimeError] : 10 : INVALID_GRAPH : This is an invalid model. In Node, ("_0", PerturbRademacher, "", -1) : ("conv0_weight_tensor": tensor(float),) -> ("pcw_tensor": tensor(float),) , Error No Op registered for PerturbRademacher with domain_version of 21
+[Deeploy] 💥 PARSING FAILED - Backtracking exhausted at root!
+[Deeploy] ================================================================================
+[Deeploy] 🔍 Diagnosis:
+[Deeploy]    - Deepest successful exploration: Layer 8 '_5'
+[Deeploy]    - Deepest layer available mappers: ['MaxPool1DParser', 'MaxPool2DParser']
+[Deeploy] ================================================================================
+[Deeploy] Error during parsing! Exporting deeploy state backend_post_binding[.onnx|.pkl]!
+Traceback (most recent call last):
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPTraining.py", line 333, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPTraining.py", line 161, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3463, in frontEnd
+    raise e
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 2713, in parse
+    raise RuntimeError(
+RuntimeError: Did not find adequate mapping for graph! Explored until layer MaxPoolLayer of node _5Candidates: ['MaxPool1DParser', 'MaxPool2DParser']. Exhausted backtracking.
+
+[91m✗ Test mp_zo_train FAILED with exception: Tiled MeZO network generation failed for mp_zo_train[0m

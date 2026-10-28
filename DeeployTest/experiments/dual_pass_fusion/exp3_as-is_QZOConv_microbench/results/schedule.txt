@@ -1,0 +1,73 @@
+# Emitted schedule / tiling — fixture (codegen/Network.c) vs the full QZO network (codegen/full_network_qzo19_TrainingNetwork.c, block 0)
+
+## Fixture: execution blocks
+  104:  // PerturbRademacher (Name: rqsp_blocks0convweight_int8, Op: RQSPerturbRademacher)
+  294:  // PerturbRademacher_i32 (Name: rqsp_blocks0convbias_rqsadd, Op: RQSPerturbRademacher)
+  481:  // Transpose [1, 1, 14, 700] -> [1, 14, 700, 1] (Name: _MERGE_CONVRQ_PASS_0_input_0_transpose, Op: Transpose)
+  674:  // Transpose [8, 1, 1, 4] -> [8, 1, 4, 1] (Name: _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose, Op: Transpose)
+  1098:  // Transpose [1, 14, 701, 8] -> [1, 8, 14, 701] (Name: _MERGE_CONVRQ_PASS_0_output_0_pre_transpose, Op: Transpose)
+
+## Kernel calls (fixture | full network, block-0 subset of the 5×)
+  fixture     :  1 ApplyPerturbQuantRademacher_CHW(; 1 ApplyPerturbQuantRademacher_i32(; 1 pulp_nn_conv_i8_i8_i8(;
+  full network:  5 ApplyPerturbQuantRademacher_CHW(; 5 ApplyPerturbQuantRademacher_i32(; 5 pulp_nn_conv_i8_i8_i8(;
+
+## fixture: numTiles
+  CODEGEN_L1_rqsp_blocks0convweight_int8_numTiles[2] = {0, 1}
+  CODEGEN_L1_rqsp_blocks0convbias_rqsadd_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_input_0_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_output_0_pre_transpose_numTiles[2] = {0, 2}
+## fixture: conv cumByteOffsets
+  _MERGE_CONVRQ_PASS_0_data_in_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_weight_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_add_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_mul_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_data_out_cumByteOffset[1] = {0}
+## fixture: chunk_seed (block-0 perturb nodes)
+  120:  uint32_t chunk_seed = ((42 + perturb_seed_base) + NUM_CORES * 0 + rqsp_blocks0convweight_int8_core_id) ^ (0 * 0x9E3779B1u);
+  309:  uint32_t chunk_seed = ((42 + perturb_seed_base) + NUM_CORES * 1 + rqsp_blocks0convbias_rqsadd_core_id) ^ (0 * 0x9E3779B1u);
+## fixture: pulp_nn_conv_i8_i8_i8 call  (template arg order: in, im2col, NULL, out, w, mul, add, 1, log2D, dim_in_y, dim_in_x, ch_in, dim_out_y, dim_out_x, ch_out, k_y, k_x, pad_yt, pad_yb, pad_xl, pad_xr, s_y, s_x, 1, 1)
+  899:  pulp_nn_conv_i8_i8_i8(DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_data_in_ref, DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer, NULL,
+  900-                        DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_data_out_ref, DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_weight_ref,
+  901-                        DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_mul_ref, DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_add_ref, 1, 16,
+  902-                        700, 14, 1, 701, 14, 8, 4, 1, 0, 0, 2, 2, 1, 1, 1, 1);
+## fixture: L1 arena offsets
+  _MERGE_CONVRQ_PASS_0_data_in_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 78512)
+  _MERGE_CONVRQ_PASS_0_weight_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88408)
+  _MERGE_CONVRQ_PASS_0_mul_ref = (int32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88440)
+  _MERGE_CONVRQ_PASS_0_add_ref = (int32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88376)
+  _MERGE_CONVRQ_PASS_0_data_out_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 0)
+  DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer = (void *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88312)
+
+## full network: numTiles
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1_rqsp_blocks0convweight_int8_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1_rqsp_blocks0convbias_rqsadd_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_numTiles[2] = {0, 1}
+  CODEGEN_L1__MERGE_CONVRQ_PASS_0_blocks_0_conv_output_quant_1Clip_output_0_tensor_pre_transpose_numTiles[2] = {0, 2}
+## full network: conv cumByteOffsets
+  _MERGE_CONVRQ_PASS_0_data_in_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_weight_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_add_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_mul_cumByteOffset[1] = {0}
+  _MERGE_CONVRQ_PASS_0_data_out_cumByteOffset[1] = {0}
+## full network: chunk_seed (block-0 perturb nodes)
+  1257:  uint32_t chunk_seed = ((42 + perturb_seed_base) + NUM_CORES * 0 + rqsp_blocks0convweight_int8_core_id) ^ (0 * 0x9E3779B1u);
+  3306:  uint32_t chunk_seed = ((42 + perturb_seed_base) + NUM_CORES * 1 + rqsp_blocks0convbias_rqsadd_core_id) ^ (0 * 0x9E3779B1u);
+## full network: pulp_nn_conv_i8_i8_i8 call  (template arg order: in, im2col, NULL, out, w, mul, add, 1, log2D, dim_in_y, dim_in_x, ch_in, dim_out_y, dim_out_x, ch_out, k_y, k_x, pad_yt, pad_yb, pad_xl, pad_xr, s_y, s_x, 1, 1)
+  3485:  pulp_nn_conv_i8_i8_i8(DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_data_in_ref, DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer, NULL,
+  3486-                        DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_data_out_ref, DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_weight_ref,
+  3487-                        DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_mul_ref, DeeployNetwork_TILING_CODEGEN_L1__MERGE_CONVRQ_PASS_0_add_ref, 1, 16,
+  3488-                        700, 14, 1, 701, 14, 8, 4, 1, 0, 0, 2, 2, 1, 1, 1, 1);
+## full network: L1 arena offsets
+  _MERGE_CONVRQ_PASS_0_data_in_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 78512)
+  _MERGE_CONVRQ_PASS_0_weight_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88408)
+  _MERGE_CONVRQ_PASS_0_mul_ref = (int32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88440)
+  _MERGE_CONVRQ_PASS_0_add_ref = (int32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88376)
+  _MERGE_CONVRQ_PASS_0_data_out_ref = (int8_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 0)
+  DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer = (void *)((char *)DeeployNetwork_MEMORYARENA_L1 + 88312)
+
+## Fixture RQSPerturb kernel args (mul, log2D, channel_width): weight -> (pmul, 15, 4); bias -> (pmul, 16, 1)
+## Build variant: OUTPUT compare = exact integer path (no OUTPUT_TOL); --cores 8; perf_bench_print sites in fixture codegen: 6 (6 = instrumented build)

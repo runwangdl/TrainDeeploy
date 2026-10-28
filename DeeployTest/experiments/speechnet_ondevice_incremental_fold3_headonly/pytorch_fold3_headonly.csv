@@ -1,0 +1,6 @@
+batch,no_ft,headonly_ft,note
+1,80.56,80.56,(zero-shot)
+2,81.67,90.56,(FT on b1..b1)
+3,76.67,80.56,(FT on b1..b2)
+4,87.78,88.89,(FT on b1..b3)
+5,76.11,81.67,(FT on b1..b4)

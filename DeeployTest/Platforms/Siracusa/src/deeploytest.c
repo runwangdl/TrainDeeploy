@@ -5,6 +5,10 @@
  */
 
 #include "CycleCounter.h"
+#ifndef OUTPUT_TOL  /* -- QW exp13: compile-time output compare tolerance; default == original literal 1e-4 -- QW */
+#define OUTPUT_TOL 1e-4f
+#endif
+#include <string.h>  /* -- QW exp13: memcpy for OUTPUT_BITS -- QW */
 #include "Network.h"
 #include "dory_mem.h"
 #include "pmsis.h"
@@ -41,8 +45,14 @@ void CompareFloatOnCluster(void *args) {
       float actual_val = actual[i];
       float diff = expected_val - actual_val;
 
-      if ((diff < -1e-4) || (diff > 1e-4) || isnan(diff)) {
+      printf("Logit[%u]: %10.6f\r\n", i, actual_val);
+
+      if ((diff < -OUTPUT_TOL) || (diff > OUTPUT_TOL) || isnan(diff)) {  // -- QW exp13: was the literal 1e-4
         local_err_count += 1;
+#ifdef OUTPUT_BITS  /* -- QW exp13: raw fp32 bits of mismatching outputs (bit-level probe evidence) -- QW */
+        { uint32_t eb, ab; memcpy(&eb, &expected_val, 4); memcpy(&ab, &actual_val, 4);
+          printf("BITS idx=%u exp=0x%08x act=0x%08x\r\n", i, (unsigned)eb, (unsigned)ab); }
+#endif
 
         printf("Expected: %10.6f  ", expected_val);
         printf("Actual: %10.6f  ", actual_val);
@@ -93,6 +103,19 @@ int main(void) {
 
 #ifndef CI
   printf("Input copied\r\n");
+#endif
+
+#ifdef BN_FROZEN_STATS /* QW: ZO single perturbed forward uses frozen (running) BN stats, matching the
+                        * frozen fine-tuning setup — avoids batch-stat corruption at batch-1 -- QW */
+  {
+    extern uint32_t g_bn_frozen_stats;
+    g_bn_frozen_stats = 1u;
+    printf("[BN_FROZEN_STATS] inference BN uses frozen running statistics\r\n");
+#ifdef BN_DEBUG /* QW: enable frozen-BN kernel value dump -- QW */
+    extern uint32_t g_bn_debug;
+    g_bn_debug = 1u;
+#endif
+  }
 #endif
 
   pi_cluster_task(&cluster_task, RunNetwork, NULL);

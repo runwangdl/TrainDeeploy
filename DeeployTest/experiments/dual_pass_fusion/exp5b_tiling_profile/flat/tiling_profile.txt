@@ -1,0 +1,35 @@
+Input copied
+===== Profiling rqsp_blocks0convweight_int8_L2 =====
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Pre-Kernel :   254 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Kernel     :  1947 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Post-Kernel:   139 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Total      :  2340 cycles (83.2% Kernel + 16.8% Overhead, 1947 + 393)
+===== Profiling rqsp_blocks0convbias_rqsadd_L2 =====
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Pre-Kernel :   230 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Kernel     :  1484 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Post-Kernel:   202 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Total      :  1916 cycles (77.5% Kernel + 22.5% Overhead, 1484 + 432)
+===== Profiling _MERGE_CONVRQ_PASS_0_input_0_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_input_0_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1375 cycles
+[_MERGE_CONVRQ_PASS_0_input_0_transpose_L2][SB][0 ops][Tile 0] Kernel     :  7384 cycles
+[_MERGE_CONVRQ_PASS_0_input_0_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1388 cycles
+[_MERGE_CONVRQ_PASS_0_input_0_transpose_L2][SB][0 ops][Tile 0] Total      : 10147 cycles (72.8% Kernel + 27.2% Overhead, 7384 + 2763)
+===== Profiling _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   144 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   328 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   117 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :   589 cycles (55.7% Kernel + 44.3% Overhead, 328 + 261)
+===== Profiling _MERGE_CONVRQ_PASS_0_L2 =====
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Pre-Kernel :  1342 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Kernel     :444387 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Post-Kernel: 10265 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Total      :455994 cycles (97.5% Kernel + 2.5% Overhead, 444387 + 11607)
+===== Profiling _MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  9968 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 68393 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  7715 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 86076 cycles (79.5% Kernel + 20.5% Overhead, 68393 + 17683)
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  9963 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 67335 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  2630 cycles
+[_MERGE_CONVRQ_PASS_0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Total      : 79928 cycles (84.2% Kernel + 15.8% Overhead, 67335 + 12593)

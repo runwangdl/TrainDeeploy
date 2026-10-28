@@ -1,0 +1,16 @@
+================ EVAL b1_zs  (Tests/Models/speechnet_infer_b1_zs_isft_fw) ================
+---- b1_zs summary ----
+  >> [179/180]  true=5  pred=5  CORRECT  sim_errors=0
+Balanced accuracy : 0.8056  (80.56%)
+Overall accuracy  : 145/180 evaluated = 0.8056
+================ EVAL b2_zs  (Tests/Models/speechnet_infer_b2_zs_isft_fw) ================
+---- b2_zs summary ----
+  >> [179/180]  true=8  pred=8  CORRECT  sim_errors=0
+Balanced accuracy : 0.8167  (81.67%)
+Overall accuracy  : 147/180 evaluated = 0.8167
+================ EVAL b2_ft  (Tests/Models/speechnet_infer_b2_ft_isft_fw) ================
+---- b2_ft summary ----
+  >> [180/180]  true=6  pred=6  CORRECT  sim_errors=0
+Balanced accuracy : 0.8944  (89.44%)
+Overall accuracy  : 161/180 evaluated = 0.8944
+ALL EVALS DONE

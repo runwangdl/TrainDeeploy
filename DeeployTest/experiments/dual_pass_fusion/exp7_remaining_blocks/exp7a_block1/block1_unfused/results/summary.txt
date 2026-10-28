@@ -1,0 +1,16 @@
+exp7a block 1 step 0 -- unfused QZO conv baseline (deployed flow: 2 perturb nodes + transposes + pulp_nn_conv_i8_i8_i8), Siracusa GVSoC
+fixture Tests/Kernels/Integer/QZO_Conv_B1 (build_qzo_conv_fixture.py --block 1, source speechnet_qzo19_train), L1 128000, L2 1500000, 8 cores
+
+correctness                : Errors: 0 out of 19712 (exact int8 compare)
+whole fixture, one pass    : 469,934 cycles (plain run)   both passes = 2 x = 939,868   @370 MHz 2.54 ms
+  core-0 node sum          : 460,584 (rest 9,350 = DMA/control outside the profiled nodes)
+conv node                  : 401,397 (87.1%)  both passes 802,794
+perturb w + b              : 37,277 + 2,256 = 39,533 (8.6%)
+transposes in / w / out    : 6,586 / 2,363 / 10,705 = 19,654 (4.3%)
+everything except the conv : 59,187 (12.9%)  -> upper bound of what removing nodes alone can save
+cluster MAC/cycle (conv)   : 6.29   (block 0 exp3: 0.473)   MACs per pass 2,523,136
+core-0 instr per MAC       : 0.93   (block 0: 9.18)   core 0 = 4 rows x 44 px x 16 ch x 128 = 360,448 MACs
+conv IPC / I-cache stall   : 0.8375 / 28,670 = 7.1% of conv cycles (block 0: 22.8 %)
+load balance (pulp-nn)     : rows 4/4/4/2 x 2 column sections of 44 -> px per core 176 x6, 88 x2 -> 87.5%
+weight perturb per element : 37,277 cyc / 256 elements per core = 146 cyc/element (block 0: 2,509 for 4 elements per core)
+tiles                      : every node 1 tile

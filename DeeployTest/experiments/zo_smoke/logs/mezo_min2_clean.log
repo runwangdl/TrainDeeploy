@@ -1,0 +1,92 @@
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+Consolidate compiler generated dependencies of target pulp-nnx
+[  0%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  3%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 95%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[ 98%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[100%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_zo_train
+[100%] Built target speechnet_zo_train
+[Deeploy] Could not parse error count from output
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_zo_train
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  0%] Built target pulp-nnx
+[  3%] Built target deeploybasic
+[  8%] Built target pulp-sdk
+[ 94%] Built target pulp-nn-mixed
+[ 97%] Built target deeploypulp
+[ 97%] Built target optimizer_network
+[ 98%] Built target training_network
+[ 98%] Built target speechnet_zo_train
+[100%] POST_BUILD
+Error copying file (if different) from "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/*.bin" to "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/gvsoc_workdir/".
+Killed
+Input error: Platform returned an error (exitcode: 137)
+gmake[3]: *** [DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train.dir/build.make:72: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:441: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:448: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train.dir/rule] Error 2
+gmake: *** [Makefile:241: gvsoc_speechnet_zo_train] Error 2
+
+[91m✗ Test speechnet_zo_train FAILED - -1 errors out of -1[0m

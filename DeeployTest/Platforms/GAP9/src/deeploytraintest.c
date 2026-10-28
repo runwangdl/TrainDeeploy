@@ -195,6 +195,10 @@ struct pi_device cluster_dev;
 
 static unsigned int g_train_cycles_acc = 0;
 static unsigned int g_opt_cycles_acc = 0;
+/* RW 2026-10-15: 64-bit totals -- a 540-step BP round (2160 fwd+bwd, ~44 G cycles) wraps the 32-bit counters
+ * above (they stay for the single-step CI parsers); printed as hi/lo halves like the MeZO harness. */
+static uint64_t g_train_cycles_acc64 = 0;
+static uint64_t g_opt_cycles_acc64 = 0;
 
 /* Summary-mode tiling profile (DEEPLOY_PROFILE_SUMMARY=1 at code generation):
  * every tile loop adds its waits here, [level*3 + {ingress wait, kernel, egress
@@ -233,7 +237,7 @@ static void RunTrainingNetworkWrapper(void *args) {
   ResetTimer();
   StartTimer();
   RunTrainingNetwork(pi_core_id(), pi_cl_cluster_nb_cores());
-  g_train_cycles_acc += getCycles();
+  { unsigned int _c = getCycles(); g_train_cycles_acc += _c; g_train_cycles_acc64 += _c; }
   StopTimer();
 }
 
@@ -247,7 +251,7 @@ static void RunOptimizerNetworkWrapper(void *args) {
   ResetTimer();
   StartTimer();
   RunOptimizerNetwork(pi_core_id(), pi_cl_cluster_nb_cores());
-  g_opt_cycles_acc += getCycles();
+  { unsigned int _c = getCycles(); g_opt_cycles_acc += _c; g_opt_cycles_acc64 += _c; }
   StopTimer();
 }
 
@@ -397,6 +401,36 @@ static void CompareLossesOnCluster(void *args) {
  * main
  * ---------------------------------------------------------------------- */
 
+// RW 2026-10-15: ported from the Siracusa BP harness (board accuracy of a BP round needs the trained weights)
+#ifdef DUMP_WEIGHTS
+/* QW: on-device weight extraction (whole function added by QW) ------------- QW
+ * Dump the on-device trainable weights as raw 32-bit hex words (FPU-free, bit-exact).
+ * Reads the persistent training-weight buffers (post-optimizer-update) and prints one
+ * line per weight tensor: "[WDUMP s=<step> wi=<i> n=<#floats>] <hex> <hex> ...".
+ * Parsed off the runner log to reconstruct the actual fine-tuned weights. */
+static void dump_weights(uint32_t step) {
+#if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
+  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+    uint32_t idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
+    uint32_t bytes = DeeployNetwork_inputs_bytes[idx];
+    void *buf = DeeployNetwork_inputs[idx];
+    uint32_t n = bytes / 4u;
+    printf("[WDUMP s=%u wi=%u n=%u]", (unsigned)step, (unsigned)wi, (unsigned)n);
+    for (uint32_t k = 0; k < n; k++) {
+      uint32_t word;
+      if (IS_L2(buf)) {
+        word = ((const uint32_t *)buf)[k];
+      } else {
+        ram_read(&word, (uint8_t *)buf + 4u * k, 4u);
+      }
+      printf(" %08x", (unsigned)word);
+    }
+    printf("\r\n");
+  }
+#endif
+}
+#endif /* DUMP_WEIGHTS */ /* QW: end on-device weight extraction --------------- QW */
+
 int main(void) {
 
 #ifdef POWER_MEASUREMENT
@@ -468,6 +502,18 @@ int main(void) {
   pi_pad_function_set(GPIOs, 1);
   pi_gpio_pin_configure(GPIOs, PI_GPIO_OUTPUT);
   pi_gpio_pin_write(GPIOs, 0);
+#endif
+
+#if !defined(POWER_MEASUREMENT) && !defined(GVSOC_DEFAULT_FREQ)
+  /* RW 2026-10-13 (from the Mamba harness, AI_AGENT/Mamba/board_bringup_2026-10-06.md 2.1): run gvsoc at the
+   * EVK operating point. At the SDK default (cluster 50 MHz) every PSRAM wait is ~7x cheaper in cycles
+   * (FEMBA: 65.0 M gvsoc-default vs 107.8 M gvsoc@370 vs 108.8 M board). -DGVSOC_DEFAULT_FREQ = old clocks. */
+  pi_freq_set(PI_FREQ_DOMAIN_FC, 370 * 1000 * 1000);
+  pi_freq_set(PI_FREQ_DOMAIN_CL, 370 * 1000 * 1000);
+  pi_freq_set(PI_FREQ_DOMAIN_PERIPH, 370 * 1000 * 1000);
+  pi_pmu_voltage_set(PI_PMU_VOLTAGE_DOMAIN_CHIP, 800);
+  printf("[FREQ] FC=%d CL=%d PE=%d Hz\r\n", pi_freq_get(PI_FREQ_DOMAIN_FC), pi_freq_get(PI_FREQ_DOMAIN_CL),
+         pi_freq_get(PI_FREQ_DOMAIN_PERIPH));
 #endif
 
   BISECT(3); /* freq/voltage set */
@@ -564,6 +610,13 @@ int main(void) {
 
   BISECT(8); /* weight copy done — about to enter ROI */
 
+#ifdef BN_FROZEN_STATS /* RW 2026-10-13: Qiwen's frozen-stat BN, as in Siracusa/src/deeploytraintest.c. Without it
+                          the GAP9 BP harness normalised with batch-1 statistics (SpeechNet loss 1.4856 vs 0.011451). */
+  extern uint32_t g_bn_frozen_stats;
+  g_bn_frozen_stats = 1u;
+  printf("[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)\r\n");
+#endif
+
   printf("Starting training (%u optimizer steps x %u accum steps)...\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
 
@@ -648,6 +701,11 @@ int main(void) {
 
     /* ⑤ SGD weight update via Deeploy-compiled OptimizerNetwork. */
     run_optimizer_step();
+#ifdef DUMP_WEIGHTS  // RW 2026-10-15: trained weights after the final optimizer step
+    if (update_step == (uint32_t)N_TRAIN_STEPS - 1u) {
+      dump_weights(update_step);
+    }
+#endif
 
   } /* end update_step loop */
 
@@ -706,6 +764,9 @@ int main(void) {
 
   printf("BENCH train_cycles=%u opt_cycles=%u trainable_bytes=%u\r\n",
          g_train_cycles_acc, g_opt_cycles_acc, trainable_bytes_total);
+  printf("BENCH64 train_cycles_hi=%u train_cycles_lo=%u opt_cycles_hi=%u opt_cycles_lo=%u\r\n",  // RW
+         (unsigned)(g_train_cycles_acc64 >> 32), (unsigned)(g_train_cycles_acc64 & 0xffffffffu),
+         (unsigned)(g_opt_cycles_acc64 >> 32), (unsigned)(g_opt_cycles_acc64 & 0xffffffffu));
   if (deeploy_prof_acc[1] != 0) {
     printf("PROFSUM l2_in=%u l2_kernel=%u l2_out=%u l3_in=%u l3_kernel=%u "
            "l3_out=%u\r\n",

@@ -133,6 +133,14 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "wmem: mark test as using Neureka weight memory")
     config.addinivalue_line("markers", "promote: mark test as exercising the L3->L2 tensor promotion pass")
     config.addinivalue_line("markers", "dma: mark test as DMA test")
+    config.addinivalue_line(  # -- QW
+        "markers", "zo_training: mark test as a MeZO (ZO / QZO) on-device training test (zo_train + zo_update)")
+    config.addinivalue_line(  # -- QW
+        "markers", "qzo_block0: mark test as a SpeechNet block-0 QZO conv kernel test (fused / unfused)")
+    config.addinivalue_line(  # -- QW
+        "markers", "qzo_blocks: mark test as a SpeechNet blocks 1-4 QZO conv kernel test (fused / unfused)")
+    config.addinivalue_line(  # RW 2026-10-13
+        "markers", "speechnet_gap9: mark test as a SpeechNet fine-tuning gate on GAP9 (ZO / QZO / QZO+ECO / BP)")
     config.addinivalue_line(
         "markers",
         "deeploy_internal: mark test as internal Deeploy test (state serialization, extensions, transformations)")

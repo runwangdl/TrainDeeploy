@@ -10,7 +10,8 @@ import sys
 import numpy as np
 import onnx
 import onnx_graphsurgeon as gs
-from testUtils.codeGenerateTraining import generateTrainingTestNetwork
+from testUtils.codeGenerateTraining import _load_reference_zo_losses, generateTrainingTestNetwork, \
+    generateZOTestOutputsHeader  # -- QW
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import TrainingDBOnlyL3Tiler, TrainingDBTiler, TrainingSBTiler
@@ -20,7 +21,18 @@ from testUtils.trainingUtils import _GRAD_ACC, _infer_data_size, _infer_n_accum,
 from testUtils.typeMapping import inferTypeAndOffset
 
 from Deeploy.AbstractDataTypes import PointerClass
-from Deeploy.CommonExtensions.DataTypes import float32_t, uint8_t
+from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int16_t, int32_t, int64_t, uint8_t
+
+# QW: map every ONNX-declared element type to its Deeploy pointer type, so graph inputs are typed by the ONNX
+#     (not by value inference, which mis-types int8 weights, int64 labels, etc.). Mirrors testMVPOptimizer.
+_ONNX_ELEM_TO_PTR = {
+    onnx.TensorProto.FLOAT: float32_t,
+    onnx.TensorProto.INT8: int8_t,
+    onnx.TensorProto.INT16: int16_t,
+    onnx.TensorProto.INT32: int32_t,
+    onnx.TensorProto.INT64: int64_t,
+    onnx.TensorProto.UINT8: uint8_t,
+}
 from Deeploy.DeeployTypes import CodeGenVerbosity, _NoVerbosity
 from Deeploy.Logging import DEFAULT_LOGGER as log
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
@@ -30,6 +42,8 @@ from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses
 from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
+from Deeploy.EngineExtension.NetworkDeployers.EngineColoringDeployer import \
+    EngineColoringDeployerWrapper  # -- QW (GAP9_w_NE16)
 
 
 def _loadFetchBytes(path):
@@ -80,12 +94,28 @@ def generateTiledTrainingNetwork(args) -> None:
         graph.cleanup()
         log.debug("Stripped UNDEFINED-typed unused optional outputs from graph nodes")
 
+    # 1b. QW (dual_pass_fusion exp8): both ZO passes in ONE graph execution -- the dual-pass rewrite (channel-stacked
+    #     [+ | -] between the fused convs, L+ / L- as outputs 0 / 1). The harness must be built -D ZO_FUSED_DUAL=ON.
+    if getattr(args, "zo_fused_dual", False):  # -- QW
+        from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.ZODualPassFusion import \
+            zoDualPassFusion  # -- QW
+        _ne16 = {int(v) for v in args.zo_fused_dual_ne16.split(',') if v.strip()} if args.zo_fused_dual_ne16 else set()
+        graph = zoDualPassFusion(graph, ne16_convs = _ne16)  # -- QW
+        log.info("[ZO] dual-pass graph: %d nodes, outputs %s", len(graph.nodes), [o.name for o in graph.outputs])
+
     # 2. Load inputs.npz.
     inputs_path = f'{args.dir}/inputs.npz'
     inputs = np.load(inputs_path)
 
     # 3. Platform setup.
     platform, signProp = mapPlatform(args.platform)
+
+    # -- QW (exp16c_SDK_port phase 3): NE16 engine flags, mirroring testMVP.py:77-82. Without these
+    #    the NE16 engine claims nothing and the whole QZO training graph falls back to the cluster.
+    if getattr(args, "enable_3x3", False):  # -- QW
+        platform.engines[0].enable3x3 = True  # -- QW
+    if getattr(args, "enable_1xk", False):  # -- QW
+        platform.engines[0].enable1xK = True  # -- QW
     log.debug(f"Platform: {platform} (sign: {signProp})")
 
     clusters = [engine for engine in platform.engines if isinstance(engine, (PULPClusterEngine, GAP9ClusterEngine))]
@@ -117,7 +147,17 @@ def generateTiledTrainingNetwork(args) -> None:
         else:
             arr = npz_base[npz_idx]
             npz_idx += 1
-            if arr.dtype == bool or arr.dtype == np.bool_:
+            # QW: honor the ONNX-declared element type for EVERY graph input — quantized-ZO int8/int32 conv
+            #     weights+biases, fp32 BN γ/β + fc weight/bias, and the int64 label. Value inference
+            #     (astype(float32)+inferTypeAndOffset) mis-types them (int8 weight→float32, int64 label→
+            #     float32), so the RQSPerturb / RequantizedConv / BatchNormInternal / SoftmaxCrossEntropyLoss
+            #     bindings reject them. Mirrors testMVPOptimizer._ONNX_ELEM_TO_PTR (7cc4199). -- QW
+            _et = onnx_graph.graph.input[graph_idx].type.tensor_type.elem_type
+            _ptr = _ONNX_ELEM_TO_PTR.get(_et)
+            if _ptr is not None:
+                inputTypes[f"input_{graph_idx}"] = PointerClass(_ptr)
+                inputOffsets[f"input_{graph_idx}"] = 0
+            elif arr.dtype == bool or arr.dtype == np.bool_:
                 inputTypes[f"input_{graph_idx}"] = PointerClass(uint8_t)
                 inputOffsets[f"input_{graph_idx}"] = 0
             elif arr.dtype in (np.float32, np.float64):
@@ -148,6 +188,14 @@ def generateTiledTrainingNetwork(args) -> None:
                            conv_channels_first = args.convChannelsFirst,
                            scheduler = recomputeScheduler(args.recomputeSchedule) if args.recomputeSchedule else
                            (_mockScheduler if args.identitySchedule else _memoryMinimisingScheduler))
+
+    # QW: make the deployer engine-color-aware for composite platforms (GAP9 + NE16).
+    #     Mirrors testMVP.py:98-100. MUST sit between mapDeployer() and setupMemoryPlatform():
+    #     EngineColoringDeployer interleaves an EngineColoringPass between every pair of lowering
+    #     passes, and setupMemoryPlatform requires an UNWRAPPED platform. On a non-composite
+    #     platform this is a no-op, so it is gated by name rather than applied unconditionally.
+    if args.platform in ("Siracusa_w_neureka", "GAP9_w_NE16"):  # -- QW
+        deployer = EngineColoringDeployerWrapper(deployer)  # -- QW
 
     # 7. Set up memory hierarchy.
     L3 = MemoryLevel(name = "L3", neighbourNames = ["L2"], size = 64_000_000)
@@ -257,6 +305,14 @@ def generateTiledTrainingNetwork(args) -> None:
 
     if grad_buf_start_idx > num_data:
         init_weights = list(npz_base[num_data:grad_buf_start_idx])
+    elif grad_buf_start_idx == -1 and len(graph_input_names) > num_data:
+        # QW: the ZO train graph has no gradient-accumulation buffers, so every input after the
+        #     data inputs is a trainable weight (running to the end of the graph inputs). Set the
+        #     "grad start" to the input count so num_weight_inputs is emitted correctly and the
+        #     harness copies testInitWeights into the (deploy-promoted) weight buffers — otherwise
+        #     the weight inputs stay uninitialized and the forward produces NaN. -- QW
+        grad_buf_start_idx = len(graph_input_names)  # -- QW
+        init_weights = list(npz_base[num_data:grad_buf_start_idx])  # -- QW
     else:
         init_weights = []
 
@@ -280,6 +336,24 @@ def generateTiledTrainingNetwork(args) -> None:
                                 init_weights = init_weights,
                                 data_size = data_size,
                                 tolerance_abs = args.tolerance_abs)
+
+    # 14b. MeZO (ZO) mode: swap only the outputs-header emitter. The BP emitter
+    # (already run inside generateTrainingTestNetwork) greps the first 'loss'
+    # key; ZO instead needs explicit loss_plus / loss_minus references. Re-emit
+    # testoutputs.h with the ZO emitter, leaving all other files untouched. -- QW
+    if getattr(args, 'zo', False):  # -- QW
+        zo_lp, zo_lm = _load_reference_zo_losses(args.dir)  # -- QW
+        zo_out = generateZOTestOutputsHeader(reference_loss_plus = zo_lp,  # -- QW
+                                             reference_loss_minus = zo_lm,  # -- QW
+                                             tolerance_abs = args.tolerance_abs)  # -- QW
+        zo_out_path = os.path.join(args.dumpdir, 'testoutputs.h')  # -- QW
+        with open(zo_out_path, 'w') as f:  # -- QW
+            f.write(zo_out)  # -- QW
+        clang_format = "{BasedOnStyle: llvm, IndentWidth: 2, ColumnLimit: 160}"  # -- QW
+        os.system(f'clang-format -i --style="{clang_format}" {zo_out_path}')  # -- QW
+        log.info(f"[ZO] Re-emitted {zo_out_path} with loss_plus/loss_minus references "  # -- QW
+                 f"(plus={None if zo_lp is None else len(zo_lp)}, "  # -- QW
+                 f"minus={None if zo_lm is None else len(zo_lm)})")  # -- QW
 
     # 15. Write resolved config for execution.py to pick up.
     meta = {
@@ -331,6 +405,30 @@ if __name__ == '__main__':
         metavar = "SUBSTR[,SUBSTR...]",
         help = "Restrict tiling profiling to nodes whose name contains any of the given comma-separated "
         "substrings. E.g. --profileNodes=conv_stem,ds_blocks_0_dw  (default: profile all nodes).")
+    parser.add_argument("--zo-fused-dual",  # -- QW exp8
+                        dest = "zo_fused_dual",
+                        action = "store_true",
+                        default = False,
+                        help = "Rewrite the ZO training graph into the dual-pass form (both passes in one execution).")
+    parser.add_argument("--zo-fused-dual-ne16",  # -- QW exp8
+                        dest = "zo_fused_dual_ne16",
+                        type = str,
+                        default = "",
+                        help = "With --zo-fused-dual on GAP9_w_NE16: comma-separated conv indices emitted in NE16 form.")
+    parser.add_argument("--zo",  # -- QW
+                        action = "store_true",  # -- QW
+                        help = "MeZO (ZO) mode: emit loss_plus/loss_minus references in testoutputs.h "  # -- QW
+                        "instead of the BP single-loss reference.")  # -- QW
+    parser.add_argument('--enable-1xk',  # -- QW
+                        dest = "enable_1xk",
+                        action = "store_true",
+                        default = False,
+                        help = 'GAP9_w_NE16: let NE16 claim 1xK / Kx1 dense convs\n')
+    parser.add_argument('--enable-3x3',  # -- QW
+                        dest = "enable_3x3",
+                        action = "store_true",
+                        default = False,
+                        help = 'GAP9_w_NE16: let NE16 claim 3x3 / depthwise convs\n')
     parser.add_argument("--shouldFail", action = "store_true")
     parser.add_argument('--promoteToL2',
                         action = 'store_true',

@@ -1,0 +1,7 @@
+[QZO_DualConv2in block 3] wrote /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv2in_B3
+  node      : RequantizedDualConv inputs=['/blocks_3_conv_input_quant_1/Clip_output_0', 'blocks.3.conv.weight_int8', 'QSTANDALONE_QCDQ_/blocks_3_conv_output_quant_1/Clip_Quant_mul_pc', 'blocks.3.conv.bias_rqsadd', 'blocks.3.conv.weight_int8_pmul', 'blocks.3.conv.bias_rqsadd_pmul', '/blocks_3_conv_input_quant_1/Clip_output_0_minus']
+  attrs     : seed_w 42 idx_w 6 div_w 32768  seed_b 42 idx_b 7 div_b 65536  div 65536  weight_chw 1
+  x+        : (1, 16, 14, 5) range [0,71]
+  x-        : (1, 16, 14, 5) range [0,58]  638/1120 differ from x+
+  A+ == full graph block output: True;  A+ vs A-: 1015/1280 differ
+  output    : /blocks_3_conv_dual_output_0 (1, 64, 8, 5) int8 (ch 0-31 = A+, 32-63 = A-)

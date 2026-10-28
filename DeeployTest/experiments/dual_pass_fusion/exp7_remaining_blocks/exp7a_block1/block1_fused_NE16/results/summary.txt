@@ -1,0 +1,34 @@
+exp7a block 1 step 7 -- exp6's four measurements on GAP9 (GVSoC), both passes, fixture level (NCHW in / out), exact compare
+deeploy_gap9; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8 (Run's kernel-fixture setting; GAP9 kernel harness keeps the
+cluster stacks in L1, so exp6's 92000 no longer fits on this branch). Kernels DualConv2In.c / Conv4x2.c / NE16DualPrep.c at -O3.
+
+                                                                    cycles      vs A   exact
+A     2 x pulp-nn on the GAP9 cluster (QZO_Conv_B1)              741,872      1.00x   0/19712 per pass (370,936 per pass)
+B     2 x NE16 im2col route, single pass (QZO_Conv_NE16_B1)      911,630      0.81x   0/19712 per pass (455,815 per pass)
+C_cl  fused two-input kernel on the cluster (QZO_DualConv2in_B1)  502,274      1.48x   0/39424
+C     fused on NE16: 2 columns, 2 NE16 jobs, shared-seed prep    903,653      0.82x   0/39424
+      (QZO_DualConv2in_NE16_B1)
+
+A/B = 0.81 (NE16 route SLOWER than pulp-nn on block 1; block 0: 1.93x)   B/C = 1.01 (no fusion gain on NE16)
+C_cl/C = 0.56 (the fused cluster kernel is 1.80x faster than fused NE16)
+
+per node (GAP9 master-core wall time, one pass unless stated):
+                                A (pulp-nn)   B (NE16)    C_cl (both)   C (both passes)
+  perturb w + b nodes              19,231       19,319         --            --
+  NE16 prep (encode + bias)          --         17,474         --        64,586  (2 x dual_wenc 21.0k + 2 x dual_bias 11.3k)
+  weight transpose                  3,346         --           --            --
+  input transpose(s)                9,662         --         19,200          --
+  im2col column buffer (cluster)     --        291,205         --       582,433  (2 x 291.2k; 157,696 B per pass, 2 tiles)
+  conv: pulp-nn / NE16 job / fused 310,898      103,199      425,211       206,708  (2 x 103.4k, 6 tiles each)
+  output transpose                 30,941       30,916       60,445        61,851
+
+Reading: the NE16 job does block 1's MACs in 103 k vs pulp-nn's 311 k (3.0x), but the cluster-side column buffer
+(byte-wise copy + 0x80 of 158 kB per pass, 2 tiles) costs 291 k -- as much as the whole pulp-nn conv. Block 1 has no shared
+column between the passes, so C = 2 x B minus a little prep. Both are the targets of the planned SDK work: word-wise column
+copy (the cluster gather got this in step 5d) and the SDK's double-buffered column + 2-deep NE16 job queue, which would hide the
+column behind the NE16 job when it is shorter than it.
+
+-Os vs -O3: before adding DualConv2In.c / Conv4x2.c / NE16DualPrep.c to the GAP9 -O3 list, C_cl was 991,489 (fused node
+914 k) and C 913,781 -- logs *_Os.log, tables *_Os.md.
+Side checks (not used): B at --l1 64000: 466,346; at 56000: 467,153 (logs gap9_B_l1probe_*); exp6's block-0 B fixture at
+--l1 92000 fails the L1 arena allocation on this branch (gap9_exp6_block0_B_recheck.log).

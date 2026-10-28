@@ -32,6 +32,15 @@ class DeeployTestConfig:
     # Directory containing the optimizer ONNX (network.onnx with SGD nodes).
     # If None, defaults to <test_dir>/../simplemlp_optimizer when training=True.
     optimizer_dir: Optional[str] = None
+    # MeZO (ZO) on-device training path. When True, generate_network drives the
+    # ZO two-graph codegen (zo_train + zo_update) and configure_cmake selects the
+    # MEZO_TRAINING harness. Mutually exclusive with `training` (BP). -- QW
+    mezo: bool = False  # -- QW
+    zo_eps: Optional[float] = None  # -- QW  MeZO perturbation epsilon (None -> runner default)
+    zo_lr: Optional[float] = None   # -- QW  MeZO learning rate (None -> runner default)
+    zo_q: int = 1                   # -- QW  MeZO random directions per step
+    zo_seed: int = 0                # -- QW  MeZO base seed
+    optimizer_l1: Optional[int] = None  # RW  L1 budget of the update graph (default: same as --l1)
 
     def __post_init__(self):
         if self.cmake_args is None:

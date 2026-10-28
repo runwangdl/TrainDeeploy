@@ -1,0 +1,52 @@
+exp5a -- breakdown of exp5's gain into "kernel rewrite" and "fusion"   (Siracusa GVSoC, 8 cores, tiled L1 128000 / L2 1500000)
+
+A = 2 x exp3   (pulp_nn_conv_i8_i8_i8, two graph executions)         per pass: 858,185   conv node: 664,646
+B = 2 x exp5a  (PULP_FlatConv2d, single pass, same graph, x2)          per pass: 638,519   conv node: 445,028
+C = exp5       (PULP_DualConv2d, fused)                                          910,763   conv node: 614,979
+
+correctness (exp5a): Errors: 0 out of 78512, exact integer compare against exp3's outputs.npz (the rewrite is bit-identical to pulp-nn)
+
+                          A            B            C        A/B (rewrite)   B/C (fusion)   A/C
+whole fixture         1,716,370    1,277,038     910,763       1.344x          1.402x       1.885x
+conv node             1,329,292      890,056     614,979       1.494x          1.447x       2.162x
+
+=> the two contributions are of the SAME size. exp5a's Plan §6 predicted fusion ~5-8 % at the node level; measured 45 %.
+   Meeting_Brief §6.4's estimated split ("fusion ~10 %") was wrong and is corrected there.
+
+where B - C = 366,275 cycles (what fusion removes), by node:
+  conv node                     275,077   (75 %)   -- per-pixel work that does not depend on the pass is done once instead of twice
+  output transpose               62,649   (17 %)   -- 2 x 136,674 -> 210,699 (one 2x tensor, 3 tiles, vs two tensors)
+  outside-node DMA/tiling        10,537            -- 2 x 43,398 -> 76,259 (second graph execution gone, but conv now 2 tiles)
+  2 perturb nodes                 9,162            -- done inside the kernel (phase 1)
+  input transpose                 8,115            -- run once instead of twice
+  weight transpose                  735            -- unperturbed weight transposed once
+where A - B = 439,332 cycles (what the rewrite removes): conv node 439,236 (100 %); every other node identical to exp3 (+-100 cyc).
+
+core 0, conv node, per output pixel per pass:
+                          pulp-nn (A)    flat (B)    fused (C)
+  cycles                     474.7        362.7       250.6
+  instructions               293.8        302.2       213.5
+  IPC                        0.619        0.833       0.852
+  I-fetch stall cycles       108.1          1.5         2.1
+  load-use stall cycles       25.4         20.0        14.5
+  loads                       70.8         47.0        33.6
+  stores                      36.1         12.1        10.6
+  branches                    15.1         28.0        17.5
+  (A: /1,400 px; B: /1,227 px; C: /1,227 px /2 passes)
+
+what fusion shares, from B and C (core 0, per pixel):  S + P = single pass,  S + 2P = fused
+  instructions:  S + P = 302.2,  S + 2P = 427.0   ->  P = 124.8 per pass (8 channels: dot, requant, store),  S = 177.4 pass-independent
+  cycles:        S + P = 362.7,  S + 2P = 501.2   ->  P = 138.5 per pass,                                     S = 224.2 pass-independent
+  i.e. 62 % of the single-pass kernel's per-pixel cycles are pass-INdependent (gather, bounds tests, pixel loop, parameter reloads
+  from the stack, per-tile setup). Fusion pays them once for both passes; that -- not the activation-load sharing -- is the fusion gain.
+  It is also the quantitative case for optimisation #1 (tighten the pixel loop): S is overhead, not arithmetic.
+
+why the rewrite wins (B vs A, per pass-pixel): fetch stalls 108 -> 1.5 (per-pixel route 896 B single function vs 4-function 1.2 KB
+  route into a 512 B L0), load balance 87.4 % -> 99.8 % (1,400 -> 1,227 critical-path pixels), calls/prologue/spills gone
+  (loads 71 -> 47, stores 36 -> 12); instruction count is NOT lower (294 -> 302: the byte-wise bounds-tested gather costs more
+  instructions than pulp-nn's word im2col + generic paths save). The flat kernel wins on stalls and balance, not on instructions.
+
+tiling: exp5a identical to exp3 (conv 1 tile, transpose 2 tiles, outside-node 43,398 vs 43,499) -- the only change is the kernel.
+code size: flat 896 B, dual 1,828 B, pulp-nn route 4,694 B (results/code_size.txt).
+revert check: with the default (pulp-nn) mapper line restored, QZO_Conv reproduces exp3: 857,891 cycles, 0/78512
+  (logs/run_plain_default_after_revert.log; generated Network.c calls pulp_nn_conv_i8_i8_i8 again).

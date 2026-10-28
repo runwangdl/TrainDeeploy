@@ -1,0 +1,6 @@
+zo p30_e120 S01: MeZO lr=3e-06 eps=0.01 q=1 n_accum=4 (MEAN) epochs=120 per_class=6 seed=42 order=cyclic rng=device draw=device | Rademacher, frozen pretraining BN stats, batch-1, forward-only | max_steps=0
+      r1: next  88.89  held-out  85.71  train  88.89
+      r2: next  81.67  held-out  90.48  train  92.59
+      r3: next  90.00  held-out  84.13  train  83.33
+      r4: next  83.89  held-out  90.48  train  90.74
+DONE zo p30_e120 S01: mean val_next 86.11  val_in 87.70  steps [1620, 1620, 1620, 1620]  (55s)

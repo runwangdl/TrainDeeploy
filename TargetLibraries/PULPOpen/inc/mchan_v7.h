@@ -34,6 +34,7 @@
 #endif
 
 #include "pmsis.h"
+#include <assert.h>  // -- QW: mchan_v7.h uses assert()
 
 #define MCHAN_TRANSFER_LEN_SIZE (17)
 #define MCHAN_CHANNEL_ID_MAX (15)

@@ -1,0 +1,127 @@
+2026-10-26 00:03:16 launch container PARALLEL=3
+2026-10-26 00:03:16 start eco p30_e120 S01
+2026-10-26 00:03:16 start eco p30_e120 S02
+2026-10-26 00:03:16 start eco p30_e120 S03
+2026-10-26 01:04:05 launch native PARALLEL=1
+2026-10-26 01:04:05 start zo p30_e120 S01
+2026-10-26 01:05:03 end   zo p30_e120 S01 : DONE zo p30_e120 S01: mean val_next 86.11  val_in 87.70  steps [1620, 1620, 1620, 1620]  (55s)
+2026-10-26 01:05:03 start zo p30_e120 S02
+2026-10-26 01:06:04 end   zo p30_e120 S02 : DONE zo p30_e120 S02: mean val_next 70.56  val_in 75.20  steps [1620, 1620, 1620, 1620]  (57s)
+2026-10-26 01:06:04 start zo p30_e120 S03
+2026-10-26 01:07:02 end   zo p30_e120 S03 : DONE zo p30_e120 S03: mean val_next 68.61  val_in 74.80  steps [1620, 1620, 1620, 1620]  (55s)
+2026-10-26 01:07:02 start zo p30_e120 S04
+2026-10-26 01:07:58 end   zo p30_e120 S04 : DONE zo p30_e120 S04: mean val_next 86.67  val_in 87.90  steps [1620, 1620, 1620, 1620]  (54s)
+2026-10-26 01:07:58 start zo p70_eq1620 S01
+2026-10-26 01:08:55 end   zo p70_eq1620 S01 : DONE zo p70_eq1620 S01: mean val_next 86.39  val_in 86.57  steps [1620, 1620, 1620, 1620]  (54s)
+2026-10-26 01:08:55 start zo p70_eq1620 S02
+2026-10-26 01:09:55 end   zo p70_eq1620 S02 : DONE zo p70_eq1620 S02: mean val_next 72.08  val_in 78.24  steps [1620, 1620, 1620, 1620]  (57s)
+2026-10-26 01:09:55 start zo p70_eq1620 S03
+2026-10-26 01:10:53 end   zo p70_eq1620 S03 : DONE zo p70_eq1620 S03: mean val_next 67.36  val_in 74.07  steps [1620, 1620, 1620, 1620]  (55s)
+2026-10-26 01:10:53 start zo p70_eq1620 S04
+2026-10-26 01:11:45 end   zo p70_eq1620 S04 : DONE zo p70_eq1620 S04: mean val_next 86.67  val_in 86.11  steps [1620, 1620, 1620, 1620]  (50s)
+2026-10-26 01:11:45 start bp p30_e40 S01
+2026-10-26 01:12:04 end   bp p30_e40 S01 : DONE bp p30_e40 S01: mean val_next 82.50  val_in 85.71  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:12:04 start bp p30_e40 S02
+2026-10-26 01:12:21 end   bp p30_e40 S02 : DONE bp p30_e40 S02: mean val_next 71.11  val_in 78.17  steps [540, 540, 540, 540]  (15s)
+2026-10-26 01:12:21 start bp p30_e40 S03
+2026-10-26 01:12:39 end   bp p30_e40 S03 : DONE bp p30_e40 S03: mean val_next 71.53  val_in 78.17  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:12:39 start bp p30_e40 S04
+2026-10-26 01:12:57 end   bp p30_e40 S04 : DONE bp p30_e40 S04: mean val_next 85.56  val_in 87.30  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:12:57 start bp p70_eq540 S01
+2026-10-26 01:13:15 end   bp p70_eq540 S01 : DONE bp p70_eq540 S01: mean val_next 84.44  val_in 89.81  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:13:15 start bp p70_eq540 S02
+2026-10-26 01:13:33 end   bp p70_eq540 S02 : DONE bp p70_eq540 S02: mean val_next 78.89  val_in 84.72  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:13:33 start bp p70_eq540 S03
+2026-10-26 01:13:51 end   bp p70_eq540 S03 : DONE bp p70_eq540 S03: mean val_next 73.47  val_in 81.02  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:13:51 start bp p70_eq540 S04
+2026-10-26 01:14:09 end   bp p70_eq540 S04 : DONE bp p70_eq540 S04: mean val_next 86.39  val_in 87.50  steps [540, 540, 540, 540]  (16s)
+2026-10-26 01:14:09 start bp p30_e120 S01
+2026-10-26 01:14:53 end   bp p30_e120 S01 : DONE bp p30_e120 S01: mean val_next 82.78  val_in 84.72  steps [1620, 1620, 1620, 1620]  (42s)
+2026-10-26 01:14:53 start bp p30_e120 S02
+2026-10-26 01:15:37 end   bp p30_e120 S02 : DONE bp p30_e120 S02: mean val_next 70.69  val_in 76.98  steps [1620, 1620, 1620, 1620]  (41s)
+2026-10-26 01:15:37 start bp p30_e120 S03
+2026-10-26 01:16:21 end   bp p30_e120 S03 : DONE bp p30_e120 S03: mean val_next 70.56  val_in 77.38  steps [1620, 1620, 1620, 1620]  (41s)
+2026-10-26 01:16:21 start bp p30_e120 S04
+2026-10-26 01:17:04 end   bp p30_e120 S04 : DONE bp p30_e120 S04: mean val_next 84.31  val_in 85.71  steps [1620, 1620, 1620, 1620]  (40s)
+2026-10-26 01:17:04 start bp p70_eq1620 S01
+2026-10-26 01:17:52 end   bp p70_eq1620 S01 : DONE bp p70_eq1620 S01: mean val_next 86.25  val_in 93.52  steps [1620, 1620, 1620, 1620]  (46s)
+2026-10-26 01:17:52 start bp p70_eq1620 S02
+2026-10-26 01:18:46 end   bp p70_eq1620 S02 : DONE bp p70_eq1620 S02: mean val_next 78.61  val_in 86.57  steps [1620, 1620, 1620, 1620]  (51s)
+2026-10-26 01:18:46 start bp p70_eq1620 S03
+2026-10-26 01:19:38 end   bp p70_eq1620 S03 : DONE bp p70_eq1620 S03: mean val_next 74.44  val_in 81.02  steps [1620, 1620, 1620, 1620]  (49s)
+2026-10-26 01:19:38 start bp p70_eq1620 S04
+2026-10-26 01:20:25 end   bp p70_eq1620 S04 : DONE bp p70_eq1620 S04: mean val_next 85.69  val_in 87.96  steps [1620, 1620, 1620, 1620]  (45s)
+2026-10-26 01:20:25 start zo p70_e120 S01
+2026-10-26 01:22:38 end   zo p70_e120 S01 : DONE zo p70_e120 S01: mean val_next 85.69  val_in 87.96  steps [3780, 3780, 3780, 3780]  (131s)
+2026-10-26 01:22:38 start zo p70_e120 S02
+2026-10-26 01:24:53 end   zo p70_e120 S02 : DONE zo p70_e120 S02: mean val_next 75.14  val_in 81.48  steps [3780, 3780, 3780, 3780]  (131s)
+2026-10-26 01:24:53 start zo p70_e120 S03
+2026-10-26 00:24:57 end   eco p30_e120 S03 : DONE eco p30_e120 S03: mean val_next 67.92  val_in 75.00  steps [1620, 1620, 1620, 1620]  (1226s)
+2026-10-26 00:24:57 start eco p30_e120 S04
+2026-10-26 00:25:04 end   eco p30_e120 S02 : DONE eco p30_e120 S02: mean val_next 73.61  val_in 77.58  steps [1620, 1620, 1620, 1620]  (1224s)
+2026-10-26 00:25:04 start eco p70_eq1620 S01
+2026-10-26 00:25:28 end   eco p30_e120 S01 : DONE eco p30_e120 S01: mean val_next 87.36  val_in 88.29  steps [1620, 1620, 1620, 1620]  (1251s)
+2026-10-26 00:25:28 start eco p70_eq1620 S02
+2026-10-26 01:27:06 end   zo p70_e120 S03 : DONE zo p70_e120 S03: mean val_next 69.03  val_in 75.00  steps [3780, 3780, 3780, 3780]  (131s)
+2026-10-26 01:27:06 start zo p70_e120 S04
+2026-10-26 01:29:26 end   zo p70_e120 S04 : DONE zo p70_e120 S04: mean val_next 86.39  val_in 87.50  steps [3780, 3780, 3780, 3780]  (137s)
+2026-10-26 01:29:26 start bp p70_e40 S01
+2026-10-26 01:30:02 end   bp p70_e40 S01 : DONE bp p70_e40 S01: mean val_next 85.83  val_in 93.52  steps [1260, 1260, 1260, 1260]  (33s)
+2026-10-26 01:30:02 start bp p70_e40 S02
+2026-10-26 01:30:41 end   bp p70_e40 S02 : DONE bp p70_e40 S02: mean val_next 79.17  val_in 84.26  steps [1260, 1260, 1260, 1260]  (36s)
+2026-10-26 01:30:41 start bp p70_e40 S03
+2026-10-26 01:31:23 end   bp p70_e40 S03 : DONE bp p70_e40 S03: mean val_next 72.92  val_in 80.09  steps [1260, 1260, 1260, 1260]  (39s)
+2026-10-26 01:31:23 start bp p70_e40 S04
+2026-10-26 01:32:03 end   bp p70_e40 S04 : DONE bp p70_e40 S04: mean val_next 85.97  val_in 87.96  steps [1260, 1260, 1260, 1260]  (37s)
+2026-10-26 01:32:03 ALL DONE native
+2026-10-26 00:32:22 launch extra (reverse optional arms)
+2026-10-26 00:32:23 start qzo p70_e120 S04 (extra)
+2026-10-26 00:44:50 end   eco p70_eq1620 S01 : DONE eco p70_eq1620 S01: mean val_next 85.97  val_in 87.04  steps [1620, 1620, 1620, 1620]  (1113s)
+2026-10-26 00:44:50 start eco p70_eq1620 S03
+2026-10-26 00:44:55 end   eco p30_e120 S04 : DONE eco p30_e120 S04: mean val_next 84.72  val_in 86.90  steps [1620, 1620, 1620, 1620]  (1120s)
+2026-10-26 00:44:56 start eco p70_eq1620 S04
+2026-10-26 00:45:33 end   eco p70_eq1620 S02 : DONE eco p70_eq1620 S02: mean val_next 73.89  val_in 79.63  steps [1620, 1620, 1620, 1620]  (1129s)
+2026-10-26 00:45:33 start qzo p30_e120 S01
+2026-10-26 01:12:21 end   eco p70_eq1620 S03 : DONE eco p70_eq1620 S03: mean val_next 69.44  val_in 76.85  steps [1620, 1620, 1620, 1620]  (1573s)
+2026-10-26 01:12:21 start qzo p30_e120 S02
+2026-10-26 01:12:37 end   eco p70_eq1620 S04 : DONE eco p70_eq1620 S04: mean val_next 85.28  val_in 86.57  steps [1620, 1620, 1620, 1620]  (1591s)
+2026-10-26 01:12:38 start qzo p30_e120 S03
+2026-10-26 01:13:48 end   qzo p30_e120 S01 : DONE qzo p30_e120 S01: mean val_next 85.83  val_in 85.12  steps [1620, 1620, 1620, 1620]  (1604s)
+2026-10-26 01:13:49 start qzo p30_e120 S04
+2026-10-26 01:28:56 end   qzo p70_e120 S04 : DONE qzo p70_e120 S04: mean val_next 84.58  val_in 85.19  steps [3780, 3780, 3780, 3780]  (3279s)
+2026-10-26 01:28:57 start qzo p70_e120 S03 (extra)
+2026-10-26 01:38:42 end   qzo p30_e120 S02 : DONE qzo p30_e120 S02: mean val_next 69.86  val_in 71.83  steps [1620, 1620, 1620, 1620]  (1435s)
+2026-10-26 01:38:42 start qzo p70_eq1620 S01
+2026-10-26 01:38:50 end   qzo p30_e120 S03 : DONE qzo p30_e120 S03: mean val_next 65.83  val_in 69.84  steps [1620, 1620, 1620, 1620]  (1447s)
+2026-10-26 01:38:50 start qzo p70_eq1620 S02
+2026-10-26 01:39:54 end   qzo p30_e120 S04 : DONE qzo p30_e120 S04: mean val_next 82.50  val_in 84.72  steps [1620, 1620, 1620, 1620]  (1444s)
+2026-10-26 01:39:54 start qzo p70_eq1620 S03
+2026-10-26 01:55:37 end   qzo p70_eq1620 S01 : DONE qzo p70_eq1620 S01: mean val_next 85.42  val_in 87.04  steps [1620, 1620, 1620, 1620]  (957s)
+2026-10-26 01:55:37 start qzo p70_eq1620 S04
+2026-10-26 01:55:59 end   qzo p70_eq1620 S02 : DONE qzo p70_eq1620 S02: mean val_next 68.33  val_in 74.07  steps [1620, 1620, 1620, 1620]  (970s)
+2026-10-26 01:55:59 start eco p70_e120 S01
+2026-10-26 01:56:18 end   qzo p70_eq1620 S03 : DONE qzo p70_eq1620 S03: mean val_next 68.33  val_in 75.46  steps [1620, 1620, 1620, 1620]  (922s)
+2026-10-26 01:56:18 start eco p70_e120 S02
+2026-10-26 02:09:37 end   qzo p70_e120 S03 : DONE qzo p70_e120 S03: mean val_next 66.11  val_in 71.76  steps [3780, 3780, 3780, 3780]  (2366s)
+2026-10-26 02:09:37 start qzo p70_e120 S02 (extra)
+2026-10-26 02:13:22 end   qzo p70_eq1620 S04 : DONE qzo p70_eq1620 S04: mean val_next 85.14  val_in 84.26  steps [1620, 1620, 1620, 1620]  (1005s)
+2026-10-26 02:13:22 start eco p70_e120 S03
+2026-10-26 02:32:10 end   eco p70_e120 S01 : DONE eco p70_e120 S01: mean val_next 85.56  val_in 88.89  steps [3780, 3780, 3780, 3780]  (2100s)
+2026-10-26 02:32:11 start eco p70_e120 S04
+2026-10-26 02:34:30 end   eco p70_e120 S02 : DONE eco p70_e120 S02: mean val_next 73.19  val_in 76.39  steps [3780, 3780, 3780, 3780]  (2229s)
+2026-10-26 02:34:30 start qzo p70_e120 S01
+2026-10-26 02:42:35 end   qzo p70_e120 S02 : DONE qzo p70_e120 S02: mean val_next 68.47  val_in 75.93  steps [3780, 3780, 3780, 3780]  (1908s)
+2026-10-26 02:42:35 extra skip qzo p70_e120 S01
+2026-10-26 02:42:35 extra skip eco p70_e120 S04
+2026-10-26 02:42:35 extra skip eco p70_e120 S03
+2026-10-26 02:42:36 extra skip eco p70_e120 S02
+2026-10-26 02:42:36 extra skip eco p70_e120 S01
+2026-10-26 02:42:36 ALL DONE extra
+2026-10-26 02:45:24 end   eco p70_e120 S03 : DONE eco p70_e120 S03: mean val_next 69.31  val_in 77.78  steps [3780, 3780, 3780, 3780]  (1857s)
+2026-10-26 02:45:24 skip  qzo p70_e120 S02
+2026-10-26 02:45:24 skip  qzo p70_e120 S03
+2026-10-26 02:45:24 skip  qzo p70_e120 S04
+2026-10-26 02:59:22 end   eco p70_e120 S04 : DONE eco p70_e120 S04: mean val_next 86.11  val_in 88.89  steps [3780, 3780, 3780, 3780]  (1586s)
+2026-10-26 03:01:03 end   qzo p70_e120 S01 : DONE qzo p70_e120 S01: mean val_next 85.14  val_in 87.50  steps [3780, 3780, 3780, 3780]  (1545s)
+2026-10-26 03:01:03 ALL DONE container
+2026-10-26 04:02:20 README + analysis written; exp21d COMPLETE

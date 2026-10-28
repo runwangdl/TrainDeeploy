@@ -1,0 +1,63 @@
+=== zo round 1  2026-10-28 04:21:47
+[zo_r1] flash.bin 2187264 B -> pad 126976 B -> 2314240 B
+[zo_r1] 03:25:05 flash + run (speechnet_train_ZO_r1)
+[zo_r1] 03:29:43 done after 278 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0x0896ebed
+[WCHK] changed 22/22 trainable tensors after 1890 updates
+Errors: 0 out of 112
+BENCH train_cycles_hi=12 train_cycles_lo=293719551 opt_cycles_hi=0 opt_cycles_lo=109912821
+[W1028 03:29:49.286337240 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+zo round 1: [WDUMP] s=1889
+  val_next  board  90.56   host seed42 e140 90.56
+  val_in    board  85.71   host seed42 e140 85.71
+  train     board  88.89   host seed42 e140 88.89
+=== zo round 2  2026-10-28 04:29:49
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r1/uart.log into fixtures_arm/zo/speechnet_train_ZO_r2/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r1/uart.log into fixtures_arm/zo/speechnet_update_ZO_r2/inputs.npz
+[zo_r2] flash.bin 2187264 B -> pad 126976 B -> 2314240 B
+[zo_r2] 03:33:11 flash + run (speechnet_train_ZO_r2)
+[zo_r2] 03:37:49 done after 278 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0x6b744afd
+[WCHK] changed 22/22 trainable tensors after 1890 updates
+Errors: 111 out of 112
+BENCH train_cycles_hi=12 train_cycles_lo=333561214 opt_cycles_hi=0 opt_cycles_lo=110046681
+[W1028 03:37:54.958757170 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+zo round 2: [WDUMP] s=1889
+  val_next  board  81.11   host seed42 e140 81.11
+  val_in    board  89.68   host seed42 e140 89.68
+  train     board  92.59   host seed42 e140 92.59
+=== zo round 3  2026-10-28 04:37:55
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r2/uart.log into fixtures_arm/zo/speechnet_train_ZO_r3/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r2/uart.log into fixtures_arm/zo/speechnet_update_ZO_r3/inputs.npz
+[zo_r3] flash.bin 2187264 B -> pad 126976 B -> 2314240 B
+[zo_r3] 03:41:13 flash + run (speechnet_train_ZO_r3)
+[zo_r3] 03:45:51 done after 278 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xe86499fe
+[WCHK] changed 22/22 trainable tensors after 1890 updates
+Errors: 108 out of 112
+BENCH train_cycles_hi=12 train_cycles_lo=293135200 opt_cycles_hi=0 opt_cycles_lo=109911989
+[W1028 03:46:00.784236852 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+zo round 3: [WDUMP] s=1889
+  val_next  board  90.00   host seed42 e140 90.0
+  val_in    board  84.13   host seed42 e140 84.13
+  train     board  83.33   host seed42 e140 83.33
+=== zo round 4  2026-10-28 04:46:01
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r3/uart.log into fixtures_arm/zo/speechnet_train_ZO_r4/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/zo_r3/uart.log into fixtures_arm/zo/speechnet_update_ZO_r4/inputs.npz
+[zo_r4] flash.bin 2187264 B -> pad 126976 B -> 2314240 B
+[zo_r4] 03:49:25 flash + run (speechnet_train_ZO_r4)
+[zo_r4] 03:54:09 done after 284 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xc8eb2312
+[WCHK] changed 22/22 trainable tensors after 1890 updates
+Errors: 108 out of 112
+BENCH train_cycles_hi=12 train_cycles_lo=291133156 opt_cycles_hi=0 opt_cycles_lo=109910355
+[W1028 03:54:14.758357370 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+zo round 4: [WDUMP] s=1889
+  val_next  board  85.56   host seed42 e140 85.56
+  val_in    board  90.48   host seed42 e140 90.48
+  train     board  92.59   host seed42 e140 92.59
+=== zo chain done 2026-10-28 04:54:15

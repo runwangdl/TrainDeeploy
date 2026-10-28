@@ -1,0 +1,4 @@
+losses: 2160/2160 bit-equal device == emulator
+weights after step 539: 15489/15489 bit-equal
+printed |device-ref| over 2160 forwards: max 0.000000, #>1e-3 0
+same device trajectory vs the exp17 PyTorch reference: max 9.560e-04, #>1e-3 0, first >1e-5 at fwd 639

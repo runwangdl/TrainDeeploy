@@ -60,7 +60,8 @@ from Deeploy.Targets.PULPOpen.TileConstraints.LayernormTileConstraint import Lay
     LayernormTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MatMulTileConstraint import MatMulTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolGradTileConstraint import MaxPoolGradCTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint, \
+    MaxPoolHCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MSELossTileConstraint import MSELossGradTileConstraint, \
     MSELossTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.ReduceSumTileConstraint import ReduceSumTileConstraint
@@ -121,7 +122,7 @@ GAP9FlattenTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _GAP9Fla
                                                          tileConstraint = NOPTileConstraint())
 
 GAP9MaxPool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPool2DBindings,
-                                                           tileConstraint = MaxPoolCTileConstraint())
+                                                           tileConstraint = MaxPoolHCTileConstraint())  # RW 2026-10-13: row tiles, contiguous DMA
 GAP9MaxPoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPoolGrad2DBindings,
                                                                tileConstraint = MaxPoolGradCTileConstraint())
 
@@ -239,3 +240,35 @@ GAP9InPlaceAccumulatorV2TilingReadyBindings = TilingReadyNodeBindings(
 
 GAP9LayernormGradTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = [GAP9LayernormGradBinding],
                                                                tileConstraint = LayernormGradTileConstraint())
+
+
+# RW 2026-10-13: argmax-mask MaxPool with the GAP9 transformer (see Bindings.py).
+from Deeploy.Targets.GAP9.Bindings import GAP9MaxPoolArgmaxBindings, GAP9MaxPoolGradMaskBindings
+from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint as _MaxPoolCTC
+from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolGradTileConstraint import MaxPoolGradCTileConstraint as _MaxPoolGradCTC
+
+GAP9MaxPoolArgmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPoolArgmaxBindings,
+                                                               tileConstraint = _MaxPoolCTC())
+GAP9MaxPoolGradMaskTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = GAP9MaxPoolGradMaskBindings,
+                                                                 tileConstraint = _MaxPoolGradCTC())
+
+
+# RW 2026-10-13: Qiwen's flat int8 conv kernel (PULPOpen FlatConv.c / FlatConvTemplate) with the GAP9 transformer.
+from Deeploy.Targets.PULPOpen.Templates import FlatConvTemplate as _FCT
+from Deeploy.Targets.PULPOpen.TypeCheckers import PULPConvChecker as _PCC
+from Deeploy.AbstractDataTypes import PointerClass as _PC
+from Deeploy.CommonExtensions.DataTypes import int8_t as _i8, int32_t as _i32
+from Deeploy.DeeployTypes import NodeBinding as _NB
+from Deeploy.Targets.GAP9.Bindings import GAP9Transformer as _G9T
+GAP9RQSConv2DFlatTilingReadyBindings = TilingReadyNodeBindings(
+    nodeBindings = [_NB(_PCC([_PC(_i8), _PC(_i8), _PC(_i32), _PC(_i32), _PC(_i32)], [_PC(_i8)]),
+                        _FCT.referenceTemplate, _G9T)],
+    tileConstraint = RQConv2DTileConstraint())
+
+# -- QW (2026-10-22, per-block breakdown on GAP9): the Conv4x2 control kernel (PULPOpen Conv4x2.c / Conv4x2Template)
+#    with the GAP9 transformer; same tile constraint as pulp-nn's binding, so only the kernel call differs. -- QW
+from Deeploy.Targets.PULPOpen.Templates import Conv4x2Template as _C42T  # -- QW
+GAP9RQSConv2D4x2TilingReadyBindings = TilingReadyNodeBindings(  # -- QW
+    nodeBindings = [_NB(_PCC([_PC(_i8), _PC(_i8), _PC(_i32), _PC(_i32), _PC(_i32)], [_PC(_i8)]),
+                        _C42T.referenceTemplate, _G9T)],
+    tileConstraint = RQConv2DTileConstraint())

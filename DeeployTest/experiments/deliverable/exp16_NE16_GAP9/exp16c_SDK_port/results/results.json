@@ -1,0 +1,192 @@
+{
+  "experiment": "exp16c_SDK_port",
+  "date": "2026-09-14",
+  "goal": "port the GAP9 SDK's NE16 techniques into our flow and run SpeechNet QZO on GAP9 with NE16",
+  "status": "COMPLETE -- SpeechNet QZO runs on GAP9 with NE16 and is BIT-IDENTICAL to the cluster-only baseline",
+  "phase1_pipelined_dispatch": {
+    "technique": "SDK technique A (KerConv1D_StrideS_NE16): block only while NE16's 2-deep job queue is full; resolve once after the whole tap chain",
+    "per_block": [
+      {
+        "block": 0,
+        "before": 5517302,
+        "after": 5480672,
+        "saved_pct": 0.66,
+        "errors": "0/78512"
+      },
+      {
+        "block": 1,
+        "before": 1608939,
+        "after": 1548078,
+        "saved_pct": 3.78,
+        "errors": "0/19712"
+      },
+      {
+        "block": 2,
+        "before": 420743,
+        "after": 398739,
+        "saved_pct": 5.23,
+        "errors": "0/5152"
+      },
+      {
+        "block": 3,
+        "before": 183651,
+        "after": 176503,
+        "saved_pct": 3.89,
+        "errors": "0/1280"
+      },
+      {
+        "block": 4,
+        "before": 145990,
+        "after": 142915,
+        "saved_pct": 2.11,
+        "errors": "0/320"
+      }
+    ],
+    "total_before": 7876625,
+    "total_after": 7746907,
+    "total_saved_pct": 1.65,
+    "cluster_total": 1226064,
+    "ratio_before": 6.42,
+    "ratio_after": 6.32,
+    "correction": "This CORRECTS exp16b's interpretation. exp16b called the layer 'DMA- and setup-bound' and I read setup as job programming; removing nearly all of that programming cost buys only 1.65%, so the dominant term is the int32 streamin round-trips through L1, not register writes. SDK technique B (10 register writes instead of 24) is therefore dropped; technique C (im2col channel folding) matters more since it removes streamin outright."
+  },
+  "phase2_automatic_pass": {
+    "what": "NE16Prepare1xKPass rewrites a plain 1xK/Kx1 Conv into the NE16 form: per-tap stacked bit-serial weight (host-side for a constant, NE16WeightEncode inserted for a runtime one), ne16_taps / weight_offset / ne16_weight_preencoded, and channels_first=1 on the un-merged RequantShift",
+    "verified_on_plain_graphs": [
+      {
+        "name": "b3_plain",
+        "kernel": "7x1",
+        "errors": "0/1280",
+        "cycles": 180585,
+        "dispatches": 7,
+        "device_encodes": 1,
+        "cluster_convs": 0
+      },
+      {
+        "name": "b4_plain",
+        "kernel": "7x1",
+        "errors": "0/320",
+        "cycles": 146409,
+        "dispatches": 7,
+        "device_encodes": 1,
+        "cluster_convs": 0
+      }
+    ],
+    "note": "plain = ordinary NCHW Conv with a runtime weight from RQSPerturbRademacher and ZERO NE16 attributes; slightly slower than the hand-authored NHWC fixtures (176,503 / 142,915) because the plain graph pays for the layout Transposes"
+  },
+  "phase3_full_network": {
+    "command_in_reproduction_section": true,
+    "result": "PASSED, Errors: 0 out of 8 (the harness's optimizer-output check)",
+    "engine_split": {
+      "ne16_convs": 2,
+      "ne16_dispatches": 14,
+      "device_weight_encodes": 2,
+      "cluster_convs": 3
+    },
+    "which": "blocks 3 and 4 (7x1, unpadded) on NE16; blocks 0/1/2 on the cluster because they are padded",
+    "train_cycles_ne16": 68077617,
+    "train_cycles_cluster_only": 66817357,
+    "opt_cycles_ne16": 372466,
+    "opt_cycles_cluster_only": 372177,
+    "reproducible": "yes -- two independent runs produced identical loss bits"
+  },
+  "coverage_limit": {
+    "issue": "NE16Prepare1xKPass refuses PADDED convolutions, so SpeechNet blocks 0/1/2 (pads [0,2,0,2], [0,8,0,8], [0,4,0,4]) stay on the cluster -- only 5.8% of conv MACs reach NE16.",
+    "why": "NE16's 1x1 mode cannot pad and its gvsoc guard (fsm.cpp:53) is COMMENTED OUT, so a padded job returns wrong results rather than trapping. Every fixture so far pre-padded the activation DATA; a real graph carries padding on the node.",
+    "fix_shape": "The GAP9 SDK handles it with pointer arithmetic plus border-subtile computation (NE16_ComputeBorders, CNN_BasicKernels_NE16.c), not with NE16 padding. That belongs in NE161xKConstraint.serializeTilingSolution."
+  },
+  "rounding_bug": {
+    "file": "Deeploy/Targets/PULPOpen/Templates/RequantShiftTemplate.py (and the Generic twin)",
+    "bug": "the standalone RequantShift passed rounding=1 unconditionally, while PULPConvRequantMergePass bakes +div/2 into the add ONLY for a gs.Constant add; for a runtime (perturbed) add it bakes nothing and the fused kernel truncates",
+    "effect": "with div=65536 the NE16 (un-merged) path was off by exactly div/2 -- a systematic +0.5 LSB on every output element of blocks 3 and 4, amplifying to a 20-55% wrong loss",
+    "why_isolated_tests_missed_it": "the single-layer fixtures bake the perturbed bias in as a CONSTANT initializer, which puts them in the branch where merged and un-merged agree by construction",
+    "pre_existing": "the bug is older than this work but was unreachable -- with every conv fused into RequantizedConv, no standalone RequantShift with a runtime add ever existed. NE16 is the first thing to leave one un-merged, and it must, because streamin forces int32 output.",
+    "fix": "rqs_rounding = int(hasattr(addBuffer,'values') and addBuffer.values is not None)",
+    "verified": "generated C now ends both NE16 requant calls with '-128, 127, 0)'"
+  },
+  "numerical_result": {
+    "losses_after_fix": [
+      1.216181,
+      0.289454,
+      0.190928,
+      1.145638,
+      0.106618,
+      0.016925,
+      1.6103,
+      0.543904
+    ],
+    "cluster": [
+      1.216696,
+      0.290987,
+      0.188705,
+      1.132746,
+      0.108673,
+      0.01682,
+      1.610501,
+      0.54526
+    ],
+    "host_reference": [
+      1.216687,
+      0.290998,
+      0.190276,
+      1.132753,
+      0.108246,
+      0.016822,
+      1.594573,
+      0.545274
+    ],
+    "max_abs_ne16_vs_host": 0.01573,
+    "max_abs_cluster_vs_host": 0.01593,
+    "verdict": "NE16 is now as close to the host reference as the cluster is (marginally closer). The ~1.6e-2 residual on L+ #3 is present in the cluster baseline too -- the known pre-existing device-vs-host int8/fp32 gap.",
+    "residual": "Against the cluster directly, six of eight passes agree to ~1e-3 or better but L- #1 differs by 1.29e-2, where the cluster tracks the host to 7e-6. A second, ~40x smaller discrepancy remains -- signature changed from uniform offset to sparse disagreement, suggesting a few 1-LSB elements rather than a systematic bias. Next to chase."
+  },
+  "final_result": {
+    "max_abs_ne16_vs_cluster": 0.0,
+    "note": "all eight per-pass losses match the cluster baseline bit for bit (identical fp32 hex)",
+    "max_abs_ne16_vs_host_ref": 0.0159,
+    "max_abs_cluster_vs_host_ref": 0.0159,
+    "interpretation": "NE16's distance to the host reference is now exactly the cluster's -- the residual is the known pre-existing device-vs-host int8/fp32 gap, not an NE16 artefact",
+    "engine_split": {
+      "ne16_dispatches": 14,
+      "device_weight_encodes": 2,
+      "cluster_convs": 3
+    },
+    "losses": [
+      1.216696,
+      0.290987,
+      0.188705,
+      1.132746,
+      0.108673,
+      0.01682,
+      1.610501,
+      0.54526
+    ]
+  },
+  "bugs_found_and_fixed": [
+    {
+      "n": 1,
+      "name": "+div/2 rounding",
+      "file": "Deeploy/Targets/PULPOpen/Templates/RequantShiftTemplate.py (+ Generic twin)",
+      "bug": "standalone RequantShift passed rounding=1 unconditionally; PULPConvRequantMergePass bakes +div/2 only into a CONSTANT add, so with a runtime (perturbed) bias the un-merged path was off by exactly div/2",
+      "impact": "systematic +0.5 LSB on every NE16 output element -> 20-55% wrong loss",
+      "fix": "rqs_rounding derived from whether the add buffer is constant"
+    },
+    {
+      "n": 2,
+      "name": "perturb channel axis (serialize)",
+      "file": "Deeploy/Targets/PULPOpen/TileConstraints/RQSPerturbTileConstraint.py",
+      "bug": "channelDim = cube.dims[0]; once the bias is broadcast to (1,cout) this gives channel_width = cout, and the kernel's M[(start+i)/channel_width] collapses to M[0] for every channel",
+      "fix": "skip leading unit axes"
+    },
+    {
+      "n": 3,
+      "name": "perturb axis alignment (geometry)",
+      "file": "Deeploy/Targets/PULPOpen/TileConstraints/RQSPerturbTileConstraint.py",
+      "bug": "addGeometricalConstraint paired input/output dims by raw index. The op is elementwise but the ranks differ once the OUTPUT is broadcast to (1,cout) while the input stays (cout,): data_in.dim0 (cout) was equated with data_out.dim0 (1), sizing the input tile at ONE element (4 bytes) against a 128-byte DMA",
+      "evidence": "generated C showed data_in at arena+128 and mul at arena+132 -- 4 bytes apart, both receiving 128-byte transfers, a 124-byte overlap that clobbered the multipliers",
+      "impact": "perturbation wrong by a constant per output channel; channel 0 correct, channels 1..31 wrong (1240/1280 on block 3)",
+      "fix": "align axes from the first non-unit axis, numpy-broadcast style"
+    }
+  ],
+  "common_thread": "All three are PRE-EXISTING Deeploy defects that were unreachable before NE16. With every convolution fused into a RequantizedConv, no standalone RequantShift with a runtime bias ever existed -- so the bias was never broadcast and the rounding branch was never taken. NE16 is the first thing to leave a conv un-merged, and it must, because streamin forces int32 output."
+}

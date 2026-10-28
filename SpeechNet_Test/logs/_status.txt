@@ -1,0 +1,11 @@
+bp_single exit=1
+zo_single exit=1
+zo_infer exit=0
+bp_infer exit=0
+qzo_single exit=0
+bp_round1 exit=0
+bp_single(rerun) exit=0
+zo_single(rerun) exit=0
+qzo_single(rerun) exit=0
+zo_round1 exit=0
+qzo_round1 exit=137

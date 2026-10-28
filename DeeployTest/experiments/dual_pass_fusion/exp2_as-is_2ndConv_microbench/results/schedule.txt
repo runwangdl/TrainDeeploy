@@ -1,0 +1,40 @@
+# Emitted schedule / tiling — extracted from codegen/Network.c
+
+## Node order (execution blocks)
+  100:  // PerturbRademacher (Name: perturbrademacher_6_blocks_1_0_weight, Op: PerturbRademacher)
+  284:  // PerturbRademacher (Name: perturbrademacher_7_blocks_1_0_bias, Op: PerturbRademacher)
+  467:  // Transpose [1, 8, 14, 87] -> [1, 14, 87, 8] (Name: node_5_blocks_1_blocks_1_0_Conv_input_0_transpose, Op: Transpose)
+  666:  // Transpose [16, 8, 1, 16] -> [16, 1, 16, 8] (Name: node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose, Op: Transpose)
+  894:  // 2D FP Conv HWC with Im2Col and ChannelOout parallelism (Name: node_5_blocks_1_blocks_1_0_Conv, Op: Conv)
+  1166:  // Transpose [1, 14, 88, 16] -> [1, 16, 14, 88] (Name: node_5_blocks_1_blocks_1_0_Conv_output_0_pre_transpose, Op: Transpose)
+
+## numTiles per node
+  CODEGEN_L1_perturbrademacher_6_blocks_1_0_weight_numTiles[2] = {0, 1}
+  CODEGEN_L1_perturbrademacher_7_blocks_1_0_bias_numTiles[2] = {0, 1}
+  CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_input_0_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_numTiles[2] = {0, 1}
+  CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_numTiles[2] = {0, 2}
+  CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_output_0_pre_transpose_numTiles[2] = {0, 2}
+
+## Channel split across conv tiles (bias bytes = 4 B per output channel)
+  node_5_blocks_1_blocks_1_0_Conv_weight_cumByteOffset[2] = {0, 7680}
+  node_5_blocks_1_blocks_1_0_Conv_bias_cumByteOffset[2] = {0, 60}
+  node_5_blocks_1_blocks_1_0_Conv_data_out_cumByteOffset[2] = {0, 60}
+
+## Conv kernel invocation (H, W, C, w, F_total, P, Q, SP, SQ, bias, has_bias, dst, pads..., ctx)
+      PULP_Conv2d_Im2Col_fp32_fp32_fp32_HWC(
+          ref_DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_data_out_ref_DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_data_in_ref,
+          14, 87, 8, DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_weight_ref,
+          *DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_ch_im_out_ref, 1, 16, 1, 1,
+          DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_bias_ref, true,
+          ref_DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_data_out_ref_DeeployNetwork_TILING_CODEGEN_L1_node_5_blocks_1_blocks_1_0_Conv_data_out_ref,
+
+## L1 arena offsets for the Conv node
+  node_5_blocks_1_blocks_1_0_Conv_data_in_ref = (float32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 73920)
+  node_5_blocks_1_blocks_1_0_Conv_weight_ref = (float32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 112896)
+  node_5_blocks_1_blocks_1_0_Conv_bias_ref = (float32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 124672)
+  node_5_blocks_1_blocks_1_0_Conv_data_out_ref = (float32_t *)((char *)DeeployNetwork_MEMORYARENA_L1 + 0)
+  DeeployNetwork_node_5_blocks_1_blocks_1_0_Conv_buffer = (void *)((char *)DeeployNetwork_MEMORYARENA_L1 + 120576)
+
+## Build variant
+  OUTPUT_TOL=1e-3, --cores 8; perf_bench_print call sites: 6 (6 = instrumented build)

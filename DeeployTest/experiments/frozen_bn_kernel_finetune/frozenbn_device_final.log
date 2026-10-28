@@ -1,0 +1,14 @@
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+zero-shot=78.33% (SUMMING convention = device)
+  head  lr=0.005    n_accum=1 (eff=5.0e-03): mean Δ=+3.40 std=0.52 (min Δ=+2.22)
+  head  lr=0.01     n_accum=1 (eff=1.0e-02): mean Δ=+2.29 std=1.97 (min Δ=-2.22)
+  full  lr=0.001    n_accum=1 (eff=1.0e-03): mean Δ=+3.99 std=2.95 (min Δ=-1.67)
+  full  lr=0.002    n_accum=1 (eff=2.0e-03): mean Δ=+2.60 std=3.04 (min Δ=-2.78)
+  full  lr=0.00025  n_accum=4 (eff=1.0e-03): mean Δ=+4.72 std=2.25 (min Δ=+1.11)
+
+BEST head: lr=0.005 n1 -> +3.40±0.52
+BEST full: lr=0.00025 n4 -> +4.72±2.25
+DONE

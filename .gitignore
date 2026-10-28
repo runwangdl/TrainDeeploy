@@ -80,3 +80,14 @@ build_logs/
 .gap9_pyenv/
 activate_traindeeploy_convgradw.sh
 run_gap9_in_container.sh
+DeeployTest/frozenbn_grid.log
+
+# -- QW 2026-10-12: private progress notes (kept locally, not shared). Shared documentation is
+#    HandoverDocuments/ and SpeechNet_Test/README.md; logs, results and scripts stay tracked.
+/WorkLog/
+/BP_FLOW.md
+/SoC_miniproject.md
+/ZO_FINDING.md
+/ZO_TECHNICAL_REPORT.md
+/docs/codebase_workflow_guide.md
+/DeeployTest/experiments/**/*.md

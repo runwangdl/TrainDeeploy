@@ -1,0 +1,13 @@
+exp7 block 2 -- GAP9 GVSoC, both passes, exact; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes
+
+variant                                        fixture   vs A     nodes   vs A
+A    2 x pulp-nn, cluster                      242,930  1.00x   221,722  1.00x
+B    2 x NE16 im2col (exp6 route)              325,614  0.75x   315,514  0.70x
+C_cl fused, cluster (DualConv2In)              144,827  1.68x   128,380  1.73x
+C    fused NE16, exp6-style (2 chains)         319,068  0.76x   308,773  0.72x
+C_S  fused NE16 node, sequential               130,434  1.86x   116,235  1.91x
+C_P  fused NE16 node, pipelined                108,908  2.23x    94,560  2.34x
+
+C_cl per node: dualconv_blocks2_input_0_transpose 5,550, dualconv_blocks2_input_3_transpose 5,547, dualconv_blocks2 128,380, dualconv_blocks2_output_0_pre_transpose 8,491
+C_P per node: b2_xp_hwc 5,525, b2_xm_hwc 5,519, b2_dual_wenc 32,724, b2_dual_bias 12,362, b2_ne16_dualconv 49,474, b2_out_nchw 8,533

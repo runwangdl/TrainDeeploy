@@ -18,8 +18,9 @@ from testUtils.graphDebug import generateDebugConfig
 from testUtils.platformMapping import mapDeployer, mapPlatform, setupMemoryPlatform
 from testUtils.testRunner import TestGeneratorArgumentParser
 from testUtils.tilingUtils import DBOnlyL3Tiler, DBTiler, SBTiler
-from testUtils.typeMapping import inferTypeAndOffset
+from testUtils.typeMapping import inferTypeAndOffset, parseDataType  # -- QW: parseDataType for --input-type-map
 
+from Deeploy.AbstractDataTypes import PointerClass  # -- QW: for --input-type-map overrides
 from Deeploy.DeeployTypes import CodeGenVerbosity, NetworkDeployer, ONNXLayer
 from Deeploy.EngineExtension.NetworkDeployers.EngineColoringDeployer import EngineColoringDeployerWrapper
 from Deeploy.Logging import DEFAULT_LOGGER as log
@@ -30,6 +31,45 @@ from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses
 from Deeploy.Targets.Neureka.OptimizationPasses.MemoryLevelAnnotationPasses import AnnotateNeurekaWeightMemoryLevel
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
+
+
+def _resolveInputTypes(args, npzNames, testInputs, signProp):  # -- QW
+    """Per-input (type, offset), honouring --input-type-map/--input-offset-map. -- QW
+
+    The TILED generator was missing the override that generateNetwork.py has, and it is
+    needed here: `inferTypeAndOffset` picks the *minimal* float type that fits the data
+    (`minimalFloatType` walks bfloat16 -> float16 -> float32), so a small-magnitude fp32
+    tensor -- e.g. SpeechNet block-1's conv bias, |b| < 1e-5 -- is inferred as bfloat16 and
+    then has no binding at all, because the fp32 kernels are float32-only.
+
+    The ONNX file does declare FLOAT, so testMVPTraining.py's approach (trust the declared
+    elem_type) would fix it -- but 32 Integer kernel tests declare FLOAT while carrying
+    int8/int64 npz data, so that trust cannot be extended to this path. An opt-in override
+    keyed by npz entry name is the safe mechanism.
+    """
+    manualTypes, manualOffsets = {}, {}
+    for kv in getattr(args, "input_type_map", []) or []:
+        name, tstr = kv.split("=", 1)
+        manualTypes[name.strip()] = parseDataType(tstr.strip())
+    for kv in getattr(args, "input_offset_map", []) or []:
+        name, ostr = kv.split("=", 1)
+        manualOffsets[name.strip()] = int(ostr.strip())
+
+    assert set(manualTypes) == set(manualOffsets), \
+        f"Override inputs need both a type and an offset. Mismatch: {set(manualTypes) ^ set(manualOffsets)}"
+    assert set(manualTypes) <= set(npzNames), \
+        f"Unknown input names in overrides: {set(manualTypes) - set(npzNames)} (valid: {set(npzNames)})"
+
+    inputTypes, inputOffsets = {}, {}
+    for index, values in enumerate(testInputs):
+        name = npzNames[index] if index < len(npzNames) else None
+        if name in manualTypes:
+            inputTypes[f"input_{index}"] = PointerClass(manualTypes[name])
+            inputOffsets[f"input_{index}"] = manualOffsets[name]
+        else:
+            inputTypes[f"input_{index}"], inputOffsets[f"input_{index}"] = \
+                inferTypeAndOffset(values, signProp)
+    return inputTypes, inputOffsets
 
 
 # Mock of the Global Scheduler's inteface
@@ -78,15 +118,14 @@ def setupDeployer(graph: gs.Graph, memoryHierarchy: MemoryHierarchy, defaultTarg
         platform.engines[0].enable3x3 = True
     if args.enableStrides:
         platform.engines[0].enableStrides = True
+    if getattr(args, "enable_1xk", False):  # -- QW (exp16a): 1xK -> K pointwise NE16 dispatches
+        platform.engines[0].enable1xK = True  # -- QW
 
     clusters = [engine for engine in platform.engines if isinstance(engine, PULPClusterEngine)]
     for cluster in clusters:
         cluster.n_cores = args.cores
 
-    for index, num in enumerate(test_inputs):
-        _type, offset = inferTypeAndOffset(num, signProp)
-        inputTypes[f"input_{index}"] = _type
-        inputOffsets[f"input_{index}"] = offset
+    inputTypes, inputOffsets = _resolveInputTypes(args, inputs.files, test_inputs, signProp)  # -- QW
 
     deployer = mapDeployer(platform,
                            graph,
@@ -97,7 +136,7 @@ def setupDeployer(graph: gs.Graph, memoryHierarchy: MemoryHierarchy, defaultTarg
                            conv_channels_first = getattr(args, "convChannelsFirst", False))
 
     # Make the deployer engine-color-aware
-    if args.platform == "Siracusa_w_neureka":
+    if args.platform in ("Siracusa_w_neureka", "GAP9_w_NE16"):  # -- QW: composite platforms
         deployer = EngineColoringDeployerWrapper(deployer)
 
     # Make platform memory-aware after mapDeployer because it requires the platform to be an instance of an unwrapped platform
@@ -175,6 +214,12 @@ if __name__ == '__main__':
                         action = "store_true",
                         default = False,
                         help = 'Adds EXPERIMENTAL support for 3x3 convolutions on N-EUREKA\n')
+    parser.add_argument('--enable-1xk',
+                        dest = "enable_1xk",
+                        action = "store_true",
+                        default = False,
+                        help = 'Let NE16 claim 1xK / Kx1 dense convs and run them as K pointwise '
+                        'dispatches accumulating via streamin (exp16a / STEP 2b)\n')
     parser.add_argument('--enableStrides',
                         dest = "enableStrides",
                         action = "store_true",
@@ -225,6 +270,19 @@ if __name__ == '__main__':
     parser.add_argument('--plotMemAlloc',
                         action = 'store_true',
                         help = 'Turn on plotting of the memory allocation and save it in the deeployState folder\n')
+    parser.add_argument('--input-type-map',
+                        nargs = '*',
+                        default = [],
+                        type = str,
+                        help = '(Optional) map npz input names to data types, overriding value '
+                        'inference. Pair with --input-offset-map. '
+                        'Example: --input-type-map blocks_1_0_bias=float32_t')  # -- QW
+    parser.add_argument('--input-offset-map',
+                        nargs = '*',
+                        default = [],
+                        type = str,
+                        help = '(Optional) map npz input names to offsets (0 for float types). '
+                        'Example: --input-offset-map blocks_1_0_bias=0')  # -- QW
     parser.add_argument(
         "--cores",
         type = int,
@@ -325,10 +383,7 @@ if __name__ == '__main__':
 
     log.debug(f"Deployer: {deployer}")
 
-    for index, num in enumerate(test_inputs):
-        _type, offset = inferTypeAndOffset(num, signProp)
-        inputTypes[f"input_{index}"] = _type
-        inputOffsets[f"input_{index}"] = offset
+    inputTypes, inputOffsets = _resolveInputTypes(args, inputs.files, test_inputs, signProp)  # -- QW
 
     schedule = _filterSchedule(_mockScheduler(graph), deployer.layerBinding)
 

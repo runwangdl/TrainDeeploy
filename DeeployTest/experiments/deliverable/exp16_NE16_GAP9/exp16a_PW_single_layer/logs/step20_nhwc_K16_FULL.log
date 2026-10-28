@@ -1,0 +1,64 @@
+The target board you have sourced is : gap9_evk, GAP9_V2.
+Release version: 0.0.0
+[Deeploy] Error during parsing! Exporting deeploy state backend_post_binding[.onnx|.pkl]!
+Traceback (most recent call last):
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1940, in broadcast
+    ctxt.globalObjects[node.name].values = np.broadcast_to(ctxt.globalObjects[node.name].values,
+  File "/app/install/gap9-sdk/.gap9-venv/lib/python3.10/site-packages/numpy/lib/stride_tricks.py", line 413, in broadcast_to
+    return _broadcast_to(array, shape, subok=subok, readonly=True)
+  File "/app/install/gap9-sdk/.gap9-venv/lib/python3.10/site-packages/numpy/lib/stride_tricks.py", line 349, in _broadcast_to
+    it = np.nditer(
+ValueError: operands could not be broadcast together with remapped shapes [original->remapped]: (16,)  and requested shape (1,14)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVP.py", line 343, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3463, in frontEnd
+    raise e
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2685, in parse
+    newCtxt, parseSuccess = self._parseNode(currentLayer, ctxt, default_channels_first)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2608, in _parseNode
+    newCtxt, parsePass = node.parse(ctxt.copy(), default_channels_first)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2014, in parse
+    self.broadcast(newCtxt, default_channels_first)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1943, in broadcast
+    raise RuntimeError(
+RuntimeError: Could not broadcast rqs_mul_tensor from (16,) to [1, 14]!
+[Deeploy] Network generation failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : b1_1x16_ne16_nhwc
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/NE16/b1_1x16_ne16_nhwc
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/NE16/b1_1x16_ne16_nhwc
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --enable-1xk --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test b1_1x16_ne16_nhwc FAILED with exception: Network generation failed for b1_1x16_ne16_nhwc[0m
+RUNNER_EXIT=1  ELAPSED=2s

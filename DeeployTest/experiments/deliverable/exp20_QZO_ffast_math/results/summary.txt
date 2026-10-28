@@ -1,0 +1,22 @@
+exp20 — QZO single step (n_accum 1), ffast-math vs strict fp32
+
+                          ffast (default)   strict fp32       delta   overhead
+train cycles                    8,364,474     8,697,847    +333,373      3.99%
+opt cycles                        330,760       331,516        +756      0.23%
+TOTAL                           8,695,234     9,029,363    +334,129      3.84%
+
+@370 MHz: 23.50 ms -> 24.40 ms per step
+
+Where the overhead lands (kernel cycles, |delta| >= 500):
+  bnBatchNormalization                             1,109,754 1,423,434 +313,680   28.3%
+  bn_1BatchNormalization                              56,649    73,967  +17,318   30.6%
+  bn_2BatchNormalization                              12,732    17,761   +5,029   39.5%
+  QCDQ_blocks_0_conv_input_quant_1Clip_Quant          73,492    76,487   +2,995    4.1%
+  QCDQ_blocks_1_conv_input_quant_1Clip_Quant          73,931    76,408   +2,477    3.4%
+  QCDQ_blocks_2_conv_input_quant_1Clip_Quant          37,859    39,230   +1,371    3.6%
+  wrappedInnerForwardImpl_5Gemm                        7,407     8,617   +1,210   16.3%
+  bn_3BatchNormalization                               6,660     7,861   +1,201   18.0%
+  QCDQ_blocks_4_conv_input_quant_1Clip_Quant          10,414    11,060     +646    6.2%
+  _MERGE_CONVRQ_PASS_4                                60,528    61,139     +611    1.0%
+  _MERGE_CONVRQ_PASS_2                               224,728   225,324     +596    0.3%
+  poolMaxPool                                      1,543,552 1,523,064  -20,488   -1.3%

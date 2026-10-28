@@ -1,0 +1,385 @@
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+Consolidate compiler generated dependencies of target pulp-nnx
+[  1%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  4%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 95%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[100%] Built target deeploypulp
+Consolidate compiler generated dependencies of target network
+[100%] Building C object DeeployTest/CMakeFiles/network.dir/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:5:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:116:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:119:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:119:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:121:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:121:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:123:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:123:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:125:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:125:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:128:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:128:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:136:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:136:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:138:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:138:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:140:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:142:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:126:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks0convweight_int8_data_in_ref[rqsp_blocks0convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:115:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks0convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks0convweight_int8_channel_start_offset = rqsp_blocks0convweight_int8_chunk_start % 4;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:315:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks0convbias_rqsadd_data_in_ref[rqsp_blocks0convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:305:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks0convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks0convbias_rqsadd_channel_start_offset = rqsp_blocks0convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.c:1304:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer;
+[0;1;32m        ^
+[0m22 warnings generated.
+[100%] Built target network
+Consolidate compiler generated dependencies of target QZO_Conv
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/QZO_Conv.dir/src/deeploytest.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:12:
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv/Network.h:8:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:116:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:119:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:119:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:121:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:121:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:123:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:123:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:125:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:125:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:128:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:128:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:136:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:136:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:138:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:138:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:140:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:142:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:50:58: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'isnan' is invalid in C99 [-Wimplicit-function-declaration][0m
+      if ((diff < -OUTPUT_TOL) || (diff > OUTPUT_TOL) || isnan(diff)) {  // -- QW exp13: was the literal 1e-4
+[0;1;32m                                                         ^
+[0m18 warnings generated.
+[100%] Linking C executable ../../../bin/QZO_Conv
+clang-15: [0;1;35mwarning: [0m[1margument unused during compilation: '-nostartfiles' [-Wunused-command-line-argument][0m
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/QZO_Conv': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/string/memchr.c
+[100%] Built target QZO_Conv
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : QZO_Conv
+  Test Directory      : /app/ETH/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/Integer/QZO_Conv
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --input-type-map blocks.0.conv.bias_rqsadd=int32_t --input-offset-map blocks.0.conv.bias_rqsadd=0 --defaultMemLevel=L2 --l1=128000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --cores=8 --profileMicrobenchmark
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  1%] Built target pulp-nnx
+[  4%] Built target deeploybasic
+[  8%] Built target pulp-sdk
+[ 95%] Built target pulp-nn-mixed
+[100%] Built target deeploypulp
+Consolidate compiler generated dependencies of target network
+[100%] Built target network
+Consolidate compiler generated dependencies of target QZO_Conv
+[100%] Built target QZO_Conv
+[100%] POST_BUILD
+Error copying file (if different) from "/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/*.bin" to "/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/gvsoc_workdir/".
+HELLO WORLD:
+Intializing
+Initialized
+Input copied
+
+=== Performance Statistics: rqsp_blocks0convweight_int8 ===
+Cycles:                    2509
+Instructions:               476
+IPC:                      0.190
+
+--- Instruction Mix ---
+Loads:                      145 (30.46%)
+Stores:                      87 (18.28%)
+Branches:                    33 (6.93%)
+Taken Branches:              23 (69.70%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                 68
+Jump Stalls:                  0
+I-cache Misses:            1486
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: rqsp_blocks0convbias_rqsadd ===
+Cycles:                    2084
+Instructions:               275
+IPC:                      0.132
+
+--- Instruction Mix ---
+Loads:                       60 (21.82%)
+Stores:                      63 (22.91%)
+Branches:                    16 (5.82%)
+Taken Branches:               8 (50.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                 20
+Jump Stalls:                  0
+I-cache Misses:            1506
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: _MERGE_CONVRQ_PASS_0_input_0_transpose ===
+Cycles:                    8088
+Instructions:              7142
+IPC:                      0.883
+
+--- Instruction Mix ---
+Loads:                     1417 (19.84%)
+Stores:                    1429 (20.01%)
+Branches:                     9 (0.13%)
+Taken Branches:               3 (33.33%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             752
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose ===
+Cycles:                     772
+Instructions:               103
+IPC:                      0.133
+
+--- Instruction Mix ---
+Loads:                       15 (14.56%)
+Stores:                      25 (24.27%)
+Branches:                     6 (5.83%)
+Taken Branches:               4 (66.67%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             572
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: _MERGE_CONVRQ_PASS_0 ===
+Cycles:                  664646
+Instructions:            411343
+IPC:                      0.619
+
+--- Instruction Mix ---
+Loads:                    99173 (24.11%)
+Stores:                   50556 (12.29%)
+Branches:                 21139 (5.14%)
+Taken Branches:           11264 (53.29%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:              35495
+Jump Stalls:                  0
+I-cache Misses:          151362
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: _MERGE_CONVRQ_PASS_0_output_0_pre_transpose ===
+Cycles:                  136587
+Instructions:             97354
+IPC:                      0.713
+
+--- Instruction Mix ---
+Loads:                    19708 (20.24%)
+Stores:                   19741 (20.28%)
+Branches:                 18242 (18.74%)
+Taken Branches:           18201 (99.78%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                 26
+Jump Stalls:                  0
+I-cache Misses:            2425
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+Output:
+Runtime: 166043 cycles
+Errors: 0 out of 78512
+[100%] Built target gvsoc_QZO_Conv
+
+[92m✓ Test QZO_Conv PASSED - No errors found[0m
+[92m  Runtime: 166043 cycles[0m

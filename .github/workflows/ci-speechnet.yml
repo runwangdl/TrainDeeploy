@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2026 ETH Zurich and University of Bologna
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# RW 2026-10-13: the only CI that runs automatically on this branch -- SpeechNet (SilentWear) fine-tuning:
+#   GAP9:     ZO / QZO / QZO+ECO steps with an exact check of the trained weights, BP single step (L3)
+#             + (QW 2026-10-14) the fused full-network QZO+ECO step on GAP9 + NE16 (weights == unfused run)
+#   Siracusa: ZO / QZO single step (Qiwen's gate)
+# Every other workflow is manual (workflow_dispatch) only.
+---
+name: CI • SpeechNet fine-tuning (ZO / BP)
+
+"on":
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  select-env-gap9:
+    uses: ./.github/workflows/_select-env.yml
+    with:
+      docker_image_deeploy: "ghcr.io/runwangdl/deeploy:gap9"
+
+  select-env-siracusa:
+    uses: ./.github/workflows/_select-env.yml
+    with:
+      docker_image_deeploy: "ghcr.io/pulp-platform/deeploy:devel"
+
+  gap9-speechnet-finetuning:
+    needs: select-env-gap9
+    uses: ./.github/workflows/_runner-gap9-tiled.yml
+    with:
+      runner: ${{ needs.select-env-gap9.outputs.runner }}
+      docker-image: ${{ needs.select-env-gap9.outputs.image }}
+      pytest-markers: "gap9_tiled and speechnet_gap9"
+
+  siracusa-speechnet-zo-single-step:
+    needs: select-env-siracusa
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env-siracusa.outputs.runner }}
+      docker-image: ${{ needs.select-env-siracusa.outputs.image }}
+      pytest-marker: "zo_training"

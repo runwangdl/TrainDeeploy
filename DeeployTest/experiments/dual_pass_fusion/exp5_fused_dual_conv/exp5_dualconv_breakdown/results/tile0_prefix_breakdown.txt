@@ -1,0 +1,10 @@
+--- BY ADDRESS RANGE ---
+category                                instr   cycles   stall   %cyc   cyc/px
+setup (per tile)                          121      913     792   26.8    913.0
+phase 1: perturb W (per tile)             182      881     699   25.9    881.0
+phase 1: perturb b (per tile)              83      512     429   15.0    512.0
+phase 1: barrier (per tile)                 2       32      30    0.9     32.0
+pixel-loop control                          8       42      34    1.2     42.0
+gather                                     96      409     313   12.0    409.0
+channel-loop control                       88      160      72    4.7    160.0
+dot product                                80      156      76    4.6    156.0

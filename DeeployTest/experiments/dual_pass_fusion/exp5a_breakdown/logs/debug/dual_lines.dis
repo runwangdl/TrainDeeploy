@@ -1,0 +1,589 @@
+1c00f0e8 <PULP_DualConv2d_i8_i8_i8_HWC>:
+; PULP_DualConv2d_i8_i8_i8_HWC():
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:75
+1c00f0e8:      	addi	sp, sp, -160
+1c00f0ec:      	sw	ra, 156(sp)
+1c00f0f0:      	sw	s0, 152(sp)
+1c00f0f4:      	sw	s1, 148(sp)
+1c00f0f8:      	sw	s2, 144(sp)
+1c00f0fc:      	sw	s3, 140(sp)
+1c00f100:      	sw	s4, 136(sp)
+1c00f104:      	sw	s5, 132(sp)
+1c00f108:      	sw	s6, 128(sp)
+1c00f10c:      	sw	s7, 124(sp)
+1c00f110:      	sw	s8, 120(sp)
+1c00f114:      	sw	s9, 116(sp)
+1c00f118:      	sw	s10, 112(sp)
+1c00f11c:      	sw	s11, 108(sp)
+1c00f120:      	sw	a6, 80(sp)
+1c00f124:      	sw	a5, 92(sp)
+1c00f128:      	sw	a3, 88(sp)
+1c00f12c:      	sw	a0, 72(sp)
+1c00f130:      	lw	a0, 240(sp)
+1c00f134:      	sw	a0, 40(sp)
+1c00f138:      	lw	a0, 236(sp)
+1c00f13c:      	sw	a0, 44(sp)
+1c00f140:      	lw	a0, 228(sp)
+1c00f144:      	sw	a0, 48(sp)
+1c00f148:      	lw	a0, 220(sp)
+1c00f14c:      	sw	a0, 36(sp)
+1c00f150:      	lw	a0, 216(sp)
+1c00f154:      	lw	a3, 212(sp)
+1c00f158:      	lw	a5, 208(sp)
+1c00f15c:      	lw	a6, 204(sp)
+1c00f160:      	sw	a6, 60(sp)
+1c00f164:      	lw	a6, 200(sp)
+1c00f168:      	sw	a6, 64(sp)
+1c00f16c:      	lw	t0, 196(sp)
+1c00f170:      	lw	a6, 192(sp)
+1c00f174:      	sw	a6, 28(sp)
+1c00f178:      	lw	a6, 188(sp)
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/riscv/riscv_v5.h:140
+1c00f17c:      	sw	a6, 32(sp)
+1c00f180:      	csrr	a6, mhartid
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/riscv/riscv_v5.h:146
+1c00f184:      	andi	a6, a6, 31
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:77
+1c00f188:      	<unknown>
+1c00f18c:      	<unknown>
+1c00f190:      	<unknown>
+1c00f194:      	mul	t3, a3, t2
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:78
+1c00f198:      	addi	a0, t3, 3
+1c00f19c:      	andi	t4, a0, -4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:79
+1c00f1a0:      	<unknown>
+1c00f1a4:      	mul	a3, t3, t5
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:82
+1c00f1a8:      	slli	a0, a3, 1
+1c00f1ac:      	addi	a0, a0, 3
+1c00f1b0:      	andi	s0, a0, -4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:83
+1c00f1b4:      	slli	s4, t5, 2
+1c00f1b8:      	add	a0, s0, s4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:84
+1c00f1bc:      	add	a5, a0, s4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:88
+1c00f1c0:      	add	t6, a7, a0
+1c00f1c4:      	lw	a0, 184(sp)
+1c00f1c8:      	sw	a0, 24(sp)
+1c00f1cc:      	lw	s3, 180(sp)
+1c00f1d0:      	lw	s5, 176(sp)
+1c00f1d4:      	lw	s9, 172(sp)
+1c00f1d8:      	lw	a0, 168(sp)
+1c00f1dc:      	sw	a0, 16(sp)
+1c00f1e0:      	lw	a0, 164(sp)
+1c00f1e4:      	sw	a0, 12(sp)
+1c00f1e8:      	lw	a0, 160(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:77
+1c00f1ec:      	<unknown>
+1c00f1f0:      	sw	a7, 104(sp)
+1c00f1f4:      	sw	s0, 20(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:87
+1c00f1f8:      	add	s1, a7, s0
+1c00f1fc:      	sw	a6, 84(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:89
+1c00f200:      	mul	a6, a6, t4
+1c00f204:      	sw	a6, 68(sp)
+1c00f208:      	li	a6, -1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:35
+1c00f20c:      	addi	a7, a6, 2
+1c00f210:      	srl	a7, s3, a7
+1c00f214:      	addi	a6, a6, 1
+1c00f218:      	bnez	a7, 0x1c00f20c <PULP_DualConv2d_i8_i8_i8_HWC+0x124>
+1c00f21c:      	lw	a7, 104(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:86
+1c00f220:      	add	s0, a7, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:37
+1c00f224:      	sw	s0, 100(sp)
+1c00f228:      	srl	a6, a3, a6
+1c00f22c:      	sw	s3, 76(sp)
+1c00f230:      	addi	s0, s3, -1
+1c00f234:      	sw	s0, 56(sp)
+1c00f238:      	and	s0, a3, s0
+1c00f23c:      	snez	s0, s0
+1c00f240:      	add	a6, a6, s0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:38
+1c00f244:      	lw	s0, 84(sp)
+1c00f248:      	mul	s0, a6, s0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:39
+1c00f24c:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:41
+1c00f250:      	add	a6, s8, a6
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:42
+1c00f254:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:89
+1c00f258:      	add	a3, a7, a5
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:94
+1c00f25c:      	sw	a3, 52(sp)
+1c00f260:      	beq	s0, s8, 0x1c00f370 <PULP_DualConv2d_i8_i8_i8_HWC+0x288>
+1c00f264:      	li	s10, 0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:53
+1c00f268:      	beqz	s9, 0x1c00f278 <PULP_DualConv2d_i8_i8_i8_HWC+0x190>
+1c00f26c:      	addi	a3, s9, -1
+1c00f270:      	li	a5, 1
+1c00f274:      	sll	s10, a5, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:56
+1c00f278:      	bgeu	s8, s0, 0x1c00f370 <PULP_DualConv2d_i8_i8_i8_HWC+0x288>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:95
+1c00f27c:      	lw	a3, 84(sp)
+1c00f280:      	add	a0, a3, a0
+1c00f284:      	lw	a3, 16(sp)
+1c00f288:      	xor	a0, a0, a3
+1c00f28c:      	lui	a3, 406
+1c00f290:      	addi	a5, a3, 1549
+1c00f294:      	lui	a3, 247535
+1c00f298:      	lui	a6, 114704
+1c00f29c:      	flw	ft0, -528(a6)
+1c00f2a0:      	addi	a3, a3, 863
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:52
+1c00f2a4:      	<unknown>
+1c00f2a8:      	feq.s	a6, fa0, ft0
+1c00f2ac:      	li	s6, 127
+1c00f2b0:      	li	ra, -127
+1c00f2b4:      	sw	s0, 96(sp)
+1c00f2b8:      	j	0x1c00f2c4 <PULP_DualConv2d_i8_i8_i8_HWC+0x1dc>
+1c00f2bc:      	lw	s0, 96(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:56
+1c00f2c0:      	bgeu	s8, s0, 0x1c00f370 <PULP_DualConv2d_i8_i8_i8_HWC+0x288>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:25
+1c00f2c4:      	slli	a0, a3, 13
+1c00f2c8:      	xor	a0, a0, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:26
+1c00f2cc:      	srli	a3, a0, 17
+1c00f2d0:      	xor	a0, a3, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:27
+1c00f2d4:      	slli	a3, a0, 5
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:59
+1c00f2d8:      	sub	a5, s0, s8
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:60
+1c00f2dc:      	li	a7, 32
+1c00f2e0:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:27
+1c00f2e4:      	xor	a3, a3, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:62
+1c00f2e8:      	beqz	a5, 0x1c00f2bc <PULP_DualConv2d_i8_i8_i8_HWC+0x1d4>
+1c00f2ec:      	mv	a0, a3
+1c00f2f0:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:64
+1c00f2f4:      	divu	s0, s8, t3
+1c00f2f8:      	slli	s0, s0, 2
+1c00f2fc:      	add	s0, a4, s0
+1c00f300:      	lw	s11, 0(s0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:65
+1c00f304:      	bnez	a6, 0x1c00f314 <PULP_DualConv2d_i8_i8_i8_HWC+0x22c>
+1c00f308:      	fcvt.s.w	ft0, s11
+1c00f30c:      	fmul.s	ft0, ft0, fa0
+1c00f310:      	fcvt.w.s	s11, ft0
+1c00f314:      	andi	s0, a0, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:67
+1c00f318:      	bnez	s0, 0x1c00f320 <PULP_DualConv2d_i8_i8_i8_HWC+0x238>
+1c00f31c:      	neg	s11, s11
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:70
+1c00f320:      	add	s0, a1, s8
+1c00f324:      	lb	s0, 0(s0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:69
+1c00f328:      	mv	s7, s10
+1c00f32c:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:68
+1c00f330:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:71
+1c00f334:      	add	s11, s11, s0
+1c00f338:      	<unknown>
+1c00f33c:      	<unknown>
+1c00f340:      	lw	a7, 104(sp)
+1c00f344:      	add	s3, a7, s8
+1c00f348:      	sb	s11, 0(s3)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:72
+1c00f34c:      	add	s0, s7, s0
+1c00f350:      	<unknown>
+1c00f354:      	<unknown>
+1c00f358:      	lw	a7, 100(sp)
+1c00f35c:      	add	s3, a7, s8
+1c00f360:      	sb	s0, 0(s3)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:73
+1c00f364:      	srli	a0, a0, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:62
+1c00f368:      	addi	s8, s8, 1
+1c00f36c:      	j	0x1c00f2bc <PULP_DualConv2d_i8_i8_i8_HWC+0x1d4>
+1c00f370:      	lw	a0, 68(sp)
+1c00f374:      	lw	a1, 52(sp)
+1c00f378:      	add	s9, a1, a0
+1c00f37c:      	li	a0, -1
+1c00f380:      	lw	a3, 76(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:35
+1c00f384:      	addi	a1, a0, 2
+1c00f388:      	srl	a1, a3, a1
+1c00f38c:      	addi	a0, a0, 1
+1c00f390:      	bnez	a1, 0x1c00f384 <PULP_DualConv2d_i8_i8_i8_HWC+0x29c>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:37
+1c00f394:      	srl	a0, t5, a0
+1c00f398:      	lw	a7, 56(sp)
+1c00f39c:      	and	a1, a7, t5
+1c00f3a0:      	snez	a1, a1
+1c00f3a4:      	add	a0, a0, a1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:38
+1c00f3a8:      	lw	a1, 84(sp)
+1c00f3ac:      	mul	a1, a0, a1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:39
+1c00f3b0:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:41
+1c00f3b4:      	add	a0, a1, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:42
+1c00f3b8:      	<unknown>
+1c00f3bc:      	beq	a4, a1, 0x1c00f4b0 <PULP_DualConv2d_i8_i8_i8_HWC+0x3c8>
+1c00f3c0:      	li	s6, 0
+1c00f3c4:      	beqz	s5, 0x1c00f3d4 <PULP_DualConv2d_i8_i8_i8_HWC+0x2ec>
+1c00f3c8:      	addi	a0, s5, -1
+1c00f3cc:      	li	a3, 1
+1c00f3d0:      	sll	s6, a3, a0
+1c00f3d4:      	bgeu	a1, a4, 0x1c00f4b0 <PULP_DualConv2d_i8_i8_i8_HWC+0x3c8>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:99
+1c00f3d8:      	lw	a0, 84(sp)
+1c00f3dc:      	lw	a3, 12(sp)
+1c00f3e0:      	add	a0, a0, a3
+1c00f3e4:      	lw	a3, 16(sp)
+1c00f3e8:      	xor	a0, a0, a3
+1c00f3ec:      	lui	a3, 406
+1c00f3f0:      	addi	a3, a3, 1549
+1c00f3f4:      	lui	a5, 247535
+1c00f3f8:      	lui	a6, 114704
+1c00f3fc:      	flw	ft0, -528(a6)
+1c00f400:      	addi	s10, a5, 863
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:82
+1c00f404:      	<unknown>
+1c00f408:      	li	s7, 32
+1c00f40c:      	feq.s	s8, fa0, ft0
+1c00f410:      	j	0x1c00f418 <PULP_DualConv2d_i8_i8_i8_HWC+0x330>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:86
+1c00f414:      	bgeu	a1, a4, 0x1c00f4b0 <PULP_DualConv2d_i8_i8_i8_HWC+0x3c8>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:25
+1c00f418:      	slli	a0, s10, 13
+1c00f41c:      	xor	a0, a0, s10
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:26
+1c00f420:      	srli	a3, a0, 17
+1c00f424:      	xor	a3, a3, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:27
+1c00f428:      	slli	a5, a3, 5
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:89
+1c00f42c:      	sub	a0, a4, a1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:90
+1c00f430:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:27
+1c00f434:      	xor	s10, a5, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:92
+1c00f438:      	beqz	a0, 0x1c00f414 <PULP_DualConv2d_i8_i8_i8_HWC+0x32c>
+1c00f43c:      	slli	a3, a1, 2
+1c00f440:      	add	a6, s1, a3
+1c00f444:      	lw	a5, 88(sp)
+1c00f448:      	add	s11, a5, a3
+1c00f44c:      	lw	a5, 92(sp)
+1c00f450:      	add	ra, a5, a3
+1c00f454:      	mv	a5, s10
+1c00f458:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:94
+1c00f45c:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:95
+1c00f460:      	bnez	s8, 0x1c00f470 <PULP_DualConv2d_i8_i8_i8_HWC+0x388>
+1c00f464:      	fcvt.s.w	ft0, a3
+1c00f468:      	fmul.s	ft0, ft0, fa0
+1c00f46c:      	fcvt.w.s	a3, ft0
+1c00f470:      	andi	s0, a5, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:97
+1c00f474:      	bnez	s0, 0x1c00f47c <PULP_DualConv2d_i8_i8_i8_HWC+0x394>
+1c00f478:      	neg	a3, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:98
+1c00f47c:      	lw	s0, 0(s11)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:99
+1c00f480:      	mv	s3, s6
+1c00f484:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:98
+1c00f488:      	<unknown>
+1c00f48c:      	add	a3, a3, s0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:99
+1c00f490:      	add	s0, a6, s4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:98
+1c00f494:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:99
+1c00f498:      	<unknown>
+1c00f49c:      	add	a3, s3, a3
+1c00f4a0:      	sw	a3, 0(s0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:100
+1c00f4a4:      	srli	a5, a5, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/DualPerturb.h:92
+1c00f4a8:      	addi	a1, a1, 1
+1c00f4ac:      	j	0x1c00f414 <PULP_DualConv2d_i8_i8_i8_HWC+0x32c>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:101
+1c00f4b0:      	bgeu	t3, t4, 0x1c00f4e8 <PULP_DualConv2d_i8_i8_i8_HWC+0x400>
+1c00f4b4:      	lw	a0, 68(sp)
+1c00f4b8:      	add	a0, t3, a0
+1c00f4bc:      	slli	a1, t5, 3
+1c00f4c0:      	add	a0, a0, a1
+1c00f4c4:      	lw	a1, 20(sp)
+1c00f4c8:      	add	a0, a0, a1
+1c00f4cc:      	sub	a3, t4, t3
+1c00f4d0:      	lw	a1, 104(sp)
+1c00f4d4:      	add	a0, a1, a0
+1c00f4d8:      	mv	a1, t3
+1c00f4dc:      	<unknown>
+1c00f4e0:      	addi	a1, a1, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:102
+1c00f4e4:      	<unknown>
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/eu/eu_v3.h:47
+1c00f4e8:      	lui	a0, 516
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/eu/eu_v3.h:48
+1c00f4ec:      	lw	a0, 540(a0)
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/utils.h:120
+1c00f4f0:      	lw	a5, 64(sp)
+1c00f4f4:      	lw	a1, 60(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:118
+1c00f4f8:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:119
+1c00f4fc:      	<unknown>
+1c00f500:      	lw	a1, 76(sp)
+1c00f504:      	divu	a1, a7, a1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:120
+1c00f508:      	lw	a3, 84(sp)
+1c00f50c:      	mul	a3, a1, a3
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:121
+1c00f510:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:123
+1c00f514:      	add	a1, a4, a1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:124
+1c00f518:      	<unknown>
+1c00f51c:      	sw	a0, 92(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:130
+1c00f520:      	bgeu	a4, a0, 0x1c00f7c8 <PULP_DualConv2d_i8_i8_i8_HWC+0x6e0>
+1c00f524:      	<unknown>
+1c00f528:      	slli	a0, t5, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:126
+1c00f52c:      	sw	a0, 76(sp)
+1c00f530:      	divu	ra, a4, a7
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:127
+1c00f534:      	mv	s0, a4
+1c00f538:      	<unknown>
+1c00f53c:      	lw	a0, 40(sp)
+1c00f540:      	<unknown>
+1c00f544:      	sw	a0, 68(sp)
+1c00f548:      	lw	a0, 36(sp)
+1c00f54c:      	<unknown>
+1c00f550:      	sw	a0, 64(sp)
+1c00f554:      	lw	a0, 44(sp)
+1c00f558:      	<unknown>
+1c00f55c:      	sw	a0, 60(sp)
+1c00f560:      	lw	a0, 48(sp)
+1c00f564:      	<unknown>
+1c00f568:      	seqz	a0, t2
+1c00f56c:      	seqz	a1, t1
+1c00f570:      	lw	a3, 28(sp)
+1c00f574:      	<unknown>
+1c00f578:      	lw	a3, 32(sp)
+1c00f57c:      	<unknown>
+1c00f580:      	lw	a5, 24(sp)
+1c00f584:      	<unknown>
+1c00f588:      	or	a0, a0, a1
+1c00f58c:      	sw	a0, 84(sp)
+1c00f590:      	sw	a6, 56(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:130
+1c00f594:      	neg	a0, a6
+1c00f598:      	sw	a0, 52(sp)
+1c00f59c:      	mul	a6, s2, a3
+1c00f5a0:      	li	s5, 127
+1c00f5a4:      	sw	a7, 88(sp)
+1c00f5a8:      	j	0x1c00f5c4 <PULP_DualConv2d_i8_i8_i8_HWC+0x4dc>
+1c00f5ac:      	xor	a0, a0, a7
+1c00f5b0:      	seqz	a0, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:130
+1c00f5b4:      	addi	a4, a4, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:166
+1c00f5b8:      	add	ra, ra, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:130
+1c00f5bc:      	lw	a0, 92(sp)
+1c00f5c0:      	beq	a4, a0, 0x1c00f7c8 <PULP_DualConv2d_i8_i8_i8_HWC+0x6e0>
+1c00f5c4:      	sw	s0, 96(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:135
+1c00f5c8:      	lw	a0, 84(sp)
+1c00f5cc:      	beqz	a0, 0x1c00f6ac <PULP_DualConv2d_i8_i8_i8_HWC+0x5c4>
+1c00f5d0:      	beqz	t5, 0x1c00f690 <PULP_DualConv2d_i8_i8_i8_HWC+0x5a8>
+1c00f5d4:      	li	a0, 0
+1c00f5d8:      	lw	a1, 80(sp)
+1c00f5dc:      	lw	a5, 76(sp)
+1c00f5e0:      	<unknown>
+1c00f5e4:      	lw	s6, 104(sp)
+1c00f5e8:      	lw	s7, 100(sp)
+1c00f5ec:      	j	0x1c00f650 <PULP_DualConv2d_i8_i8_i8_HWC+0x568>
+1c00f5f0:      	li	s3, 0
+1c00f5f4:      	li	a5, 0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:161
+1c00f5f8:      	slli	a7, a0, 2
+1c00f5fc:      	add	s0, a2, a7
+1c00f600:      	lw	s0, 0(s0)
+1c00f604:      	add	s4, s1, a7
+1c00f608:      	lw	s4, 0(s4)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:162
+1c00f60c:      	add	a7, t6, a7
+1c00f610:      	lw	a7, 0(a7)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:161
+1c00f614:      	mul	s3, s0, s3
+1c00f618:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:162
+1c00f61c:      	mul	a5, s0, a5
+1c00f620:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:163
+1c00f624:      	<unknown>
+1c00f628:      	add	s0, a1, a0
+1c00f62c:      	sb	a5, 0(s0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:164
+1c00f630:      	<unknown>
+1c00f634:      	add	a7, a0, t5
+1c00f638:      	add	a7, a1, a7
+1c00f63c:      	sb	a5, 0(a7)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:151
+1c00f640:      	addi	a0, a0, 1
+1c00f644:      	add	s7, s7, t3
+1c00f648:      	add	s6, s6, t3
+1c00f64c:      	beq	a0, t5, 0x1c00f690 <PULP_DualConv2d_i8_i8_i8_HWC+0x5a8>
+1c00f650:      	beqz	t4, 0x1c00f5f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x508>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:155
+1c00f654:      	srli	a7, t4, 2
+1c00f658:      	li	s10, 0
+1c00f65c:      	li	a5, 0
+1c00f660:      	li	s3, 0
+1c00f664:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:156
+1c00f668:      	add	a7, s9, s10
+1c00f66c:      	lw	a7, 0(a7)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:157
+1c00f670:      	add	s0, s6, s10
+1c00f674:      	lw	s0, 0(s0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:158
+1c00f678:      	add	s4, s7, s10
+1c00f67c:      	lw	s4, 0(s4)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:157
+1c00f680:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:155
+1c00f684:      	addi	s10, s10, 4
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:158
+1c00f688:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:155
+1c00f68c:      	j	0x1c00f5f8 <PULP_DualConv2d_i8_i8_i8_HWC+0x510>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:166
+1c00f690:      	lw	a0, 96(sp)
+1c00f694:      	addi	a0, a0, 1
+1c00f698:      	li	s0, 0
+1c00f69c:      	lw	a7, 88(sp)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:166
+1c00f6a0:      	beq	a0, a7, 0x1c00f5ac <PULP_DualConv2d_i8_i8_i8_HWC+0x4c4>
+1c00f6a4:      	mv	s0, a0
+1c00f6a8:      	j	0x1c00f5ac <PULP_DualConv2d_i8_i8_i8_HWC+0x4c4>
+1c00f6ac:      	li	s6, 0
+1c00f6b0:      	lw	a0, 68(sp)
+1c00f6b4:      	mul	a0, ra, a0
+1c00f6b8:      	lw	a1, 64(sp)
+1c00f6bc:      	sub	a0, a0, a1
+1c00f6c0:      	lw	a1, 96(sp)
+1c00f6c4:      	lw	a5, 60(sp)
+1c00f6c8:      	mul	a1, a1, a5
+1c00f6cc:      	lw	a5, 56(sp)
+1c00f6d0:      	sub	s7, a1, a5
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:135
+1c00f6d4:      	lw	a5, 52(sp)
+1c00f6d8:      	add	a1, a5, a1
+1c00f6dc:      	<unknown>
+1c00f6e0:      	lw	s4, 72(sp)
+1c00f6e4:      	<unknown>
+1c00f6e8:      	mv	a1, s9
+1c00f6ec:      	j	0x1c00f6fc <PULP_DualConv2d_i8_i8_i8_HWC+0x614>
+1c00f6f0:      	addi	s6, s6, 1
+1c00f6f4:      	add	s4, s4, a6
+1c00f6f8:      	beq	s6, t2, 0x1c00f5d0 <PULP_DualConv2d_i8_i8_i8_HWC+0x4e8>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:136
+1c00f6fc:      	add	a5, s6, a0
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:139
+1c00f700:      	bltz	a5, 0x1c00f778 <PULP_DualConv2d_i8_i8_i8_HWC+0x690>
+1c00f704:      	bgeu	a5, s8, 0x1c00f7a0 <PULP_DualConv2d_i8_i8_i8_HWC+0x6b8>
+1c00f708:      	li	a5, 0
+1c00f70c:      	mv	s3, s4
+1c00f710:      	j	0x1c00f720 <PULP_DualConv2d_i8_i8_i8_HWC+0x638>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:137
+1c00f714:      	addi	a5, a5, 1
+1c00f718:      	add	s3, s3, s2
+1c00f71c:      	beq	a5, t1, 0x1c00f6f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x608>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:138
+1c00f720:      	add	s0, a5, s7
+1c00f724:      	slti	s10, s0, 0
+1c00f728:      	sltu	s0, s0, a3
+1c00f72c:      	xori	s0, s0, 1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:139
+1c00f730:      	or	s0, s10, s0
+1c00f734:      	bnez	s0, 0x1c00f75c <PULP_DualConv2d_i8_i8_i8_HWC+0x674>
+1c00f738:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:144
+1c00f73c:      	beqz	s0, 0x1c00f714 <PULP_DualConv2d_i8_i8_i8_HWC+0x62c>
+1c00f740:      	mv	s10, s3
+1c00f744:      	mv	s0, s2
+1c00f748:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:145
+1c00f74c:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:144
+1c00f750:      	addi	s0, s0, -1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:145
+1c00f754:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:144
+1c00f758:      	j	0x1c00f714 <PULP_DualConv2d_i8_i8_i8_HWC+0x62c>
+1c00f75c:      	<unknown>
+1c00f760:      	mv	s0, s2
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:140
+1c00f764:      	beqz	a7, 0x1c00f714 <PULP_DualConv2d_i8_i8_i8_HWC+0x62c>
+1c00f768:      	addi	s0, s0, -1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:141
+1c00f76c:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:140
+1c00f770:      	bnez	s0, 0x1c00f768 <PULP_DualConv2d_i8_i8_i8_HWC+0x680>
+1c00f774:      	j	0x1c00f714 <PULP_DualConv2d_i8_i8_i8_HWC+0x62c>
+1c00f778:      	<unknown>
+1c00f77c:      	beqz	a5, 0x1c00f6f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x608>
+1c00f780:      	li	a5, 0
+1c00f784:      	mv	s0, s2
+1c00f788:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:140
+1c00f78c:      	addi	s0, s0, -1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:141
+1c00f790:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:137
+1c00f794:      	addi	a5, a5, 1
+1c00f798:      	bne	a5, t1, 0x1c00f784 <PULP_DualConv2d_i8_i8_i8_HWC+0x69c>
+1c00f79c:      	j	0x1c00f6f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x608>
+1c00f7a0:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:140
+1c00f7a4:      	beqz	a5, 0x1c00f6f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x608>
+1c00f7a8:      	li	a5, 0
+1c00f7ac:      	<unknown>
+1c00f7b0:      	mv	s0, s2
+1c00f7b4:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:140
+1c00f7b8:      	addi	s0, s0, -1
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:141
+1c00f7bc:      	<unknown>
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:137
+1c00f7c0:      	addi	a5, a5, 1
+1c00f7c4:      	j	0x1c00f6f0 <PULP_DualConv2d_i8_i8_i8_HWC+0x608>
+; /app/install/pulp-sdk/rtos/pulpos/pulp_hal/include/hal/eu/eu_v3.h:48
+1c00f7c8:      	lui	a0, 516
+1c00f7cc:      	lw	a0, 540(a0)
+; /app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/src/DualConv.c:172
+1c00f7d0:      	lw	ra, 156(sp)
+1c00f7d4:      	lw	s0, 152(sp)
+1c00f7d8:      	lw	s1, 148(sp)
+1c00f7dc:      	lw	s2, 144(sp)
+1c00f7e0:      	lw	s3, 140(sp)
+1c00f7e4:      	lw	s4, 136(sp)
+1c00f7e8:      	lw	s5, 132(sp)
+1c00f7ec:      	lw	s6, 128(sp)
+1c00f7f0:      	lw	s7, 124(sp)
+1c00f7f4:      	lw	s8, 120(sp)
+1c00f7f8:      	lw	s9, 116(sp)
+1c00f7fc:      	lw	s10, 112(sp)
+1c00f800:      	lw	s11, 108(sp)
+1c00f804:      	addi	sp, sp, 160
+1c00f808:      	ret

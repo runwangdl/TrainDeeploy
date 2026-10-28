@@ -1,0 +1,22 @@
+DualConv: 426 instructions, span 494 cycles (1 pixel(s) on core 0)
+
+--- BY ADDRESS RANGE ---
+category                                instr   cycles   stall   %cyc   cyc/px
+pixel-loop control                         14       17       3    3.4     17.0
+gather                                    100      121      21   24.5    121.0
+channel-loop control                       88       92       4   18.6     92.0
+dot product                                80       88       8   17.8     88.0
+requant + store                           144      176      32   35.6    176.0
+TOTAL                                     426      494      68
+payload (dot + requant/store) = 264 cycles = 53.4 %
+
+--- BY C SOURCE LINE (cross-check) ---
+category                                instr   cycles   stall   %cyc   cyc/px
+pixel-loop control                         24       33       9    6.7     33.0
+gather                                     98      115      17   23.3    115.0
+channel-loop control                       40       42       2    8.5     42.0
+dot product                               120      128       8   25.9    128.0
+requant + store                           144      176      32   35.6    176.0
+TOTAL                                     426      494      68
+payload (dot + requant/store) = 304 cycles = 61.5 %
+

@@ -27,6 +27,7 @@ target_compile_options(deeploygap9 PRIVATE
   -Wno-sign-compare
   -Wno-type-limits
   -Wno-attributes
+  -Wno-maybe-uninitialized  # RW: -O3 flags perf_stats_t in RandomNoise.c profiling (benign)
 )
 
 # The GAP9 SDK injects -Os globally, which compiles the compute kernels for size.
@@ -46,6 +47,30 @@ set(_KERNEL_O3_FILES
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Layernorm.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Softmax.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/GELU.c
+  # SpeechNet ZO/QZO kernels (RW 2026-10-12)
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/BatchNorm.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/AvgPool.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/MaxPool.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/GlobalAveragePool.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Relu.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/RandomNoise.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/RandomNoiseQuant.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/RequantShift.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/UniformRequantShift.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/DualConv.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/FlatConv.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Im2ColU8.c
+  # QW (dual_pass_fusion exp7): the blocks 1-4 kernels and exp6's NE16 prep, at -O3 like DualConv.c / Im2ColU8.c
+  #    (under the SDK's -Os the fused cluster kernel ran 914 k vs 451 k on Siracusa). -- QW
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/DualConv2In.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/Conv4x2.c
+  ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/src/PerturbConv4x2.c  # QW exp11: single-pass in-kernel-perturbation conv
+  ${CMAKE_CURRENT_LIST_DIR}/src/NE16DualPrep.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/NE16DualConv2in.c
+  # QW (exp11, 2026-10-23): the on-device NE16 weight encode (exp16c), the one compute kernel of the NE16 path left at
+  #    the SDK's -Os (5.3-5.5 cycles per weight element; block 4: 76 k of the step). Same output (integer bit packing);
+  #    +56 B code, +32 B worker stack (64 -> 96 B), measured with the board flags. -- QW
+  ${CMAKE_CURRENT_LIST_DIR}/src/NE16WeightEncode.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c
@@ -53,6 +78,59 @@ set(_KERNEL_O3_FILES
   ${CMAKE_CURRENT_LIST_DIR}/../PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c
 )
 set_source_files_properties(${_KERNEL_O3_FILES} PROPERTIES COMPILE_OPTIONS "-O3")
+
+# -- QW exp21e/fix: opt-in STRICT fp32 for the whole GAP9 kernel library (PULPOpen kernels + pulp-trainlib compiled in):
+#    gcc contracts a*b+c into fmadd.s by default (-ffp-contract=fast for GNU C); off here so every fp32 kernel evaluates
+#    in C-source order with one rounding per operation (device side of the bit-exact BP reference, exp21e fix/).
+#    Usage: -D DEEPLOY_STRICT_FP32_ALL=ON (with -D DEEPLOY_STRICT_FP32=ON for the generated networks). OFF by default.
+if(DEEPLOY_STRICT_FP32_ALL)
+  target_compile_options(deeploygap9 PRIVATE -fno-fast-math -ffp-contract=off)
+  message(STATUS "[QW strict-fp32] deeploygap9 (all sources): -fno-fast-math -ffp-contract=off")
+endif()
+
+# -- QW (2026-10-22, per-block breakdown on GAP9): the same measurement switches as TargetLibraries/PULPOpen for the
+#    PULPOpen kernels compiled into this library. DUALCONV2IN_PROBE=ON (core-0 cycles of phase 1 / phase 2 of
+#    DualConv2In.c), DUALCONV2IN_SPLIT=1|2, CONV4X2_STEP2A=ON (original step-2a Conv4x2), CONV4X2_SPLIT=1|2. -- QW
+if(DUALCONV2IN_PROBE)
+  target_compile_definitions(deeploygap9 PUBLIC DUALCONV2IN_PROBE)
+  message(STATUS "[QW] DUALCONV2IN_PROBE: DualConv2In.c prints per-phase cycles")
+endif()
+if(DUALCONV2IN_SPLIT)
+  target_compile_definitions(deeploygap9 PUBLIC DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT})
+  message(STATUS "[QW] DUALCONV2IN_SPLIT=${DUALCONV2IN_SPLIT}")
+endif()
+# -- QW exp11: NE16DUAL_PROBE=ON: per-core phase cycles of NE16DualPerturbEncode / NE16DualBias and the master-core split
+#    of NE16DualConv2in (column builds / NE16 waits / rest), as perf records. -- QW
+if(NE16DUAL_PROBE)
+  target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE)
+  message(STATUS "[QW] NE16DUAL_PROBE: NE16 prep / conv node phase cycles")
+endif()
+# -- QW exp21c: NE16DUAL_PROBE_WALL=ON (default off): NE16DUAL_PROBE plus the wall time of each prep phase (worker core
+#    0, barrier to barrier) and the W re-perturbation of NE16DualBias on its own; the conv-node split reads the master
+#    counter WITHOUT resetting it, so Runtime stays valid. Measurement only. -- QW exp21c
+if(NE16DUAL_PROBE_WALL)
+  target_compile_definitions(deeploygap9 PUBLIC NE16DUAL_PROBE_WALL)
+  message(STATUS "[QW] NE16DUAL_PROBE_WALL: NE16 prep phase walls, Runtime-preserving conv split (exp21c)")
+endif()
+# -- QW exp21c: opt-OUT switches of the NE16 prep optimisations (all default off = optimisations ON). Each restores
+#    the checkpoint (exp21) behaviour of one optimisation, for A/B comparisons:
+#    NE16DUAL_NOOPT_B=ON  NE16DualBias re-perturbs W and forms row sums even when input_offset == 0
+#    NE16DUAL_NOOPT_H=ON  no hoisting: the prep is recomputed in every window (no per-update cache hit)
+#    NE16DUAL_NOOPT_S=ON  bit-by-bit weight encoder instead of the word-wise 8x8 bit transpose -- QW exp21c
+foreach(_x21c_opt NE16DUAL_NOOPT_B NE16DUAL_NOOPT_H NE16DUAL_NOOPT_S)
+  if(${_x21c_opt})
+    target_compile_definitions(deeploygap9 PUBLIC ${_x21c_opt})
+    message(STATUS "[QW] ${_x21c_opt}: exp21c NE16 prep optimisation disabled")
+  endif()
+endforeach()
+if(CONV4X2_STEP2A)
+  target_compile_definitions(deeploygap9 PUBLIC CONV4X2_STEP2A)
+  message(STATUS "[QW] CONV4X2_STEP2A: Conv4x2.c is the original step-2a kernel")
+endif()
+if(CONV4X2_SPLIT)
+  target_compile_definitions(deeploygap9 PUBLIC CONV4X2_SPLIT=${CONV4X2_SPLIT})
+  message(STATUS "[QW] CONV4X2_SPLIT=${CONV4X2_SPLIT}")
+endif()
 
 target_link_libraries(deeploygap9 PUBLIC pmsis)
 
@@ -133,6 +211,28 @@ if(NOT USE_PREBUILT_PULPNN)
 endif()
 
 target_link_libraries(deeploygap9 PUBLIC pulp-nn-mixed)
+
+# QW: NE16 accelerator (via pulp-nnx) — GAP9_w_NE16 only. Modelled on upstream Deeploy PR #183's
+#     TargetLibraries/GAP9/CMakeLists.txt, MINUS its CNN_BasicKernels_NE16.c exclusion: that
+#     exclusion exists because the PR's GAP9 target compiles the GAP9-SDK NE16 AutoTiler kernels,
+#     whose hal_ne16.h redefines the NE16_REG_* macros that pulp-nnx's ne16_task_defs.h also
+#     defines (-Werror redefinition). Our GAP9 target never compiled those SDK kernels in, so
+#     there is nothing to exclude. Codegen emits the pulp-nnx HAL calls (ne16_nnx_init /
+#     ne16_nnx_dispatch), which live here. -- QW
+if(platform STREQUAL GAP9_w_NE16)  # -- QW
+  set(USE_NE16 ON CACHE BOOL "Use the NE16 accelerator." FORCE)  # -- QW
+  add_subdirectory(../third_party/pulp-nnx ${CMAKE_CURRENT_BINARY_DIR}/pulp-nnx)  # -- QW
+  target_link_libraries(pulp-nnx PUBLIC pmsis)  # -- QW
+  target_compile_options(pulp-nnx PRIVATE  # -- QW
+    -Wno-error
+    -Wno-implicit-int-conversion
+    -Wno-sign-conversion
+    -Wno-typedef-redefinition
+    -Wno-unused-parameter
+    -Wno-incompatible-pointer-types-discards-qualifiers
+  )
+  target_link_libraries(deeploygap9 PUBLIC pulp-nnx)  # -- QW
+endif()  # -- QW
 
 target_link_libraries(deeploygap9 PUBLIC m)
 

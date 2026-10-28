@@ -1,0 +1,53 @@
+The target board you have sourced is : gap9_evk, GAP9_V2.
+Release version: 0.0.0
+[Deeploy] 💥 PARSING FAILED - Backtracking exhausted at root!
+[Deeploy] ================================================================================
+[Deeploy] 🔍 Diagnosis:
+[Deeploy]    - Deepest successful exploration: Layer 0 'b1_slice00'
+[Deeploy]    - Deepest layer available mappers: ['SliceParser', 'SliceParser']
+[Deeploy] ================================================================================
+[Deeploy] Error during parsing! Exporting deeploy state backend_post_binding[.onnx|.pkl]!
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVP.py", line 335, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3463, in frontEnd
+    raise e
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2713, in parse
+    raise RuntimeError(
+RuntimeError: Did not find adequate mapping for graph! Explored until layer SliceLayer of node b1_slice00Candidates: ['SliceParser', 'SliceParser']. Exhausted backtracking.
+[Deeploy] Network generation failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : b1_pw2_ne16
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/NE16/b1_pw2_ne16
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/NE16/b1_pw2_ne16
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test b1_pw2_ne16 FAILED with exception: Network generation failed for b1_pw2_ne16[0m
+RUNNER_EXIT=1  ELAPSED=3s

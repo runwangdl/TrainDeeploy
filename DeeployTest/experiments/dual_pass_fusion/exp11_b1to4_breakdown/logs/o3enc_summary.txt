@@ -1,0 +1,12 @@
+o3enc_b4_C_plain: Errors: 0 out of 640 Runtime: 156341 cycles
+o3enc_b4_C_mb: Errors: 0 out of 640 Runtime: 1709 cycles
+o3enc_b4_Cprobe_pipe: Errors: 0 out of 640 Runtime: 16867 cycles
+o3enc_b3_C_plain: Errors: 0 out of 2560 Runtime: 98881 cycles
+o3enc_b3_C_mb: Errors: 0 out of 2560 Runtime: 3590 cycles
+o3enc_b3_Cprobe_pipe: Errors: 0 out of 2560 Runtime: 24429 cycles
+o3enc_b2_C_plain: Errors: 0 out of 10304 Runtime: 121250 cycles
+o3enc_b2_C_mb: Errors: 0 out of 10304 Runtime: 8147 cycles
+o3enc_b2_Cprobe_pipe: Errors: 0 out of 10304 Runtime: 67276 cycles
+o3enc_b1_C_plain: Errors: 0 out of 39424 Runtime: 294939 cycles
+o3enc_b1_C_mb: Errors: 0 out of 39424 Runtime: 40636 cycles
+o3enc_b1_Cprobe_pipe: Errors: 0 out of 39424 Runtime: 236091 cycles

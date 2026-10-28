@@ -1,0 +1,22 @@
+FlatConv: 302 instructions, span 363 cycles (1 pixel(s) on core 0)
+
+--- BY ADDRESS RANGE ---
+category                                instr   cycles   stall   %cyc   cyc/px
+pixel-loop control                         12       14       2    3.9     14.0
+gather                                     99      122      23   33.6    122.0
+channel-loop control                       63       79      16   21.8     79.0
+dot product                                48       49       1   13.5     49.0
+requant + store                            80       99      19   27.3     99.0
+TOTAL                                     302      363      61
+payload (dot + requant/store) = 148 cycles = 40.8 %
+
+--- BY C SOURCE LINE (cross-check) ---
+category                                instr   cycles   stall   %cyc   cyc/px
+pixel-loop control                         12       14       2    3.9     14.0
+gather                                    128      146      18   40.2    146.0
+channel-loop control                       34       55      21   15.2     55.0
+dot product                                48       49       1   13.5     49.0
+requant + store                            80       99      19   27.3     99.0
+TOTAL                                     302      363      61
+payload (dot + requant/store) = 148 cycles = 40.8 %
+

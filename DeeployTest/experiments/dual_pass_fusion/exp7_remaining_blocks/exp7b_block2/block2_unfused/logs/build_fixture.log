@@ -1,0 +1,9 @@
+[QZO_Conv block 2] wrote /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv_B2
+  nodes        : ['RQSPerturbRademacher:rqsp_blocks.2.conv.weight_int8', 'RQSPerturbRademacher:rqsp_blocks.2.conv.bias_rqsadd', 'Conv:/wrappedInnerForwardImpl_2/Conv', 'RequantShift:QSTANDALONE_QCDQ_/blocks_2_conv_output_quant_1/Clip_Quant']
+  initializers : ['QSTANDALONE_QCDQ_/blocks_2_conv_output_quant_1/Clip_Quant_mul_pc', 'blocks.2.conv.bias_rqsadd_pmul', 'blocks.2.conv.weight_int8_pmul']
+  value_info   : ['blocks.2.conv.weight_int8_pert', 'blocks.2.conv.bias_rqsadd_pert', '/wrappedInnerForwardImpl_2/Conv_output_0']
+  act (i8)     : (1, 16, 14, 22) range [0,78]  (Quant scale 0.1284130960702896)
+  weight (i8)  : (16, 16, 1, 8) range [-127,127]  perturbed on device -> [-127,127], 2038/2048 elements moved
+  bias (i32)   : [32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768]
+  output (i8)  : /blocks_2_conv_output_quant_1/Clip_output_0 (1, 16, 14, 23) range [-53,41]  == full-graph tensor: True
+  MACs         : 659,456

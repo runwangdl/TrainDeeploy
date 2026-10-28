@@ -1,0 +1,56 @@
+==============================================================================
+PER-STEP CYCLE BREAKDOWN (one training step = 4 micro-batches + 1 optimizer)
+==============================================================================
+forward     compute=67,838,084  L1dma= 2,844,332  L3dma=         0  TOTAL= 70,682,416
+backward    compute=64,462,668  L1dma= 4,921,628  L3dma=         0  TOTAL= 69,384,296
+optimizer   compute=    42,700  L1dma=    59,629  L3dma=         0  TOTAL=    102,329
+------------------------------------------------------------------------------
+TOTAL       compute=132,343,452  L1dma= 7,825,589  L3dma=         0  TOTAL=140,169,041
+
+compute-fraction = 94.4%   DMA-fraction = 5.6%
+
+==============================================================================
+TOP 15 OPS BY PER-STEP TOTAL CYCLES (cluster blocks: Kernel + L2<->L1 DMA)
+==============================================================================
+     total     kernel       dma ph        name
+29,618,156 29,222,820   395,336 forward   node_1_blocks_0_blocks_0_0_Conv_Conv_L2
+24,464,796 24,365,560    99,236 forward   node_5_blocks_1_blocks_1_0_Conv_Conv_L2
+13,609,948 13,545,424    64,524 backward  node_5_blocks_1_blocks_1_0_Conv_GradConvGrad_0_ConvGrad_back
+12,591,396 11,578,340 1,013,056 backward  node_4_blocks_0_blocks_0_3_MaxPool_GradMaxPoolGrad_0_MaxPool
+10,560,112 10,429,876   130,236 backward  node_5_blocks_1_blocks_1_0_Conv_GradConvGrad_0_ConvGrad_back
+ 4,891,156  4,409,296   481,860 backward  node_2_blocks_0_blocks_0_1_BatchNormalization_BatchNormInter
+ 4,373,008  4,190,996   182,012 backward  node_1_blocks_0_blocks_0_0_Conv_GradConvGrad_0_ConvGrad_back
+ 3,817,868  3,792,484    25,384 backward  node_9_blocks_2_blocks_2_0_Conv_GradConvGrad_0_ConvGrad_back
+ 3,706,428  3,680,988    25,440 forward   node_9_blocks_2_blocks_2_0_Conv_Conv_L2
+ 3,283,784  3,069,852   213,932 forward   node_4_blocks_0_blocks_0_3_MaxPool_MaxPool_L2
+ 3,213,752  2,718,564   495,188 backward  node_4_blocks_0_blocks_0_3_MaxPool_GradMaxPoolGrad_0_MaxPool
+ 3,209,812  2,729,460   480,352 forward   node_1_blocks_0_blocks_0_0_Conv_Conv_node_0_blocks_0_blocks_
+ 3,199,608  2,719,696   479,912 backward  node_1_blocks_0_blocks_0_0_Conv_Conv_node_0_blocks_0_blocks_
+ 3,134,700  3,097,824    36,876 backward  node_9_blocks_2_blocks_2_0_Conv_GradConvGrad_0_ConvGrad_back
+ 2,537,120  2,212,360   324,760 forward   node_2_blocks_0_blocks_0_1_BatchNormalization_BatchNormInter
+
+==============================================================================
+BY OP FAMILY (per step, cluster blocks)
+==============================================================================
+family                           compute       L1dma       total  nodes
+Conv                          64,139,468   1,849,116  65,988,584     22
+ConvGradX                     19,858,412     121,272  19,979,684      4
+ConvGradW                     19,057,452     448,120  19,505,572      8
+MaxPoolGrad                   12,356,160   1,210,920  13,567,080      6
+Relu                           3,925,876   1,891,048   5,816,924     14
+BatchNormalizationGrad         4,619,020     648,232   5,267,252      5
+MaxPool                        3,358,236     278,152   3,636,388      3
+BatchNormInternal              2,366,268     438,868   2,805,136      5
+ConvGradB                      1,749,828     217,236   1,967,064      5
+ReluGrad                         798,592     650,496   1,449,088      5
+sgd                               25,142      29,221      54,363     22
+InPlaceAccumulatorV2              17,558      30,408      47,966     22
+Gemm                              32,884       6,304      39,188      4
+SoftmaxCrossEntropyLoss           18,020       1,572      19,592      1
+SoftmaxCrossEntropyLossGrad       14,056       1,520      15,576      1
+GlobalAveragePool                  3,604       1,508       5,112      1
+GlobalAveragePoolGrad              2,876       1,596       4,472      1
+
+Wrote Perfetto trace: trace.json (263 events)
+BENCH train/opt (from probe_conv):
+BENCH train_cycles=140390186 opt_cycles=56427 weight_sram=61956

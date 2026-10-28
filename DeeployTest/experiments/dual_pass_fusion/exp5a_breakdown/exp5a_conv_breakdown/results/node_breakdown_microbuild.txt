@@ -1,0 +1,31 @@
+FlatConv: 370629 instructions, span 443784 cycles (1227 pixel(s) on core 0)
+
+--- BY ADDRESS RANGE ---
+category                                instr   cycles   stall   %cyc   cyc/px
+setup (per tile)                           78      558     480    0.1      0.5
+pixel-loop control                      14722    18635    3913    4.2     15.2
+gather                                 121455   148523   27068   33.5    121.0
+channel-loop control                    77301    97067   19766   21.9     79.1
+dot product                             58896    59744     848   13.5     48.7
+requant + store                         98160   119173   21013   26.9     97.1
+epilogue (barrier + restore)               17       80      63    0.0      0.1
+end-of-tile barrier wait                    0        4       4    0.0      0.0
+TOTAL                                  370629   443784   73155
+payload (dot + requant/store) = 178917 cycles = 40.3 %
+
+--- BY C SOURCE LINE (cross-check) ---
+category                                instr   cycles   stall   %cyc   cyc/px
+setup (per tile)                           36      305     269    0.1      0.2
+pixel-loop control                      14739    18730    3991    4.2     15.3
+gather                                 157038   177768   20730   40.1    144.9
+channel-loop control                    41718    67822   26104   15.3     55.3
+dot product                             58896    59744     848   13.5     48.7
+requant + store                         98160   119173   21013   26.9     97.1
+epilogue (barrier + restore)               15       72      57    0.0      0.1
+end-of-tile barrier wait                    0        4       4    0.0      0.0
+inlined from eu_v3.h                        2        8       6    0.0      0.0
+inlined from riscv_v5.h                     2       21      19    0.0      0.0
+kernel:other (line 43)                     23      137     114    0.0      0.1
+TOTAL                                  370629   443784   73155
+payload (dot + requant/store) = 178917 cycles = 40.3 %
+

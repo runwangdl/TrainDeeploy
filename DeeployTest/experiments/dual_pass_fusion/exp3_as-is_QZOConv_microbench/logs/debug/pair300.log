@@ -1,0 +1,822 @@
+14146833032: 1019077: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01194c addi                sp, sp, -160       sp=10001cc8  sp:10001d68 
+14146874678: 1019080: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14146874678: 1019080: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011950, index: 5)
+14146874678: 1019080: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011950 sw                  156(sp), ra        sp:10001cc8  PA:10001d64  ra:1c011478 
+14146916324: 1019083: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011954 sw                  152(sp), s0        sp:10001cc8  PA:10001d60  s0:000002bc 
+14146930206: 1019084: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011958 sw                  148(sp), s1        sp:10001cc8  PA:10001d5c  s1:00000002 
+14146944088: 1019085: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01195c sw                  144(sp), s2        sp:10001cc8  PA:10001d58  s2:000002bc 
+14146957970: 1019086: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14146957970: 1019086: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011960, index: 6)
+14146957970: 1019086: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011960 sw                  140(sp), s3        sp:10001cc8  PA:10001d54  s3:00000002 
+14146999616: 1019089: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011964 sw                  136(sp), s4        sp:10001cc8  PA:10001d50  s4:00000004 
+14147013498: 1019090: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011968 sw                  132(sp), s5        sp:10001cc8  PA:10001d4c  s5:1000a4f8 
+14147041262: 1019092: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01196c sw                  128(sp), s6        sp:10001cc8  PA:10001d48  s6:00000004 
+14147055144: 1019093: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147055144: 1019093: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011970, index: 7)
+14147055144: 1019093: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011970 sw                  124(sp), s7        sp:10001cc8  PA:10001d44  s7:1001bdb3 
+14147096790: 1019096: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011974 sw                  120(sp), s8        sp:10001cc8  PA:10001d40  s8:000000f9 
+14147110672: 1019097: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011978 sw                  116(sp), s9        sp:10001cc8  PA:10001d3c  s9:00000001 
+14147124554: 1019098: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01197c sw                  112(sp), s10       sp:10001cc8  PA:10001d38 s10:1001e048 
+14147152318: 1019100: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147152318: 1019100: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011980, index: 0)
+14147152318: 1019100: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011980 sw                  108(sp), s11       sp:10001cc8  PA:10001d34 s11:1001c06f 
+14147193964: 1019103: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011984 addi                s1, a4, 0          s1=1001e088  a4:1001e088 
+14147207846: 1019104: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011988 addi                s3, a3, 0          s3=1000a500  a3:1000a500 
+14147221728: 1019105: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01198c addi                s11, a2, 0        s11=1000a4f8  a2:1000a4f8 
+14147235610: 1019106: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147235610: 1019106: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011990, index: 1)
+14147235610: 1019106: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011990 addi                ra, a1, 0          ra=00000000  a1:00000000 
+14147277256: 1019109: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011994 addi                s7, a0, 0          s7=1001e048  a0:1001e048 
+14147291138: 1019110: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011998 lw                  a0, 176(sp)        a0=00000001  sp:10001cc8  PA:10001d78 
+14147305020: 1019111: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01199c lw                  a1, 168(sp)        a1=00000008  sp:10001cc8  PA:10001d70 
+14147318902: 1019112: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147318902: 1019112: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119a0, index: 2)
+14147318902: 1019112: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119a0 lw                  a2, 172(sp)        a2=00000001  sp:10001cc8  PA:10001d74 
+14147360548: 1019115: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119a4 lw                  t0, 164(sp)        t0=00000004  sp:10001cc8  PA:10001d6c 
+14147388312: 1019117: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119a8 lw                  a3, 160(sp)        a3=00000010  sp:10001cc8  PA:10001d68 
+14147402194: 1019118: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119ac p.exthz             a4, a1             a4=00000008  a1:00000008 
+14147416076: 1019119: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147416076: 1019119: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119b0, index: 3)
+14147416076: 1019119: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119b0 andi                a1, a1, 3          a1=00000000  a1:00000008 
+14147457722: 1019122: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119b4 sw                  104(sp), a1        sp:10001cc8  PA:10001d30  a1:00000000 
+14147471604: 1019123: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119b8 addi                a1, t0, 0          a1=00000004  t0:00000004 
+14147485486: 1019124: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119bc addi                t0, 0, 4           t0=00000004 
+14147499368: 1019125: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147499368: 1019125: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119c0, index: 4)
+14147499368: 1019125: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119c0 p.exthz             t6, a1             t6=00000004  a1:00000004 
+14147541014: 1019128: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119c4 p.extbz             s0, a0             s0=00000001  a0:00000001 
+14147554896: 1019129: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119c8 p.extbz             s2, a2             s2=00000001  a2:00000001 
+14147568778: 1019130: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119cc p.exthz             a0, a3             a0=00000010  a3:00000010 
+14147582660: 1019131: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147582660: 1019131: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119d0, index: 5)
+14147582660: 1019131: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119d0 sw                  20(sp), a0         sp:10001cc8  PA:10001cdc  a0:00000010 
+14147624306: 1019134: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119d4 p.exths             a0, a7             a0=00000001  a7:00000001 
+14147638188: 1019135: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119d8 sw                  32(sp), a0         sp:10001cc8  PA:10001ce8  a0:00000001 
+14147665952: 1019137: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119dc p.extbs             a0, a3             a0=00000010  a3:00000010 
+14147679834: 1019138: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147679834: 1019138: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119e0, index: 6)
+14147679834: 1019138: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119e0 sw                  80(sp), a0         sp:10001cc8  PA:10001d18  a0:00000010 
+14147749244: 1019143: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119e4 sw                  84(sp), t6         sp:10001cc8  PA:10001d1c  t6:00000004 
+14147763126: 1019144: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119e8 sw                  16(sp), a4         sp:10001cc8  PA:10001cd8  a4:00000008 
+14147777008: 1019145: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119ec sw                  100(sp), a6        sp:10001cc8  PA:10001d2c  a6:1001e0a8 
+14147790890: 1019146: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147790890: 1019146: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119f0, index: 7)
+14147790890: 1019146: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119f0 sw                  96(sp), a5         sp:10001cc8  PA:10001d28  a5:1001e0c8 
+14147832536: 1019149: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119f4 sw                  12(sp), a1         sp:10001cc8  PA:10001cd4  a1:00000004 
+14147846418: 1019150: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119f8 bgeu                a4, t0, 364        a4:00000008  t0:00000004 
+14147888064: 1019153: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147888064: 1019153: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011b60, index: 6)
+14147888064: 1019153: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b64 addi                a5, 0, 0           a5=00000000 
+14147929710: 1019156: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b68 andi                a6, a1, 3          a6=00000000  a1:00000004 
+14147943592: 1019157: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b6c srli                a0, a4, 0x2        a0=00000002  a4:00000008 
+14147957474: 1019158: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14147957474: 1019158: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011b70, index: 7)
+14147957474: 1019158: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b70 add                 t3, s7, t6         t3=1001e04c  s7:1001e048  t6:00000004 
+14147999120: 1019161: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b74 srli                a1, t6, 0x2        a1=00000001  t6:00000004 
+14148013002: 1019162: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b78 sltu                a2, 0, s0          a2=00000001  s0:00000001 
+14148026884: 1019163: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b7c sltu                a3, 0, s2          a3=00000001  s2:00000001 
+14148040766: 1019164: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148040766: 1019164: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011b80, index: 0)
+14148040766: 1019164: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b80 and                 a2, a3, a2         a2=00000001  a3:00000001  a2:00000001 
+14148082412: 1019167: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b84 sw                  68(sp), a2         sp:10001cc8  PA:10001d0c  a2:00000001 
+14148096294: 1019168: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b88 slli                a2, t6, 0x1        a2=00000008  t6:00000004 
+14148110176: 1019169: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b8c add                 a2, a2, t6         a2=0000000c  a2:00000008  t6:00000004 
+14148124058: 1019170: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148124058: 1019170: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011b90, index: 1)
+14148124058: 1019170: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b90 sw                  64(sp), a2         sp:10001cc8  PA:10001d08  a2:0000000c 
+14148165704: 1019173: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b94 addi                a2, 0, 1           a2=00000001 
+14148179586: 1019174: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b98 p.maxu              a1, a1, a2         a1=00000001  a1:00000001  a2:00000001 
+14148193468: 1019175: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011b9c slli                t4, a1, 0x2        t4=00000004  a1:00000001 
+14148207350: 1019176: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148207350: 1019176: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011ba0, index: 2)
+14148207350: 1019176: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ba0 add                 a1, s7, t4         a1=1001e04c  s7:1001e048  t4:00000004 
+14148248996: 1019179: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ba4 sw                  24(sp), a1         sp:10001cc8  PA:10001ce0  a1:1001e04c 
+14148276760: 1019181: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ba8 sw                  72(sp), a6         sp:10001cc8  PA:10001d10  a6:00000000 
+14148304524: 1019183: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bac addi                a1, a6, -1         a1=ffffffff  a6:00000000 
+14148318406: 1019184: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148318406: 1019184: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bb0, index: 3)
+14148318406: 1019184: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bb0 p.exthz             a1, a1             a1=0000ffff  a1:ffffffff 
+14148360052: 1019187: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bb4 addi                a1, a1, 1          a1=00010000  a1:0000ffff 
+14148373934: 1019188: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bb8 sw                  36(sp), a1         sp:10001cc8  PA:10001cec  a1:00010000 
+14148387816: 1019189: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bbc p.maxu              a0, a0, a2         a0=00000002  a0:00000002  a2:00000001 
+14148401698: 1019190: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148401698: 1019190: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bc0, index: 4)
+14148401698: 1019190: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bc0 sw                  60(sp), a0         sp:10001cc8  PA:10001d04  a0:00000002 
+14148443344: 1019193: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bc4 sw                  56(sp), s7         sp:10001cc8  PA:10001d00  s7:1001e048 
+14148471108: 1019195: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bc8 sw                  40(sp), s0         sp:10001cc8  PA:10001cf0  s0:00000001 
+14148498872: 1019197: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bcc sw                  52(sp), t3         sp:10001cc8  PA:10001cfc  t3:1001e04c 
+14148512754: 1019198: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148512754: 1019198: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bd0, index: 5)
+14148512754: 1019198: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bd0 sw                  48(sp), t4         sp:10001cc8  PA:10001cf8  t4:00000004 
+14148554400: 1019201: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bd4 sw                  28(sp), s2         sp:10001cc8  PA:10001ce4  s2:00000001 
+14148568282: 1019202: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bd8 jal                 0, 344            
+14148596046: 1019204: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148596046: 1019204: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d30, index: 3)
+14148596046: 1019204: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d30 beq                 ra, 0, 28          ra:00000000 
+14148665456: 1019209: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148665456: 1019209: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d40, index: 4)
+14148665456: 1019209: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d4c addi                s8, 0, 0           s8=00000000 
+14148707102: 1019212: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148707102: 1019212: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d50, index: 5)
+14148707102: 1019212: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d50 addi                s6, 0, 0           s6=00000000 
+14148748748: 1019215: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d54 addi                s5, 0, 0           s5=00000000 
+14148762630: 1019216: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d58 addi                s4, 0, 0           s4=00000000 
+14148776512: 1019217: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d5c add                 a1, s1, t6         a1=1001e08c  s1:1001e088  t6:00000004 
+14148790394: 1019218: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148790394: 1019218: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d60, index: 6)
+14148790394: 1019218: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d60 add                 a2, a1, t6         a2=1001e090  a1:1001e08c  t6:00000004 
+14148832040: 1019221: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d64 add                 a3, a2, t6         a3=1001e094  a2:1001e090  t6:00000004 
+14148845922: 1019222: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d68 sw                  92(sp), s11        sp:10001cc8  PA:10001d24 s11:1000a4f8 
+14148859804: 1019223: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d6c sw                  88(sp), a5         sp:10001cc8  PA:10001d20  a5:00000000 
+14148873686: 1019224: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148873686: 1019224: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d70, index: 7)
+14148873686: 1019224: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d70 bgeu                t6, t0, 44         t6:00000004  t0:00000004 
+14148943096: 1019229: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148943096: 1019229: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d90, index: 1)
+14148943096: 1019229: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d9c srli                a5, t4, 0x2        a5=00000001  t4:00000004 
+14148984742: 1019232: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14148984742: 1019232: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011da0, index: 2)
+14148984742: 1019232: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da0 addi                a4, 0, 0           a4=00000000 
+14149026388: 1019235: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da4 addi                s9, s4, 0          s9=00000000  s4:00000000 
+14149040270: 1019236: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da8 addi                s10, s5, 0        s10=00000000  s5:00000000 
+14149054152: 1019237: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dac addi                s11, s6, 0        s11=00000000  s6:00000000 
+14149068034: 1019238: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149068034: 1019238: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011db0, index: 3)
+14149068034: 1019238: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db0 addi                a0, s8, 0          a0=00000000  s8:00000000 
+14149109680: 1019241: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db4 lp.setup            a5, 0x0, 0x2a      a5:00000001 
+14149123562: 1019242: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db8 add                 a5, s1, a4         a5=1001e088  s1:1001e088  a4:00000000 
+14149137444: 1019243: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dbc lw                  a5, 0(a5)          a5=b4a87c66  a5:1001e088  PA:1001e088 
+14149151326: 1019244: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149151326: 1019244: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011dc0, index: 4)
+14149151326: 1019244: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc0 add                 a6, a1, a4         a6=1001e08c  a1:1001e08c  a4:00000000 
+14149192972: 1019247: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc4 lw                  a6, 0(a6)          a6=930b8553  a6:1001e08c  PA:1001e08c 
+14149206854: 1019248: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc8 add                 a7, a2, a4         a7=1001e090  a2:1001e090  a4:00000000 
+14149220736: 1019249: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dcc lw                  a7, 0(a7)          a7=6e840448  a7:1001e090  PA:1001e090 
+14149234618: 1019250: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149234618: 1019250: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011dd0, index: 5)
+14149234618: 1019250: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd0 add                 t0, a3, a4         t0=1001e094  a3:1001e094  a4:00000000 
+14149276264: 1019253: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd4 add                 t1, s7, a4         t1=1001e048  s7:1001e048  a4:00000000 
+14149290146: 1019254: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd8 lw                  t1, 0(t1)          t1=f5f0fa04  t1:1001e048  PA:1001e048 
+14149304028: 1019255: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ddc lw                  t0, 0(t0)          t0=817537a5  t0:1001e094  PA:1001e094 
+14149317910: 1019256: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149317910: 1019256: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011de0, index: 6)
+14149317910: 1019256: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de0 add                 t2, t3, a4         t2=1001e04c  t3:1001e04c  a4:00000000 
+14149359556: 1019259: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de4 lw                  t2, 0(t2)          t2=fbf5f0fa  t2:1001e04c  PA:1001e04c 
+14149373438: 1019260: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de8 pv.sdotsp.b         a0, t1, a5         a0=00000774  t1:f5f0fa04  a5:b4a87c66  a0:00000000 
+14149387320: 1019261: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dec pv.sdotsp.b         s11, t1, a6       s11=0000082d  t1:f5f0fa04  a6:930b8553 s11:00000000 
+14149401202: 1019262: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149401202: 1019262: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011df0, index: 7)
+14149401202: 1019262: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df0 pv.sdotsp.b         s10, t1, a7       s10=0000040e  t1:f5f0fa04  a7:6e840448 s10:00000000 
+14149442848: 1019265: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df4 pv.sdotsp.b         s9, t1, t0         s9=fffffb6f  t1:f5f0fa04  t0:817537a5  s9:00000000 
+14149456730: 1019266: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df8 pv.sdotsp.b         s8, t2, a5         s8=fffffb20  t2:fbf5f0fa  a5:b4a87c66  s8:00000000 
+14149470612: 1019267: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dfc pv.sdotsp.b         s6, t2, a6         s6=00000766  t2:fbf5f0fa  a6:930b8553  s6:00000000 
+14149484494: 1019268: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149484494: 1019268: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e00, index: 0)
+14149484494: 1019268: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e00 pv.sdotsp.b         s5, t2, a7         s5=0000013e  t2:fbf5f0fa  a7:6e840448  s5:00000000 
+14149526140: 1019271: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e04 addi                a4, a4, 4          a4=00000004  a4:00000000 
+14149540022: 1019272: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e08 pv.sdotsp.b         s4, t2, t0         s4=fffffc26  t2:fbf5f0fa  t0:817537a5  s4:00000000 
+14149553904: 1019273: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e0c add                 s1, s1, t4         s1=1001e08c  s1:1001e088  t4:00000004 
+14149567786: 1019274: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e10 add                 a3, a3, a4         a3=1001e098  a3:1001e094  a4:00000004 
+14149581668: 1019275: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e14 add                 a2, a2, a4         a2=1001e094  a2:1001e090  a4:00000004 
+14149595550: 1019276: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e18 add                 a1, a1, a4         a1=1001e090  a1:1001e08c  a4:00000004 
+14149609432: 1019277: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e1c add                 a4, t3, a4         a4=1001e050  t3:1001e04c  a4:00000004 
+14149623314: 1019278: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149623314: 1019278: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e20, index: 2)
+14149623314: 1019278: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e20 lw                  s7, 24(sp)         s7=1001e04c  sp:10001cc8  PA:10001ce0 
+14149664960: 1019281: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e24 addi                a6, s1, 0          a6=1001e08c  s1:1001e08c 
+14149678842: 1019282: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e28 lw                  t0, 72(sp)         t0=00000000  sp:10001cc8  PA:10001d10 
+14149692724: 1019283: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e2c addi                a7, t0, 0          a7=00000000  t0:00000000 
+14149720488: 1019285: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149720488: 1019285: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e30, index: 3)
+14149720488: 1019285: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e30 beq                 t0, 0, 80          t0:00000000 
+14149789898: 1019290: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149789898: 1019290: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e80, index: 0)
+14149789898: 1019290: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e80 lw                  a1, 68(sp)         a1=00000001  sp:10001cc8  PA:10001d0c 
+14149845426: 1019294: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e84 bne                 a1, 0, -680        a1:00000001 
+14149900954: 1019298: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bdc lw                  s0, 96(sp)         s0=1001e0c8  sp:10001cc8  PA:10001d28 
+14149914836: 1019299: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14149914836: 1019299: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011be0, index: 6)
+14149914836: 1019299: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be0 lw                  a1, 0(s0)          a1=00000187  s0:1001e0c8  PA:1001e0c8 
+14149956482: 1019302: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be4 lw                  s2, 100(sp)        s2=1001e0a8  sp:10001cc8  PA:10001d2c 
+14149970364: 1019303: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be8 lw                  a2, 0(s2)          a2=00008000  s2:1001e0a8  PA:1001e0a8 
+14149998128: 1019305: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bec sw                  76(sp), s1         sp:10001cc8  PA:10001d14  s1:1001e08c 
+14150012010: 1019306: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150012010: 1019306: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bf0, index: 7)
+14150012010: 1019306: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf0 lw                  s1, 80(sp)         s1=00000010  sp:10001cc8  PA:10001d18 
+14150053656: 1019309: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf4 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14150081420: 1019311: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf8 sw                  44(sp), ra         sp:10001cc8  PA:10001cf4  ra:00000000 
+14150095302: 1019312: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bfc auipc               ra, 0x0            ra=1c011bfc 
+14150109184: 1019313: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150109184: 1019313: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c00, index: 0)
+14150109184: 1019313: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c00 jalr                ra, ra, 1584       ra=1c011c04  ra:1c011bfc 
+14150164712: 1019317: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=000b622c  a1:00000187  a0:00000774 
+14150192476: 1019319: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150192476: 1019319: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012230, index: 3)
+14150192476: 1019319: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14150234122: 1019322: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=0000000b  a0:000b622c  a2:00008000  a1:00000010 
+14150248004: 1019323: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14150261886: 1019324: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=0000000b  a0:0000000b  a1:0000007f 
+14150275768: 1019325: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150275768: 1019325: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012240, index: 4)
+14150275768: 1019325: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=0000000b  a0:0000000b 
+14150317414: 1019328: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c04 
+14150345178: 1019330: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c04 addi                s7, s3, 0          s7=1000a500  s3:1000a500 
+14150359060: 1019331: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c08 lw                  s3, 92(sp)         s3=1000a4f8  sp:10001cc8  PA:10001d24 
+14150386824: 1019333: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c0c sb                  0(s3), a0          s3:1000a4f8  PA:1000a4f8  a0:0000000b 
+14150414588: 1019335: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150414588: 1019335: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c10, index: 1)
+14150414588: 1019335: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c10 lw                  a1, 0(s0)          a1=00000187  s0:1001e0c8  PA:1001e0c8 
+14150456234: 1019338: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c14 lw                  a2, 0(s2)          a2=00008000  s2:1001e0a8  PA:1001e0a8 
+14150470116: 1019339: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c18 addi                a0, s8, 0          a0=fffffb20  s8:fffffb20 
+14150483998: 1019340: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c1c addi                a3, s1, 0          a3=00000010  s1:00000010 
+14150497880: 1019341: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150497880: 1019341: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c20, index: 2)
+14150497880: 1019341: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c20 auipc               ra, 0x0            ra=1c011c20 
+14150539526: 1019344: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c24 jalr                ra, ra, 1548       ra=1c011c28  ra:1c011c20 
+14150567290: 1019346: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fff88de0  a1:00000187  a0:fffffb20 
+14150595054: 1019348: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14150608936: 1019349: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffff9  a0:fff88de0  a2:00008000  a1:00000010 
+14150622818: 1019350: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14150636700: 1019351: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffff9  a0:fffffff9  a1:0000007f 
+14150650582: 1019352: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffff9  a0:fffffff9 
+14150664464: 1019353: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c28 
+14150692228: 1019355: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c28 sb                  0(s7), a0          s7:1000a500  PA:1000a500  a0:fffffff9 
+14150706110: 1019356: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c2c lw                  a1, 4(s0)          a1=000000e9  s0:1001e0c8  PA:1001e0cc 
+14150719992: 1019357: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150719992: 1019357: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c30, index: 3)
+14150719992: 1019357: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c30 lw                  a2, 4(s2)          a2=00008000  s2:1001e0a8  PA:1001e0ac 
+14150761638: 1019360: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c34 addi                a0, s11, 0         a0=0000082d s11:0000082d 
+14150775520: 1019361: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c38 addi                s11, s3, 0        s11=1000a4f8  s3:1000a4f8 
+14150789402: 1019362: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c3c addi                s3, s7, 0          s3=1000a500  s7:1000a500 
+14150803284: 1019363: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150803284: 1019363: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c40, index: 4)
+14150803284: 1019363: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c40 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14150844930: 1019366: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c44 auipc               ra, 0x0            ra=1c011c44 
+14150858812: 1019367: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c48 jalr                ra, ra, 1512       ra=1c011c4c  ra:1c011c44 
+14150886576: 1019369: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=000770f5  a1:000000e9  a0:0000082d 
+14150914340: 1019371: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150914340: 1019371: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012230, index: 3)
+14150914340: 1019371: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14150955986: 1019374: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000007  a0:000770f5  a2:00008000  a1:00000010 
+14150969868: 1019375: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14150983750: 1019376: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000007  a0:00000007  a1:0000007f 
+14150997632: 1019377: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14150997632: 1019377: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012240, index: 4)
+14150997632: 1019377: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000007  a0:00000007 
+14151039278: 1019380: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c4c 
+14151067042: 1019382: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c4c sb                  1(s11), a0        s11:1000a4f8  PA:1000a4f9  a0:00000007 
+14151080924: 1019383: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151080924: 1019383: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c50, index: 5)
+14151080924: 1019383: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c50 lw                  a1, 4(s0)          a1=000000e9  s0:1001e0c8  PA:1001e0cc 
+14151122570: 1019386: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c54 lw                  a2, 4(s2)          a2=00008000  s2:1001e0a8  PA:1001e0ac 
+14151136452: 1019387: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c58 addi                a0, s6, 0          a0=00000766  s6:00000766 
+14151150334: 1019388: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c5c addi                a3, s1, 0          a3=00000010  s1:00000010 
+14151164216: 1019389: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151164216: 1019389: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c60, index: 6)
+14151164216: 1019389: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c60 auipc               ra, 0x0            ra=1c011c60 
+14151205862: 1019392: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c64 jalr                ra, ra, 1484       ra=1c011c68  ra:1c011c60 
+14151233626: 1019394: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=0006bbd6  a1:000000e9  a0:00000766 
+14151261390: 1019396: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14151275272: 1019397: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000007  a0:0006bbd6  a2:00008000  a1:00000010 
+14151289154: 1019398: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14151303036: 1019399: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000007  a0:00000007  a1:0000007f 
+14151316918: 1019400: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000007  a0:00000007 
+14151330800: 1019401: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c68 
+14151358564: 1019403: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c68 sb                  1(s7), a0          s7:1000a500  PA:1000a501  a0:00000007 
+14151372446: 1019404: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c6c lw                  a1, 8(s0)          a1=00000151  s0:1001e0c8  PA:1001e0d0 
+14151386328: 1019405: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151386328: 1019405: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c70, index: 7)
+14151386328: 1019405: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c70 lw                  a2, 8(s2)          a2=00008000  s2:1001e0a8  PA:1001e0b0 
+14151427974: 1019408: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c74 addi                a0, s10, 0         a0=0000040e s10:0000040e 
+14151441856: 1019409: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c78 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14151455738: 1019410: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c7c auipc               ra, 0x0            ra=1c011c7c 
+14151469620: 1019411: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151469620: 1019411: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c80, index: 0)
+14151469620: 1019411: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c80 jalr                ra, ra, 1456       ra=1c011c84  ra:1c011c7c 
+14151525148: 1019415: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=0005566e  a1:00000151  a0:0000040e 
+14151552912: 1019417: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14151566794: 1019418: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000005  a0:0005566e  a2:00008000  a1:00000010 
+14151580676: 1019419: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14151594558: 1019420: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000005  a0:00000005  a1:0000007f 
+14151608440: 1019421: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000005  a0:00000005 
+14151622322: 1019422: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c84 
+14151650086: 1019424: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c84 sb                  2(s11), a0        s11:1000a4f8  PA:1000a4fa  a0:00000005 
+14151677850: 1019426: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c88 lw                  a1, 8(s0)          a1=00000151  s0:1001e0c8  PA:1001e0d0 
+14151691732: 1019427: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c8c lw                  a2, 8(s2)          a2=00008000  s2:1001e0a8  PA:1001e0b0 
+14151705614: 1019428: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151705614: 1019428: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c90, index: 1)
+14151705614: 1019428: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c90 addi                a0, s5, 0          a0=0000013e  s5:0000013e 
+14151747260: 1019431: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c94 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14151761142: 1019432: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c98 auipc               ra, 0x0            ra=1c011c98 
+14151775024: 1019433: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c9c jalr                ra, ra, 1428       ra=1c011ca0  ra:1c011c98 
+14151802788: 1019435: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=0001a29e  a1:00000151  a0:0000013e 
+14151830552: 1019437: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14151844434: 1019438: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000002  a0:0001a29e  a2:00008000  a1:00000010 
+14151858316: 1019439: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14151872198: 1019440: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000002  a0:00000002  a1:0000007f 
+14151886080: 1019441: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000002  a0:00000002 
+14151899962: 1019442: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011ca0 
+14151927726: 1019444: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14151927726: 1019444: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011ca0, index: 2)
+14151927726: 1019444: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca0 sb                  2(s7), a0          s7:1000a500  PA:1000a502  a0:00000002 
+14151969372: 1019447: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca4 lw                  a1, 12(s0)         a1=00000108  s0:1001e0c8  PA:1001e0d4 
+14151983254: 1019448: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca8 lw                  a2, 12(s2)         a2=00008000  s2:1001e0a8  PA:1001e0b4 
+14151997136: 1019449: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cac addi                a0, s9, 0          a0=fffffb6f  s9:fffffb6f 
+14152011018: 1019450: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152011018: 1019450: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011cb0, index: 3)
+14152011018: 1019450: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb0 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14152052664: 1019453: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb4 auipc               ra, 0x0            ra=1c011cb4 
+14152066546: 1019454: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb8 jalr                ra, ra, 1400       ra=1c011cbc  ra:1c011cb4 
+14152094310: 1019456: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fffb4a78  a1:00000108  a0:fffffb6f 
+14152122074: 1019458: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14152135956: 1019459: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffffb  a0:fffb4a78  a2:00008000  a1:00000010 
+14152149838: 1019460: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14152163720: 1019461: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffffb  a0:fffffffb  a1:0000007f 
+14152177602: 1019462: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffffb  a0:fffffffb 
+14152191484: 1019463: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011cbc 
+14152219248: 1019465: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cbc sb                  3(s11), a0        s11:1000a4f8  PA:1000a4fb  a0:fffffffb 
+14152233130: 1019466: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152233130: 1019466: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011cc0, index: 4)
+14152233130: 1019466: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc0 lw                  a1, 12(s0)         a1=00000108  s0:1001e0c8  PA:1001e0d4 
+14152274776: 1019469: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc4 lw                  a2, 12(s2)         a2=00008000  s2:1001e0a8  PA:1001e0b4 
+14152288658: 1019470: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc8 addi                a0, s4, 0          a0=fffffc26  s4:fffffc26 
+14152302540: 1019471: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ccc addi                a3, s1, 0          a3=00000010  s1:00000010 
+14152316422: 1019472: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152316422: 1019472: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011cd0, index: 5)
+14152316422: 1019472: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd0 lw                  s1, 76(sp)         s1=1001e08c  sp:10001cc8  PA:10001d14 
+14152358068: 1019475: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd4 auipc               ra, 0x0            ra=1c011cd4 
+14152371950: 1019476: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd8 jalr                ra, ra, 1368       ra=1c011cdc  ra:1c011cd4 
+14152399714: 1019478: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fffc0730  a1:00000108  a0:fffffc26 
+14152427478: 1019480: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14152441360: 1019481: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffffc  a0:fffc0730  a2:00008000  a1:00000010 
+14152455242: 1019482: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14152469124: 1019483: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffffc  a0:fffffffc  a1:0000007f 
+14152483006: 1019484: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffffc  a0:fffffffc 
+14152496888: 1019485: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011cdc 
+14152524652: 1019487: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cdc lw                  ra, 44(sp)         ra=00000000  sp:10001cc8  PA:10001cf4 
+14152538534: 1019488: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152538534: 1019488: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011ce0, index: 6)
+14152538534: 1019488: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce0 lw                  t6, 84(sp)         t6=00000004  sp:10001cc8  PA:10001d1c 
+14152580180: 1019491: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce4 sb                  3(s7), a0          s7:1000a500  PA:1000a503  a0:fffffffc 
+14152594062: 1019492: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce8 addi                s0, s0, 16         s0=1001e0d8  s0:1001e0c8 
+14152607944: 1019493: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cec sw                  96(sp), s0         sp:10001cc8  PA:10001d28  s0:1001e0d8 
+14152621826: 1019494: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152621826: 1019494: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011cf0, index: 7)
+14152621826: 1019494: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf0 lw                  s0, 40(sp)         s0=00000001  sp:10001cc8  PA:10001cf0 
+14152663472: 1019497: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf4 addi                s2, s2, 16         s2=1001e0b8  s2:1001e0a8 
+14152677354: 1019498: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf8 sw                  100(sp), s2        sp:10001cc8  PA:10001d2c  s2:1001e0b8 
+14152705118: 1019500: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cfc lw                  s2, 28(sp)         s2=00000001  sp:10001cc8  PA:10001ce4 
+14152719000: 1019501: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152719000: 1019501: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d00, index: 0)
+14152719000: 1019501: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d00 lw                  s7, 56(sp)         s7=1001e048  sp:10001cc8  PA:10001d00 
+14152760646: 1019504: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d04 addi                t0, 0, 4           t0=00000004 
+14152774528: 1019505: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d08 lw                  a5, 88(sp)         a5=00000000  sp:10001cc8  PA:10001d20 
+14152788410: 1019506: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d0c lw                  t3, 52(sp)         t3=1001e04c  sp:10001cc8  PA:10001cfc 
+14152802292: 1019507: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152802292: 1019507: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d10, index: 1)
+14152802292: 1019507: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d10 lw                  t4, 48(sp)         t4=00000004  sp:10001cc8  PA:10001cf8 
+14152843938: 1019510: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d14 addi                s3, s3, 4          s3=1000a504  s3:1000a500 
+14152857820: 1019511: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d18 addi                s11, s11, 4       s11=1000a4fc s11:1000a4f8 
+14152871702: 1019512: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d1c addi                a5, a5, 1          a5=00000001  a5:00000000 
+14152885584: 1019513: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152885584: 1019513: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d20, index: 2)
+14152885584: 1019513: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d20 lw                  a0, 64(sp)         a0=0000000c  sp:10001cc8  PA:10001d08 
+14152927230: 1019516: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d24 add                 s1, s1, a0         s1=1001e098  s1:1001e08c  a0:0000000c 
+14152954994: 1019518: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d28 lw                  a0, 60(sp)         a0=00000002  sp:10001cc8  PA:10001d04 
+14152968876: 1019519: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d2c beq                 a5, a0, -816       a5:00000001  a0:00000002 
+14152996640: 1019521: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14152996640: 1019521: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d30, index: 3)
+14152996640: 1019521: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d30 beq                 ra, 0, 28          ra:00000000 
+14153066050: 1019526: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153066050: 1019526: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d40, index: 4)
+14153066050: 1019526: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d4c addi                s8, 0, 0           s8=00000000 
+14153107696: 1019529: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d50 addi                s6, 0, 0           s6=00000000 
+14153121578: 1019530: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d54 addi                s5, 0, 0           s5=00000000 
+14153135460: 1019531: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d58 addi                s4, 0, 0           s4=00000000 
+14153149342: 1019532: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d5c add                 a1, s1, t6         a1=1001e09c  s1:1001e098  t6:00000004 
+14153163224: 1019533: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d60 add                 a2, a1, t6         a2=1001e0a0  a1:1001e09c  t6:00000004 
+14153177106: 1019534: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d64 add                 a3, a2, t6         a3=1001e0a4  a2:1001e0a0  t6:00000004 
+14153190988: 1019535: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d68 sw                  92(sp), s11        sp:10001cc8  PA:10001d24 s11:1000a4fc 
+14153204870: 1019536: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d6c sw                  88(sp), a5         sp:10001cc8  PA:10001d20  a5:00000001 
+14153218752: 1019537: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153218752: 1019537: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d70, index: 7)
+14153218752: 1019537: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d70 bgeu                t6, t0, 44         t6:00000004  t0:00000004 
+14153288162: 1019542: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153288162: 1019542: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d90, index: 1)
+14153288162: 1019542: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d9c srli                a5, t4, 0x2        a5=00000001  t4:00000004 
+14153329808: 1019545: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153329808: 1019545: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011da0, index: 2)
+14153329808: 1019545: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da0 addi                a4, 0, 0           a4=00000000 
+14153371454: 1019548: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da4 addi                s9, s4, 0          s9=00000000  s4:00000000 
+14153385336: 1019549: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011da8 addi                s10, s5, 0        s10=00000000  s5:00000000 
+14153399218: 1019550: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dac addi                s11, s6, 0        s11=00000000  s6:00000000 
+14153413100: 1019551: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153413100: 1019551: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011db0, index: 3)
+14153413100: 1019551: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db0 addi                a0, s8, 0          a0=00000000  s8:00000000 
+14153454746: 1019554: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db4 lp.setup            a5, 0x0, 0x2a      a5:00000001 
+14153468628: 1019555: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011db8 add                 a5, s1, a4         a5=1001e098  s1:1001e098  a4:00000000 
+14153482510: 1019556: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dbc lw                  a5, 0(a5)          a5=8af9a67f  a5:1001e098  PA:1001e098 
+14153496392: 1019557: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153496392: 1019557: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011dc0, index: 4)
+14153496392: 1019557: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc0 add                 a6, a1, a4         a6=1001e09c  a1:1001e09c  a4:00000000 
+14153538038: 1019560: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc4 lw                  a6, 0(a6)          a6=a8287fb1  a6:1001e09c  PA:1001e09c 
+14153551920: 1019561: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dc8 add                 a7, a2, a4         a7=1001e0a0  a2:1001e0a0  a4:00000000 
+14153565802: 1019562: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dcc lw                  a7, 0(a7)          a7=841328aa  a7:1001e0a0  PA:1001e0a0 
+14153579684: 1019563: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153579684: 1019563: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011dd0, index: 5)
+14153579684: 1019563: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd0 add                 t0, a3, a4         t0=1001e0a4  a3:1001e0a4  a4:00000000 
+14153621330: 1019566: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd4 add                 t1, s7, a4         t1=1001e048  s7:1001e048  a4:00000000 
+14153635212: 1019567: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dd8 lw                  t1, 0(t1)          t1=f5f0fa04  t1:1001e048  PA:1001e048 
+14153649094: 1019568: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ddc lw                  t0, 0(t0)          t0=526b3c7d  t0:1001e0a4  PA:1001e0a4 
+14153662976: 1019569: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de0 add                 t2, t3, a4         t2=1001e04c  t3:1001e04c  a4:00000000 
+14153676858: 1019570: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de4 lw                  t2, 0(t2)          t2=fbf5f0fa  t2:1001e04c  PA:1001e04c 
+14153690740: 1019571: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011de8 pv.sdotsp.b         a0, t1, a5         a0=0000099a  t1:f5f0fa04  a5:8af9a67f  a0:00000000 
+14153704622: 1019572: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dec pv.sdotsp.b         s11, t1, a6       s11=fffffd12  t1:f5f0fa04  a6:a8287fb1 s11:00000000 
+14153718504: 1019573: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df0 pv.sdotsp.b         s10, t1, a7       s10=000001dc  t1:f5f0fa04  a7:841328aa s10:00000000 
+14153732386: 1019574: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df4 pv.sdotsp.b         s9, t1, t0         s9=fffff656  t1:f5f0fa04  t0:526b3c7d  s9:00000000 
+14153746268: 1019575: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011df8 pv.sdotsp.b         s8, t2, a5         s8=00000541  t2:fbf5f0fa  a5:8af9a67f  s8:00000000 
+14153760150: 1019576: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011dfc pv.sdotsp.b         s6, t2, a6         s6=fffff9ea  t2:fbf5f0fa  a6:a8287fb1  s6:00000000 
+14153774032: 1019577: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153774032: 1019577: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e00, index: 0)
+14153774032: 1019577: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e00 pv.sdotsp.b         s5, t2, a7         s5=0000011f  t2:fbf5f0fa  a7:841328aa  s5:00000000 
+14153815678: 1019580: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e04 addi                a4, a4, 4          a4=00000004  a4:00000000 
+14153829560: 1019581: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e08 pv.sdotsp.b         s4, t2, t0         s4=fffff31f  t2:fbf5f0fa  t0:526b3c7d  s4:00000000 
+14153843442: 1019582: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e0c add                 s1, s1, t4         s1=1001e09c  s1:1001e098  t4:00000004 
+14153857324: 1019583: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e10 add                 a3, a3, a4         a3=1001e0a8  a3:1001e0a4  a4:00000004 
+14153871206: 1019584: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e14 add                 a2, a2, a4         a2=1001e0a4  a2:1001e0a0  a4:00000004 
+14153885088: 1019585: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e18 add                 a1, a1, a4         a1=1001e0a0  a1:1001e09c  a4:00000004 
+14153898970: 1019586: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e1c add                 a4, t3, a4         a4=1001e050  t3:1001e04c  a4:00000004 
+14153912852: 1019587: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14153912852: 1019587: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e20, index: 2)
+14153912852: 1019587: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e20 lw                  s7, 24(sp)         s7=1001e04c  sp:10001cc8  PA:10001ce0 
+14153954498: 1019590: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e24 addi                a6, s1, 0          a6=1001e09c  s1:1001e09c 
+14153968380: 1019591: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e28 lw                  t0, 72(sp)         t0=00000000  sp:10001cc8  PA:10001d10 
+14153982262: 1019592: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e2c addi                a7, t0, 0          a7=00000000  t0:00000000 
+14154010026: 1019594: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154010026: 1019594: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e30, index: 3)
+14154010026: 1019594: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e30 beq                 t0, 0, 80          t0:00000000 
+14154079436: 1019599: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154079436: 1019599: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011e80, index: 0)
+14154079436: 1019599: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e80 lw                  a1, 68(sp)         a1=00000001  sp:10001cc8  PA:10001d0c 
+14154121082: 1019602: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011e84 bne                 a1, 0, -680        a1:00000001 
+14154176610: 1019606: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154176610: 1019606: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bd0, index: 5)
+14154176610: 1019606: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bdc lw                  s0, 96(sp)         s0=1001e0d8  sp:10001cc8  PA:10001d28 
+14154218256: 1019609: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154218256: 1019609: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011be0, index: 6)
+14154218256: 1019609: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be0 lw                  a1, 0(s0)          a1=0000013e  s0:1001e0d8  PA:1001e0d8 
+14154259902: 1019612: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be4 lw                  s2, 100(sp)        s2=1001e0b8  sp:10001cc8  PA:10001d2c 
+14154273784: 1019613: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011be8 lw                  a2, 0(s2)          a2=00008000  s2:1001e0b8  PA:1001e0b8 
+14154301548: 1019615: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bec sw                  76(sp), s1         sp:10001cc8  PA:10001d14  s1:1001e09c 
+14154315430: 1019616: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154315430: 1019616: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011bf0, index: 7)
+14154315430: 1019616: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf0 lw                  s1, 80(sp)         s1=00000010  sp:10001cc8  PA:10001d18 
+14154384840: 1019621: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf4 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14154412604: 1019623: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bf8 sw                  44(sp), ra         sp:10001cc8  PA:10001cf4  ra:00000000 
+14154426486: 1019624: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011bfc auipc               ra, 0x0            ra=1c011bfc 
+14154440368: 1019625: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154440368: 1019625: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c00, index: 0)
+14154440368: 1019625: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c00 jalr                ra, ra, 1584       ra=1c011c04  ra:1c011bfc 
+14154495896: 1019629: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154495896: 1019629: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012220, index: 2)
+14154495896: 1019629: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=000bed4c  a1:0000013e  a0:0000099a 
+14154551424: 1019633: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154551424: 1019633: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012230, index: 3)
+14154551424: 1019633: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14154593070: 1019636: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=0000000c  a0:000bed4c  a2:00008000  a1:00000010 
+14154606952: 1019637: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14154620834: 1019638: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=0000000c  a0:0000000c  a1:0000007f 
+14154634716: 1019639: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=0000000c  a0:0000000c 
+14154648598: 1019640: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c04 
+14154676362: 1019642: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c04 addi                s7, s3, 0          s7=1000a504  s3:1000a504 
+14154690244: 1019643: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c08 lw                  s3, 92(sp)         s3=1000a4fc  sp:10001cc8  PA:10001d24 
+14154704126: 1019644: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c0c sb                  0(s3), a0          s3:1000a4fc  PA:1000a4fc  a0:0000000c 
+14154731890: 1019646: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14154731890: 1019646: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c10, index: 1)
+14154731890: 1019646: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c10 lw                  a1, 0(s0)          a1=0000013e  s0:1001e0d8  PA:1001e0d8 
+14154773536: 1019649: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c14 lw                  a2, 0(s2)          a2=00008000  s2:1001e0b8  PA:1001e0b8 
+14154787418: 1019650: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c18 addi                a0, s8, 0          a0=00000541  s8:00000541 
+14154801300: 1019651: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c1c addi                a3, s1, 0          a3=00000010  s1:00000010 
+14154815182: 1019652: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c20 auipc               ra, 0x0            ra=1c011c20 
+14154829064: 1019653: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c24 jalr                ra, ra, 1548       ra=1c011c28  ra:1c011c20 
+14154856828: 1019655: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=000686be  a1:0000013e  a0:00000541 
+14154884592: 1019657: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14154898474: 1019658: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000007  a0:000686be  a2:00008000  a1:00000010 
+14154912356: 1019659: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14154926238: 1019660: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000007  a0:00000007  a1:0000007f 
+14154940120: 1019661: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000007  a0:00000007 
+14154954002: 1019662: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c28 
+14154981766: 1019664: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c28 sb                  0(s7), a0          s7:1000a504  PA:1000a504  a0:00000007 
+14154995648: 1019665: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c2c lw                  a1, 4(s0)          a1=000000fb  s0:1001e0d8  PA:1001e0dc 
+14155009530: 1019666: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c30 lw                  a2, 4(s2)          a2=00008000  s2:1001e0b8  PA:1001e0bc 
+14155023412: 1019667: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c34 addi                a0, s11, 0         a0=fffffd12 s11:fffffd12 
+14155037294: 1019668: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c38 addi                s11, s3, 0        s11=1000a4fc  s3:1000a4fc 
+14155051176: 1019669: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c3c addi                s3, s7, 0          s3=1000a504  s7:1000a504 
+14155065058: 1019670: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14155065058: 1019670: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c40, index: 4)
+14155065058: 1019670: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c40 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14155106704: 1019673: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c44 auipc               ra, 0x0            ra=1c011c44 
+14155120586: 1019674: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c48 jalr                ra, ra, 1512       ra=1c011c4c  ra:1c011c44 
+14155148350: 1019676: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fffd20a6  a1:000000fb  a0:fffffd12 
+14155176114: 1019678: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14155189996: 1019679: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffffd  a0:fffd20a6  a2:00008000  a1:00000010 
+14155203878: 1019680: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14155217760: 1019681: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffffd  a0:fffffffd  a1:0000007f 
+14155231642: 1019682: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14155231642: 1019682: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012240, index: 4)
+14155231642: 1019682: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffffd  a0:fffffffd 
+14155273288: 1019685: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c4c 
+14155301052: 1019687: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14155301052: 1019687: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c40, index: 4)
+14155301052: 1019687: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c4c sb                  1(s11), a0        s11:1000a4fc  PA:1000a4fd  a0:fffffffd 
+14155342698: 1019690: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c50 lw                  a1, 4(s0)          a1=000000fb  s0:1001e0d8  PA:1001e0dc 
+14155356580: 1019691: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c54 lw                  a2, 4(s2)          a2=00008000  s2:1001e0b8  PA:1001e0bc 
+14155370462: 1019692: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c58 addi                a0, s6, 0          a0=fffff9ea  s6:fffff9ea 
+14155384344: 1019693: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c5c addi                a3, s1, 0          a3=00000010  s1:00000010 
+14155398226: 1019694: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c60 auipc               ra, 0x0            ra=1c011c60 
+14155412108: 1019695: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c64 jalr                ra, ra, 1484       ra=1c011c68  ra:1c011c60 
+14155439872: 1019697: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fffa086e  a1:000000fb  a0:fffff9ea 
+14155467636: 1019699: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14155481518: 1019700: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffffa  a0:fffa086e  a2:00008000  a1:00000010 
+14155495400: 1019701: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14155509282: 1019702: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffffa  a0:fffffffa  a1:0000007f 
+14155523164: 1019703: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffffa  a0:fffffffa 
+14155537046: 1019704: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c68 
+14155564810: 1019706: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c68 sb                  1(s7), a0          s7:1000a504  PA:1000a505  a0:fffffffa 
+14155578692: 1019707: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c6c lw                  a1, 8(s0)          a1=0000012a  s0:1001e0d8  PA:1001e0e0 
+14155592574: 1019708: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c70 lw                  a2, 8(s2)          a2=00008000  s2:1001e0b8  PA:1001e0c0 
+14155606456: 1019709: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c74 addi                a0, s10, 0         a0=000001dc s10:000001dc 
+14155620338: 1019710: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c78 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14155634220: 1019711: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c7c auipc               ra, 0x0            ra=1c011c7c 
+14155648102: 1019712: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c80 jalr                ra, ra, 1456       ra=1c011c84  ra:1c011c7c 
+14155675866: 1019714: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=00022a18  a1:0000012a  a0:000001dc 
+14155703630: 1019716: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14155717512: 1019717: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000002  a0:00022a18  a2:00008000  a1:00000010 
+14155731394: 1019718: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14155745276: 1019719: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000002  a0:00000002  a1:0000007f 
+14155759158: 1019720: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000002  a0:00000002 
+14155773040: 1019721: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011c84 
+14155800804: 1019723: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c84 sb                  2(s11), a0        s11:1000a4fc  PA:1000a4fe  a0:00000002 
+14155814686: 1019724: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c88 lw                  a1, 8(s0)          a1=0000012a  s0:1001e0d8  PA:1001e0e0 
+14155828568: 1019725: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c8c lw                  a2, 8(s2)          a2=00008000  s2:1001e0b8  PA:1001e0c0 
+14155842450: 1019726: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14155842450: 1019726: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011c90, index: 1)
+14155842450: 1019726: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c90 addi                a0, s5, 0          a0=0000011f  s5:0000011f 
+14155884096: 1019729: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c94 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14155897978: 1019730: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c98 auipc               ra, 0x0            ra=1c011c98 
+14155911860: 1019731: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011c9c jalr                ra, ra, 1428       ra=1c011ca0  ra:1c011c98 
+14155939624: 1019733: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=00014e16  a1:0000012a  a0:0000011f 
+14155967388: 1019735: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14155981270: 1019736: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=00000001  a0:00014e16  a2:00008000  a1:00000010 
+14155995152: 1019737: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14156009034: 1019738: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=00000001  a0:00000001  a1:0000007f 
+14156022916: 1019739: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=00000001  a0:00000001 
+14156036798: 1019740: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011ca0 
+14156064562: 1019742: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca0 sb                  2(s7), a0          s7:1000a504  PA:1000a506  a0:00000001 
+14156092326: 1019744: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca4 lw                  a1, 12(s0)         a1=0000019d  s0:1001e0d8  PA:1001e0e4 
+14156106208: 1019745: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ca8 lw                  a2, 12(s2)         a2=00008000  s2:1001e0b8  PA:1001e0c4 
+14156133972: 1019747: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cac addi                a0, s9, 0          a0=fffff656  s9:fffff656 
+14156147854: 1019748: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb0 addi                a3, s1, 0          a3=00000010  s1:00000010 
+14156161736: 1019749: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb4 auipc               ra, 0x0            ra=1c011cb4 
+14156175618: 1019750: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cb8 jalr                ra, ra, 1400       ra=1c011cbc  ra:1c011cb4 
+14156203382: 1019752: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=fff068be  a1:0000019d  a0:fffff656 
+14156231146: 1019754: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14156245028: 1019755: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=fffffff0  a0:fff068be  a2:00008000  a1:00000010 
+14156258910: 1019756: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14156272792: 1019757: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=fffffff0  a0:fffffff0  a1:0000007f 
+14156286674: 1019758: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=fffffff0  a0:fffffff0 
+14156300556: 1019759: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011cbc 
+14156328320: 1019761: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cbc sb                  3(s11), a0        s11:1000a4fc  PA:1000a4ff  a0:fffffff0 
+14156342202: 1019762: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc0 lw                  a1, 12(s0)         a1=0000019d  s0:1001e0d8  PA:1001e0e4 
+14156369966: 1019764: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc4 lw                  a2, 12(s2)         a2=00008000  s2:1001e0b8  PA:1001e0c4 
+14156383848: 1019765: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cc8 addi                a0, s4, 0          a0=fffff31f  s4:fffff31f 
+14156397730: 1019766: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ccc addi                a3, s1, 0          a3=00000010  s1:00000010 
+14156411612: 1019767: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd0 lw                  s1, 76(sp)         s1=1001e09c  sp:10001cc8  PA:10001d14 
+14156425494: 1019768: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd4 auipc               ra, 0x0            ra=1c011cd4 
+14156439376: 1019769: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cd8 jalr                ra, ra, 1368       ra=1c011cdc  ra:1c011cd4 
+14156467140: 1019771: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01222c mul                 a0, a1, a0         a0=ffeb3903  a1:0000019d  a0:fffff31f 
+14156494904: 1019773: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012230 p.extbz             a1, a3             a1=00000010  a3:00000010 
+14156508786: 1019774: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012234 p.addN              a0, a2, a1         a0=ffffffeb  a0:ffeb3903  a2:00008000  a1:00000010 
+14156522668: 1019775: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012238 addi                a1, 0, 127         a1=0000007f 
+14156536550: 1019776: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01223c p.clip              a0, a0, a1         a0=ffffffeb  a0:ffffffeb  a1:0000007f 
+14156550432: 1019777: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012240 p.extbs             a0, a0             a0=ffffffeb  a0:ffffffeb 
+14156564314: 1019778: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012244 jalr                0, ra, 0           ra:1c011cdc 
+14156592078: 1019780: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cdc lw                  ra, 44(sp)         ra=00000000  sp:10001cc8  PA:10001cf4 
+14156605960: 1019781: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14156605960: 1019781: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011ce0, index: 6)
+14156605960: 1019781: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce0 lw                  t6, 84(sp)         t6=00000004  sp:10001cc8  PA:10001d1c 
+14156661488: 1019785: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce4 sb                  3(s7), a0          s7:1000a504  PA:1000a507  a0:ffffffeb 
+14156675370: 1019786: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011ce8 addi                s0, s0, 16         s0=1001e0e8  s0:1001e0d8 
+14156689252: 1019787: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cec sw                  96(sp), s0         sp:10001cc8  PA:10001d28  s0:1001e0e8 
+14156703134: 1019788: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14156703134: 1019788: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011cf0, index: 7)
+14156703134: 1019788: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf0 lw                  s0, 40(sp)         s0=00000001  sp:10001cc8  PA:10001cf0 
+14156744780: 1019791: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf4 addi                s2, s2, 16         s2=1001e0c8  s2:1001e0b8 
+14156758662: 1019792: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cf8 sw                  100(sp), s2        sp:10001cc8  PA:10001d2c  s2:1001e0c8 
+14156772544: 1019793: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011cfc lw                  s2, 28(sp)         s2=00000001  sp:10001cc8  PA:10001ce4 
+14156800308: 1019795: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14156800308: 1019795: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d00, index: 0)
+14156800308: 1019795: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d00 lw                  s7, 56(sp)         s7=1001e048  sp:10001cc8  PA:10001d00 
+14156841954: 1019798: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d04 addi                t0, 0, 4           t0=00000004 
+14156855836: 1019799: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d08 lw                  a5, 88(sp)         a5=00000001  sp:10001cc8  PA:10001d20 
+14156869718: 1019800: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d0c lw                  t3, 52(sp)         t3=1001e04c  sp:10001cc8  PA:10001cfc 
+14156897482: 1019802: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14156897482: 1019802: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d10, index: 1)
+14156897482: 1019802: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d10 lw                  t4, 48(sp)         t4=00000004  sp:10001cc8  PA:10001cf8 
+14156939128: 1019805: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d14 addi                s3, s3, 4          s3=1000a508  s3:1000a504 
+14156953010: 1019806: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d18 addi                s11, s11, 4       s11=1000a500 s11:1000a4fc 
+14156966892: 1019807: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d1c addi                a5, a5, 1          a5=00000002  a5:00000001 
+14156980774: 1019808: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14156980774: 1019808: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011d20, index: 2)
+14156980774: 1019808: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d20 lw                  a0, 64(sp)         a0=0000000c  sp:10001cc8  PA:10001d08 
+14157022420: 1019811: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d24 add                 s1, s1, a0         s1=1001e0a8  s1:1001e09c  a0:0000000c 
+14157050184: 1019813: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d28 lw                  a0, 60(sp)         a0=00000002  sp:10001cc8  PA:10001d04 
+14157077948: 1019815: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011d2c beq                 a5, a0, -816       a5:00000002  a0:00000002 
+14157133476: 1019819: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157133476: 1019819: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0119f0, index: 7)
+14157133476: 1019819: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0119fc lw                  a0, 104(sp)        a0=00000000  sp:10001cc8  PA:10001d30 
+14157175122: 1019822: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157175122: 1019822: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011a00, index: 0)
+14157175122: 1019822: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011a00 beq                 a0, 0, 2024        a0:00000000 
+14157244532: 1019827: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157244532: 1019827: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0121e0, index: 6)
+14157244532: 1019827: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121e8 lw                  a0, 16(sp)         a0=00000008  sp:10001cc8  PA:10001cd8 
+14157286178: 1019830: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121ec add                 a0, s11, a0        a0=1000a508 s11:1000a500  a0:00000008 
+14157313942: 1019832: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157313942: 1019832: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0121f0, index: 7)
+14157313942: 1019832: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121f0 lw                  ra, 156(sp)        ra=1c011478  sp:10001cc8  PA:10001d64 
+14157355588: 1019835: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121f4 lw                  s0, 152(sp)        s0=000002bc  sp:10001cc8  PA:10001d60 
+14157369470: 1019836: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121f8 lw                  s1, 148(sp)        s1=00000002  sp:10001cc8  PA:10001d5c 
+14157383352: 1019837: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0121fc lw                  s2, 144(sp)        s2=000002bc  sp:10001cc8  PA:10001d58 
+14157397234: 1019838: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157397234: 1019838: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012200, index: 0)
+14157397234: 1019838: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012200 lw                  s3, 140(sp)        s3=00000002  sp:10001cc8  PA:10001d54 
+14157438880: 1019841: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012204 lw                  s4, 136(sp)        s4=00000004  sp:10001cc8  PA:10001d50 
+14157452762: 1019842: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012208 lw                  s5, 132(sp)        s5=1000a4f8  sp:10001cc8  PA:10001d4c 
+14157466644: 1019843: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01220c lw                  s6, 128(sp)        s6=00000004  sp:10001cc8  PA:10001d48 
+14157480526: 1019844: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157480526: 1019844: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012210, index: 1)
+14157480526: 1019844: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012210 lw                  s7, 124(sp)        s7=1001bdb3  sp:10001cc8  PA:10001d44 
+14157522172: 1019847: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012214 lw                  s8, 120(sp)        s8=000000f9  sp:10001cc8  PA:10001d40 
+14157536054: 1019848: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012218 lw                  s9, 116(sp)        s9=00000001  sp:10001cc8  PA:10001d3c 
+14157549936: 1019849: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01221c lw                  s10, 112(sp)      s10=1001e048  sp:10001cc8  PA:10001d38 
+14157563818: 1019850: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157563818: 1019850: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c012220, index: 2)
+14157563818: 1019850: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012220 lw                  s11, 108(sp)      s11=1001c06f  sp:10001cc8  PA:10001d34 
+14157605464: 1019853: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012224 addi                sp, sp, 160        sp=10001d68  sp:10001cc8 
+14157619346: 1019854: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c012228 jalr                0, ra, 0           ra:1c011478 
+14157647110: 1019856: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157647110: 1019856: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011470, index: 7)
+14157647110: 1019856: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011478 addi                s5, a0, 0          s5=1000a508  a0:1000a508 
+14157688756: 1019859: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01147c lw                  s6, 156(sp)        s6=00000004  sp:10001d68  PA:10001e04 
+14157702638: 1019860: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157702638: 1019860: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011480, index: 0)
+14157702638: 1019860: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011480 lw                  s7, 152(sp)        s7=1001bdb3  sp:10001d68  PA:10001e00 
+14157744284: 1019863: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011484 addi                s8, s8, 1          s8=000000fa  s8:000000f9 
+14157758166: 1019864: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011488 lw                  a0, 160(sp)        a0=00000001  sp:10001d68  PA:10001e08 
+14157772048: 1019865: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01148c add                 s7, s7, a0         s7=1001bdb4  s7:1001bdb3  a0:00000001 
+14157799812: 1019867: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157799812: 1019867: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011490, index: 1)
+14157799812: 1019867: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011490 lw                  a0, 172(sp)        a0=0000015e  sp:10001d68  PA:10001e14 
+14157841458: 1019870: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011494 beq                 s8, a0, 668        s8:000000fa  a0:0000015e 
+14157869222: 1019872: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011498 lw                  a0, 136(sp)        a0=00000001  sp:10001d68  PA:10001df0 
+14157883104: 1019873: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01149c lw                  a1, 116(sp)        a1=0000000e  sp:10001d68  PA:10001ddc 
+14157896986: 1019874: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157896986: 1019874: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0114a0, index: 2)
+14157896986: 1019874: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a0 sw                  180(sp), s5        sp:10001d68  PA:10001e1c  s5:1000a508 
+14157938632: 1019877: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a4 sw                  152(sp), s7        sp:10001d68  PA:10001e00  s7:1001bdb4 
+14157966396: 1019879: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a8 bge                 a0, a1, 168        a0:00000001  a1:0000000e 
+14157980278: 1019880: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114ac lw                  a0, 132(sp)        a0=00000002  sp:10001d68  PA:10001dec 
+14157994160: 1019881: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14157994160: 1019881: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0114b0, index: 3)
+14157994160: 1019881: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114b0 bgeu                s8, a0, 396        s8:000000fa  a0:00000002 
+14158063570: 1019886: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158063570: 1019886: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011630, index: 3)
+14158063570: 1019886: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01163c lw                  a0, 52(sp)         a0=000002bb  sp:10001d68  PA:10001d9c 
+14158105216: 1019889: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158105216: 1019889: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011640, index: 4)
+14158105216: 1019889: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011640 bge                 s8, a0, 64         s8:000000fa  a0:000002bb 
+14158146862: 1019892: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011644 lw                  a0, 168(sp)        a0=00000001  sp:10001d68  PA:10001e10 
+14158160744: 1019893: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011648 beq                 a0, 0, 216         a0:00000001 
+14158188508: 1019895: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01164c addi                s11, s7, 0        s11=1001bdb4  s7:1001bdb4 
+14158202390: 1019896: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158202390: 1019896: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011650, index: 5)
+14158202390: 1019896: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011650 lw                  s1, 104(sp)        s1=00000001  sp:10001d68  PA:10001dd0 
+14158244036: 1019899: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011654 addi                a0, s11, 0         a0=1001bdb4 s11:1001bdb4 
+14158257918: 1019900: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011658 addi                a1, s10, 0         a1=1001e048 s10:1001e048 
+14158271800: 1019901: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01165c lw                  s4, 176(sp)        s4=00000004  sp:10001d68  PA:10001e18 
+14158285682: 1019902: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158285682: 1019902: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011660, index: 6)
+14158285682: 1019902: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011660 addi                a2, s4, 0          a2=00000004  s4:00000004 
+14158327328: 1019905: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011664 auipc               ra, 0x0            ra=1c011664 
+14158341210: 1019906: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011668 jalr                ra, ra, 640        ra=1c01166c  ra:1c011664 
+14158368974: 1019908: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158368974: 1019908: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0118e0, index: 6)
+14158368974: 1019908: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118e4 addi                a4, 0, 4           a4=00000004 
+14158410620: 1019911: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118e8 andi                a3, a2, 3          a3=00000000  a2:00000004 
+14158424502: 1019912: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118ec bltu                a2, a4, 20         a2:00000004  a4:00000004 
+14158438384: 1019913: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158438384: 1019913: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c0118f0, index: 7)
+14158438384: 1019913: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f0 srli                a2, a2, 0x2        a2=00000001  a2:00000004 
+14158480030: 1019916: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f4 lp.setup            a2, 0x0, 0x4       a2:00000001 
+14158493912: 1019917: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f8 p.lw                a4, 4(a0!)         a4=02fbf5f0  a0=1001bdb8  a0:1001bdb4  PA:1001bdb4 
+14158507794: 1019918: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118fc p.sw                4(a1!), a4         a1=1001e04c  a1:1001e048  PA:1001e048  a4:02fbf5f0 
+14158535558: 1019920: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158535558: 1019920: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011900, index: 0)
+14158535558: 1019920: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011900 beq                 a3, 0, 20          a3:00000000 
+14158604968: 1019925: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158604968: 1019925: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011910, index: 1)
+14158604968: 1019925: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011914 jalr                0, ra, 0           ra:1c01166c 
+14158660496: 1019929: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01166c add                 s10, s10, s4      s10=1001e04c s10:1001e048  s4:00000004 
+14158674378: 1019930: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158674378: 1019930: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011670, index: 7)
+14158674378: 1019930: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011670 addi                s1, s1, 1          s1=00000002  s1:00000001 
+14158716024: 1019933: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011674 add                 s11, s11, s2      s11=1001c070 s11:1001bdb4  s2:000002bc 
+14158729906: 1019934: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011678 blt                 s1, s3, -36        s1:00000002  s3:00000002 
+14158743788: 1019935: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01167c jal                 0, 164            
+14158771552: 1019937: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158771552: 1019937: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011720, index: 2)
+14158771552: 1019937: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011720 lw                  a0, 164(sp)        a0=1001e050  sp:10001d68  PA:10001e0c 
+14158827080: 1019941: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011724 beq                 s10, a0, -772     s10:1001e04c  a0:1001e050 
+14158854844: 1019943: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011728 lw                  s5, 180(sp)        s5=1000a508  sp:10001d68  PA:10001e1c 
+14158868726: 1019944: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01172c jal                 0, -688           
+14158896490: 1019946: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14158896490: 1019946: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011470, index: 7)
+14158896490: 1019946: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01147c lw                  s6, 156(sp)        s6=00000004  sp:10001d68  PA:10001e04 
+14158938136: 1019949: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011480 lw                  s7, 152(sp)        s7=1001bdb4  sp:10001d68  PA:10001e00 
+14158965900: 1019951: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011484 addi                s8, s8, 1          s8=000000fb  s8:000000fa 
+14158979782: 1019952: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011488 lw                  a0, 160(sp)        a0=00000001  sp:10001d68  PA:10001e08 
+14158993664: 1019953: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01148c add                 s7, s7, a0         s7=1001bdb5  s7:1001bdb4  a0:00000001 
+14159021428: 1019955: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011490 lw                  a0, 172(sp)        a0=0000015e  sp:10001d68  PA:10001e14 
+14159049192: 1019957: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011494 beq                 s8, a0, 668        s8:000000fb  a0:0000015e 
+14159076956: 1019959: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011498 lw                  a0, 136(sp)        a0=00000001  sp:10001d68  PA:10001df0 
+14159090838: 1019960: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01149c lw                  a1, 116(sp)        a1=0000000e  sp:10001d68  PA:10001ddc 
+14159104720: 1019961: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a0 sw                  180(sp), s5        sp:10001d68  PA:10001e1c  s5:1000a508 
+14159132484: 1019963: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a4 sw                  152(sp), s7        sp:10001d68  PA:10001e00  s7:1001bdb5 
+14159146366: 1019964: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114a8 bge                 a0, a1, 168        a0:00000001  a1:0000000e 
+14159160248: 1019965: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114ac lw                  a0, 132(sp)        a0=00000002  sp:10001d68  PA:10001dec 
+14159174130: 1019966: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0114b0 bgeu                s8, a0, 396        s8:000000fb  a0:00000002 
+14159229658: 1019970: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01163c lw                  a0, 52(sp)         a0=000002bb  sp:10001d68  PA:10001d9c 
+14159243540: 1019971: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011640 bge                 s8, a0, 64         s8:000000fb  a0:000002bb 
+14159271304: 1019973: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011644 lw                  a0, 168(sp)        a0=00000001  sp:10001d68  PA:10001e10 
+14159285186: 1019974: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011648 beq                 a0, 0, 216         a0:00000001 
+14159312950: 1019976: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01164c addi                s11, s7, 0        s11=1001bdb5  s7:1001bdb5 
+14159326832: 1019977: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011650 lw                  s1, 104(sp)        s1=00000001  sp:10001d68  PA:10001dd0 
+14159340714: 1019978: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011654 addi                a0, s11, 0         a0=1001bdb5 s11:1001bdb5 
+14159354596: 1019979: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011658 addi                a1, s10, 0         a1=1001e04c s10:1001e04c 
+14159368478: 1019980: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01165c lw                  s4, 176(sp)        s4=00000004  sp:10001d68  PA:10001e18 
+14159396242: 1019982: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011660 addi                a2, s4, 0          a2=00000004  s4:00000004 
+14159424006: 1019984: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011664 auipc               ra, 0x0            ra=1c011664 
+14159437888: 1019985: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011668 jalr                ra, ra, 640        ra=1c01166c  ra:1c011664 
+14159465652: 1019987: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118e4 addi                a4, 0, 4           a4=00000004 
+14159479534: 1019988: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118e8 andi                a3, a2, 3          a3=00000000  a2:00000004 
+14159493416: 1019989: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118ec bltu                a2, a4, 20         a2:00000004  a4:00000004 
+14159507298: 1019990: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f0 srli                a2, a2, 0x2        a2=00000001  a2:00000004 
+14159521180: 1019991: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f4 lp.setup            a2, 0x0, 0x4       a2:00000001 
+14159562826: 1019994: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118f8 p.lw                a4, 4(a0!)         a4=0902fbf5  a0=1001bdb9  a0:1001bdb5  PA:1001bdb5 
+14159576708: 1019995: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c0118fc p.sw                4(a1!), a4         a1=1001e050  a1:1001e04c  PA:1001e04c  a4:0902fbf5 
+14159604472: 1019997: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011900 beq                 a3, 0, 20          a3:00000000 
+14159646118: 1020000: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011914 jalr                0, ra, 0           ra:1c01166c 
+14159673882: 1020002: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01166c add                 s10, s10, s4      s10=1001e050 s10:1001e04c  s4:00000004 
+14159687764: 1020003: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14159687764: 1020003: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011670, index: 7)
+14159687764: 1020003: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011670 addi                s1, s1, 1          s1=00000002  s1:00000001 
+14159729410: 1020006: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011674 add                 s11, s11, s2      s11=1001c071 s11:1001bdb5  s2:000002bc 
+14159743292: 1020007: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011678 blt                 s1, s3, -36        s1:00000002  s3:00000002 
+14159757174: 1020008: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01167c jal                 0, 164            
+14159784938: 1020010: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011720 lw                  a0, 164(sp)        a0=1001e050  sp:10001d68  PA:10001e0c 
+14159798820: 1020011: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011724 beq                 s10, a0, -772     s10:1001e050  a0:1001e050 
+14159854348: 1020015: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14159854348: 1020015: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011420, index: 2)
+14159854348: 1020015: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011420 lw                  a2, 180(sp)        a2=1000a508  sp:10001d68  PA:10001e1c 
+14159895994: 1020018: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011424 lw                  a0, 144(sp)        a0=00000008  sp:10001d68  PA:10001df8 
+14159909876: 1020019: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011428 add                 a3, a2, a0         a3=1000a510  a2:1000a508  a0:00000008 
+14159937640: 1020021: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01142c lw                  a0, 80(sp)         a0=00000001  sp:10001d68  PA:10001db8 
+14159965404: 1020023: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14159965404: 1020023: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011430, index: 3)
+14159965404: 1020023: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011430 sw                  16(sp), a0         sp:10001d68  PA:10001d78  a0:00000001 
+14160007050: 1020026: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011434 lw                  a0, 76(sp)         a0=00000001  sp:10001d68  PA:10001db4 
+14160020932: 1020027: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011438 sw                  12(sp), a0         sp:10001d68  PA:10001d74  a0:00000001 
+14160048696: 1020029: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01143c lw                  a0, 84(sp)         a0=00000008  sp:10001d68  PA:10001dbc 
+14160062578: 1020030: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14160062578: 1020030: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011440, index: 4)
+14160062578: 1020030: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011440 sw                  8(sp), a0          sp:10001d68  PA:10001d70  a0:00000008 
+14160104224: 1020033: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011444 lw                  a0, 88(sp)         a0=00000004  sp:10001d68  PA:10001dc0 
+14160118106: 1020034: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011448 sw                  4(sp), a0          sp:10001d68  PA:10001d6c  a0:00000004 
+14160145870: 1020036: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01144c lw                  a0, 140(sp)        a0=00000010  sp:10001d68  PA:10001df4 
+14160159752: 1020037: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14160159752: 1020037: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011450, index: 5)
+14160159752: 1020037: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011450 sw                  0(sp), a0          sp:10001d68  PA:10001d68  a0:00000010 
+14160201398: 1020040: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011454 lw                  s10, 148(sp)      s10=1001e048  sp:10001d68  PA:10001dfc 
+14160215280: 1020041: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011458 addi                a0, s10, 0         a0=1001e048 s10:1001e048 
+14160243044: 1020043: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01145c lw                  a1, 120(sp)        a1=00000000  sp:10001d68  PA:10001de0 
+14160256926: 1020044: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14160256926: 1020044: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011460, index: 6)
+14160256926: 1020044: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011460 lw                  a4, 92(sp)         a4=1001e088  sp:10001d68  PA:10001dc4 
+14160298572: 1020047: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011464 lw                  a5, 96(sp)         a5=1001e0c8  sp:10001d68  PA:10001dc8 
+14160312454: 1020048: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011468 lw                  a6, 100(sp)        a6=1001e0a8  sp:10001d68  PA:10001dcc 
+14160326336: 1020049: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c01146c lw                  a7, 124(sp)        a7=00000001  sp:10001d68  PA:10001de4 
+14160340218: 1020050: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011470 auipc               ra, 0x0            ra=1c011470 
+14160354100: 1020051: [[34m/chip/cluster/pe0/insn                                       [0m] -:0                              M 1c011474 jalr                ra, ra, 1244       ra=1c011478  ra:1c011470 
+14160381864: 1020053: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Cache miss
+14160381864: 1020053: [[34m/chip/cluster/icache/l0_bank0/trace                          [0m] Refilling line (addr: 0x1c011940, index: 4)

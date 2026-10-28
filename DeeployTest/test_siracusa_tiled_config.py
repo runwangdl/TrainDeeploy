@@ -19,6 +19,17 @@ L2_SINGLEBUFFER_KERNELS = {
     "Kernels/FP32/Conv/Regular_2D_Bias": [6600],
     "Kernels/FP32/Conv/Regular_2D_NoBias": [1600],
     "Kernels/FP32/Conv/Regular_2D_ZeroValuedBias": [6600],
+    # ZO prototype: SpeechNet block-0 Conv + its two PerturbRademacher nodes, lifted
+    # verbatim out of the float-ZO training graph. L1 = 128000 is the ZO runner's own
+    # setting, which reproduces the ZO network's tiling for this node exactly (single
+    # buffer only -- the double-buffer dict is deliberately left alone). -- QW
+    "Kernels/FP32/ZO_Conv": [128000],
+    "Kernels/FP32/ZO_Conv_Block1": [128000],
+    # QZO prototype: block-0 QUANTIZED conv (Conv + RequantShift -> fused RequantizedConv) with
+    # its two RQSPerturbRademacher nodes, lifted verbatim from speechnet_qzo19_train. -- QW
+    "Kernels/Integer/QZO_Conv": [128000],
+    # QW exp5: the FUSED dual-pass version of QZO_Conv (one node, both eps signs, 2*ch_out output). -- QW
+    "Kernels/Integer/QZO_DualConv": [128000],
     "Kernels/FP32/GEMM/Regular": [8000],
     "Kernels/FP32/MatMul": [2000],
     "Kernels/FP32/MaxPool/Regular_2D": [2000],
@@ -55,6 +66,55 @@ L2_SINGLEBUFFER_KERNELS = {
     "Kernels/Integer/Conv/StriddedPadded_2D_RQ": [600],
     "Kernels/Integer/GEMM/Batch_RQ": [20000],
     "Kernels/Integer/Hardswish/Regular_RQ": [750],
+}
+
+# Per-kernel extra generation arguments (same shape as TRAINING_MODEL_OVERRIDES below):
+# test path -> list of flags appended to the generator's command line.
+#
+# ZO_Conv_Block1: SpeechNet block-1's conv bias is |b| < 1e-5, and testMVP.py types inputs by
+# VALUE (`minimalFloatType` walks bfloat16 -> float16 -> float32), so it is inferred as bfloat16
+# and PerturbRademacher -- which is float32-only -- then has no binding and parsing fails. The
+# ONNX declares FLOAT, but 32 Integer kernel tests declare FLOAT while holding int8/int64 data,
+# so the declared type can't simply be trusted here the way testMVPTraining.py trusts it. Pin
+# the one tensor instead. -- QW
+# Per-kernel extra CMake defines (NAME=VALUE, same form as the runner's -D).
+#
+# The ZO_Conv* fixtures are lifted out of the float-ZO training graph, so they are held to the
+# tolerance that flow uses: ZO_TOLERANCE_ABS / TRAINING_TOLERANCE_ABS default to 1e-3
+# (testUtils/codeGenerateTraining.py:191,229). deeploytest.c's own OUTPUT_TOL default is 1e-4,
+# which these fixtures inherit only by living under Tests/Kernels/.
+#
+# 1e-4 is the wrong bar for block 0 specifically: its conv output reaches |y| ~ 2615, and the
+# comparison is ABSOLUTE. On a clean tree 10 of 78512 elements miss by exactly 1.22e-4 -- one fp32
+# ulp in the [1024, 2048) binade -- i.e. the default sits just *below* one ulp. Which elements land
+# on which side is decided by clang's -ffast-math contraction, not by correctness. 1e-3 clears the
+# observed max by 8.2x and is still ~4e-7 RELATIVE at that magnitude, far stricter than 1e-3 is on
+# the scalar losses the ZO harness applies it to.
+#
+# Block 1 passes at the 1e-4 default on its own (outputs max at ~28, an ulp is ~2e-6); it is pinned
+# to the same 1e-3 so the two experiments are built identically and the comparison has no
+# confound. -- QW
+KERNEL_CMAKE_ARGS = {
+    "Kernels/FP32/ZO_Conv": ["OUTPUT_TOL=1e-3"],
+    "Kernels/FP32/ZO_Conv_Block1": ["OUTPUT_TOL=1e-3"],
+}
+
+KERNEL_GEN_ARGS = {
+    # QZO_Conv: the requant bias is int32 but every entry is 32768, which value inference types as
+    # uint16_t -- and the RQSPerturbRademacher_i32 / RequantizedConv bindings want int32_t. Pin it.
+    # Output is int8, compared EXACTLY by deeploytest.c's integer path: no OUTPUT_TOL needed. -- QW
+    "Kernels/Integer/QZO_Conv": [
+        "--input-type-map", "blocks.0.conv.bias_rqsadd=int32_t",
+        "--input-offset-map", "blocks.0.conv.bias_rqsadd=0",
+    ],
+    "Kernels/Integer/QZO_DualConv": [  # -- QW exp5: same int32 pin for the unperturbed requant add
+        "--input-type-map", "blocks.0.conv.bias_rqsadd=int32_t",
+        "--input-offset-map", "blocks.0.conv.bias_rqsadd=0",
+    ],
+    "Kernels/FP32/ZO_Conv_Block1": [
+        "--input-type-map", "blocks_1_0_bias=float32_t",
+        "--input-offset-map", "blocks_1_0_bias=0",
+    ],
 }
 
 L2_DOUBLEBUFFER_KERNELS = {
@@ -167,6 +227,7 @@ L2_SINGLEBUFFER_TRAINING_MODELS = {
     # activation, so no --l2 value recovers it; minimalloc fails at the runner's
     # 1,991,744 B capacity.
     "Models/Training/DSCNN/dscnn_train": [128000],
+    "Models/Training/SpeechNet/speechnet_train": [128000],
 }
 
 # Training-enabled tiled models that need L3 spill (weights/activations don't
@@ -266,3 +327,62 @@ L3_SINGLEBUFFER_PROMOTE_MODELS = {
     "Models/CCT/FP32/CCT_2_32_32_128": [(128000, "greedy-score", True),],
     "Models/MLPerf/AnomalyDetection": [(128000, "cycle-aware", True),],
 }
+
+# -- QW 2026-10-12: SpeechNet single-step CI gates. Fixtures live in TrainDeeploy/SpeechNet_Test (see its
+#    README); paths are relative to DeeployTest/. Each entry reproduces the command-line smoke run that
+#    passed on GVSoC (SpeechNet_Test/logs/smoke/siracusa_*.log), with the cycle count it gave.
+#
+#    MeZO single step: one antithetic forward pair (L+, L-) + one update, compared exactly with the
+#    host reference (Errors: 0 out of 2). lr / eps / seed must match the values baked at export.
+ZO_SINGLE_STEP_TESTS = {
+    "SpeechNet_ZO_single_step": {  # float ZO, lr 3e-6; smoke run: 35,634,779 train cycles
+        "train_dir": "../SpeechNet_Test/speechnet_train_ZO_single_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_ZO_single_step",
+        "lr": 3e-6,
+        "eps": 0.01,
+        "seed": 42,
+        "l1": 128000,
+        "l2": 2000000,
+    },
+    "SpeechNet_QZO_single_step": {  # quantized ZO, lr 1e-5; smoke run: 8,311,241 train cycles
+        "train_dir": "../SpeechNet_Test/speechnet_train_QZO_single_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_QZO_single_step",
+        "lr": 1e-5,
+        "eps": 0.01,
+        "seed": 42,
+        "l1": 128000,
+        "l2": 2000000,
+    },
+}
+
+#    Block-0 QZO conv kernels on the cluster (exact int8 compare). The requant add of block 0 is int32
+#    but every entry is 32768, which value inference would type as uint16_t: pin it (as for
+#    Kernels/Integer/QZO_Conv above). fused = both eps-passes in one kernel (DualConv), unfused = one
+#    pass through pulp-nn (the deployed path). Smoke runs: 858,185 (unfused) / 910,763 (fused) cycles.
+QZO_BLOCK0_KERNEL_TESTS = {
+    "SpeechNet_unfused_b0_cluster": "../SpeechNet_Test/speechnet_unfused_b0_cluster",
+    "SpeechNet_fused_b0_cluster": "../SpeechNet_Test/speechnet_fused_b0_cluster",
+}
+QZO_BLOCK0_GEN_ARGS = [
+    "--input-type-map", "blocks.0.conv.bias_rqsadd=int32_t",
+    "--input-offset-map", "blocks.0.conv.bias_rqsadd=0",
+]
+
+#    QW 2026-10-14: blocks 1-4 QZO conv kernels on the cluster (exp7; HandoverDocuments/05_Fusion_Full_Network_Guide.md).
+#    unfused = ONE pass (perturb nodes + transpose + pulp-nn), fused = both passes in RequantizedDualConv (7 inputs,
+#    PULP_DualConv2d_2in_i8_i8_i8_HWC). The activation inputs are >= 0, so they must be pinned to int8 (otherwise the
+#    generator types them uint8 and picks the u8 pulp-nn kernel); the fused fixtures have a second activation x-.
+#    Smoke runs (fixture Runtime): unfused 469,934 / 170,216 / 103,558 / 173,803; fused 529,028 / 162,895 / 60,817 / 48,656.
+QZO_BLOCKS_KERNEL_TESTS = {
+    f"SpeechNet_{kind}_b{i}_cluster": (i, kind, f"../SpeechNet_Test/speechnet_{kind}_b{i}_cluster")
+    for i in (1, 2, 3, 4) for kind in ("unfused", "fused")
+}
+
+
+def qzo_block_gen_args(i: int, fused: bool) -> list:
+    a, b = f"/blocks_{i}_conv_input_quant_1/Clip_output_0", f"blocks.{i}.conv.bias_rqsadd"
+    types, offsets = [f"{b}=int32_t", f"{a}=int8_t"], [f"{b}=0", f"{a}=0"]
+    if fused:
+        types.append(f"{a}_minus=int8_t")
+        offsets.append(f"{a}_minus=0")
+    return ["--input-type-map", *types, "--input-offset-map", *offsets]

@@ -1,0 +1,41 @@
+/app/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+Traceback (most recent call last):
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 333, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 166, in generateTiledTrainingNetwork
+    num_data = _infer_num_data_inputs(inputs_path)
+  File "/app/TrainDeeploy/DeeployTest/testUtils/trainingUtils.py", line 86, in _infer_num_data_inputs
+    raise ValueError("Cannot auto-detect num_data_inputs: inputs.npz has only one mini-batch "
+ValueError: Cannot auto-detect num_data_inputs: inputs.npz has only one mini-batch (no mb1_arr_* entries found). Please pass --num-data-inputs explicitly.
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_zo_train
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_zo_train FAILED with exception: Tiled MeZO network generation failed for speechnet_zo_train[0m
+EXIT=1

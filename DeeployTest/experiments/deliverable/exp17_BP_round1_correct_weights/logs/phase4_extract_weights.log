@@ -1,0 +1,25 @@
+parsed [WDUMP] last step s=539: 22 tensors (expected 22)
+  wi= 0 blocks_0_0_weight    shape=(8, 1, 1, 4)  max|dev-base|=4.738e-02
+  wi= 1 blocks_0_0_bias      shape=(8,)  max|dev-base|=1.481e-04
+  wi= 2 blocks_0_1_weight    shape=(8,)  max|dev-base|=1.738e-02
+  wi= 3 blocks_0_1_bias      shape=(8,)  max|dev-base|=8.343e-03
+  wi= 4 blocks_1_0_weight    shape=(16, 8, 1, 16)  max|dev-base|=1.845e-02
+  wi= 5 blocks_1_0_bias      shape=(16,)  max|dev-base|=5.562e-03
+  wi= 6 blocks_1_1_weight    shape=(16,)  max|dev-base|=8.613e-03
+  wi= 7 blocks_1_1_bias      shape=(16,)  max|dev-base|=1.044e-02
+  wi= 8 blocks_2_0_weight    shape=(16, 16, 1, 8)  max|dev-base|=1.827e-02
+  wi= 9 blocks_2_0_bias      shape=(16,)  max|dev-base|=9.451e-03
+  wi=10 blocks_2_1_weight    shape=(16,)  max|dev-base|=7.548e-03
+  wi=11 blocks_2_1_bias      shape=(16,)  max|dev-base|=6.252e-03
+  wi=12 blocks_3_0_weight    shape=(32, 16, 7, 1)  max|dev-base|=2.197e-02
+  wi=13 blocks_3_0_bias      shape=(32,)  max|dev-base|=1.013e-02
+  wi=14 blocks_3_1_weight    shape=(32,)  max|dev-base|=1.086e-02
+  wi=15 blocks_3_1_bias      shape=(32,)  max|dev-base|=7.232e-03
+  wi=16 blocks_4_0_weight    shape=(32, 32, 7, 1)  max|dev-base|=1.028e-02
+  wi=17 blocks_4_0_bias      shape=(32,)  max|dev-base|=5.595e-03
+  wi=18 blocks_4_1_weight    shape=(32,)  max|dev-base|=3.499e-03
+  wi=19 blocks_4_1_bias      shape=(32,)  max|dev-base|=1.599e-03
+  wi=20 fc_weight            shape=(9, 32)  max|dev-base|=8.951e-03
+  wi=21 fc_bias              shape=(9,)  max|dev-base|=1.622e-03
+max weight movement over all trainable tensors: 4.738e-02
+saved carry -> /tmp/carry_fullfrozen_b1_fold3_ref.pt

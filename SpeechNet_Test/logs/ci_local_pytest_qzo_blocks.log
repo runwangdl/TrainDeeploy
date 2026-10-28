@@ -1,0 +1,20 @@
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b3_cluster] 
+[gw1] [ 37%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b2_cluster] 
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b2_cluster] 
+[gw0] [ 50%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b1_cluster] 
+test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b1_cluster] 
+[gw3] [ 62%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b4_cluster] 
+[gw1] [ 75%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b2_cluster] 
+[gw2] [ 87%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b3_cluster] 
+[gw0] [100%] PASSED test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b1_cluster] 
+
+============================= Performance Summary ==============================
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b1_cluster]  runtime=     529,284 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b2_cluster]  runtime=     162,895 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b3_cluster]  runtime=      60,699 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_fused_b4_cluster]  runtime=      48,656 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b1_cluster]  runtime=     469,934 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b2_cluster]  runtime=     170,216 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b3_cluster]  runtime=     103,558 cyc
+  [PASS] DeeployTest/test_platforms.py::test_siracusa_tiled_qzo_blocks_kernels[SpeechNet_unfused_b4_cluster]  runtime=     173,803 cyc
+========================= 8 passed in 69.93s (0:01:09) =========================

@@ -1560,14 +1560,30 @@ class ConvGradWTileConstraintBase(TileConstraint):
             (nSize, inputCSize, hiSize, wiSize),
         )
 
-        # ONNX pads apply only on boundary tiles of dY space
-        Hy = gradOutFull[2]
-        Wy = gradOutFull[3]
-
-        tile_pad_top = pad_top if hoOff == 0 else 0
-        tile_pad_bottom = pad_bottom if (hoOff + hoSize) == Hy else 0
-        tile_pad_left = pad_left if woOff == 0 else 0
-        tile_pad_right = pad_right if (woOff + woSize) == Wy else 0
+        # -- QW exp21e: the per-tile pad must be exactly the part of this tile's receptive field that lies
+        #    outside X, i.e. what the clamp above cut off. The original rule ("full ONNX pad on the boundary
+        #    tiles of dY, 0 elsewhere") is wrong whenever a NON-boundary dY tile's window already reaches past
+        #    X: SpeechNet block 0 (k=4 along W, pad 2/2, W_out=701) is cut into dY tiles of 175,175,175,175,1;
+        #    tile 3 (wo 525..699) needs X[523..701) but X ends at 700, so it got W_in=177 with pad 0. The
+        #    pulp-trainlib im2row then emits only (177-4+0+0+1)=174 columns while the GEMM consumes
+        #    K = 175 -> one stale im2col column per row entered dW. Result: blocks_0_0 / blocks_1_0 weight
+        #    gradients off by 12 % / 2 % of the update (BP regression A, first seen in the devel merge
+        #    ce75da00/599f3c1e). With pad = clamped amount the kernel's Wtot = (W_in-Q+L+R+s)/s equals the dY
+        #    tile width for every tile, by construction.
+        # # ONNX pads apply only on boundary tiles of dY space
+        # Hy = gradOutFull[2]
+        # Wy = gradOutFull[3]
+        #
+        # tile_pad_top = pad_top if hoOff == 0 else 0
+        # tile_pad_bottom = pad_bottom if (hoOff + hoSize) == Hy else 0
+        # tile_pad_left = pad_left if woOff == 0 else 0
+        # tile_pad_right = pad_right if (woOff + woSize) == Wy else 0
+        tile_pad_top = h_in_start_c - h_in_start
+        tile_pad_bottom = max(0, h_in_end - h_in_end_c)
+        tile_pad_left = w_in_start_c - w_in_start
+        tile_pad_right = max(0, w_in_end - w_in_end_c)
+        assert tile_pad_top <= pad_top and tile_pad_bottom <= pad_bottom and tile_pad_left <= pad_left \
+            and tile_pad_right <= pad_right, "ConvGradW tile needs more padding than the op has"  # -- QW exp21e
 
         return xTile, (tile_pad_top, tile_pad_bottom, tile_pad_left, tile_pad_right)
 

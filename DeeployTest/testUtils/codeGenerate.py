@@ -251,8 +251,13 @@ def generateL3HexDump(deployer: NetworkDeployer, path: str, test_inputs: List, t
 
         typeStr, width = type2TypeStr(buf._type)
 
-        # Word alignment
-        mod = (32 // width)
+        # Word alignment: `mod` is how many elements fit in one 32-bit word, and the buffer is padded
+        # up to a whole number of words.
+        # QW: clamp to >= 1. For a type WIDER than a word (int64 labels, which the training graphs
+        #     declare and which testMVPTraining now types from the ONNX rather than by value
+        #     inference) `32 // width` is 0 and this raised ZeroDivisionError. An element that is
+        #     already >= 1 word needs no padding, so mod = 1 is the correct generalisation. -- QW
+        mod = max(1, 32 // width)
         paddingLength = (mod - (array.size % mod)) % mod
         paddedArray = np.pad(array.flatten(), (0, paddingLength), 'constant')
 

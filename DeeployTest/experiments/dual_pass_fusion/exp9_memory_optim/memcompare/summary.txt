@@ -1,0 +1,32 @@
+== bp
+L1: const 0 = 0 B | var 366 peak live 121,984 B (step 91) | const+var peak 121,984 B
+L2: const 7 = 99,752 B | var 273 peak live 687,488 B (step 10) | const+var peak 787,240 B
+L3: const 12 = 880 B | var 122 peak live 1,005,668 B (step 97) | const+var peak 1,006,548 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 237312)
+   alloc: pi_l2_malloc(sizeof(int8_t) * 687488)
+   alloc: cl_ram_malloc(sizeof(int8_t) * 1005648)
+== zo
+L1: const 0 = 0 B | var 177 peak live 113,844 B (step 34) | const+var peak 113,844 B
+L2: const 11 = 848 B | var 104 peak live 791,184 B (step 29) | const+var peak 792,032 B
+L3: const 0 = 0 B | var 0 peak live 0 B (step None) | const+var peak 0 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 791216)
+== eco_unf_t0
+L1: const 0 = 0 B | var 202 peak live 112,416 B (step 30) | const+var peak 112,416 B
+L2: const 26 = 2,096 B | var 109 peak live 466,464 B (step 30) | const+var peak 468,560 B
+L3: const 0 = 0 B | var 0 peak live 0 B (step None) | const+var peak 0 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 466464)
+== eco_unf_t1
+L1: const 0 = 0 B | var 148 peak live 88,472 B (step 29) | const+var peak 88,472 B
+L2: const 26 = 2,096 B | var 74 peak live 162,152 B (step 29) | const+var peak 164,248 B
+L3: const 0 = 0 B | var 0 peak live 0 B (step None) | const+var peak 0 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 162152)
+== eco_fus_t0
+L1: const 0 = 0 B | var 232 peak live 113,664 B (step 32) | const+var peak 113,664 B
+L2: const 34 = 3,344 B | var 109 peak live 854,388 B (step 25) | const+var peak 857,732 B
+L3: const 0 = 0 B | var 0 peak live 0 B (step None) | const+var peak 0 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 854452)
+== eco_fus_t1
+L1: const 0 = 0 B | var 178 peak live 113,728 B (step 25) | const+var peak 113,728 B
+L2: const 34 = 3,344 B | var 74 peak live 265,612 B (step 23) | const+var peak 268,956 B
+L3: const 0 = 0 B | var 0 peak live 0 B (step None) | const+var peak 0 B
+   alloc: pi_l2_malloc(sizeof(int8_t) * 265612)

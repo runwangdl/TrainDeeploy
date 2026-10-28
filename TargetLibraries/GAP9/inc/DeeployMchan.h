@@ -38,7 +38,8 @@
 #endif
 #endif
 
-// Now include the mchan.h header with all configurations set
+// Now include the mchan.h header with all configurations set (GAP9 dory API:
+// mchan_transfer_push_1d/2d / get_id / wait / free)
 #include "mchan.h"
 
 // GAP9's mchan.h carries the older push/wait API used by dory_dma.c. The tiling

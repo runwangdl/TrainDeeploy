@@ -1,0 +1,13 @@
+exp7 step 6 -- blocks 1-4, both ZO passes, Siracusa GVSoC (L1 128000, L2 1500000, 8 cores); all runs exact (Errors: 0)
+A = 2 x unfused pulp-nn (perturb nodes + transposes + pulp_nn_conv)   B = 2 x single-pass Conv4x2   C = fused two-input RequantizedDualConv
+
+block  MACs/pass  W elems          A          B          C    A/B    B/C    A/C    perturb-w node/pass  conv (B)/pass  fused node phase1 est.
+    1  2,523,136    2,048    939,868    653,328    580,248   1.44   1.13   1.62                 38,141        250,179     494,019      -6,339
+    2    659,456    2,048    340,432    266,868    183,559   1.28   1.45   1.85                 38,183         72,260     155,671      11,151
+    3    143,360    3,584    207,116    197,634     72,693   1.05   2.72   2.85                 64,105         22,440      63,523      18,643
+    4     71,680    7,168    347,606    305,642     74,188   1.14   4.12   4.69                125,298         12,894      67,135      41,347
+  1-4                      1,835,022  1,423,472    910,688   1.29   1.56   2.01
+
+perturb-w node/pass: ApplyPerturbQuantRademacher_CHW, core 0 (8 cores share the weight): ~141-146 cycles per element per sign
+phase1 est. = fused node - 2 x single-pass conv node: block 3 ~42, block 4 ~46 cycles per element for BOTH signs (dc_perturb_i8_chw)
+@370 MHz, blocks 1-4 both passes: 4.96 ms -> 2.46 ms

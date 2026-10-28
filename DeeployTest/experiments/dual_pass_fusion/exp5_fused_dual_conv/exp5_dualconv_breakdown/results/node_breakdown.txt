@@ -1,0 +1,38 @@
+DualConv: 523490 instructions, span 634889 cycles (1227 pixel(s) on core 0)
+
+--- BY ADDRESS RANGE ---
+category                                instr   cycles   stall   %cyc   cyc/px
+setup (per tile)                          242     1327    1085    0.2      1.1
+phase 1: perturb W (per tile)             364     1361     997    0.2      1.1
+phase 1: perturb b (per tile)             166      725     559    0.1      0.6
+phase 1: barrier (per tile)                 4       44      40    0.0      0.0
+pixel-loop control                      17174    22197    5023    3.5     18.1
+gather                                 122682   148882   26200   23.5    121.3
+channel-loop control                   107976   113004    5028   17.8     92.1
+dot product                             98160   108143    9983   17.0     88.1
+requant + store                        176688   216262   39574   34.1    176.3
+epilogue (barrier + restore)               34      163     129    0.0      0.1
+end-of-tile barrier wait                    0     6242    6242    1.0      5.1
+inter-tile gap (outside kernel)             0    16539   16539    2.6     13.5
+TOTAL                                  523490   634889  111399
+payload (dot + requant/store) = 324405 cycles = 51.1 %
+
+--- BY C SOURCE LINE (cross-check) ---
+category                                instr   cycles   stall   %cyc   cyc/px
+setup (per tile)                          192     1093     901    0.2      0.9
+pixel-loop control                      29462    42033   12571    6.6     34.3
+gather                                 120228   141429   21201   22.3    115.3
+channel-loop control                    49080    51585    2505    8.1     42.0
+dot product                            147240   157249   10009   24.8    128.2
+requant + store                        176688   216262   39574   34.1    176.3
+epilogue (barrier + restore)               30      147     117    0.0      0.1
+end-of-tile barrier wait                    0     6242    6242    1.0      5.1
+inter-tile gap (outside kernel)             0    16539   16539    2.6     13.5
+inlined from DualPerturb.h                478     1739    1261    0.3      1.4
+inlined from eu_v3.h                        8       60      52    0.0      0.0
+inlined from riscv_v5.h                     6       31      25    0.0      0.0
+inlined from utils.h                        4       28      24    0.0      0.0
+kernel:other (line 75)                     74      452     378    0.1      0.4
+TOTAL                                  523490   634889  111399
+payload (dot + requant/store) = 373511 cycles = 58.8 %
+

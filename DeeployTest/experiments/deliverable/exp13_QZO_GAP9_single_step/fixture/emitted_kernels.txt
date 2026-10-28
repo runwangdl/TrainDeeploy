@@ -1,0 +1,24 @@
+QZO kernel calls emitted into the generated GAP9 C code
+(from a successful `deeployMezoRunner_tiled_GAP9.py` codegen+tiling run, 2026-09-10)
+Source: TEST_GAP9/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/{TrainingNetwork,OptimizerNetwork}.c
+
+== OptimizerNetwork.c (the ZO update graph: apply +eps / -eps perturbations, then update) ==
+     12  ApplySequentialRademacherPerturbation(   # fp32 BN/fc perturb (PerturbRademacher)
+     12  ApplyRademacherPerturbation(             # fp32 BN/fc perturb
+      5  ApplyPerturbQuantRademacher_i32(         # int32 bias perturb (RQSPerturbRademacher)
+      5  ApplyPerturbQuantRademacher_CHW(         # int8 per-channel conv-weight perturb (RQSPerturbRademacher)
+  -> 22 perturb ops total = 12 PerturbRademacher (fp32) + 10 RQSPerturbRademacher (int8) — matches the graph.
+
+== TrainingNetwork.c (the ZO forward: perturbed forward + loss) ==
+      5  PULP_BatchNormInternal_fp32(             # frozen-stat BN, 8-core PULP kernel
+
+Generated file sizes:
+  TrainingNetwork.c   1,136,523 bytes
+  OptimizerNetwork.c    283,929 bytes
+  TrainingNetwork.h       3,625 bytes
+  OptimizerNetwork.h      5,862 bytes
+
+These are the SAME QZO kernels validated bit-exact on Siracusa, now emitted for the GAP9 target
+via GAP9's deeploylib (which compiles the PULPOpen kernel sources). GlobalAveragePool, Conv, Gemm,
+RequantShift, Quant/Dequant etc. are emitted as tiled GAP9 cluster-fork kernels (see TrainingNetwork.c
+symbols like GlobalAveragePool_cluster_fork / _closure_L3 / _numTiles).

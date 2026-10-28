@@ -1,0 +1,219 @@
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+Consolidate compiler generated dependencies of target pulp-nnx
+[  1%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  4%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 95%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[100%] Built target deeploypulp
+Consolidate compiler generated dependencies of target network
+[100%] Building C object DeeployTest/CMakeFiles/network.dir/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c.obj
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c:5:
+[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c:24:59: [0m[0;1;35mwarning: [0m[1munused parameter '_perturb_rademacher_node_tiling_closure_args' [-Wunused-parameter][0m
+static void _perturb_rademacher_node_tiling_closure(void *_perturb_rademacher_node_tiling_closure_args) {
+[0;1;32m                                                          ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c:57:57: [0m[0;1;35mwarning: [0m[1munused parameter '_perturb_rademacher_node_cluster_fork_args' [-Wunused-parameter][0m
+static void _perturb_rademacher_node_cluster_fork(void *_perturb_rademacher_node_cluster_fork_args) {
+[0;1;32m                                                        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c:76:52: [0m[0;1;35mwarning: [0m[1munused parameter '_perturb_rademacher_node_closure_args' [-Wunused-parameter][0m
+static void _perturb_rademacher_node_closure(void *_perturb_rademacher_node_closure_args) {
+[0;1;32m                                                   ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.c:91:55: [0m[0;1;35mwarning: [0m[1munused parameter '_perturb_rademacher_node_closure_L3_args' [-Wunused-parameter][0m
+static void _perturb_rademacher_node_closure_L3(void *_perturb_rademacher_node_closure_L3_args) {
+[0;1;32m                                                      ^
+[0m21 warnings generated.
+[100%] Built target network
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/PerturbRademacher.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/PerturbRademacher.dir/src/deeploytest.c.obj
+In file included from /app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:8:
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher/Network.h:8:
+[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:46:46: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'isnan' is invalid in C99 [-Wimplicit-function-declaration][0m
+      if ((diff < -1e-4) || (diff > 1e-4) || isnan(diff)) {
+[0;1;32m                                             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:152:34: [0m[0;1;35mwarning: [0m[1mimplicit conversion turns floating-point number into integer: 'float' to 'int32_t' (aka 'int') [-Wfloat-conversion][0m
+        int32_t error = expected - actual;
+[0;1;32m                ~~~~~   ~~~~~~~~~^~~~~~~~
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:155:13: [0m[0;1;35mwarning: [0m[1mimplicit conversion turns floating-point number into integer: 'float32_t' (aka 'float') to 'bool' [-Wfloat-conversion][0m
+        if (diff) {
+[0;1;32m        ~~  ^~~~
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:157:37: [0m[0;1;35mwarning: [0m[1mformat specifies type 'int' but the argument has type 'float32_t' (aka 'float') [-Wformat][0m
+          printf("Expected: %4d  ", expected);
+[0;1;32m                            ~~~     ^~~~~~~~
+[0m[0;32m                            %4f
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:158:35: [0m[0;1;35mwarning: [0m[1mformat specifies type 'int' but the argument has type 'float32_t' (aka 'float') [-Wformat][0m
+          printf("Actual: %4d  ", actual);
+[0;1;32m                          ~~~     ^~~~~~
+[0m[0;32m                          %4f
+[0m[1m/app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploytest.c:159:62: [0m[0;1;35mwarning: [0m[1mformat specifies type 'int' but the argument has type 'float32_t' (aka 'float') [-Wformat][0m
+          printf("Diff: %4d at Index %12u in Output %u\r\n", diff, i, buf);
+[0;1;32m                        ~~~                                  ^~~~
+[0m[0;32m                        %4f
+[0m23 warnings generated.
+[100%] Linking C executable ../../../bin/PerturbRademacher
+clang-15: [0;1;35mwarning: [0m[1margument unused during compilation: '-nostartfiles' [-Wunused-command-line-argument][0m
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/PerturbRademacher': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/string/memchr.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/PerturbRademacher': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/machine/riscv/../../common/s_isnan.c
+[100%] Built target PerturbRademacher
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : PerturbRademacher
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Kernels/FP32/ZOPerturb_QW/PerturbRademacher
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : No
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[92m✓ Test PerturbRademacher PASSED - No errors found[0m

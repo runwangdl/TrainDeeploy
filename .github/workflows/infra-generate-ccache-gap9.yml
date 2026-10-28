@@ -6,15 +6,17 @@
 name: Infrastructure • Generate CCache GAP9
 
 "on":
+  # RW 2026-10-13: auto-trigger off on this branch; only ci-speechnet.yml runs on push / pull_request.
+
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
         description: "Deeploy GAP9 Image to use"
         required: false
         default: "ghcr.io/runwangdl/deeploy:gap9"
-  schedule:
-    # Runs the workflow on the default branch every day at 2AM CET to keep the cache fresh
-    - cron: "0 2 * * *"
+  # schedule:
+  #   # Runs the workflow on the default branch every day at 2AM CET to keep the cache fresh
+  #   - cron: "0 2 * * *"
 
 jobs:
   generate-ccache-gap9:

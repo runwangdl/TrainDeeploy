@@ -1,0 +1,98 @@
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[0;93m2026-07-29 02:21:19.051665960 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053505918 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053554835 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053580210 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053625918 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053655502 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053691960 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053718502 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053744168 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053770002 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053836752 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053858335 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053892710 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_0_blocks_0_1_Constant__0_tensor_DUPLICATE_FOR_node_3_blocks_0_blocks_0_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053917293 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_0_blocks_0_1_Constant__0_tensor_DUPLICATE_FOR_node_3_blocks_0_blocks_0_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053940543 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_0_blocks_0_1_Constant__0_tensor_DUPLICATE_FOR_node_3_blocks_0_blocks_0_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.053961043 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_0_blocks_0_1_Constant__0_tensor_DUPLICATE_FOR_node_3_blocks_0_blocks_0_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.053996835 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.054026043 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.054053585 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.054078668 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_1_blocks_1_1_Constant_1__0_tensor_DUPLICATE_FOR_node_33_blocks_2_blocks_2_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.054146335 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.054192793 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-07-29 02:21:19.054223210 [W:onnxruntime:, graph.cc:1332 Graph] Duplicate initializer (dense, sparse or ConstantNode): 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape' the model will use the latest encountered initializer. Please, fix your model.[m
+[0;93m2026-07-29 02:21:19.054249835 [W:onnxruntime:, graph.cc:1363 Graph] Initializer node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_62_blocks_4_blocks_4_1_Reshape_Reshape appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+/app/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+[W] colored module is not installed, will not use colors when logging. To enable colors, please install the colored module: python3 -m pip install colored
+[W] Inference failed. You may want to try enabling partitioning to see better results. Note: Error was:
+[ONNXRuntimeError] : 2 : INVALID_ARGUMENT : Invalid model. Node input 'node_0_blocks_3_blocks_3_1_Constant_3__0_tensor_DUPLICATE_FOR_node_64_blocks_4_blocks_4_1_Reshape_1_Reshape' is not a graph input, initializer, or output of a previous node.
+Traceback (most recent call last):
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 310, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 160, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.backEnd(verbose = verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3493, in backEnd
+    self.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 62, in codeTransform
+    return self._innerObject.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/MemoryLevelExtension/NetworkDeployers/MemoryLevelDeployer.py", line 258, in codeTransform
+    super().codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 62, in codeTransform
+    return self._innerObject.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2577, in codeTransform
+    self.ctxt = layer.codeTransform(self.ctxt, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2141, in codeTransform
+    newCtxt = self.mapper.binder.codeTransform(ctxt, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 1653, in codeTransform
+    ctxt, self._executionBlock = self.codeTransformer.transform(ctxt, self.executionBlock, self.nodeName, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2338, in transform
+    ctxt, executionBlock = _pass.apply(ctxt, executionBlock, name, verbose)
+  File "/app/TrainDeeploy/Deeploy/Targets/PULPOpen/CodeTransformationPasses/PULPClusterTiling.py", line 51, in apply
+    ctxt, executionBlock = self.SB.apply(ctxt, executionBlock, name)
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 285, in apply
+    ctxt, executionBlock, applicable = self.generateTilingLoop(ctxt, executionBlock, nodeMemoryConstraint,
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 95, in generateTilingLoop
+    return self._tilingLoop(ctxt, executionBlock, nodeMemoryConstraint, flatTilingSchedule, variableReplacement,
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/SingleBufferingTilingCodeGeneration.py", line 280, in _tilingLoop
+    ctxt, ingressDMAStatements, ingressFutures = self._generateTransferScheduleCalls(
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/SingleBufferingTilingCodeGeneration.py", line 74, in _generateTransferScheduleCalls
+    rectangles, externalBufferShape = self._legalizeTransfers(rectangles, tuple(externalBufferShape),
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 193, in _legalizeTransfers
+    minRect, newMinOuterShape = minimizeRectangle(paddedRect, outerShape)
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/TilingCodegen.py", line 537, in minimizeRectangle
+    assert rectOffset == 0, f"Rectangle offset should be zero when the dimensions are the same. Received rectangle {rect} and reference shape {referenceShape}"
+AssertionError: Rectangle offset should be zero when the dimensions are the same. Received rectangle HyperRectangle(offset=(0, 0, 1, 0), dims=(1, 8, 1, 1)) and reference shape (1, 8, 1, 1)
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_decompose_b1_fold3
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_train_decompose_b1_fold3
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_train_decompose_b1_fold3
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DDUMP_WEIGHTS=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_train_decompose_b1_fold3 FAILED with exception: Tiled training network generation failed for speechnet_train_decompose_b1_fold3[0m

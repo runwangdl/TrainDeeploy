@@ -1,0 +1,565 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+
+======================================================================
+🚀 Generating model: SpeechNet (Q-ZO-TRAIN mode)
+======================================================================
+
+📐 --n-epochs 200.0  × data_size 54  ÷ --n-accum 4  → n_batches=10800  (≈200.0 epochs)
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+
+============================================================
+🚀 Exporting SpeechNet to ONNX (Quantized Zeroth-Order Mode)
+============================================================
+
+📦 Creating Brevitas model (pretrained, BN UNFOLDED) + real-data PTQ calibration...
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 1 samples/class × 9 classes = 9 total
+   🧊 baked pooled act thresholds (12 sites) from /app/TrainDeeploy/SpeechNet_Test/calibration/pooled_9999_fold3_ref.json
+📤 exportBrevitas + 12-pass integer pipeline...
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+[W1012 15:26:33.234049082 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.324280833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.341811374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.360039583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.374790708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.484474541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.528236541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.546268624 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.567360291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.580667083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.603561291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.643323916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.658033708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.673216124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.691849333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.714856499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.751396874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.764165874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.778520374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.792215374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+/usr/local/lib/python3.10/site-packages/brevitas/backport/fx/_symbolic_trace.py:622: UserWarning: Was not able to add assertion to guarantee correct input x to specialized function. It is up to the user to make sure that your inputs match the inputs you specialized the function with.
+  warnings.warn(
+[W1012 15:26:34.848668999 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.892791666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.908555791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.928562749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.946014208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.992092625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.018950000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.033428291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.047746291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.056595666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.117084416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.158224416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.180356708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.206729916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.224304375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.737176042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.766617042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.780978958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.792410625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.802297958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+Output Original:          tensor([[-4.5001, -1.0514,  0.2376, -2.5358,  4.0937, -0.1940, -2.6773, -4.5086,
+         -5.3570]])
+Output Dequant Modified:  tensor([[-4.5001, -1.0514,  0.2376, -2.5358,  4.0937, -0.1940, -2.6773, -4.5086,
+         -5.3570]])
+[W1012 15:26:35.862022083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.903411042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.924270500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.942986750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.958060250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+Input npz:  tensor([[[[-6.4067e+00, -1.0460e+01, -3.1798e+00,  ..., -1.3411e+01,
+           -2.1178e+01, -1.0438e+01],
+          [ 1.8528e-02, -7.1316e+00, -7.2454e-01,  ...,  1.3875e+01,
+           -9.9027e+00, -2.2038e+01],
+          [ 2.0443e+00, -1.1211e+01, -1.0750e+01,  ...,  1.9913e+00,
+           -1.1291e+01, -7.9516e+00],
+          ...,
+          [-1.4141e+00,  1.1263e+01,  7.8791e+00,  ...,  2.5013e+01,
+            1.5537e+01,  4.9199e+00],
+          [ 5.5801e+00, -8.9164e+00,  6.2438e+00,  ..., -4.8567e+01,
+           -5.1225e+01, -4.0265e+01],
+          [ 1.0702e+00, -6.9814e+00, -1.1513e+01,  ..., -3.5547e+01,
+           -4.4382e+01, -3.2851e+01]]]])
+Input data saved to /app/TrainDeeploy/SpeechNet_Test/exports/qzo_round1/inputs.npz ✓
+[0;93m2026-10-12 15:26:35.819256720 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820243012 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820256137 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820259970 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820529429 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820544804 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820558679 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820578595 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820587220 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820611262 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820618929 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820625554 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820632637 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820640512 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820647887 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820653970 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820660262 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820666929 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820674054 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820680262 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820686012 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820789054 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820797512 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820805012 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820816137 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820822554 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820830720 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820852387 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820862345 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820884595 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820897762 [W:onnxruntime:, graph.cc:1312 Graph] Initializer fc.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-10-12 15:26:35.820905095 [W:onnxruntime:, graph.cc:1312 Graph] Initializer fc.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+Output npz:  [[-4.5001097  -1.0514467   0.23762956 -2.5358188   4.093692   -0.19401729
+  -2.6773183  -4.5086365  -5.356984  ]]
+Output data saved to /app/TrainDeeploy/SpeechNet_Test/exports/qzo_round1/outputs.npz ✓
+🔧 Running optimization pipeline: 'quant'
+   Total passes: 12
+   Enabled passes: 11
+  ➤ [1/12] remove_initializers_from_inputs
+      Drop weight initializers from graph.input (PyTorch keep_initializers_as_inputs cleanup)
+    remove_initializers_from_inputs: 32
+  ➤ [2/12] upgrade_reducemean_axes
+      Rename opset-13 'axes' attribute to 'axis' so Deeploy's _remove_only_singleton_reduce_mean reads it
+    upgrade_reducemean_axes: 0
+  ➤ [3/12] fold_qcdq_to_quant_dequant
+      Collapse Div/Add/Round/Clip → Quant and Sub/Mul → Dequant; chase Cast(Constant) for bounds
+    fold_qcdq_to_quant_dequant: 24
+  ➤ [4/12] constfold_quant_of_initializer
+      Statically apply Quant() to constant weights/biases; emit int initializers directly
+    constfold_quant_of_initializer: 0
+  ➤ [5/12] fold_dequant_quant_to_requantshift
+      Match Dequant → Quant and replace with RequantShift (the QCDQ → RequantShift bridge)
+    fold_dequant_quant_to_requantshift: 1
+  ➤ [6/12] skip_dequant_before_integer_op
+      Drop standalone Dequant whose output only flows into integer-friendly ops (Conv/Gemm/Add/ReduceMean)
+    skip_dequant_before_integer_op: 6
+  ➤ [7/12] fold_standalone_quant_to_requantshift
+      Replace `int_op → Quant` chains with `int_op → RequantShift`
+    fold_standalone_quant_to_requantshift: 5
+  ➤ [8/12] skip_leading_quant_dequant
+      Drop the trailing Dequant of a leading `input → Quant → Dequant → ...` pair
+    skip_leading_quant_dequant: 0
+  ➤ [9/12] absorb_conv_bias_into_following_requantshift
+      Fold Conv.bias × RequantShift.mul into RequantShift.add (4-input RequantizedConv)
+    absorb_conv_bias_into_following_requantshift: 0
+  ⊘ Skipping disabled pass: quantize_input_offline
+  ➤ [11/12] strip_trailing_dequant
+      Drop the trailing Dequant feeding the graph output; output stays int8
+    strip_trailing_dequant: 0
+  ➤ [12/12] cleanup_orphan_nodes
+      Remove unused Constants/Casts/Identity nodes and orphan initializers
+    cleanup_orphan_nodes: 0
+
+  ✅ Pipeline complete
+     Nodes: 320 → 193 (-127)
+🔧 build_qzo_train_graph + build_qzo_update_graph...
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /app/TrainDeeploy/SpeechNet_Test/exports/qzo_round1/network_zo_train.onnx
+  [qzo] int8 zo_update graph (22 RQSPerturb, params in/updated out) -> /app/TrainDeeploy/SpeechNet_Test/exports/qzo_round1/network_zo_update.onnx
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   QZO multi-step sim: data_size=54 n_accum=4 → n_steps=2700 lr=1e-05 eps=0.01 seed=42
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/qzo_sim_k1oaptx1/qzo_p.onnx
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/qzo_sim_k1oaptx1/qzo_m.onnx
+     u0 a0 mb0: L+=0.023334 L-=0.022559
+     u0 a1 mb1: L+=0.194037 L-=0.392794
+     u0 a2 mb2: L+=0.025142 L-=0.069338
+     u0 a3 mb3: L+=2.571299 L-=2.093531
+     u0: acc=0.235590 g_proj=2.944880 coeff=-2.945e-05
+     u1 a0 mb4: L+=0.456585 L-=0.206808
+     u1 a1 mb5: L+=0.686226 L-=0.026123
+     u1 a2 mb6: L+=3.670691 L-=2.650785
+     u1 a3 mb7: L+=1.044476 L-=2.066198
+     u1: acc=0.908063 g_proj=11.350788 coeff=-1.135e-04
+     u2 a0 mb8: L+=1.226534 L-=0.275722
+     u2 a1 mb9: L+=1.072522 L-=0.322116
+     u2 a2 mb10: L+=2.907645 L-=3.161529
+     u2 a3 mb11: L+=0.063232 L-=0.006712
+     u2: acc=1.503855 g_proj=18.798182 coeff=-1.880e-04
+     u3 a0 mb12: L+=0.011989 L-=0.029303
+     u3 a1 mb13: L+=0.069487 L-=0.589964
+     u3 a2 mb14: L+=0.111405 L-=0.055138
+     u3 a3 mb15: L+=1.207025 L-=2.923497
+     u3: acc=-2.197995 g_proj=-27.474934 coeff=2.747e-04
+     u4 a0 mb16: L+=0.007160 L-=0.006219
+     u4 a1 mb17: L+=0.161475 L-=0.180543
+     u4 a2 mb18: L+=0.034612 L-=0.001660
+     u4 a3 mb19: L+=2.490977 L-=5.653149
+     u4: acc=-3.147346 g_proj=-39.341827 coeff=3.934e-04
+     u5 a0 mb20: L+=0.051715 L-=0.023091
+     u5 a1 mb21: L+=1.897801 L-=1.132504
+     u5 a2 mb22: L+=1.447163 L-=1.715441
+     u5 a3 mb23: L+=0.013262 L-=0.011904
+     u5: acc=0.526999 g_proj=6.587493 coeff=-6.587e-05
+     u6 a0 mb24: L+=2.532059 L-=1.156899
+     u6 a1 mb25: L+=0.203400 L-=0.083832
+     u6 a2 mb26: L+=0.021503 L-=0.033187
+     u6 a3 mb27: L+=0.006855 L-=0.005906
+     u6: acc=1.483993 g_proj=18.549917 coeff=-1.855e-04
+     u7 a0 mb28: L+=0.063961 L-=0.005613
+     u7 a1 mb29: L+=0.587144 L-=2.649016
+     u7 a2 mb30: L+=0.285100 L-=0.029012
+     u7 a3 mb31: L+=0.519228 L-=0.414694
+     u7: acc=-1.642902 g_proj=-20.536276 coeff=2.054e-04
+     u8 a0 mb32: L+=4.538624 L-=4.323015
+     u8 a1 mb33: L+=0.000852 L-=0.333026
+     u8 a2 mb34: L+=1.861582 L-=2.212860
+     u8 a3 mb35: L+=0.154040 L-=1.592078
+     u8: acc=-1.905881 g_proj=-23.823509 coeff=2.382e-04
+     u9 a0 mb36: L+=0.341051 L-=2.496907
+     u9 a1 mb37: L+=0.440878 L-=0.063510
+     u9 a2 mb38: L+=0.084109 L-=0.228301
+     u9 a3 mb39: L+=0.098467 L-=0.015758
+     u9: acc=-1.839972 g_proj=-22.999651 coeff=2.300e-04
+     u10 a0 mb40: L+=3.206439 L-=3.477890
+     u10 a1 mb41: L+=1.976724 L-=0.956123
+     u10 a2 mb42: L+=1.645525 L-=1.039023
+     u10 a3 mb43: L+=0.218158 L-=0.013669
+     u10: acc=1.560140 g_proj=19.501747 coeff=-1.950e-04
+     u11 a0 mb44: L+=0.187737 L-=0.000844
+     u11 a1 mb45: L+=3.434199 L-=6.369477
+     u11 a2 mb46: L+=0.033099 L-=0.069474
+     u11 a3 mb47: L+=0.004433 L-=0.052037
+     u11: acc=-2.832364 g_proj=-35.404545 coeff=3.540e-04
+     u12 a0 mb48: L+=0.322965 L-=0.188814
+     u12 a1 mb49: L+=1.610334 L-=0.687510
+     u12 a2 mb50: L+=0.862761 L-=1.497881
+     u12 a3 mb51: L+=0.077090 L-=0.713779
+     u12: acc=-0.214834 g_proj=-2.685422 coeff=2.685e-05
+     u13 a0 mb52: L+=0.681062 L-=0.393022
+     u13 a1 mb53: L+=0.043029 L-=0.084279
+     u13 a2 mb0: L+=0.077395 L-=0.006844
+     u13 a3 mb1: L+=0.643898 L-=0.059642
+     u13: acc=0.901597 g_proj=11.269966 coeff=-1.127e-04
+     u14 a0 mb2: L+=0.160952 L-=0.036452
+     u14 a1 mb3: L+=1.654206 L-=2.983829
+     u14 a2 mb4: L+=0.421424 L-=0.110052
+     u14 a3 mb5: L+=0.310315 L-=0.116434
+     u14: acc=-0.699870 g_proj=-8.748374 coeff=8.748e-05
+     u15 a0 mb6: L+=2.587637 L-=4.302690
+     u15 a1 mb7: L+=0.989286 L-=1.029895
+     u15 a2 mb8: L+=0.314823 L-=0.800287
+     u15 a3 mb9: L+=0.715849 L-=1.307345
+     u15: acc=-2.832623 g_proj=-35.407784 coeff=3.541e-04
+     u16 a0 mb10: L+=2.687845 L-=3.823678
+     u16 a1 mb11: L+=0.004558 L-=0.088985
+     u16 a2 mb12: L+=0.050171 L-=0.004385
+     u16 a3 mb13: L+=0.756323 L-=0.081085
+     u16: acc=-0.499238 g_proj=-6.240477 coeff=6.240e-05
+     u17 a0 mb14: L+=0.054525 L-=0.115493
+     u17 a1 mb15: L+=1.852740 L-=1.671903
+     u17 a2 mb16: L+=0.004056 L-=0.003912
+     u17 a3 mb17: L+=0.213462 L-=0.060960
+     u17: acc=0.272513 g_proj=3.406418 coeff=-3.406e-05
+     u18 a0 mb18: L+=0.004935 L-=0.002133
+     u18 a1 mb19: L+=3.223419 L-=5.059760
+     u18 a2 mb20: L+=0.027366 L-=0.027153
+     u18 a3 mb21: L+=1.832920 L-=1.488191
+     u18: acc=-1.488596 g_proj=-18.607449 coeff=1.861e-04
+     u19 a0 mb22: L+=1.720067 L-=1.357676
+     u19 a1 mb23: L+=0.080803 L-=0.010124
+     u19 a2 mb24: L+=0.383115 L-=2.175462
+     u19 a3 mb25: L+=0.018746 L-=0.788735
+     u19: acc=-2.129267 g_proj=-26.615831 coeff=2.662e-04
+     u20 a0 mb26: L+=0.027798 L-=0.029362
+     u20 a1 mb27: L+=0.006361 L-=0.006574
+     u20 a2 mb28: L+=0.018261 L-=0.047443
+     u20 a3 mb29: L+=1.480796 L-=0.447635
+     u20: acc=1.002203 g_proj=12.527540 coeff=-1.253e-04
+     u21 a0 mb30: L+=0.304520 L-=0.042354
+     u21 a1 mb31: L+=0.378959 L-=0.354586
+     u21 a2 mb32: L+=4.130323 L-=3.105852
+     u21 a3 mb33: L+=0.023720 L-=0.023039
+     u21: acc=1.311692 g_proj=16.396154 coeff=-1.640e-04
+     u22 a0 mb34: L+=2.056227 L-=1.755634
+     u22 a1 mb35: L+=0.616552 L-=0.337088
+     u22 a2 mb36: L+=0.600120 L-=0.624514
+     u22 a3 mb37: L+=0.259530 L-=0.064915
+     u22: acc=0.750279 g_proj=9.378485 coeff=-9.378e-05
+     u23 a0 mb38: L+=0.091890 L-=0.086328
+     u23 a1 mb39: L+=0.088306 L-=0.022830
+     u23 a2 mb40: L+=3.794951 L-=3.123708
+     u23 a3 mb41: L+=0.531921 L-=1.107062
+     u23: acc=0.167140 g_proj=2.089250 coeff=-2.089e-05
+     u24 a0 mb42: L+=1.308598 L-=1.534521
+     u24 a1 mb43: L+=0.046028 L-=0.071366
+     u24 a2 mb44: L+=0.015005 L-=0.011372
+     u24 a3 mb45: L+=5.108038 L-=4.540755
+     u24: acc=0.319655 g_proj=3.995684 coeff=-3.996e-05
+     u25 a0 mb46: L+=0.018828 L-=0.160313
+     u25 a1 mb47: L+=0.001791 L-=0.029636
+     u25 a2 mb48: L+=1.005032 L-=0.131471
+     u25 a3 mb49: L+=0.416509 L-=2.060084
+     u25: acc=-0.939345 g_proj=-11.741812 coeff=1.174e-04
+     u26 a0 mb50: L+=1.460396 L-=0.380147
+     u26 a1 mb51: L+=0.884635 L-=0.154076
+     u26 a2 mb52: L+=0.589687 L-=0.492159
+     u26 a3 mb53: L+=0.009768 L-=0.445252
+     u26: acc=1.472852 g_proj=18.410645 coeff=-1.841e-04
+     u27 a0 mb0: L+=0.011898 L-=0.052758
+     u27 a1 mb1: L+=0.061569 L-=0.400010
+     u27 a2 mb2: L+=0.063985 L-=0.031909
+     u27 a3 mb3: L+=1.595430 L-=3.524621
+     u27: acc=-2.276416 g_proj=-28.455198 coeff=2.846e-04
+     u28 a0 mb4: L+=0.704499 L-=0.218231
+     u28 a1 mb5: L+=0.223569 L-=0.355667
+     u28 a2 mb6: L+=3.794569 L-=3.317676
+     u28 a3 mb7: L+=0.977564 L-=1.045109
+     u28: acc=0.763519 g_proj=9.543985 coeff=-9.544e-05
+     u29 a0 mb8: L+=0.489284 L-=0.571734
+     u29 a1 mb9: L+=0.462813 L-=1.028019
+     u29 a2 mb10: L+=2.647347 L-=3.879328
+     u29 a3 mb11: L+=0.030536 L-=0.031335
+     u29: acc=-1.880437 g_proj=-23.505465 coeff=2.351e-04
+     u30 a0 mb12: L+=0.005466 L-=0.021042
+     u30 a1 mb13: L+=0.050826 L-=0.398269
+     u30 a2 mb14: L+=0.093182 L-=0.082804
+     u30 a3 mb15: L+=0.708526 L-=3.269739
+     u30: acc=-2.913854 g_proj=-36.423180 coeff=3.642e-04
+     u31 a0 mb16: L+=0.003058 L-=0.005663
+     u31 a1 mb17: L+=0.145481 L-=0.020903
+     u31 a2 mb18: L+=0.023746 L-=0.000948
+     u31 a3 mb19: L+=1.792851 L-=6.324939
+     u31: acc=-4.387317 g_proj=-54.841461 coeff=5.484e-04
+     u32 a0 mb20: L+=0.069213 L-=0.019644
+     u32 a1 mb21: L+=1.756534 L-=1.273633
+     u32 a2 mb22: L+=1.294575 L-=0.993668
+     u32 a3 mb23: L+=0.004534 L-=0.053388
+     u32: acc=0.784523 g_proj=9.806537 coeff=-9.807e-05
+     u33 a0 mb24: L+=1.820002 L-=2.790404
+     u33 a1 mb25: L+=0.053642 L-=0.200120
+     u33 a2 mb26: L+=0.007273 L-=0.136804
+     u33 a3 mb27: L+=0.010283 L-=0.004599
+     u33: acc=-1.240727 g_proj=-15.509084 coeff=1.551e-04
+     u34 a0 mb28: L+=0.077249 L-=0.017748
+     u34 a1 mb29: L+=1.168095 L-=0.834634
+     u34 a2 mb30: L+=0.233736 L-=0.024388
+     u34 a3 mb31: L+=0.224565 L-=0.673405
+     u34: acc=0.153470 g_proj=1.918369 coeff=-1.918e-05
+     u35 a0 mb32: L+=4.083020 L-=3.763187
+     u35 a1 mb33: L+=0.005330 L-=0.013902
+     u35 a2 mb34: L+=2.944064 L-=1.302149
+     u35 a3 mb35: L+=0.426778 L-=0.581566
+     u35: acc=1.798388 g_proj=22.479849 coeff=-2.248e-04
+     u36 a0 mb36: L+=0.729888 L-=0.743842
+     u36 a1 mb37: L+=0.233956 L-=0.165954
+     u36 a2 mb38: L+=0.108958 L-=0.076243
+     u36 a3 mb39: L+=0.116062 L-=0.023692
+     u36: acc=0.179134 g_proj=2.239177 coeff=-2.239e-05
+     u37 a0 mb40: L+=3.063567 L-=3.536019
+     u37 a1 mb41: L+=0.871145 L-=0.932941
+     u37 a2 mb42: L+=0.572234 L-=1.364631
+     u37 a3 mb43: L+=0.117073 L-=0.040996
+     u37: acc=-1.250567 g_proj=-15.632091 coeff=1.563e-04
+     u38 a0 mb44: L+=0.068955 L-=0.013585
+     u38 a1 mb45: L+=2.780004 L-=6.138687
+     u38 a2 mb46: L+=0.132656 L-=0.056098
+     u38 a3 mb47: L+=0.014950 L-=0.006226
+     u38: acc=-3.218029 g_proj=-40.225368 coeff=4.023e-04
+     u39 a0 mb48: L+=0.692338 L-=0.186389
+     u39 a1 mb49: L+=0.364785 L-=2.270666
+     u39 a2 mb50: L+=1.751263 L-=0.554584
+     u39 a3 mb51: L+=0.270966 L-=0.248151
+     u39: acc=-0.180439 g_proj=-2.255482 coeff=2.255e-05
+     u40 a0 mb52: L+=0.660106 L-=0.498947
+     u40 a1 mb53: L+=0.131807 L-=0.042417
+     u40 a2 mb0: L+=0.008650 L-=0.062659
+     u40 a3 mb1: L+=0.095547 L-=0.436295
+     u40: acc=-0.144209 g_proj=-1.802610 coeff=1.803e-05
+     u41 a0 mb2: L+=0.049735 L-=0.127081
+     u41 a1 mb3: L+=1.677932 L-=2.837345
+     u41 a2 mb4: L+=0.078604 L-=1.565035
+     u41 a3 mb5: L+=0.463455 L-=0.180350
+     u41: acc=-2.440085 g_proj=-30.501068 coeff=3.050e-04
+     u42 a0 mb6: L+=2.929164 L-=2.715294
+     u42 a1 mb7: L+=1.690583 L-=0.487504
+     u42 a2 mb8: L+=0.215651 L-=1.044948
+     u42 a3 mb9: L+=0.497669 L-=0.688923
+     u42: acc=0.396398 g_proj=4.954977 coeff=-4.955e-05
+     u43 a0 mb10: L+=5.135183 L-=2.735293
+     u43 a1 mb11: L+=0.010376 L-=0.030343
+     u43 a2 mb12: L+=0.035654 L-=0.009531
+     u43 a3 mb13: L+=1.024281 L-=0.067828
+     u43: acc=3.362499 g_proj=42.031231 coeff=-4.203e-04
+     u44 a0 mb14: L+=0.282159 L-=0.044986
+     u44 a1 mb15: L+=2.671748 L-=1.451007
+     u44 a2 mb16: L+=0.015814 L-=0.002249
+     u44 a3 mb17: L+=0.004385 L-=0.466796
+     u44: acc=1.009068 g_proj=12.613344 coeff=-1.261e-04
+     u45 a0 mb18: L+=0.004714 L-=0.011164
+     u45 a1 mb19: L+=4.018836 L-=3.029794
+     u45 a2 mb20: L+=0.004149 L-=0.725944
+     u45 a3 mb21: L+=0.538441 L-=3.622909
+     u45: acc=-2.823671 g_proj=-35.295891 coeff=3.530e-04
+     u46 a0 mb22: L+=1.169608 L-=1.482893
+     u46 a1 mb23: L+=0.008836 L-=0.023504
+     u46 a2 mb24: L+=2.429853 L-=0.690420
+     u46 a3 mb25: L+=0.323802 L-=0.103970
+     u46: acc=1.631312 g_proj=20.391397 coeff=-2.039e-04
+     u47 a0 mb26: L+=0.034790 L-=0.023168
+     u47 a1 mb27: L+=0.002647 L-=0.016481
+     u47 a2 mb28: L+=0.010048 L-=0.009461
+     u47 a3 mb29: L+=1.029757 L-=0.363398
+     u47: acc=0.664734 g_proj=8.309174 coeff=-8.309e-05
+     u48 a0 mb30: L+=0.097253 L-=0.089623
+     u48 a1 mb31: L+=0.464751 L-=0.199239
+     u48 a2 mb32: L+=4.430582 L-=2.468668
+     u48 a3 mb33: L+=0.021072 L-=0.004931
+     u48: acc=2.251197 g_proj=28.139965 coeff=-2.814e-04
+     u49 a0 mb34: L+=2.503243 L-=0.933667
+     u49 a1 mb35: L+=0.156066 L-=0.754058
+     u49 a2 mb36: L+=1.070263 L-=0.530155
+     u49 a3 mb37: L+=0.219173 L-=0.153298
+     u49: acc=1.577567 g_proj=19.719582 coeff=-1.972e-04
+     u50 a0 mb38: L+=0.021299 L-=0.138356
+     u50 a1 mb39: L+=0.280650 L-=0.006666
+     u50 a2 mb40: L+=2.610413 L-=3.369289
+     u50 a3 mb41: L+=2.796844 L-=0.359065
+     u50: acc=1.835829 g_proj=22.947859 coeff=-2.295e-04
+     u51 a0 mb42: L+=2.392906 L-=1.076786
+     u51 a1 mb43: L+=0.015310 L-=0.199032
+     u51 a2 mb44: L+=0.006534 L-=0.019764
+     u51 a3 mb45: L+=5.132585 L-=3.828313
+     u51: acc=2.423441 g_proj=30.293013 coeff=-3.029e-04
+     u52 a0 mb46: L+=0.031039 L-=0.044406
+     u52 a1 mb47: L+=0.007683 L-=0.014606
+     u52 a2 mb48: L+=0.357798 L-=0.294062
+     u52 a3 mb49: L+=1.513707 L-=1.028728
+     u52: acc=0.528425 g_proj=6.605315 coeff=-6.605e-05
+     u53 a0 mb50: L+=1.520349 L-=0.424353
+     u53 a1 mb51: L+=0.678058 L-=0.075905
+     u53 a2 mb52: L+=0.430273 L-=0.581376
+     u53 a3 mb53: L+=0.092995 L-=0.042369
+     u53: acc=1.597671 g_proj=19.970890 coeff=-1.997e-04
+     u54 a0 mb0: L+=0.015814 L-=0.039360
+     u54 a1 mb1: L+=0.261847 L-=0.165066
+     u54 a2 mb2: L+=0.073340 L-=0.037441
+     u54 a3 mb3: L+=2.118072 L-=3.196034
+     u54: acc=-0.968830 g_proj=-12.110373 coeff=1.211e-04
+     u55 a0 mb4: L+=0.738573 L-=0.258182
+     u55 a1 mb5: L+=0.191579 L-=0.376350
+     u55 a2 mb6: L+=4.151589 L-=2.540034
+     u55 a3 mb7: L+=1.312533 L-=1.926300
+     u55: acc=1.293408 g_proj=16.167597 coeff=-1.617e-04
+     u56 a0 mb8: L+=0.963168 L-=0.253843
+     u56 a1 mb9: L+=0.864940 L-=0.673792
+     u56 a2 mb10: L+=4.658075 L-=2.609690
+     u56 a3 mb11: L+=0.161025 L-=0.004307
+     u56: acc=3.105577 g_proj=38.819714 coeff=-3.882e-04
+     u57 a0 mb12: L+=0.015089 L-=0.017187
+     u57 a1 mb13: L+=0.148445 L-=0.213834
+     u57 a2 mb14: L+=0.074410 L-=0.105279
+     u57 a3 mb15: L+=1.746969 L-=1.395475
+     u57: acc=0.253138 g_proj=3.164222 coeff=-3.164e-05
+     u58 a0 mb16: L+=0.004145 L-=0.007731
+     u58 a1 mb17: L+=0.060738 L-=0.168224
+     u58 a2 mb18: L+=0.000560 L-=0.022894
+     u58 a3 mb19: L+=2.394300 L-=4.722230
+     u58: acc=-2.461337 g_proj=-30.766714 coeff=3.077e-04
+     u59 a0 mb20: L+=0.005593 L-=0.093346
+     u59 a1 mb21: L+=2.116645 L-=1.470560
+     u59 a2 mb22: L+=0.631476 L-=1.612692
+     u59 a3 mb23: L+=0.008708 L-=0.037902
+     u59: acc=-0.452079 g_proj=-5.650988 coeff=5.651e-05
+     u60 a0 mb24: L+=2.394579 L-=0.981279
+     u60 a1 mb25: L+=0.037229 L-=0.265933
+     u60 a2 mb26: L+=0.043449 L-=0.009070
+     u60 a3 mb27: L+=0.002140 L-=0.017711
+     u60: acc=1.203404 g_proj=15.042553 coeff=-1.504e-04
+     u61 a0 mb28: L+=0.008482 L-=0.101112
+     u61 a1 mb29: L+=1.287079 L-=1.021664
+     u61 a2 mb30: L+=0.020132 L-=0.511983
+     u61 a3 mb31: L+=0.248936 L-=0.287354
+     u61: acc=-0.357485 g_proj=-4.468558 coeff=4.469e-05
+     u62 a0 mb32: L+=4.423138 L-=2.640234
+     u62 a1 mb33: L+=0.015773 L-=0.019556
+     u62 a2 mb34: L+=3.097597 L-=0.838521
+     u62 a3 mb35: L+=0.484644 L-=0.309006
+     u62: acc=4.213836 g_proj=52.672947 coeff=-5.267e-04
+     u63 a0 mb36: L+=0.455924 L-=0.767635
+     u63 a1 mb37: L+=0.194297 L-=0.136358
+     u63 a2 mb38: L+=0.192008 L-=0.061645
+     u63 a3 mb39: L+=0.060023 L-=0.014202
+     u63: acc=-0.077587 g_proj=-0.969840 coeff=9.698e-06
+     u64 a0 mb40: L+=2.216061 L-=5.487488
+     u64 a1 mb41: L+=0.574535 L-=3.335046
+     u64 a2 mb42: L+=1.317673 L-=2.163720
+     u64 a3 mb43: L+=0.444277 L-=0.005437
+     u64: acc=-6.439144 g_proj=-80.489304 coeff=8.049e-04
+     u65 a0 mb44: L+=0.031063 L-=0.010275
+     u65 a1 mb45: L+=3.797334 L-=5.666537
+     u65 a2 mb46: L+=0.019217 L-=0.062835
+     u65 a3 mb47: L+=0.002077 L-=0.013048
+     u65: acc=-1.903005 g_proj=-23.787561 coeff=2.379e-04
+     u66 a0 mb48: L+=0.520704 L-=0.107304
+     u66 a1 mb49: L+=1.010343 L-=1.151618
+     u66 a2 mb50: L+=1.237631 L-=0.365791
+     u66 a3 mb51: L+=0.051014 L-=1.625592
+     u66: acc=-0.430613 g_proj=-5.382665 coeff=5.383e-05
+     u67 a0 mb52: L+=0.490019 L-=0.585512
+     u67 a1 mb53: L+=0.134721 L-=0.037898
+     u67 a2 mb0: L+=0.004079 L-=0.026492
+     u67 a3 mb1: L+=0.200047 L-=0.172171
+     u67: acc=0.006793 g_proj=0.084911 coeff=-8.491e-07
+     u68 a0 mb2: L+=0.155331 L-=0.117772
+     u68 a1 mb3: L+=1.901557 L-=2.677663
+     u68 a2 mb4: L+=0.152952 L-=0.496832
+     u68 a3 mb5: L+=0.313980 L-=0.331383
+     u68: acc=-1.099830 g_proj=-13.747877 coeff=1.375e-04
+     u69 a0 mb6: L+=3.280142 L-=3.293808
+     u69 a1 mb7: L+=1.239832 L-=0.959616
+     u69 a2 mb8: L+=0.043102 L-=1.323882
+     u69 a3 mb9: L+=0.573151 L-=0.572766
+     u69: acc=-1.013845 g_proj=-12.673068 coeff=1.267e-04
+     u70 a0 mb10: L+=3.287486 L-=4.256201
+     u70 a1 mb11: L+=0.020302 L-=0.036264
+     u70 a2 mb12: L+=0.024044 L-=0.017195
+     u70 a3 mb13: L+=0.198672 L-=0.074754
+     u70: acc=-0.853910 g_proj=-10.673880 coeff=1.067e-04
+     u71 a0 mb14: L+=0.261628 L-=0.018315
+     u71 a1 mb15: L+=1.056011 L-=2.342626
+     u71 a2 mb16: L+=0.002046 L-=0.004272
+     u71 a3 mb17: L+=0.164067 L-=0.037903
+     u71: acc=-0.919363 g_proj=-11.492043 coeff=1.149e-04
+     u72 a0 mb18: L+=0.015277 L-=0.001660
+     u72 a1 mb19: L+=4.312485 L-=3.168380
+     u72 a2 mb20: L+=0.051266 L-=0.027774
+     u72 a3 mb21: L+=2.098187 L-=1.625583
+     u72: acc=1.653818 g_proj=20.672722 coeff=-2.067e-04
+     u73 a0 mb22: L+=0.956105 L-=1.865335
+     u73 a1 mb23: L+=0.004475 L-=0.064626
+     u73 a2 mb24: L+=0.809173 L-=1.936358
+     u73 a3 mb25: L+=0.234697 L-=0.017115
+     u73: acc=-1.878984 g_proj=-23.487301 coeff=2.349e-04
+     u74 a0 mb26: L+=0.011207 L-=0.049039
+     u74 a1 mb27: L+=0.027683 L-=0.003797
+     u74 a2 mb28: L+=0.061954 L-=0.012651
+     u74 a3 mb29: L+=0.667178 L-=2.361028
+     u74: acc=-1.658493 g_proj=-20.731165 coeff=2.073e-04
+     u75 a0 mb30: L+=0.057143 L-=0.203806
+     u75 a1 mb31: L+=0.076878 L-=1.001958
+     u75 a2 mb32: L+=4.241375 L-=2.920501
+     u75 a3 mb33: L+=0.006696 L-=0.040636
+     u75: acc=0.215193 g_proj=2.689914 coeff=-2.690e-05
+     u76 a0 mb34: L+=2.427975 L-=1.195766
+     u76 a1 mb35: L+=0.367882 L-=0.497039
+     u76 a2 mb36: L+=1.138428 L-=0.678456
+     u76 a3 mb37: L+=0.128461 L-=0.128539
+     u76: acc=1.562945 g_proj=19.536816 coeff=-1.954e-04
+     u77 a0 mb38: L+=0.151321 L-=0.051235

@@ -1,0 +1,18 @@
+run: make gvsoc_speechnet_zo_train (sim only, no rebuild)
+[  0%] Built target pulp-nnx
+[  3%] Built target deeploybasic
+[  8%] Built target pulp-sdk
+[ 94%] Built target pulp-nn-mixed
+[ 97%] Built target deeploypulp
+[ 97%] Built target optimizer_network
+[ 98%] Built target training_network
+[ 98%] Built target speechnet_zo_train
+[100%] POST_BUILD
+Error copying file (if different) from "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/*.bin" to "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/gvsoc_workdir/".
+make[3]: *** wait: No child processes.  Stop.
+make[3]: *** Waiting for unfinished jobs....
+make[3]: *** wait: No child processes.  Stop.
+make[2]: *** [CMakeFiles/Makefile2:441: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:448: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train.dir/rule] Terminated
+make: *** [Makefile:241: gvsoc_speechnet_zo_train] Terminated
+EXIT=124

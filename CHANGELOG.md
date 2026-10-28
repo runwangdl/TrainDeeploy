@@ -5,6 +5,7 @@ This file contains the changelog for the Deeploy project. The changelog is divid
 
 
 ### List of Pull Requests
+- SpeechNet (SilentWear) MaxPool On-Device Fine-Tuning [#XXX](https://github.com/pulp-platform/Deeploy/pull/XXX)
 - Add Microbenchmarking Infrastructure and CI Using GVSoC CSR [#162](https://github.com/pulp-platform/Deeploy/pull/162)
 - Fix CI Cache Generation [#176](https://github.com/pulp-platform/Deeploy/pull/176)
 - Fix Broken CI [#175](https://github.com/pulp-platform/Deeploy/pull/175)
@@ -53,6 +54,9 @@ This file contains the changelog for the Deeploy project. The changelog is divid
 - Fix tiling variable replacement corrupting static arrays by changing pointer update from value copy to address reassignment
 - Reduce RunNetwork stack usage by scoping per-layer variables with braces and moving tileIdxPtr allocation into per-layer execution blocks
 - Fix invalid escape sequence python error in DeeployTypes.py: appearing when using pytest to launch regressions
+- [SpeechNet] [TODO: verify] Fix FloatMaxPool PULPOpen template x/y dimension order, which produced wrong logits on asymmetric pools (SpeechNet inference 9/9 errors → 0/9, bit-exact)
+- [SpeechNet] [TODO: verify] Fix NCHW→NHWC lowering to transpose MaxPoolGrad's forward-input X (`inputs[1]`), correcting the backward-pass layout (per-step fine-tuning drift 0.025 → ~1e-6)
+- [SpeechNet] [TODO: verify] Pass `num_cores` correctly so the Im2Col buffer is allocated at the right size in the test runner
 
 ### Removed
 - `testDMA.py` was an old test; we now have `test_dmas.py` instead.

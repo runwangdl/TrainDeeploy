@@ -12,12 +12,13 @@ from Deeploy.AbstractDataTypes import Pointer
 from Deeploy.CommonExtensions.NetworkDeployers.SignPropDeployer import SignPropDeployer
 from Deeploy.CommonExtensions.OptimizationPasses.BindingsOptimizationPasses.AutoTranspose import AutoTransposeMergePass
 from Deeploy.CommonExtensions.OptimizationPasses.TopologyOptimizationPasses.LoweringOptimizationPasses import \
-    PULPNCHWtoNHWCPass, RemoveGlobalOutputReshapePass, TransposeMatmulInputsPass
+    MergeSiblingTransposesPass, PULPNCHWtoNHWCPass, RemoveGlobalOutputReshapePass, TransposeMatmulInputsPass
 from Deeploy.DeeployTypes import ConstantBuffer, DeploymentPlatform, NodeTemplate, TopologyOptimizer, VariableBuffer
 from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import ReshapeConstOptPass, TransposeConstOptPass, \
     TransposeMergePass, TransposeNoPermOptPass, TransposeSplitPass
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
+from Deeploy.Targets.PULPOpen.FrozenBNTail import FuseFrozenBNTailPass  # -- QW exp9
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import RQAddTransposeSquashPass
 
 _L3AllocTemplate = NodeTemplate("""
@@ -66,6 +67,8 @@ class PULPDeployer(SignPropDeployer):
             ReshapeConstOptPass(),
             TransposeNoPermOptPass(),
             RemoveGlobalOutputReshapePass(),
+            MergeSiblingTransposesPass(),  # QW: Part-4 dedupe per-op input transposes (after last split) -- QW
+            FuseFrozenBNTailPass(),  # QW exp9: frozen BN + MaxPool + Relu + Quant (+ their transposes) -> one node -- QW
         ]
 
         self.extNameCount = 0

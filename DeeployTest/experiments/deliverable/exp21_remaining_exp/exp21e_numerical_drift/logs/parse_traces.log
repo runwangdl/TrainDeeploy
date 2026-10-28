@@ -1,0 +1,4 @@
+BP: n=2160  max|printed ref - npz ref| = 4.98e-07 (fixture = the one the run used?)
+BP WDUMP tensors: 22  ref trainable tensors: 22
+ZO: n+=10800 n-=10800  printed-ref vs npz: 5.0e-07 5.0e-07 ; printed-dev vs bits: 5.0e-07
+ZO WDUMP tensors: 22  ref trainable tensors: 22

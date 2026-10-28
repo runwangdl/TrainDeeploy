@@ -1,0 +1,17 @@
+{
+ "round": 2,
+ "start_ckpt": "/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r1.pt",
+ "carry": "/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r2.pt",
+ "wdump_step": 539,
+ "max_abs_board_minus_ref": 2.7194619178771973e-07,
+ "board": {
+  "val_next": 76.66666666666667,
+  "val_in": 88.88888888888889,
+  "train": 98.14814814814815
+ },
+ "host_seed42": {
+  "val_next": 76.66666666666667,
+  "val_in": 88.88888888888889,
+  "train": 98.14814814814815
+ }
+}

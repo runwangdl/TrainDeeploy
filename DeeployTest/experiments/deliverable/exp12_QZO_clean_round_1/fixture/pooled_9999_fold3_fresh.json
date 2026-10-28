@@ -1,0 +1,14 @@
+{
+ "blocks.0.conv.input_quant": 2854.0,
+ "blocks.0.conv.output_quant": 1698.0,
+ "blocks.1.conv.input_quant": 23.125,
+ "blocks.1.conv.output_quant": 27.140625,
+ "blocks.2.conv.input_quant": 11.8359375,
+ "blocks.2.conv.output_quant": 11.364375781238778,
+ "blocks.3.conv.input_quant": 14.190625781247945,
+ "blocks.3.conv.output_quant": 15.625003906247002,
+ "blocks.4.conv.input_quant": 7.3500042968717025,
+ "blocks.4.conv.output_quant": 5.382032031249764,
+ "fc_iq.act_quant": 8.54314296874918,
+ "fc.input_quant": 8.54314296874918
+}

@@ -1,0 +1,682 @@
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[0;93m2026-09-03 20:57:02.923521131 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze_1[m
+[0;93m2026-09-03 20:57:02.923689715 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze[m
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+Consolidate compiler generated dependencies of target pulp-nnx
+[  0%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  3%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 94%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[ 98%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1:
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.h:8:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:293:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks0convweight_int8_data_in_ref[rqsp_upd_blocks0convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:282:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks0convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks0convweight_int8_channel_start_offset = rqsp_upd_blocks0convweight_int8_chunk_start % 4;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:486:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks0convbias_rqsadd_data_in_ref[rqsp_upd_blocks0convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:476:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks0convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks0convbias_rqsadd_channel_start_offset = rqsp_upd_blocks0convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:680:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks1convweight_int8_data_in_ref[rqsp_upd_blocks1convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:669:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks1convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks1convweight_int8_channel_start_offset = rqsp_upd_blocks1convweight_int8_chunk_start % 128;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:873:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks1convbias_rqsadd_data_in_ref[rqsp_upd_blocks1convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:863:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks1convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks1convbias_rqsadd_channel_start_offset = rqsp_upd_blocks1convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1067:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks2convweight_int8_data_in_ref[rqsp_upd_blocks2convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1056:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks2convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks2convweight_int8_channel_start_offset = rqsp_upd_blocks2convweight_int8_chunk_start % 128;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1260:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks2convbias_rqsadd_data_in_ref[rqsp_upd_blocks2convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1250:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks2convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks2convbias_rqsadd_channel_start_offset = rqsp_upd_blocks2convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1454:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks3convweight_int8_data_in_ref[rqsp_upd_blocks3convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1443:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks3convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks3convweight_int8_channel_start_offset = rqsp_upd_blocks3convweight_int8_chunk_start % 112;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1647:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks3convbias_rqsadd_data_in_ref[rqsp_upd_blocks3convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1637:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks3convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks3convbias_rqsadd_channel_start_offset = rqsp_upd_blocks3convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1841:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks4convweight_int8_data_in_ref[rqsp_upd_blocks4convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:1830:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks4convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks4convweight_int8_channel_start_offset = rqsp_upd_blocks4convweight_int8_chunk_start % 224;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:2034:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployOptNetwork_TILING_CODEGEN_L1_rqsp_upd_blocks4convbias_rqsadd_data_in_ref[rqsp_upd_blocks4convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:2024:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_upd_blocks4convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_upd_blocks4convbias_rqsadd_channel_start_offset = rqsp_upd_blocks4convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4405:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_0 = (float32_t *)DeeployNetwork_input_12;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4406:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_1 = (float32_t *)DeeployNetwork_input_17;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4407:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_2 = (float32_t *)DeeployNetwork_input_13;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4408:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_3 = (float32_t *)DeeployNetwork_input_18;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4409:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_4 = (float32_t *)DeeployNetwork_input_14;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4410:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_5 = (float32_t *)DeeployNetwork_input_19;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4411:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_6 = (float32_t *)DeeployNetwork_input_15;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4412:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_7 = (float32_t *)DeeployNetwork_input_20;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4413:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_8 = (float32_t *)DeeployNetwork_input_16;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4414:29: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_input_9 = (float32_t *)DeeployNetwork_input_21;   /* shared with TrainingNetwork */
+[0;1;32m                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4427:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_0 = (float32_t *)DeeployNetwork_input_12;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4428:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_1 = (float32_t *)DeeployNetwork_input_17;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4429:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_2 = (float32_t *)DeeployNetwork_input_13;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4430:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_3 = (float32_t *)DeeployNetwork_input_18;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4431:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_4 = (float32_t *)DeeployNetwork_input_14;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4432:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_5 = (float32_t *)DeeployNetwork_input_19;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4433:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_6 = (float32_t *)DeeployNetwork_input_15;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4434:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_7 = (float32_t *)DeeployNetwork_input_20;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4435:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int8_t *' (aka 'signed char *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_8 = (float32_t *)DeeployNetwork_input_16;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.c:4436:30: [0m[0;1;35mwarning: [0m[1mincompatible pointer types assigning to 'int32_t *' (aka 'int *') from 'float32_t *' (aka 'float *') [-Wincompatible-pointer-types][0m
+  DeeployOptNetwork_output_9 = (float32_t *)DeeployNetwork_input_21;  /* in-place, shared with TrainingNetwork */
+[0;1;32m                             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m57 warnings generated.
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[100%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:5:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:837:38: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t scaled_val = input_val * 0.04484933426769446; // Multiply instead of divide
+[0;1;32m              ~~~~~~~~~~   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:838:40: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = scaled_val + 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:1256:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks0convweight_int8_data_in_ref[rqsp_blocks0convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:1245:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks0convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks0convweight_int8_channel_start_offset = rqsp_blocks0convweight_int8_chunk_start % 4;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:1666:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks1convweight_int8_data_in_ref[rqsp_blocks1convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:1655:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks1convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks1convweight_int8_channel_start_offset = rqsp_blocks1convweight_int8_chunk_start % 128;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2076:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks2convweight_int8_data_in_ref[rqsp_blocks2convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2065:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks2convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks2convweight_int8_channel_start_offset = rqsp_blocks2convweight_int8_chunk_start % 128;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2486:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks3convweight_int8_data_in_ref[rqsp_blocks3convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2475:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks3convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks3convweight_int8_channel_start_offset = rqsp_blocks3convweight_int8_chunk_start % 112;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2896:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int8_t *' (aka 'const signed char *') to parameter of type 'int8_t *' (aka 'signed char *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int8_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks4convweight_int8_data_in_ref[rqsp_blocks4convweight_int8_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:94:59: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_CHW(int8_t *__restrict__ pweights,
+[0;1;32m                                                          ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:2885:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks4convweight_int8_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks4convweight_int8_channel_start_offset = rqsp_blocks4convweight_int8_chunk_start % 224;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:3305:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks0convbias_rqsadd_data_in_ref[rqsp_blocks0convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:3295:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks0convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks0convbias_rqsadd_channel_start_offset = rqsp_blocks0convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:3946:39: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = quantized - 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:3947:41: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t dequantized = shifted_val * 13.1875;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:4752:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_reluRelu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_reluRelu_data_out_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:5526:38: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t scaled_val = input_val * 5.535135135135135; // Multiply instead of divide
+[0;1;32m              ~~~~~~~~~~   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:5527:40: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = scaled_val + 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:5950:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks1convbias_rqsadd_data_in_ref[rqsp_blocks1convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:5940:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks1convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks1convbias_rqsadd_channel_start_offset = rqsp_blocks1convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:6553:39: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = quantized - 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:6554:41: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t dequantized = shifted_val * 0.2120361328125;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:7351:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_relu_1Relu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_relu_1Relu_data_out_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:8128:38: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t scaled_val = input_val * 10.814521452145215; // Multiply instead of divide
+[0;1;32m              ~~~~~~~~~~   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:8129:40: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = scaled_val + 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:8552:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks2convbias_rqsadd_data_in_ref[rqsp_blocks2convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:8542:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks2convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks2convbias_rqsadd_channel_start_offset = rqsp_blocks2convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:9155:39: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = quantized - 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:9156:41: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t dequantized = shifted_val * 0.08878418803215027;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:9895:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_relu_2Relu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_relu_2Relu_data_out_ref, 5152);
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:10621:38: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t scaled_val = input_val * 9.020038911421073; // Multiply instead of divide
+[0;1;32m              ~~~~~~~~~~   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:10622:40: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = scaled_val + 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:11045:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks3convbias_rqsadd_data_in_ref[rqsp_blocks3convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:11035:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks3convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks3convbias_rqsadd_channel_start_offset = rqsp_blocks3convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:11648:39: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = quantized - 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:11649:41: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t dequantized = shifted_val * 0.12207034230232239;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:12388:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_relu_3Relu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_relu_3Relu_data_out_ref, 1280);
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:12538:38: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t scaled_val = input_val * 17.414956044072962; // Multiply instead of divide
+[0;1;32m              ~~~~~~~~~~   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:12539:40: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = scaled_val + 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:12962:7: [0m[0;1;35mwarning: [0m[1mpassing 'const int32_t *' (aka 'const int *') to parameter of type 'int32_t *' (aka 'int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers][0m
+      (const int32_t *)&DeeployNetwork_TILING_CODEGEN_L1_rqsp_blocks4convbias_rqsadd_data_in_ref[rqsp_blocks4convbias_rqsadd_chunk_start],
+[0;1;32m      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/kernel/RandomNoise.h:115:60: [0m[0;1;30mnote: [0mpassing argument to parameter 'pweights' here[0m
+void ApplyPerturbQuantRademacher_i32(int32_t *__restrict__ pweights,
+[0;1;32m                                                           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:12952:12: [0m[0;1;35mwarning: [0m[1munused variable 'rqsp_blocks4convbias_rqsadd_channel_start_offset' [-Wunused-variable][0m
+  uint32_t rqsp_blocks4convbias_rqsadd_channel_start_offset = rqsp_blocks4convbias_rqsadd_chunk_start % 1;
+[0;1;32m           ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:13565:39: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t shifted_val = quantized - 0.0;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:13566:41: [0m[0;1;35mwarning: [0m[1mimplicit conversion loses floating-point precision: 'double' to 'float32_t' (aka 'float') [-Wimplicit-float-conversion][0m
+    float32_t dequantized = shifted_val * 0.04204712435603142;
+[0;1;32m              ~~~~~~~~~~~   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:14305:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_relu_4Relu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_relu_4Relu_data_out_ref, 320);
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:14450:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_GlobalAveragePool_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_GlobalAveragePool_fp32(DeeployNetwork_TILING_CODEGEN_L1_global_poolGlobalAveragePool_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:14943:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Gemm_fp32_fp32_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+    PULP_Gemm_fp32_fp32_fp32_fp32(
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15406:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_4_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_4_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15379:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_3BatchNormalization_rv_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_3BatchNormalization_rv_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15403:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_1_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_1_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15402:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_0_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15405:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_3_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_3_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15404:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork__MERGE_CONVRQ_PASS_2_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork__MERGE_CONVRQ_PASS_2_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15378:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_3BatchNormalization_rm_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_3BatchNormalization_rm_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15327:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bnBatchNormalization_rm_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bnBatchNormalization_rm_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15328:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bnBatchNormalization_rv_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bnBatchNormalization_rv_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15392:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_4BatchNormalization_rm_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_4BatchNormalization_rm_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15393:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_4BatchNormalization_rv_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_4BatchNormalization_rv_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15361:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_2BatchNormalization_rm_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_2BatchNormalization_rm_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15345:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_1BatchNormalization_rv_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_1BatchNormalization_rv_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15362:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_2BatchNormalization_rv_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_2BatchNormalization_rv_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/TrainingNetwork.c:15344:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_bn_1BatchNormalization_rm_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_bn_1BatchNormalization_rm_tensor;
+[0;1;32m             ^
+[0m79 warnings generated.
+[100%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_qzo9_train
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/speechnet_qzo9_train.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/speechnet_qzo9_train.dir/src/deeploymezotest.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:64:
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_qzo9_train/OptimizerNetwork.h:8:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:252:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("=== Siracusa MeZO (ZO) Training Harness ===\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:278:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Initializing TrainingNetwork (zo_train)...\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:283:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("[PHASE] InitTrainingNetwork done\r\n");             // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:291:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Initializing OptimizerNetwork (zo_update)...\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:296:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("[PHASE] InitOptimizerNetwork done\r\n");             // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:322:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Starting ZO training (%u update steps x %u accum steps)...\r\n",  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:345:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("  update %u/%u  accum %u/%u  (mini-batch %u)  seed_base=%u\r\n",  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:370:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps forward START\r\n");                  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:378:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps forward DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:390:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps loss read OK: lp_bits=0x%08x\r\n", (unsigned)lp_bits);  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:395:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps forward START\r\n");                  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:403:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps forward DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:414:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps loss read OK: lm_bits=0x%08x\r\n", (unsigned)lm_bits);  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:447:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+    ZTRACE("[PHASE] update (zo_update) START\r\n");            // -- QW
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:455:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+    ZTRACE("[PHASE] update (zo_update) DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:219:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m32 warnings generated.
+[100%] Linking C executable ../../../bin/speechnet_qzo9_train
+clang-15: [0;1;35mwarning: [0m[1margument unused during compilation: '-nostartfiles' [-Wunused-command-line-argument][0m
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/string/memchr.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/tinystdio/fflush.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_config.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_exp.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_log.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_uflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_oflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_divzerof.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/machine/riscv/machine/math.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_qzo9_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_invalidf.c
+[100%] Built target speechnet_qzo9_train

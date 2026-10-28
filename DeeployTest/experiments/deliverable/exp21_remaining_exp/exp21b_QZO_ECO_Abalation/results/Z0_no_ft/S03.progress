@@ -1,0 +1,11 @@
+02:12:36 Z0_no_ft S03: QZO-ablation opt=sgd round=rtn ef=none lr=3e-06 eps=0.01 n_accum=4 (MEAN) epochs=0 per_class=6 seed=42 order=cyclic draw=device rng=device mode=direct
+02:13:36   b1 eval: acc=77.22 loss=0.7124
+02:13:36   round 1 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [60s]
+02:13:40   b2 eval: acc=75.56 loss=0.8031
+02:13:40   round 2 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [64s]
+02:13:44   b3 eval: acc=70.56 loss=0.8354
+02:13:44   round 3 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [68s]
+02:13:47   b4 eval: acc=62.78 loss=1.0565
+02:13:47   round 4 done: moved_steps=0.0% differ(round)=0.00% ever=0.00% cum=0.00% flips=0 [71s]
+02:13:50   b5 eval: acc=63.89 loss=1.0236
+02:13:50 DONE Z0_no_ft S03: b1=77.22 b2=75.56 b3=70.56 b4=62.78 b5=63.89 mean(b2-b5)=68.19 [74s]

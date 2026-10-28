@@ -1484,6 +1484,15 @@ class UniformRequantShiftParser(RequantShiftParser):
     def parseNode(self, node: gs.Node) -> (bool):
         ret1 = super().parseNode(node)
 
+        # QW: `parseNode` must DECLINE an unsupported node, not raise on it. `.values` exists only
+        #     on a gs.Constant; a RequantShift whose mul/add is produced at runtime (exp16c feeds
+        #     `add` from NE16SignedInputBias, and the QZO graph perturbs biases at runtime) made
+        #     this throw `AttributeError: 'Variable' object has no attribute 'values'` during
+        #     parsing, aborting the whole deployment instead of falling through to the general
+        #     RequantShift binding. -- QW
+        if not all(isinstance(i, gs.Constant) for i in node.inputs[1:3]):
+            return False
+
         ret2 = all([
             np.prod(node.inputs[1].values.shape) == 1,
             np.prod(node.inputs[2].values.shape) == 1,
@@ -2875,7 +2884,11 @@ class QuantParser(NodeParser):
         ])
 
         if ret:
-            self.operatorRepresentation['scale'] = float(node.attrs['scale'])
+            # QW: the float QuantTemplate MULTIPLIES by ${scale} ("Multiply instead of divide"), but the
+            #     ONNX/Brevitas Quant convention is int8 = round(x / scale). Pass the RECIPROCAL so the device
+            #     matches the host (run_onnx_graph divides by scale) — otherwise the online input Quant used
+            #     x*scale and saturated the int8 input (e.g. x*23.79 vs x/23.79 → device dequant ~29× off). -- QW
+            self.operatorRepresentation['scale'] = 1.0 / float(node.attrs['scale'])
             self.operatorRepresentation['zero_point'] = float(node.attrs['zero_point'])
             self.operatorRepresentation['bit_width'] = int(node.attrs['bit_width'])
 
@@ -3083,6 +3096,42 @@ class InPlaceAccumulatorV2Parser(NodeParser):
         return ctxt, True
 
 
+# Ported from Deeploy zo-support (FP32 PerturbRademacher ZO op). -- QW
+class PerturbRademacherParser(NodeParser):  # -- QW
+
+    def __init__(self):  # -- QW
+        super().__init__()  # -- QW
+
+    def parseNode(self, node: gs.Node) -> bool:  # -- QW
+
+        ret = all([  # -- QW
+            len(node.inputs) == 1,  # -- QW
+            len(node.outputs) == 1,  # -- QW
+            'seed' in node.attrs,  # -- QW
+            'eps' in node.attrs,  # -- QW
+            'idx' in node.attrs  # -- QW
+        ])  # -- QW
+        return ret  # -- QW
+
+    def parseNodeCtxt(self,  # -- QW
+                      ctxt: NetworkContext,  # -- QW
+                      node: gs.Node,  # -- QW
+                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:  # -- QW
+
+        data_in = ctxt.lookup(node.inputs[0].name)  # -- QW
+        data_out = ctxt.lookup(node.outputs[0].name)  # -- QW
+        input_shape = data_in.shape  # -- QW
+        if isinstance(data_in.shape, int):  # -- QW
+            input_shape = tuple(input_shape, )  # -- QW
+        self.operatorRepresentation['data_in'] = data_in.name  # -- QW
+        self.operatorRepresentation['data_out'] = data_out.name  # -- QW
+        self.operatorRepresentation['seed'] = node.attrs['seed']  # -- QW
+        self.operatorRepresentation['size'] = np.prod(input_shape)  # -- QW
+        self.operatorRepresentation['nodeIdx'] = node.attrs['idx']  # -- QW
+        self.operatorRepresentation['eps'] = node.attrs['eps']  # -- QW
+        return ctxt, True  # -- QW
+
+
 class BatchNormParser(NodeParser):
 
     def __init__(self):
@@ -3145,6 +3194,11 @@ class BatchNormInternalParser(NodeParser):
         self.operatorRepresentation['epsilon'] = float(node.attrs.get('epsilon', 1e-5))
         self.operatorRepresentation['momentum'] = float(node.attrs.get('momentum', 0.9))
         self.operatorRepresentation['training_mode'] = int(node.attrs.get('training_mode', 1))
+        self.operatorRepresentation['nhwc'] = int(node.attrs.get('bn_nhwc', 0))  # RW 2026-10-13: frozen-stat NHWC
+        # RW 2026-10-15: folded Dequant (FoldDequantIntoFrozenBNPass): int8 input, dequantized inside the kernel
+        self.operatorRepresentation['dq'] = int('dq_scale' in node.attrs)
+        self.operatorRepresentation['dq_scale'] = float(node.attrs.get('dq_scale', 1.0))
+        self.operatorRepresentation['dq_zero_point'] = float(node.attrs.get('dq_zero_point', 0.0))
         return True
 
     def parseNodeCtxt(self,
@@ -3168,9 +3222,12 @@ class BatchNormInternalParser(NodeParser):
         # Spatial shape from input[0]
         input_shape = ctxt.lookup(node.inputs[0].name).shape
         N = int(input_shape[0])
-        C = int(input_shape[1])
-        H_in = int(input_shape[2])
-        W_in = int(input_shape[3])
+        if self.operatorRepresentation.get('nhwc', 0):  # RW 2026-10-13: [N, H, W, C]
+            H_in, W_in, C = int(input_shape[1]), int(input_shape[2]), int(input_shape[3])
+        else:
+            C = int(input_shape[1])
+            H_in = int(input_shape[2])
+            W_in = int(input_shape[3])
         self.operatorRepresentation['N'] = N
         self.operatorRepresentation['C'] = C
         self.operatorRepresentation['H_in'] = H_in
@@ -3658,4 +3715,31 @@ class Conv2DGradXWBParser(NodeParser):
         self.operatorRepresentation['gradw_dim_im_in_x'] = data_in.shape[2]
         self.operatorRepresentation['gradw_dim_im_in_y'] = data_in.shape[3]
 
+        return ctxt, True
+
+
+class RQSPerturbRademacherParser(NodeParser, RQSParserInterface):  # -- QW: ported from shipped Deeploy (quantized ZO)
+    def __init__(self):
+        super().__init__()
+
+    def parseNode(self, node: gs.Node) -> bool:
+        return all([len(node.inputs) == 2, len(node.outputs) == 1,
+                    'seed' in node.attrs, 'idx' in node.attrs])
+
+    def parseNodeCtxt(self, ctxt: NetworkContext, node: gs.Node,
+                      channels_first: bool = True) -> Tuple[NetworkContext, bool]:
+        data_in = ctxt.lookup(node.inputs[0].name)
+        mul = ctxt.lookup(node.inputs[1].name)
+        data_out = ctxt.lookup(node.outputs[0].name)
+        input_shape = data_in.shape
+        if isinstance(data_in.shape, int):
+            input_shape = tuple(input_shape, )
+        self.operatorRepresentation['data_in'] = data_in.name
+        self.operatorRepresentation['data_out'] = data_out.name
+        self.operatorRepresentation['mul'] = mul.name
+        self.operatorRepresentation['seed'] = node.attrs['seed']
+        self.operatorRepresentation['size'] = np.prod(input_shape)
+        self.operatorRepresentation['nodeIdx'] = node.attrs['idx']
+        self.operatorRepresentation['channel_width'] = np.prod(mul.shape)
+        self.operatorRepresentation['log2D'] = int(math.log2(node.attrs['div']))
         return ctxt, True

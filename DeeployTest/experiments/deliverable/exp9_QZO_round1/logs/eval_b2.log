@@ -1,0 +1,176 @@
+Dataset: 180 windows, ref accuracy 83.33%
+[  1/180] true=6 pred=6 OK  bitexact_err=9
+[  2/180] true=7 pred=2 MISS bitexact_err=0
+[  3/180] true=5 pred=5 OK  bitexact_err=0
+[  4/180] true=6 pred=6 OK  bitexact_err=9
+[  5/180] true=3 pred=3 OK  bitexact_err=0
+[  6/180] true=6 pred=6 OK  bitexact_err=9
+[  7/180] true=2 pred=2 OK  bitexact_err=9
+[  8/180] true=5 pred=5 OK  bitexact_err=9
+[  9/180] true=6 pred=6 OK  bitexact_err=0
+[ 10/180] true=3 pred=3 OK  bitexact_err=9
+[ 11/180] true=3 pred=3 OK  bitexact_err=0
+[ 12/180] true=1 pred=1 OK  bitexact_err=0
+[ 13/180] true=6 pred=6 OK  bitexact_err=9
+[ 14/180] true=7 pred=2 MISS bitexact_err=0
+[ 15/180] true=3 pred=1 MISS bitexact_err=0
+[ 16/180] true=0 pred=0 OK  bitexact_err=0
+[ 17/180] true=7 pred=7 OK  bitexact_err=9
+[ 18/180] true=0 pred=0 OK  bitexact_err=0
+[ 19/180] true=2 pred=2 OK  bitexact_err=9
+[ 20/180] true=1 pred=1 OK  bitexact_err=9
+[ 21/180] true=4 pred=4 OK  bitexact_err=9
+[ 22/180] true=0 pred=0 OK  bitexact_err=9
+[ 23/180] true=5 pred=5 OK  bitexact_err=0
+[ 24/180] true=6 pred=6 OK  bitexact_err=9
+[ 25/180] true=7 pred=7 OK  bitexact_err=9
+[ 26/180] true=8 pred=8 OK  bitexact_err=9
+[ 27/180] true=4 pred=4 OK  bitexact_err=9
+[ 28/180] true=0 pred=0 OK  bitexact_err=0
+[ 29/180] true=1 pred=1 OK  bitexact_err=0
+[ 30/180] true=2 pred=4 MISS bitexact_err=9
+[ 31/180] true=8 pred=8 OK  bitexact_err=0
+[ 32/180] true=4 pred=3 MISS bitexact_err=9
+[ 33/180] true=4 pred=2 MISS bitexact_err=9
+[ 34/180] true=0 pred=0 OK  bitexact_err=0
+[ 35/180] true=4 pred=4 OK  bitexact_err=9
+[ 36/180] true=0 pred=0 OK  bitexact_err=0
+[ 37/180] true=2 pred=2 OK  bitexact_err=0
+[ 38/180] true=4 pred=4 OK  bitexact_err=9
+[ 39/180] true=1 pred=1 OK  bitexact_err=9
+[ 40/180] true=8 pred=8 OK  bitexact_err=9
+[ 41/180] true=5 pred=4 MISS bitexact_err=9
+[ 42/180] true=8 pred=8 OK  bitexact_err=9
+[ 43/180] true=5 pred=4 MISS bitexact_err=9
+[ 44/180] true=6 pred=6 OK  bitexact_err=0
+[ 45/180] true=8 pred=8 OK  bitexact_err=0
+[ 46/180] true=7 pred=7 OK  bitexact_err=9
+[ 47/180] true=7 pred=4 MISS bitexact_err=9
+[ 48/180] true=8 pred=8 OK  bitexact_err=0
+[ 49/180] true=3 pred=3 OK  bitexact_err=9
+[ 50/180] true=7 pred=2 MISS bitexact_err=9
+[ 51/180] true=8 pred=8 OK  bitexact_err=0
+[ 52/180] true=6 pred=6 OK  bitexact_err=9
+[ 53/180] true=8 pred=8 OK  bitexact_err=9
+[ 54/180] true=5 pred=5 OK  bitexact_err=9
+[ 55/180] true=2 pred=2 OK  bitexact_err=9
+[ 56/180] true=8 pred=7 MISS bitexact_err=9
+[ 57/180] true=7 pred=2 MISS bitexact_err=0
+[ 58/180] true=0 pred=0 OK  bitexact_err=9
+[ 59/180] true=3 pred=3 OK  bitexact_err=9
+[ 60/180] true=1 pred=1 OK  bitexact_err=0
+[ 61/180] true=2 pred=2 OK  bitexact_err=9
+[ 62/180] true=6 pred=6 OK  bitexact_err=9
+[ 63/180] true=0 pred=0 OK  bitexact_err=0
+[ 64/180] true=4 pred=4 OK  bitexact_err=9
+[ 65/180] true=5 pred=5 OK  bitexact_err=9
+[ 66/180] true=2 pred=4 MISS bitexact_err=9
+[ 67/180] true=4 pred=4 OK  bitexact_err=9
+[ 68/180] true=3 pred=3 OK  bitexact_err=0
+[ 69/180] true=5 pred=5 OK  bitexact_err=9
+[ 70/180] true=2 pred=2 OK  bitexact_err=9
+[ 71/180] true=8 pred=8 OK  bitexact_err=0
+[ 72/180] true=6 pred=6 OK  bitexact_err=9
+[ 73/180] true=7 pred=4 MISS bitexact_err=0
+[ 74/180] true=3 pred=3 OK  bitexact_err=9
+[ 75/180] true=0 pred=0 OK  bitexact_err=9
+[ 76/180] true=3 pred=3 OK  bitexact_err=9
+[ 77/180] true=4 pred=4 OK  bitexact_err=9
+[ 78/180] true=6 pred=6 OK  bitexact_err=9
+[ 79/180] true=5 pred=2 MISS bitexact_err=9
+[ 80/180] true=6 pred=6 OK  bitexact_err=9
+[ 81/180] true=5 pred=5 OK  bitexact_err=9
+[ 82/180] true=4 pred=4 OK  bitexact_err=9
+[ 83/180] true=5 pred=6 MISS bitexact_err=9
+[ 84/180] true=5 pred=6 MISS bitexact_err=9
+[ 85/180] true=3 pred=3 OK  bitexact_err=9
+[ 86/180] true=3 pred=3 OK  bitexact_err=0
+[ 87/180] true=7 pred=4 MISS bitexact_err=9
+[ 88/180] true=5 pred=5 OK  bitexact_err=0
+[ 89/180] true=4 pred=4 OK  bitexact_err=9
+[ 90/180] true=5 pred=6 MISS bitexact_err=9
+[ 91/180] true=3 pred=3 OK  bitexact_err=9
+[ 92/180] true=6 pred=6 OK  bitexact_err=9
+[ 93/180] true=3 pred=3 OK  bitexact_err=0
+[ 94/180] true=0 pred=0 OK  bitexact_err=0
+[ 95/180] true=8 pred=8 OK  bitexact_err=9
+[ 96/180] true=7 pred=7 OK  bitexact_err=0
+[ 97/180] true=1 pred=1 OK  bitexact_err=9
+[ 98/180] true=1 pred=1 OK  bitexact_err=9
+[ 99/180] true=1 pred=1 OK  bitexact_err=9
+[100/180] true=1 pred=1 OK  bitexact_err=9
+[101/180] true=5 pred=5 OK  bitexact_err=9
+[102/180] true=1 pred=1 OK  bitexact_err=9
+[103/180] true=7 pred=7 OK  bitexact_err=9
+[104/180] true=2 pred=2 OK  bitexact_err=9
+[105/180] true=0 pred=0 OK  bitexact_err=0
+[106/180] true=3 pred=3 OK  bitexact_err=9
+[107/180] true=2 pred=2 OK  bitexact_err=9
+[108/180] true=2 pred=2 OK  bitexact_err=9
+[109/180] true=7 pred=8 MISS bitexact_err=0
+[110/180] true=0 pred=0 OK  bitexact_err=9
+[111/180] true=1 pred=2 MISS bitexact_err=9
+[112/180] true=3 pred=1 MISS bitexact_err=9
+[113/180] true=0 pred=0 OK  bitexact_err=9
+[114/180] true=8 pred=8 OK  bitexact_err=9
+[115/180] true=0 pred=0 OK  bitexact_err=9
+[116/180] true=8 pred=8 OK  bitexact_err=0
+[117/180] true=7 pred=7 OK  bitexact_err=9
+[118/180] true=2 pred=2 OK  bitexact_err=9
+[119/180] true=6 pred=6 OK  bitexact_err=9
+[120/180] true=0 pred=0 OK  bitexact_err=0
+[121/180] true=3 pred=1 MISS bitexact_err=9
+[122/180] true=8 pred=8 OK  bitexact_err=0
+[123/180] true=1 pred=1 OK  bitexact_err=9
+[124/180] true=0 pred=0 OK  bitexact_err=9
+[125/180] true=8 pred=2 MISS bitexact_err=9
+[126/180] true=3 pred=3 OK  bitexact_err=9
+[127/180] true=4 pred=4 OK  bitexact_err=9
+[128/180] true=2 pred=2 OK  bitexact_err=8
+[129/180] true=1 pred=2 MISS bitexact_err=0
+[130/180] true=2 pred=2 OK  bitexact_err=9
+[131/180] true=6 pred=6 OK  bitexact_err=9
+[132/180] true=5 pred=2 MISS bitexact_err=0
+[133/180] true=8 pred=8 OK  bitexact_err=9
+[134/180] true=2 pred=2 OK  bitexact_err=0
+[135/180] true=7 pred=7 OK  bitexact_err=9
+[136/180] true=7 pred=7 OK  bitexact_err=0
+[137/180] true=4 pred=4 OK  bitexact_err=9
+[138/180] true=2 pred=6 MISS bitexact_err=9
+[139/180] true=7 pred=7 OK  bitexact_err=0
+[140/180] true=1 pred=1 OK  bitexact_err=9
+[141/180] true=7 pred=7 OK  bitexact_err=9
+[142/180] true=1 pred=1 OK  bitexact_err=8
+[143/180] true=6 pred=6 OK  bitexact_err=9
+[144/180] true=5 pred=6 MISS bitexact_err=0
+[145/180] true=0 pred=0 OK  bitexact_err=0
+[146/180] true=2 pred=2 OK  bitexact_err=8
+[147/180] true=7 pred=7 OK  bitexact_err=8
+[148/180] true=3 pred=3 OK  bitexact_err=9
+[149/180] true=8 pred=8 OK  bitexact_err=0
+[150/180] true=4 pred=4 OK  bitexact_err=9
+[151/180] true=3 pred=3 OK  bitexact_err=9
+[152/180] true=1 pred=3 MISS bitexact_err=9
+[153/180] true=1 pred=1 OK  bitexact_err=0
+[154/180] true=4 pred=4 OK  bitexact_err=0
+[155/180] true=8 pred=8 OK  bitexact_err=9
+[156/180] true=2 pred=2 OK  bitexact_err=9
+[157/180] true=1 pred=1 OK  bitexact_err=9
+[158/180] true=1 pred=1 OK  bitexact_err=0
+[159/180] true=0 pred=0 OK  bitexact_err=9
+[160/180] true=2 pred=2 OK  bitexact_err=0
+[161/180] true=0 pred=0 OK  bitexact_err=9
+[162/180] true=6 pred=6 OK  bitexact_err=9
+[163/180] true=4 pred=4 OK  bitexact_err=0
+[164/180] true=2 pred=2 OK  bitexact_err=9
+[165/180] true=4 pred=4 OK  bitexact_err=9
+[166/180] true=4 pred=4 OK  bitexact_err=0
+[167/180] true=0 pred=0 OK  bitexact_err=0
+[168/180] true=7 pred=7 OK  bitexact_err=0
+[169/180] true=3 pred=3 OK  bitexact_err=9
+[170/180] true=4 pred=4 OK  bitexact_err=9
+[171/180] true=4 pred=4 OK  bitexact_err=9
+[172/180] true=1 pred=1 OK  bitexact_err=9
+[173/180] true=5 pred=2 MISS bitexact_err=0
+[174/180] true=5 pred=5 OK  bitexact_err=9
+[175/180] true=6 pred=6 OK  bitexact_err=9

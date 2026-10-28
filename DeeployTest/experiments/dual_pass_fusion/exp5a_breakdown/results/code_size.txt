@@ -1,0 +1,6 @@
+llvm-nm -S --size-sort on TEST_SIRACUSA/build_e5am/lib/{libdeeploypulp.a,libpulp-nn-mixed.a} (2026-09-30)
+
+PULP_FlatConv2d_i8_i8_i8_HWC   0x380 =   896 B   (single-pass control kernel, no calls)
+PULP_DualConv2d_i8_i8_i8_HWC   0x724 = 1,828 B   (fused, exp5)
+pulp_nn_conv_i8_i8_i8          0x924 = 2,340 B   \
+pulp_nn_matmul_i8_i8_i8        0x8e0 = 2,272 B    > 4,694 B on the per-pixel route (+ im2col 52 B, bn_quant 28 B)

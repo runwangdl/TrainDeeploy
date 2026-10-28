@@ -1,0 +1,4 @@
+[QZO_DualConv2in_NE16 block 4] wrote /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv2in_NE16_B4
+  nodes : ['NE16DualPerturbEncode:b4p_dual_wenc', 'NE16DualBias:b4p_dual_bias', 'NE16Im2ColU8:b4p_im2col', 'Conv:b4p_ne16conv', 'RequantShift:b4p_rqs', 'Transpose:b4p_out_nchw', 'NE16DualPerturbEncode:b4m_dual_wenc', 'NE16DualBias:b4m_dual_bias', 'NE16Im2ColU8:b4m_im2col', 'Conv:b4m_ne16conv', 'RequantShift:b4m_rqs', 'Transpose:b4m_out_nchw']
+  seeds : {'seed_w': 42, 'idx_w': 8, 'div_w': 32768, 'seed_b': 42, 'idx_b': 9, 'div_b': 65536}
+  NE16 1x1 per pass: Cin*K = 224 (14 x 16 lanes), Cout = 32 of 32; columns 2 x [1,2,5,224] u8 = 2 x 2,240 B; refs A+ / A- (1, 32, 2, 5) from QZO_DualConv2in_B4

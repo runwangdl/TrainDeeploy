@@ -1,0 +1,48 @@
+# exp3 derived numbers  (CORRECTED 2026-09-22: pulp-nn's x/y axes, load balance, transpose framing)
+
+whole fixture (run_plain)        : 858,185 cycles = 2.319 ms @ 370 MHz
+sum of instrumented blocks       : 814,686 (94.9 %)   DMA/tiling outside blocks: 43,499 (5.1 %)
+conv node (_MERGE_CONVRQ_PASS_0) : 664,646 cycles (77.4 % of runtime), 411,343 instr, IPC 0.619
+MACs (layer)                     : 314,048   cluster MAC/cycle = 0.473
+
+## pulp_nn_conv_i8_i8_i8 work split
+Deeploy's template maps its dim_im_in_y -> the kernel's dim_in_x parameter, so in the KERNEL's own
+names the call is: dim_out_x = 701 (the long axis, 4 taps, pad 2+2), dim_out_y = 14 (1 tap, no pad).
+  extra_chunk = ((dim_out_y=14) & 7) != 0 -> 1, and dim_out_x > 1 -> the halved-core path:
+  Log2Core = log2(4), core_id_r = core_id>>1, section = core_id&1, dim_out_x_r = 350, chunk = 4
+  rows per group : 4 / 4 / 4 / **2**   (14 rows over 4 groups of 4 -> the last group gets 2)
+  cols per section: 350 (even cores) / 351 (odd cores, flag_dim_out_x_odd = 1)
+  pixels per core: [1400, 1404, 1400, 1404, 1400, 1404, 700, 702]
+  -> all 8 cores active, critical path 1,404 px, **LOAD BALANCE 87.4 %**
+     (cores 6 and 7 get half a row-group and do 2.0x less work than cores 1/3/5)
+  core 0: 1,400 px = 44,800 MACs (14.3 % of the layer)
+  core-0 instr per core-0 MAC: 411,343 / 44,800 = 9.18
+
+## Where the conv's cycles go (core 0)
+  I-cache refill stall :  151362 = 22.8 % of its cycles   (108 stall-cycles per output pixel)
+  load stall           :   35495 =  5.3 %
+  TCDM contention      :       0
+  issuing              :         61.9 %  (IPC 0.619)
+Code footprint of the hot path (llvm-nm on the built ELF), against a 512 B private L0 I-cache
+(8 sets x 4 ways x 16 B; shared L1 2048 B; refill_latency 2):
+  pulp_nn_conv_i8_i8_i8   2,340 B  +  pulp_nn_matmul_i8_i8_i8   2,272 B  +  pulp_nn_im2col_i8_to_i8  82 B
+  = 4,694 B, and the matmul is CALLED once per 2 output columns -> the two regions evict each other.
+  fp32 PULP_Conv2d_Im2Col_fp32_fp32_fp32_HWC: 2,720 B total, but `if (has_bias) {...} else {...}`
+  duplicates the whole loop nest so only ~half is live, with NO calls -> the per-pixel path fits 512 B.
+
+## vs exp1 (fp32 ZO_Conv, same layer)
+  whole fixture 8,226,975 -> 858,185   = 9.59x faster
+  conv node     7,306,842 -> 664,646   = 10.99x faster
+  cluster MAC/cycle 0.043 -> 0.473   = 11.0x
+  output transpose 682,795 -> 136587 = 5.00x FASTER in absolute cycles
+    (8.70 -> 1.74 cycles/element; 4x less data + 2 tiles instead of 8).
+    Its SHARE rose 8.3 % -> 15.9 % only because the conv sped up 11x and it sped up 5x.
+  I-cache stall in conv 2,893 (0.04 %) -> 151362 (22.8 %)
+
+## Caveat on IPC
+PULPMicrobenchmark's pre/post templates are guarded by `pi_core_id() == 0` and sit in RunNetwork()
+OUTSIDE the pi_cl_team_fork (codegen/Network.c:1433-1457), so every counter above is the CLUSTER
+MASTER core's, measured across the whole node (fork + all cores + join). Core 0 does 1,400 of the
+critical 1,404 px, i.e. it is on the critical path to within 0.3 %, so 0.619 is
+effectively its issue rate. The other cores are NOT measured, and cannot be equal: cores 6 and 7
+do half the work, so whatever their issue rate, their utilisation over this node is ~50 %.

@@ -390,3 +390,70 @@ TRAINING_MODEL_OVERRIDES = {
         "conv_channels_first": True,  # CHW convs; NHWC-transpose tiling is infeasible
     },
 }
+
+
+# RW 2026-10-13: SpeechNet (SilentWear) fine-tuning on GAP9, the gates for the GAP9 port. Fixtures in
+# ../SpeechNet_Test/ (Qiwen's handover set). Every MeZO test also checks the trained weights bit for bit:
+# ZO_EXPECT_WSUM is the harness hash of all 22 trainable tensors after the last update (a missing or wrong
+# update cannot pass on the loss tolerance alone, see the [WCHK] note in deeploymezotest.c).
+#   ZO / QZO: one step, both losses == host reference (Errors 0 out of 2), weights after the update.
+#   QZO+ECO: 5 steps at lr 3e-3 so that ~13.5k int8/int32 weights move; the expected hash is the run that a
+#   numpy replay of the ECO update matched bit for bit (AI_AGENT/SilentWearZO/eco/emulate_eco.py). The run
+#   also writes the weights to flash (ZO_PERSIST) and fails if the read-back does not verify.
+SPEECHNET_MEZO_TESTS = {
+    "SpeechNet_ZO_single_step": {
+        "train_dir": "../SpeechNet_Test/speechnet_train_ZO_single_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_ZO_single_step",
+        "lr": 3e-6, "n_steps": 1, "l1": 114000, "l2": 1500000,
+        "defines": ["ZO_EXPECT_WSUM=0xc14819e6"],
+    },
+    "SpeechNet_QZO_single_step": {
+        "train_dir": "../SpeechNet_Test/speechnet_train_QZO_single_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_QZO_single_step",
+        "lr": 1e-5, "n_steps": 1, "l1": 114000, "l2": 1500000,
+        "defines": ["ZO_EXPECT_WSUM=0x97e57471"],
+    },
+    "SpeechNet_QZO_ECO_5steps": {
+        "train_dir": "../SpeechNet_Test/speechnet_train_QZO_single_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_QZO_single_step",
+        "lr": 3e-3, "n_steps": 5, "l1": 114000, "l2": 1500000,
+        "defines": ["ZO_ECO=ON", "ZO_PERSIST=ON", "ZO_EXPECT_WSUM=0x6706ea8a"],
+    },
+}
+
+# BP single step, full model, frozen BN stats, L3 + double buffer + traffic-per-peak promotion to L2.
+SPEECHNET_BP_SINGLE_STEP = {
+    "test_dir": "../SpeechNet_Test/speechnet_train_BP_single_step",
+    "l1": 122000, "l2": 1400000, "promote_headroom": 131072,
+    "defines": ["BN_FROZEN_STATS=ON", "CC_STACK_SIZE=4096"],
+}
+
+
+# QW 2026-10-14: the fused full-network QZO step (HandoverDocuments/05_Fusion_Full_Network_Guide.md). ONE gate:
+# the dual-pass graph (ZODualPassFusion, --zo-fused-dual) with blocks 0-2 on NE16 and blocks 3-4 on the cluster,
+# QZO+ECO, one update step with n_accum 4 (4 distinct windows, staged in L3). It passes only if
+#   * all 4 L+ / L- pairs equal the host reference (Errors 0 out of 8 + the [WSUM] check), and
+#   * the trained weights hash to ZO_EXPECT_WSUM, the value the UNFUSED GAP9 cluster run of the same step produces
+#     (deeployMezoRunner_tiled_GAP9.py without --zo-fused-dual) -- i.e. fused == unfused bit for bit.
+# lr 3e-3 is a GATE value, not the training recipe (QZO+ECO trains at lr 3e-6): at the recipe lr one step moves almost
+# no int8 weight (sub-LSB updates), so the hash would barely test the update. As in SpeechNet_QZO_ECO_5steps, 3e-3
+# makes the update move many int8 / int32 weights ([WCHK]: 21/22 tensors
+# changed). 0xb11cc64f = unfused GAP9 cluster run = fused NE16 run (2026-10-14, SpeechNet_Test/logs/smoke/ci_wsum_*.log).
+SPEECHNET_FUSED_TESTS = {
+    # RW 2026-10-15: NE16 for block 0 only (the board configuration until eabbb0b2 fixed NE16DualConv2in's job widths
+    # for the silicon; the board now runs --zo-fused-dual-ne16 0,1,2, gated below). Same expected hash: fused == unfused.
+    "SpeechNet_QZO_ECO_fused_NE16b0_single_update_step": {
+        "train_dir": "../SpeechNet_Test/speechnet_train_QZOECO_full_fused_single_update_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_QZOECO_full_fused_single_update_step",
+        "lr": 3e-3, "n_steps": 1, "n_accum": 4, "l1": 114000, "l2": 1500000,
+        "ne16_convs": "0",
+        "defines": ["ZO_FUSED_DUAL=ON", "GAP9_NETWORK_O3=ON", "ZO_ECO=ON", "ZO_EXPECT_WSUM=0xb11cc64f"],
+    },
+    "SpeechNet_QZO_ECO_fused_NE16_single_update_step": {
+        "train_dir": "../SpeechNet_Test/speechnet_train_QZOECO_full_fused_single_update_step",
+        "update_dir": "../SpeechNet_Test/speechnet_update_QZOECO_full_fused_single_update_step",
+        "lr": 3e-3, "n_steps": 1, "n_accum": 4, "l1": 114000, "l2": 1500000,
+        "ne16_convs": "0,1,2",
+        "defines": ["ZO_FUSED_DUAL=ON", "GAP9_NETWORK_O3=ON", "ZO_ECO=ON", "ZO_EXPECT_WSUM=0xb11cc64f"],
+    },
+}

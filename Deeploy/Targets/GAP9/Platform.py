@@ -60,6 +60,20 @@ from Deeploy.Targets.PULPOpen.Parsers import PULPConv1DParser, PULPConv2DParser,
     PULPMatrixVecParser, PULPPWConvGradW2DParser, PULPPWConvGradX2DParser, PULPTallGEMMParser
 from Deeploy.Targets.PULPOpen.Tiler import PULPDequantTilingReadyBindings, PULPQuantTilingReadyBindings
 
+# -- QW: QZO / MeZO ops (BatchNormInternal, PerturbRademacher fp32, RQSPerturbRademacher int8).
+#        GAP9 has no GAP9-specific tiling bindings for these; the kernels are already compiled into
+#        GAP9's deeploylib (TargetLibraries/GAP9 globs ../PULPOpen/src/**), so we reuse the PULPOpen
+#        tiling-ready bindings directly — exactly as GAP9 already reuses BasicQuant/DequantBindings
+#        and PULPRQSConv1DBindings above.
+from Deeploy.Targets.Generic.Layers import BatchNormInternalLayer, GlobalAveragePoolLayer, \
+    PerturbRademacherLayer, RQSPerturbRademacherLayer  # -- QW
+from Deeploy.Targets.Generic.Parsers import BatchNormInternalParser, GlobalAveragePoolParser, \
+    PerturbRademacherParser, RQSPerturbRademacherParser  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPBatchNormInternalTilingReadyBindings, \
+    PULPDequantTilingReadyBindings, PULPGlobalAveragePool2DTilingReadyBindings, \
+    PULPPerturbRademacherTilingReadyBindings, PULPQuantTilingReadyBindings, \
+    PULPRQSPerturbRademacherTilingReadyBindings  # -- QW
+
 # Create GAP9-specific NodeMappers
 GAP9_RQAddMapper = NodeMapper(RQAddParser(), GAP9RQAddTilingReadyBindings)
 GAP9_AddMapper = NodeMapper(AddParser(), GAP9AddTilingReadyBindings)
@@ -89,6 +103,17 @@ GAP9_FPConv2DMapper = NodeMapper(PULPFPConv2DParser(), GAP9Conv2DTilingReadyBind
 GAP9_FPConv2DCHWMapper = NodeMapper(PULPFPConv2DCHWParser(), GAP9Conv2DCHWTilingReadyBindings)
 GAP9_FPDWConv2DCHWMapper = NodeMapper(PULPFPDWConv2DCHWParser(), GAP9DWConv2DCHWTilingReadyBindings)
 GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2DTilingReadyBindings)
+# RW 2026-10-13: Qiwen's flat int8 conv (exp5a, FlatConv.c: pixels split evenly over the cores, sdotp4 + requant
+# inline) on GAP9, for A/B measurements: DEEPLOY_RQCONV_FLAT=1 binds every RequantizedConv to it.
+import os as _os
+if _os.environ.get("DEEPLOY_RQCONV_FLAT", "0") == "1":
+    from Deeploy.Targets.GAP9.Tiler import GAP9RQSConv2DFlatTilingReadyBindings
+    GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2DFlatTilingReadyBindings)
+# -- QW (2026-10-22, per-block breakdown): DEEPLOY_RQCONV_KERNEL=4x2 binds every RequantizedConv to the Conv4x2 control
+#    kernel, as on PULPOpen (Platform.py there). -- QW
+if _os.environ.get("DEEPLOY_RQCONV_KERNEL", "pulpnn") == "4x2":  # -- QW
+    from Deeploy.Targets.GAP9.Tiler import GAP9RQSConv2D4x2TilingReadyBindings  # -- QW
+    GAP9_Conv2DMapper = NodeMapper(PULPConv2DParser(), GAP9RQSConv2D4x2TilingReadyBindings)  # -- QW
 GAP9_FPDWConv2DMapper = NodeMapper(PULPFPDWConv2DParser(), GAP9DWConv2DTilingReadyBindings)
 GAP9_DWConv2DMapper = NodeMapper(PULPDWConv2DParser(), GAP9RQSDWConv2DTilingReadyBindings)
 GAP9_GEMMMapper = NodeMapper(PULPGEMMParser(), GAP9RQSGEMMTilingReadyBindings)
@@ -137,6 +162,61 @@ GAP9_MSELossGradMapper = NodeMapper(MSELossGradParser(), GAP9MSELossGradTilingRe
 GAP9_ReluGradMapper = NodeMapper(ReluGradParser(), GAP9ReluGradTilingReadyBindings)
 GAP9_InPlaceAccumulatorV2Mapper = NodeMapper(InPlaceAccumulatorV2Parser(), GAP9InPlaceAccumulatorV2TilingReadyBindings)
 GAP9_LayerNormGradMapper = NodeMapper(LayerNormGradParser(), GAP9LayernormGradTilingReadyBindings)
+
+
+# -- QW: QZO / MeZO mappers (reuse the PULPOpen tiling-ready bindings; kernels are in GAP9 deeploylib)
+GAP9_PerturbRademacherMapper = NodeMapper(PerturbRademacherParser(), PULPPerturbRademacherTilingReadyBindings)  # -- QW (fp32 ZO op)
+from Deeploy.Targets.PULPOpen.Parsers import PerturbRademacherFixedParser as _PRFixedParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbRademacherFixedTilingReadyBindings as _PRFixedTRB  # -- QW exp8
+GAP9_PerturbRademacherFixedMapper = NodeMapper(_PRFixedParser(), _PRFixedTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Parsers import DualHalfParser as _DualHalfParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualHalfTilingReadyBindings as _DualHalfTRB  # -- QW exp8
+GAP9_DualHalfMapper = NodeMapper(_DualHalfParser(), _DualHalfTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen import FrozenBNTail as _FBT  # -- QW exp9
+GAP9_FrozenBNPoolReluQuantMapper = NodeMapper(_FBT.FrozenBNPoolReluQuantParser(), _FBT.tilingReadyBindings())  # -- QW exp9
+GAP9_RQSPerturbRademacherMapper = NodeMapper(RQSPerturbRademacherParser(), PULPRQSPerturbRademacherTilingReadyBindings)  # -- QW (quantized ZO)
+
+# -- QW (exp16c / blocker 1b): NE16WeightEncode runs on the CLUSTER cores (plain data movement),
+#     not on NE16 -- NE16Engine.canExecute only ever claims Conv. Registering it in GAP9Mapping is
+#     what lets a runtime-produced conv weight be bit-serial encoded on device.
+from Deeploy.Targets.NE16.WeightEncode import NE16WeightEncodeLayer, NE16WeightEncodeParser  # -- QW
+from Deeploy.Targets.NE16.Tiler import NE16WeightEncodeTilingReadyBindings  # -- QW
+GAP9_NE16WeightEncodeMapper = NodeMapper(NE16WeightEncodeParser(), NE16WeightEncodeTilingReadyBindings)  # -- QW
+from Deeploy.Targets.NE16.WeightEncode import NE16SignedInputBiasLayer, NE16SignedInputBiasParser  # -- QW
+from Deeploy.Targets.NE16.Tiler import NE16SignedInputBiasTilingReadyBindings  # -- QW
+GAP9_NE16SignedInputBiasMapper = NodeMapper(NE16SignedInputBiasParser(), NE16SignedInputBiasTilingReadyBindings)  # -- QW
+# -- QW (dual_pass_fusion exp6): NE16Im2ColU8 -- the cluster half of the GAP9 SDK's im2col route for 1xK convs
+#     (the NE16 half is the ordinary pointwise path). Runs on the cluster cores, so it lives in GAP9Mapping.
+from Deeploy.Targets.NE16.Im2Col import NE16Im2ColU8Layer, NE16Im2ColU8Parser  # -- QW
+from Deeploy.Targets.NE16.Tiler import NE16Im2ColU8TilingReadyBindings  # -- QW
+GAP9_NE16Im2ColU8Mapper = NodeMapper(NE16Im2ColU8Parser(), NE16Im2ColU8TilingReadyBindings)  # -- QW
+# -- QW (dual_pass_fusion exp6): exp5's fused dual-pass cluster conv on GAP9 too (baseline C_cl). Same PULP
+#     parser / tiling-ready bindings as PULPOpen/Platform.py -- the kernel is plain cluster C. -- QW
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DParser as _PULPDualConv2DParser  # -- QW
+from Deeploy.Targets.PULPOpen.Layers import PULPDualConvLayer as _PULPDualConvLayer  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DTilingReadyBindings as _PULPDualConv2DTRB  # -- QW
+GAP9_DualConv2DMapper = NodeMapper(_PULPDualConv2DParser(), _PULPDualConv2DTRB)  # -- QW
+# -- QW (dual_pass_fusion exp7 step 7): the 7-input RequantizedDualConv (blocks 1-4) on the GAP9 cluster (baseline C_cl).
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2D2InParser as _PULPDualConv2D2InParser  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2D2InTilingReadyBindings as _PULPDualConv2D2InTRB  # -- QW
+GAP9_DualConv2D2InMapper = NodeMapper(_PULPDualConv2D2InParser(), _PULPDualConv2D2InTRB)  # -- QW
+from Deeploy.Targets.PULPOpen.Parsers import PULPPerturbConv2DParser as _PULPPerturbConv2DParser  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbConv2DTilingReadyBindings as _PULPPerturbConv2DTRB  # -- QW exp11
+GAP9_PerturbConv2DMapper = NodeMapper(_PULPPerturbConv2DParser(), _PULPPerturbConv2DTRB)  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DStackedParser as _PULPDualConv2DStackedParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DStackedTilingReadyBindings as _PULPDualConv2DStackedTRB  # -- QW exp8
+GAP9_DualConv2DStackedMapper = NodeMapper(_PULPDualConv2DStackedParser(), _PULPDualConv2DStackedTRB)  # -- QW exp8
+# -- QW (dual_pass_fusion exp6, task 2): fused-pass preparation for NE16 (cluster-side), see NE16/DualPrep.py
+from Deeploy.Targets.NE16.DualPrep import NE16DualBiasLayer, NE16DualBiasParser, NE16DualPerturbEncodeLayer, \
+    NE16DualPerturbEncodeParser  # -- QW
+from Deeploy.Targets.NE16.Tiler import NE16DualBiasTilingReadyBindings, NE16DualPerturbEncodeTilingReadyBindings  # -- QW
+GAP9_NE16DualPerturbEncodeMapper = NodeMapper(NE16DualPerturbEncodeParser(), NE16DualPerturbEncodeTilingReadyBindings)  # -- QW
+GAP9_NE16DualBiasMapper = NodeMapper(NE16DualBiasParser(), NE16DualBiasTilingReadyBindings)  # -- QW
+# RW merge 2026-10-13: Qiwen's argmax-mask MaxPool backward (exp3) on GAP9 too, same PULP tiling-ready bindings.
+from Deeploy.Targets.GAP9.Tiler import GAP9MaxPoolArgmaxTilingReadyBindings as _PULPMaxPoolArgmaxTRB, \
+    GAP9MaxPoolGradMaskTilingReadyBindings as _PULPMaxPoolGradMaskTRB  # RW: GAP9 transformer (L3-safe)
+GAP9_MaxPoolArgmaxMapper = NodeMapper(MaxPool2DParser(), _PULPMaxPoolArgmaxTRB)
+GAP9_MaxPoolGradMaskMapper = NodeMapper(MaxPoolGradParser(), _PULPMaxPoolGradMaskTRB)
 
 # GAP9-specific mapping using ClDma
 GAP9Mapping = {
@@ -246,6 +326,36 @@ GAP9Mapping = {
         InPlaceAccumulatorV2Layer([GAP9_InPlaceAccumulatorV2Mapper]),
     'LayerNormalizationGrad':
         LayerNormGradLayer([GAP9_LayerNormGradMapper]),
+    # -- QW: QZO / MeZO ops (mirror PULPMapping so GAP9 can run the ZO train + update graphs)
+    'PerturbRademacher':
+        PerturbRademacherLayer([GAP9_PerturbRademacherMapper]),  # -- QW (fp32 ZO perturb)
+    'PerturbRademacherFixed':
+        PerturbRademacherLayer([GAP9_PerturbRademacherFixedMapper]),  # -- QW exp8 (dual-pass graph)
+    'DualHalf':
+        PerturbRademacherLayer([GAP9_DualHalfMapper]),  # -- QW exp8 (dual-pass tail; generic layer, size-based ops)
+    _FBT.OP:
+        _FBT.FrozenBNPoolReluQuantLayer([GAP9_FrozenBNPoolReluQuantMapper]),  # -- QW exp9 (frozen BN tail, memory)
+    'RQSPerturbRademacher':
+        RQSPerturbRademacherLayer([GAP9_RQSPerturbRademacherMapper]),  # -- QW (quantized ZO perturb)
+    'NE16WeightEncode':
+        NE16WeightEncodeLayer([GAP9_NE16WeightEncodeMapper]),  # -- QW (exp16c: on-device NE16 weight encode)
+    'NE16SignedInputBias':
+        NE16SignedInputBiasLayer([GAP9_NE16SignedInputBiasMapper]),  # -- QW (exp16c: BLOCKER 3 correction)
+    'NE16Im2ColU8':
+        NE16Im2ColU8Layer([GAP9_NE16Im2ColU8Mapper]),  # -- QW (exp6: column buffer for the NE16 im2col route)
+    'RequantizedDualConv':
+        # _PULPDualConvLayer([GAP9_DualConv2DMapper]),  # -- QW (exp6: exp5's fused cluster kernel, baseline C_cl)
+        # _PULPDualConvLayer([GAP9_DualConv2DMapper, GAP9_DualConv2D2InMapper, GAP9_DualConv2DStackedMapper]),  # -- QW exp6 + exp7 (7-input, blocks 1-4)
+        _PULPDualConvLayer([GAP9_DualConv2DMapper, GAP9_DualConv2D2InMapper, GAP9_DualConv2DStackedMapper,
+                            GAP9_PerturbConv2DMapper]),  # -- QW exp6 + exp7 + exp11 (single-pass in-kernel perturbation)
+    'NE16DualPerturbEncode':
+        NE16DualPerturbEncodeLayer([GAP9_NE16DualPerturbEncodeMapper]),  # -- QW (exp6 task 2)
+    'NE16DualBias':
+        NE16DualBiasLayer([GAP9_NE16DualBiasMapper]),  # -- QW (exp6 task 2)
+    'MaxPoolArgmax':
+        MaxPoolLayer([GAP9_MaxPoolArgmaxMapper]),  # RW merge
+    'MaxPoolGradMask':
+        MaxPoolGradLayer([GAP9_MaxPoolGradMaskMapper]),  # RW merge
 }
 
 
@@ -318,7 +428,7 @@ class GAP9StructBuffer(StructBuffer):
     deallocTemplate = NodeTemplate("")
 
 
-_includeList = ["pmsis.h", "DeeployGAP9Math.h", "pulp_nn_kernels.h", "DeeployMchan.h"]
+_includeList = ["pmsis.h", "DeeployGAP9Math.h", "pulp_nn_kernels.h", "DeeployMchan.h", "perf_utils.h"]  # -- QW (exp6): --profileMicrobenchmark templates need perf_stats_t; header is GAP9-aware
 
 
 class GAP9ClusterEngine(DeploymentEngine):

@@ -1,0 +1,4 @@
+eco_prof: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=41854859 opt_cycles_hi=0 opt_cycles_lo=2270784
+ne16_prof: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=21639572 opt_cycles_hi=0 opt_cycles_lo=2275635
+eco_plain: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=13288673 opt_cycles_hi=0 opt_cycles_lo=557957
+ne16_plain: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6543740 opt_cycles_hi=0 opt_cycles_lo=550427

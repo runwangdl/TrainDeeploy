@@ -1,0 +1,16 @@
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+zero-shot=78.33%
+  head  lr=0.005   : mean Δ=+3.40  std=0.52  (range +2.22..+3.89)
+  head  lr=0.01    : mean Δ=+2.29  std=1.97  (range -2.22..+5.00)
+  head  lr=0.02    : mean Δ=+1.08  std=2.32  (range -3.89..+5.00)
+  full  lr=0.001   : mean Δ=+3.99  std=2.95  (range -1.67..+8.89)
+  full  lr=0.0025  : mean Δ=+2.60  std=3.75  (range -3.89..+9.44)
+
+FAIR head-to-head (each at own best-mean lr):
+  head-only @ lr0.005 : mean Δ=+3.40  std=0.52
+  full-FT   @ lr0.001 : mean Δ=+3.99  std=2.95
+  paired (full-head): mean=+0.59  std=2.99  full wins 9/16
+DONE

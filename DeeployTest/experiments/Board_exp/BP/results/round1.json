@@ -1,0 +1,17 @@
+{
+ "round": 1,
+ "start_ckpt": "/Users/qiwenwu/ETH/TrainDeeploy/SpeechNet_Test/pretrained/inter_session_ft/S01/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt",
+ "carry": "/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r1.pt",
+ "wdump_step": 539,
+ "max_abs_board_minus_ref": 2.68593430519104e-05,
+ "board": {
+  "val_next": 88.88888888888889,
+  "val_in": 85.71428571428572,
+  "train": 100.0
+ },
+ "host_seed42": {
+  "val_next": 88.88888888888889,
+  "val_in": 85.71428571428572,
+  "train": 100.0
+ }
+}

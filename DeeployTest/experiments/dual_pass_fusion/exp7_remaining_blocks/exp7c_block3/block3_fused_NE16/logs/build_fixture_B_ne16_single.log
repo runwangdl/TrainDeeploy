@@ -1,0 +1,5 @@
+[QZO_Conv_NE16] wrote /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv_NE16_B3
+  nodes : ['RQSPerturbRademacher:rqsp_blocks.3.conv.weight_int8', 'RQSPerturbRademacher:rqsp_blocks.3.conv.bias_rqsadd', 'NE16SignedInputBias:b3_sbias', 'NE16WeightEncode:b3_wenc', 'NE16Im2ColU8:b3_im2col', 'Conv:b3_ne16conv', 'RequantShift:b3_rqs', 'Transpose:b3_out_nchw']
+  inits : ['QSTANDALONE_QCDQ_/blocks_3_conv_output_quant_1/Clip_Quant_mul_pc', 'blocks.3.conv.bias_rqsadd_pmul', 'blocks.3.conv.weight_int8_pmul']
+  col   : [1,8,5,112] u8 (= 4,480 B); weight_enc [32,7,16]; NE16 1x1 over Cin*K = 112 lanes of 16, Cout = 32 of 32
+  ref   : exp3's /blocks_3_conv_output_quant_1/Clip_output_0 (1, 32, 8, 5) (exact compare)

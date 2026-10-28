@@ -1,0 +1,607 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+
+======================================================================
+🚀 Generating model: SpeechNet (TRAIN mode)
+======================================================================
+
+📐 --n-steps 1  × --n-accum 1  → n_batches=1
+
+============================================================
+🚀 Exporting SpeechNet to ONNX (Training Mode)
+============================================================
+
+📦 Creating PyTorch model...
+  Loaded pretrained weights from /app/SilentWear/SilentWear/artifacts_reference/models/inter_session_ft/S01/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt
+  BN_FROZEN_STATS: 5 BatchNorm layer(s) in eval mode (frozen running stats)
+   Input shape: (1, 1, 14, 700)
+
+📤 Exporting to ONNX (opset 17, training mode)...
+[W1012 15:29:03.906370649 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:03.957902899 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:03.970266483 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:03.976717274 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:03.984762233 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+✅ Inference ONNX saved: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+
+🔧 Running inference optimizations...
+🔧 Running optimization pipeline: 'inference'
+   Total passes: 8
+   Enabled passes: 8
+  ➤ [1/8] rename_nodes
+      Rename nodes for C compatibility
+✅ Renamed ONNX model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+  ➤ [2/8] remove_identity
+      Remove Identity nodes
+✅ Removed 0 Identity node(s)
+  ➤ [3/8] reshape_fusion
+      Optimize Reshape operations
+Loading model: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+Found 0 Microsoft custom nodes. These will be preserved.
+Original model node count: 22
+Optimized model node count: 22
+Removed Reshape nodes: 0
+Optimized model saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+  ➤ [4/8] unify_gemm
+      Unify GEMM input dimensions
+Processing model: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+
+Processing Gemm node: node_22_fc_Gemm
+Warning: Cannot determine shapes for node_22_fc_Gemm, skipping.
+
+Modified 0 Gemm nodes
+Created 0 unique reshaped initializers
+Saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+  ➤ [5/8] biasgelu_opt
+      Optimize BiasGelu operations
+✅ Shape inference completed successfully
+⚠️ No BiasGelu nodes were replaced.
+  ➤ [6/8] squeeze_unsqueeze
+      Convert Squeeze/Unsqueeze to attributes
+Modified 0 Squeeze/Unsqueeze nodes
+Saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+  ➤ [7/8] sum_to_add
+      Convert Sum to Add operations
+Converted model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+  ➤ [8/8] softmax_axis
+      Optimize Softmax axis
+Saving optimized model to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_infer.onnx
+Optimization complete. Modified 0 Softmax nodes.
+
+  ✅ Pipeline complete
+     Nodes: 22 → 22 (+0)
+✅ Model validation passed
+
+📊 Model Info: network_infer.onnx
+   Inputs: 1
+   Outputs: 1
+   Initializers: 32
+   Nodes: 22
+
+  Training Strategy: 'full'
+   Total: 22  Trainable: 22  Frozen: 0
+
+🔹 Trainable parameters: 22
+🔹 Frozen parameters: 10
+
+🏋️ Generating training artifacts...
+2026-10-12 15:29:03.694146636 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConstantSharing modified: 0 with status: OK
+2026-10-12 15:29:03.697226011 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer LayerNormFusion modified: 0 with status: OK
+2026-10-12 15:29:03.698754552 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer CommonSubexpressionElimination modified: 0 with status: OK
+2026-10-12 15:29:03.699062761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.699248802 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer SimplifiedLayerNormFusion modified: 0 with status: OK
+2026-10-12 15:29:03.699547344 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer FastGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.699794094 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer QuickGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.700007094 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer SoftmaxCrossEntropyLossInternalFusion modified: 0 with status: OK
+2026-10-12 15:29:03.700422802 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GatherSliceToSplitFusion modified: 0 with status: OK
+2026-10-12 15:29:03.700653469 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GatherToSliceFusion modified: 0 with status: OK
+2026-10-12 15:29:03.700766094 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer QDQFusion modified: 0 with status: OK
+2026-10-12 15:29:03.700886636 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer BiasGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.701008344 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer IsInfReduceSumFusion modified: 0 with status: OK
+2026-10-12 15:29:03.701235386 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ScaledSumFusion modified: 0 with status: OK
+2026-10-12 15:29:03.701659261 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConstantFolding modified: 0 with status: OK
+2026-10-12 15:29:03.702070552 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ReshapeFusion modified: 0 with status: OK
+2026-10-12 15:29:03.702315261 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ShapeOptimizer modified: 0 with status: OK
+2026-10-12 15:29:03.702425511 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConcatSliceElimination modified: 0 with status: OK
+2026-10-12 15:29:03.704964094 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer PropagateCastOps modified: 0 with status: OK
+2026-10-12 15:29:03.705092802 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer CastSceLossFusion modified: 0 with status: OK
+2026-10-12 15:29:03.707676886 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer Level1_RuleBasedTransformer modified: 1 with status: OK
+2026-10-12 15:29:03.708354802 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConstantSharing modified: 0 with status: OK
+2026-10-12 15:29:03.708386302 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer LayerNormFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708444886 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer CommonSubexpressionElimination modified: 0 with status: OK
+2026-10-12 15:29:03.708453302 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708460886 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer SimplifiedLayerNormFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708468761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer FastGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708476469 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer QuickGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708483761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer SoftmaxCrossEntropyLossInternalFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708507177 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GatherSliceToSplitFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708515427 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer GatherToSliceFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708523386 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer QDQFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708530636 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer BiasGeluFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708538011 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer IsInfReduceSumFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708545136 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ScaledSumFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708555011 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConstantFolding modified: 0 with status: OK
+2026-10-12 15:29:03.708564761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ReshapeFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708575761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ShapeOptimizer modified: 0 with status: OK
+2026-10-12 15:29:03.708585136 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer ConcatSliceElimination modified: 0 with status: OK
+2026-10-12 15:29:03.708613344 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer PropagateCastOps modified: 0 with status: OK
+2026-10-12 15:29:03.708620886 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer CastSceLossFusion modified: 0 with status: OK
+2026-10-12 15:29:03.708630719 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer Level1_RuleBasedTransformer modified: 0 with status: OK
+2026-10-12 15:29:03.708640761 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer Level2_RuleBasedTransformer modified: 0 with status: OK
+2026-10-12 15:29:03.716065969 [I:onnxruntime:Default, graph_transformer.cc:15 Apply] GraphTransformer pre_training_rule_based_graph_transformer modified: 0 with status: OK
+✅ Training model: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train.onnx
+
+🔧 Running training optimizations...
+🔹 Running optimization for /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train.onnx...
+   Frozen params detected: ['blocks_0_1_running_mean', 'blocks_0_1_running_var', 'blocks_1_1_running_mean', 'blocks_1_1_running_var', 'blocks_2_1_running_mean', 'blocks_2_1_running_var', 'blocks_3_1_running_mean', 'blocks_3_1_running_var', 'blocks_4_1_running_mean', 'blocks_4_1_running_var']
+   convert_frozen_initializers_to_constants: converted 10 frozen param(s) → Constant nodes.
+✅ Successfully converted frozen params to Constant nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Canonicalized ConcatTraining/SplitTraining → Concat/Split. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Saving optimized model to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Optimization complete. Modified 0 Softmax nodes.
+✅ Successfully optimized Softmax axis. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Loading model: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Found 44 Microsoft custom nodes. These will be preserved.
+Original model node count: 81
+Optimized model node count: 81
+Removed Reshape nodes: 0
+Optimized model saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully optimized Reshape nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Modified 0 Squeeze/Unsqueeze nodes
+Saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully converted Squeeze inputs to attributes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+
+🔍 Converting ReduceSum nodes to ReduceSum + Reshape:
+
+  Processing: node_22_fc_Gemm_Grad/ReduceSum_3
+    Original output: node_22_fc_Gemm_Grad/dC_reduced
+    ⚠️  No axes specified, skipping
+
+✅ Converted 0 ReduceSum node(s) to ReduceSum + Reshape
+✅ Successfully converted ReduceSum to ReduceSum+Reshape. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Removing Identity node 'node_22_fc_Gemm_Grad/Identity_4': fc_bias_grad -> node_22_fc_Gemm_Grad/dC_reduced
+  Updated node 'GradientAccumulator22' input: fc_bias_grad -> node_22_fc_Gemm_Grad/dC_reduced
+✅ Removed 1 Identity node(s)
+✅ Successfully removed Identity nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Model converted and saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully converted ReduceSum axes to attributes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+============================================================
+✅ Conversion Summary:
+   - Converted 0 FusedMatMul nodes to No-Bias Gemm
+   - No bias tensors created (bias-free operation)
+   - Descriptions preserved and inherited
+   - Enhanced naming prevents conflicts
+   - Saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+============================================================
+✅ Successfully converted FusedMatMul to Gemm nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Converted model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully converted Sum to Add nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+  ✅ Fused GAP backward: Scale+Shape+Expand → GlobalAveragePoolGrad (dY=node_0_global_pool_GlobalAveragePool__0_grad, dX=node_0_blocks_4_blocks_4_2_Relu__0_grad, H=2, W=5)
+✅ Successfully fused GlobalAveragePool backward. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+  INFO fuse_mse_loss: no MSE loss pattern found, skipping
+✅ Successfully fused MSE loss nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Modified 0 SoftmaxGrad_13 nodes to SoftmaxGrad
+Saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully renamed SoftmaxGrad nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Found 1 SoftmaxCrossEntropyLossGrad nodes
+Saved model with SoftmaxCrossEntropyLossGrad first input removed to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully removed Softmax Grad Loss inputs. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully processed LayerNormGrad nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+⚠️ Found 43 Microsoft custom operators that might affect shape inference
+✅ Partial shape inference completed for non-Microsoft operators
+⚠️ No BiasGelu nodes were replaced.
+✅ Successfully removed BiasGeluFusion. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+Optimized model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully removed BiasGeluGradFusion. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+
+🔍 Verifying optimization results...
+
+============================================================
+Comparing network_train.onnx vs network.onnx
+============================================================
+
+📊 Node Statistics:
+  network_train.onnx: 71 nodes
+  network.onnx: 78 nodes
+  Difference: +7 nodes
+
+📋 Node Type Changes:
+  Constant: 0 → 10 (+10)
+  Expand: 1 → 0 (-1)
+  GlobalAveragePoolGrad: 0 → 1 (+1)
+  Identity: 1 → 0 (-1)
+  Scale: 1 → 0 (-1)
+  Shape: 1 → 0 (-1)
+
+🎯 Graph Outputs:
+  network_train.onnx: 23 outputs
+    - onnx::loss::2
+    - blocks_0_0_weight_grad.accumulation.out
+    - blocks_0_0_bias_grad.accumulation.out
+    - blocks_0_1_weight_grad.accumulation.out
+    - blocks_0_1_bias_grad.accumulation.out
+    - blocks_1_0_weight_grad.accumulation.out
+    - blocks_1_0_bias_grad.accumulation.out
+    - blocks_1_1_weight_grad.accumulation.out
+    - blocks_1_1_bias_grad.accumulation.out
+    - blocks_2_0_weight_grad.accumulation.out
+    ... and 13 more
+  network.onnx: 23 outputs
+    - onnx::loss::2
+    - blocks_0_0_weight_grad.accumulation.out
+    - blocks_0_0_bias_grad.accumulation.out
+    - blocks_0_1_weight_grad.accumulation.out
+    - blocks_0_1_bias_grad.accumulation.out
+    - blocks_1_0_weight_grad.accumulation.out
+    - blocks_1_0_bias_grad.accumulation.out
+    - blocks_1_1_weight_grad.accumulation.out
+    - blocks_1_1_bias_grad.accumulation.out
+    - blocks_2_0_weight_grad.accumulation.out
+    ... and 13 more
+============================================================
+
+🔍 MatMul+Add fusion with constant bias validation...
+  No valid MatMul+Add patterns found for fusion
+✅ Successfully fused MatMul and Add to Gemm nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Successfully processed ONNX model name with type. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Duplicated multi-consumer Constant-fed Transposes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+🔍 Analyzing nodes for backward pass detection...
+  🔴 Marked backward: onnx::SoftmaxCrossEntropyLoss::4_Grad/SoftmaxCrossEntropyLossGrad_0_SoftmaxCrossEntropyLossGrad -> onnx::SoftmaxCrossEntropyLoss::4_Grad/SoftmaxCrossEntropyLossGrad_0_SoftmaxCrossEntropyLossGrad_backward
+     Reason: node name contains 'grad': onnx::SoftmaxCrossEntropyLoss::4_Grad/SoftmaxCrossEntropyLossGrad_0_SoftmaxCrossEntropyLossGrad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_22_fc_Gemm_Grad/ReduceSum_3_ReduceSum -> node_22_fc_Gemm_Grad/ReduceSum_3_ReduceSum_backward
+     Reason: node name contains 'grad': node_22_fc_Gemm_Grad/ReduceSum_3_ReduceSum
+     Reason: input tensor contains 'grad': output_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_22_fc_Gemm_Grad/Gemm_1_Gemm -> node_22_fc_Gemm_Grad/Gemm_1_Gemm_backward
+     Reason: node name contains 'grad': node_22_fc_Gemm_Grad/Gemm_1_Gemm
+     Reason: input tensor contains 'grad': output_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_22_fc_Gemm_Grad/Gemm_0_Gemm -> node_22_fc_Gemm_Grad/Gemm_0_Gemm_backward
+     Reason: node name contains 'grad': node_22_fc_Gemm_Grad/Gemm_0_Gemm
+     Reason: input tensor contains 'grad': output_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_21_Reshape_Grad/Reshape_1_Reshape -> node_21_Reshape_Grad/Reshape_1_Reshape_backward
+     Reason: node name contains 'grad': node_21_Reshape_Grad/Reshape_1_Reshape
+     Reason: input tensor contains 'grad': node_0_Reshape__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_19_global_pool_GlobalAveragePool_Grad/Expand_3_fused_GlobalAveragePoolGrad -> node_19_global_pool_GlobalAveragePool_Grad/Expand_3_fused_GlobalAveragePoolGrad_backward
+     Reason: node name contains 'grad': node_19_global_pool_GlobalAveragePool_Grad/Expand_3_fused_GlobalAveragePoolGrad
+     Reason: input tensor contains 'grad': node_0_global_pool_GlobalAveragePool__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_18_blocks_4_blocks_4_2_Relu_Grad/ReluGrad_0_ReluGrad -> node_18_blocks_4_blocks_4_2_Relu_Grad/ReluGrad_0_ReluGrad_backward
+     Reason: node name contains 'grad': node_18_blocks_4_blocks_4_2_Relu_Grad/ReluGrad_0_ReluGrad
+     Reason: input tensor contains 'grad': node_0_blocks_4_blocks_4_2_Relu__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_17_blocks_4_blocks_4_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad -> node_17_blocks_4_blocks_4_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad_backward
+     Reason: node name contains 'grad': node_17_blocks_4_blocks_4_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad
+     Reason: input tensor contains 'grad': node_0_blocks_4_blocks_4_1_BatchNormalization__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_16_blocks_4_blocks_4_0_Conv_Grad/ConvGrad_0_ConvGrad -> node_16_blocks_4_blocks_4_0_Conv_Grad/ConvGrad_0_ConvGrad_backward
+     Reason: node name contains 'grad': node_16_blocks_4_blocks_4_0_Conv_Grad/ConvGrad_0_ConvGrad
+     Reason: input tensor contains 'grad': node_0_blocks_4_blocks_4_0_Conv__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_15_blocks_3_blocks_3_2_Relu_Grad/ReluGrad_0_ReluGrad -> node_15_blocks_3_blocks_3_2_Relu_Grad/ReluGrad_0_ReluGrad_backward
+     Reason: node name contains 'grad': node_15_blocks_3_blocks_3_2_Relu_Grad/ReluGrad_0_ReluGrad
+     Reason: input tensor contains 'grad': node_0_blocks_3_blocks_3_2_Relu__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_14_blocks_3_blocks_3_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad -> node_14_blocks_3_blocks_3_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad_backward
+     Reason: node name contains 'grad': node_14_blocks_3_blocks_3_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad
+     Reason: input tensor contains 'grad': node_0_blocks_3_blocks_3_1_BatchNormalization__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_13_blocks_3_blocks_3_0_Conv_Grad/ConvGrad_0_ConvGrad -> node_13_blocks_3_blocks_3_0_Conv_Grad/ConvGrad_0_ConvGrad_backward
+     Reason: node name contains 'grad': node_13_blocks_3_blocks_3_0_Conv_Grad/ConvGrad_0_ConvGrad
+     Reason: input tensor contains 'grad': node_0_blocks_3_blocks_3_0_Conv__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_12_blocks_2_blocks_2_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad -> node_12_blocks_2_blocks_2_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad_backward
+     Reason: node name contains 'grad': node_12_blocks_2_blocks_2_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad
+     Reason: input tensor contains 'grad': node_0_blocks_2_blocks_2_3_MaxPool__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_11_blocks_2_blocks_2_2_Relu_Grad/ReluGrad_0_ReluGrad -> node_11_blocks_2_blocks_2_2_Relu_Grad/ReluGrad_0_ReluGrad_backward
+     Reason: node name contains 'grad': node_11_blocks_2_blocks_2_2_Relu_Grad/ReluGrad_0_ReluGrad
+     Reason: input tensor contains 'grad': node_0_blocks_2_blocks_2_2_Relu__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_10_blocks_2_blocks_2_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad -> node_10_blocks_2_blocks_2_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad_backward
+     Reason: node name contains 'grad': node_10_blocks_2_blocks_2_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad
+     Reason: input tensor contains 'grad': node_0_blocks_2_blocks_2_1_BatchNormalization__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_9_blocks_2_blocks_2_0_Conv_Grad/ConvGrad_0_ConvGrad -> node_9_blocks_2_blocks_2_0_Conv_Grad/ConvGrad_0_ConvGrad_backward
+     Reason: node name contains 'grad': node_9_blocks_2_blocks_2_0_Conv_Grad/ConvGrad_0_ConvGrad
+     Reason: input tensor contains 'grad': node_0_blocks_2_blocks_2_0_Conv__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_8_blocks_1_blocks_1_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad -> node_8_blocks_1_blocks_1_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad_backward
+     Reason: node name contains 'grad': node_8_blocks_1_blocks_1_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad
+     Reason: input tensor contains 'grad': node_0_blocks_1_blocks_1_3_MaxPool__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_7_blocks_1_blocks_1_2_Relu_Grad/ReluGrad_0_ReluGrad -> node_7_blocks_1_blocks_1_2_Relu_Grad/ReluGrad_0_ReluGrad_backward
+     Reason: node name contains 'grad': node_7_blocks_1_blocks_1_2_Relu_Grad/ReluGrad_0_ReluGrad
+     Reason: input tensor contains 'grad': node_0_blocks_1_blocks_1_2_Relu__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_6_blocks_1_blocks_1_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad -> node_6_blocks_1_blocks_1_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad_backward
+     Reason: node name contains 'grad': node_6_blocks_1_blocks_1_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad
+     Reason: input tensor contains 'grad': node_0_blocks_1_blocks_1_1_BatchNormalization__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_5_blocks_1_blocks_1_0_Conv_Grad/ConvGrad_0_ConvGrad -> node_5_blocks_1_blocks_1_0_Conv_Grad/ConvGrad_0_ConvGrad_backward
+     Reason: node name contains 'grad': node_5_blocks_1_blocks_1_0_Conv_Grad/ConvGrad_0_ConvGrad
+     Reason: input tensor contains 'grad': node_0_blocks_1_blocks_1_0_Conv__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_4_blocks_0_blocks_0_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad -> node_4_blocks_0_blocks_0_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad_backward
+     Reason: node name contains 'grad': node_4_blocks_0_blocks_0_3_MaxPool_Grad/MaxPoolGrad_0_MaxPoolGrad
+     Reason: input tensor contains 'grad': node_0_blocks_0_blocks_0_3_MaxPool__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_3_blocks_0_blocks_0_2_Relu_Grad/ReluGrad_0_ReluGrad -> node_3_blocks_0_blocks_0_2_Relu_Grad/ReluGrad_0_ReluGrad_backward
+     Reason: node name contains 'grad': node_3_blocks_0_blocks_0_2_Relu_Grad/ReluGrad_0_ReluGrad
+     Reason: input tensor contains 'grad': node_0_blocks_0_blocks_0_2_Relu__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_2_blocks_0_blocks_0_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad -> node_2_blocks_0_blocks_0_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad_backward
+     Reason: node name contains 'grad': node_2_blocks_0_blocks_0_1_BatchNormalization_BatchNormInternal_Grad/BatchNormalizationGrad_0_BatchNormalizationGrad
+     Reason: input tensor contains 'grad': node_0_blocks_0_blocks_0_1_BatchNormalization__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: node_1_blocks_0_blocks_0_0_Conv_Grad/ConvGrad_0_ConvGrad -> node_1_blocks_0_blocks_0_0_Conv_Grad/ConvGrad_0_ConvGrad_backward
+     Reason: node name contains 'grad': node_1_blocks_0_blocks_0_0_Conv_Grad/ConvGrad_0_ConvGrad
+     Reason: input tensor contains 'grad': node_0_blocks_0_blocks_0_0_Conv__0_grad
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator1_InPlaceAccumulatorV2 -> GradientAccumulator1_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator1_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_0_0_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator2_InPlaceAccumulatorV2 -> GradientAccumulator2_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator2_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_0_0_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator3_InPlaceAccumulatorV2 -> GradientAccumulator3_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator3_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_0_1_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator4_InPlaceAccumulatorV2 -> GradientAccumulator4_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator4_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_0_1_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator5_InPlaceAccumulatorV2 -> GradientAccumulator5_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator5_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_1_0_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator6_InPlaceAccumulatorV2 -> GradientAccumulator6_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator6_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_1_0_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator7_InPlaceAccumulatorV2 -> GradientAccumulator7_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator7_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_1_1_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator8_InPlaceAccumulatorV2 -> GradientAccumulator8_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator8_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_1_1_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator9_InPlaceAccumulatorV2 -> GradientAccumulator9_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator9_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_2_0_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator10_InPlaceAccumulatorV2 -> GradientAccumulator10_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator10_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_2_0_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator11_InPlaceAccumulatorV2 -> GradientAccumulator11_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator11_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_2_1_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator12_InPlaceAccumulatorV2 -> GradientAccumulator12_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator12_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_2_1_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator13_InPlaceAccumulatorV2 -> GradientAccumulator13_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator13_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_3_0_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator14_InPlaceAccumulatorV2 -> GradientAccumulator14_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator14_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_3_0_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator15_InPlaceAccumulatorV2 -> GradientAccumulator15_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator15_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_3_1_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator16_InPlaceAccumulatorV2 -> GradientAccumulator16_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator16_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_3_1_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator17_InPlaceAccumulatorV2 -> GradientAccumulator17_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator17_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_4_0_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator18_InPlaceAccumulatorV2 -> GradientAccumulator18_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator18_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_4_0_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator19_InPlaceAccumulatorV2 -> GradientAccumulator19_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator19_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_4_1_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator20_InPlaceAccumulatorV2 -> GradientAccumulator20_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator20_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': blocks_4_1_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator21_InPlaceAccumulatorV2 -> GradientAccumulator21_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator21_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': fc_weight_grad.accumulation.buffer
+     Added description: [Backward pass]
+  🔴 Marked backward: GradientAccumulator22_InPlaceAccumulatorV2 -> GradientAccumulator22_InPlaceAccumulatorV2_backward
+     Reason: node name contains 'grad': GradientAccumulator22_InPlaceAccumulatorV2
+     Reason: input tensor contains 'grad': fc_bias_grad.accumulation.buffer
+     Added description: [Backward pass]
+
+============================================================
+✅ BACKWARD NODE MARKING SUMMARY
+============================================================
+Total nodes in model: 78
+Forward nodes: 32 (41.0%)
+Backward nodes (total): 46 (59.0%)
+  - Newly marked: 46
+  - Already marked: 0
+Model saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+============================================================
+✅ Successfully added backward markers to nodes. Saved as /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+
+🔍 Running shape inference on training model...
+
+🔍 Running shape inference with custom op support...
+  ℹ️  Custom op registration not available, using fallback for Microsoft ops
+  ✅ Shape inference succeeded
+  🔧 Applying custom shape inference for 43 Microsoft op(s)...
+    BatchNormInternal updated_running_mean shape: [8]
+    BatchNormInternal updated_running_var shape: [8]
+    BatchNormInternal saved_mean shape: [8]
+    BatchNormInternal saved_inv_std shape: [8]
+    BatchNormInternal updated_running_mean shape: [16]
+    BatchNormInternal updated_running_var shape: [16]
+    BatchNormInternal saved_mean shape: [16]
+    BatchNormInternal saved_inv_std shape: [16]
+    BatchNormInternal updated_running_mean shape: [16]
+    BatchNormInternal updated_running_var shape: [16]
+    BatchNormInternal saved_mean shape: [16]
+    BatchNormInternal saved_inv_std shape: [16]
+    BatchNormInternal updated_running_mean shape: [32]
+    BatchNormInternal updated_running_var shape: [32]
+    BatchNormInternal saved_mean shape: [32]
+    BatchNormInternal saved_inv_std shape: [32]
+    BatchNormInternal updated_running_mean shape: [32]
+    BatchNormInternal updated_running_var shape: [32]
+    BatchNormInternal saved_mean shape: [32]
+    BatchNormInternal saved_inv_std shape: [32]
+    ReluGrad output shape: [1, 32, 2, 5]
+    BatchNormalizationGrad dgamma shape: [32]
+    BatchNormalizationGrad dbeta shape: [32]
+    ConvGrad output shape: [1, 32, 8, 5]
+    ReluGrad output shape: [1, 32, 8, 5]
+    BatchNormalizationGrad dgamma shape: [32]
+    BatchNormalizationGrad dbeta shape: [32]
+    ConvGrad output shape: [1, 16, 14, 5]
+    ReluGrad output shape: [1, 16, 14, 23]
+    BatchNormalizationGrad dgamma shape: [16]
+    BatchNormalizationGrad dbeta shape: [16]
+    ConvGrad output shape: [1, 16, 14, 22]
+    ReluGrad output shape: [1, 16, 14, 88]
+    BatchNormalizationGrad dgamma shape: [16]
+    BatchNormalizationGrad dbeta shape: [16]
+    ConvGrad output shape: [1, 8, 14, 87]
+    ReluGrad output shape: [1, 8, 14, 701]
+    BatchNormalizationGrad dgamma shape: [8]
+    BatchNormalizationGrad dbeta shape: [8]
+    ConvGrad output shape: [1, 1, 14, 700]
+    InPlaceAccumulatorV2 output shape: [8, 1, 1, 4]
+    InPlaceAccumulatorV2 gradient shape: [8, 1, 1, 4]
+    InPlaceAccumulatorV2 output shape: [8]
+    InPlaceAccumulatorV2 gradient shape: [8]
+    InPlaceAccumulatorV2 output shape: [8]
+    InPlaceAccumulatorV2 output shape: [8]
+    InPlaceAccumulatorV2 output shape: [16, 8, 1, 16]
+    InPlaceAccumulatorV2 gradient shape: [16, 8, 1, 16]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 gradient shape: [16]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 output shape: [16, 16, 1, 8]
+    InPlaceAccumulatorV2 gradient shape: [16, 16, 1, 8]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 gradient shape: [16]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 output shape: [16]
+    InPlaceAccumulatorV2 output shape: [32, 16, 7, 1]
+    InPlaceAccumulatorV2 gradient shape: [32, 16, 7, 1]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 gradient shape: [32]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 output shape: [32, 32, 7, 1]
+    InPlaceAccumulatorV2 gradient shape: [32, 32, 7, 1]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 gradient shape: [32]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 output shape: [32]
+    InPlaceAccumulatorV2 output shape: [9, 32]
+    InPlaceAccumulatorV2 output shape: [9]
+  🔧 Applying custom shape inference for 11 training op(s)...
+  💾 Model with inferred shapes saved: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train_optim.onnx
+✅ Final model: /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network.onnx
+   QW: inserted 3 MaxPoolArgmax node(s); rewired 3 MaxPoolGrad to uint8 argmax mask
+
+⚙️  Building optimizer ONNX (lr=0.0003) → /app/TrainDeeploy/SpeechNet_Test/speechnet_optimizer_BP_single_step/network.onnx
+Found 22 trainable parameter(s):
+  blocks_0_0_weight  shape=[8, 1, 1, 4]  dtype=float32
+  blocks_0_0_bias  shape=[8]  dtype=float32
+  blocks_0_1_weight  shape=[8]  dtype=float32
+  blocks_0_1_bias  shape=[8]  dtype=float32
+  blocks_1_0_weight  shape=[16, 8, 1, 16]  dtype=float32
+  blocks_1_0_bias  shape=[16]  dtype=float32
+  blocks_1_1_weight  shape=[16]  dtype=float32
+  blocks_1_1_bias  shape=[16]  dtype=float32
+  blocks_2_0_weight  shape=[16, 16, 1, 8]  dtype=float32
+  blocks_2_0_bias  shape=[16]  dtype=float32
+  blocks_2_1_weight  shape=[16]  dtype=float32
+  blocks_2_1_bias  shape=[16]  dtype=float32
+  blocks_3_0_weight  shape=[32, 16, 7, 1]  dtype=float32
+  blocks_3_0_bias  shape=[32]  dtype=float32
+  blocks_3_1_weight  shape=[32]  dtype=float32
+  blocks_3_1_bias  shape=[32]  dtype=float32
+  blocks_4_0_weight  shape=[32, 32, 7, 1]  dtype=float32
+  blocks_4_0_bias  shape=[32]  dtype=float32
+  blocks_4_1_weight  shape=[32]  dtype=float32
+  blocks_4_1_bias  shape=[32]  dtype=float32
+  fc_weight  shape=[9, 32]  dtype=float32
+  fc_bias  shape=[9]  dtype=float32
+Saved optimizer ONNX → /app/TrainDeeploy/SpeechNet_Test/speechnet_optimizer_BP_single_step/network.onnx
+  Inputs  (44): blocks_0_0_weight, blocks_0_0_weight_grad.accumulation.buffer, blocks_0_0_bias, blocks_0_0_bias_grad.accumulation.buffer, blocks_0_1_weight, blocks_0_1_weight_grad.accumulation.buffer, blocks_0_1_bias, blocks_0_1_bias_grad.accumulation.buffer, blocks_1_0_weight, blocks_1_0_weight_grad.accumulation.buffer, blocks_1_0_bias, blocks_1_0_bias_grad.accumulation.buffer, blocks_1_1_weight, blocks_1_1_weight_grad.accumulation.buffer, blocks_1_1_bias, blocks_1_1_bias_grad.accumulation.buffer, blocks_2_0_weight, blocks_2_0_weight_grad.accumulation.buffer, blocks_2_0_bias, blocks_2_0_bias_grad.accumulation.buffer, blocks_2_1_weight, blocks_2_1_weight_grad.accumulation.buffer, blocks_2_1_bias, blocks_2_1_bias_grad.accumulation.buffer, blocks_3_0_weight, blocks_3_0_weight_grad.accumulation.buffer, blocks_3_0_bias, blocks_3_0_bias_grad.accumulation.buffer, blocks_3_1_weight, blocks_3_1_weight_grad.accumulation.buffer, blocks_3_1_bias, blocks_3_1_bias_grad.accumulation.buffer, blocks_4_0_weight, blocks_4_0_weight_grad.accumulation.buffer, blocks_4_0_bias, blocks_4_0_bias_grad.accumulation.buffer, blocks_4_1_weight, blocks_4_1_weight_grad.accumulation.buffer, blocks_4_1_bias, blocks_4_1_bias_grad.accumulation.buffer, fc_weight, fc_weight_grad.accumulation.buffer, fc_bias, fc_bias_grad.accumulation.buffer
+  Outputs (22): blocks_0_0_weight_updated, blocks_0_0_bias_updated, blocks_0_1_weight_updated, blocks_0_1_bias_updated, blocks_1_0_weight_updated, blocks_1_0_bias_updated, blocks_1_1_weight_updated, blocks_1_1_bias_updated, blocks_2_0_weight_updated, blocks_2_0_bias_updated, blocks_2_1_weight_updated, blocks_2_1_bias_updated, blocks_3_0_weight_updated, blocks_3_0_bias_updated, blocks_3_1_weight_updated, blocks_3_1_bias_updated, blocks_4_0_weight_updated, blocks_4_0_bias_updated, blocks_4_1_weight_updated, blocks_4_1_bias_updated, fc_weight_updated, fc_bias_updated
+  SGD lr = 0.0003
+
+🧪 Creating test input/output...
+   Training sim: n_batches=1  n_accum=1  n_steps=1  lr=0.0003
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   Training model inputs:  ['input', 'labels', 'blocks_0_0_weight', 'blocks_0_0_bias', 'blocks_0_1_weight', 'blocks_0_1_bias', 'blocks_0_1_running_mean', 'blocks_0_1_running_var', 'blocks_1_0_weight', 'blocks_1_0_bias', 'blocks_1_1_weight', 'blocks_1_1_bias', 'blocks_1_1_running_mean', 'blocks_1_1_running_var', 'blocks_2_0_weight', 'blocks_2_0_bias', 'blocks_2_1_weight', 'blocks_2_1_bias', 'blocks_2_1_running_mean', 'blocks_2_1_running_var', 'blocks_3_0_weight', 'blocks_3_0_bias', 'blocks_3_1_weight', 'blocks_3_1_bias', 'blocks_3_1_running_mean', 'blocks_3_1_running_var', 'blocks_4_0_weight', 'blocks_4_0_bias', 'blocks_4_1_weight', 'blocks_4_1_bias', 'blocks_4_1_running_mean', 'blocks_4_1_running_var', 'fc_weight', 'fc_bias', 'blocks_0_0_weight_grad.accumulation.buffer', 'blocks_0_0_bias_grad.accumulation.buffer', 'blocks_0_1_weight_grad.accumulation.buffer', 'blocks_0_1_bias_grad.accumulation.buffer', 'blocks_1_0_weight_grad.accumulation.buffer', 'blocks_1_0_bias_grad.accumulation.buffer', 'blocks_1_1_weight_grad.accumulation.buffer', 'blocks_1_1_bias_grad.accumulation.buffer', 'blocks_2_0_weight_grad.accumulation.buffer', 'blocks_2_0_bias_grad.accumulation.buffer', 'blocks_2_1_weight_grad.accumulation.buffer', 'blocks_2_1_bias_grad.accumulation.buffer', 'blocks_3_0_weight_grad.accumulation.buffer', 'blocks_3_0_bias_grad.accumulation.buffer', 'blocks_3_1_weight_grad.accumulation.buffer', 'blocks_3_1_bias_grad.accumulation.buffer', 'blocks_4_0_weight_grad.accumulation.buffer', 'blocks_4_0_bias_grad.accumulation.buffer', 'blocks_4_1_weight_grad.accumulation.buffer', 'blocks_4_1_bias_grad.accumulation.buffer', 'fc_weight_grad.accumulation.buffer', 'fc_bias_grad.accumulation.buffer', 'lazy_reset_grad']
+   Training model outputs: ['onnx::loss::2', 'blocks_0_0_weight_grad.accumulation.out', 'blocks_0_0_bias_grad.accumulation.out', 'blocks_0_1_weight_grad.accumulation.out', 'blocks_0_1_bias_grad.accumulation.out', 'blocks_1_0_weight_grad.accumulation.out', 'blocks_1_0_bias_grad.accumulation.out', 'blocks_1_1_weight_grad.accumulation.out', 'blocks_1_1_bias_grad.accumulation.out', 'blocks_2_0_weight_grad.accumulation.out', 'blocks_2_0_bias_grad.accumulation.out', 'blocks_2_1_weight_grad.accumulation.out', 'blocks_2_1_bias_grad.accumulation.out', 'blocks_3_0_weight_grad.accumulation.out', 'blocks_3_0_bias_grad.accumulation.out', 'blocks_3_1_weight_grad.accumulation.out', 'blocks_3_1_bias_grad.accumulation.out', 'blocks_4_0_weight_grad.accumulation.out', 'blocks_4_0_bias_grad.accumulation.out', 'blocks_4_1_weight_grad.accumulation.out', 'blocks_4_1_bias_grad.accumulation.out', 'fc_weight_grad.accumulation.out', 'fc_bias_grad.accumulation.out', 'blocks_0_0_weight_grad', 'blocks_0_0_bias_grad', 'blocks_0_1_weight_grad', 'blocks_0_1_bias_grad', 'blocks_1_0_weight_grad', 'blocks_1_0_bias_grad', 'blocks_1_1_weight_grad', 'blocks_1_1_bias_grad', 'blocks_2_0_weight_grad', 'blocks_2_0_bias_grad', 'blocks_2_1_weight_grad', 'blocks_2_1_bias_grad', 'blocks_3_0_weight_grad', 'blocks_3_0_bias_grad', 'blocks_3_1_weight_grad', 'blocks_3_1_bias_grad', 'blocks_4_0_weight_grad', 'blocks_4_0_bias_grad', 'blocks_4_1_weight_grad', 'blocks_4_1_bias_grad', 'fc_weight_grad', 'fc_bias_grad']
+  Loaded pretrained weights from /app/SilentWear/SilentWear/artifacts_reference/models/inter_session_ft/S01/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt
+/app/Onnx4Deeploy/onnx4deeploy/models/speechnet_exporter.py:351: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  sd[tname] = torch.from_numpy(np.asarray(init_map[oname])).float().reshape(sd[tname].shape)
+[W1012 15:29:05.720929192 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.728419817 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.734278900 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.740756359 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.745618359 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.770890234 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.778553900 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.797704525 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.845087484 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:29:05.907292192 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+   [exp1/Option A] frozen-BN PyTorch reference — 1 losses (first 5: [0.01145])
+   Reference losses (frozen-PyTorch): [0.01145]
+   inputs.npz: 25 base tensors (data + 22 params; 22 grad-acc-buf(s) omitted) + 0 DATA entries
+   outputs.npz: 33 tensors (32 updated params + loss)
+
+============================================================
+✅ Export Complete!
+   Training model:  /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network_train.onnx
+   Final model:     /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step/network.onnx
+   Output dir:      /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step
+============================================================
+
+
+======================================================================
+✅ Training mode model generation completed!
+======================================================================
+
+📁 Generated files:
+  ✓ optimizer/network.onnx    (5.7 KB)  [speechnet_optimizer_BP_single_step/network.onnx]
+  ✓ network.onnx              (30.5 KB)
+  ✓ inputs.npz                (105.6 KB)
+  ✓ outputs.npz               (69.9 KB)
+  ✓ network_train.onnx        (24.2 KB)
+  ✓ optimizer_model.onnx      (0.3 KB)
+
+💡 Output source: PyTorch model (for verifying ONNX correctness)

@@ -1,0 +1,108 @@
+exp8 step 0 -- Siracusa QZO single step (speechnet_train/update_QZO_single_step), --profileTiling, wall clock per node
+summed over all executions in the log (training graph x2 passes + update graph x1)
+
+category                     kernel       DMA      total   share
+conv (pulp-nn)            2,461,479    28,252  2,489,731   48.3%
+conv perturb (w+b)          839,805     9,858    849,663   16.5%
+BN                          713,431   113,164    826,595   16.0%
+Quant/Dequant               368,008   118,407    486,415    9.4%
+pool                        246,431    34,712    281,143    5.5%
+conv transposes              57,796    13,167     70,963    1.4%
+ReLU                         47,741    19,146     66,887    1.3%
+fp32 perturb (BN, fc)        58,512     7,207     65,719    1.3%
+fc + loss                    16,370       522     16,892    0.3%
+sum                                            5,154,008
+
+plain run (BENCH): training (both passes) 5,162,943 cycles, update 321,350; profiled run 5,231,477 / 335,080
+
+per node (kernel, DMA):
+  rqsp_blocks0convbias_rqsadd: 2,970 / 350
+  pert_blocks0bnweight: 3,735 / 354
+  pert_blocks0bnbias: 3,001 / 356
+  pert_fcbias_fp32: 3,053 / 354
+  rqsp_blocks1convbias_rqsadd: 3,224 / 266
+  rqsp_blocks2convbias_rqsadd: 2,614 / 262
+  pert_blocks1bnweight: 3,691 / 478
+  pert_blocks1bnbias: 2,943 / 498
+  pert_blocks2bnweight: 3,044 / 354
+  pert_blocks2bnbias: 3,091 / 436
+  rqsp_blocks0convweight_int8: 3,968 / 426
+  _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose: 740 / 262
+  rqsp_blocks3convbias_rqsadd: 3,790 / 268
+  rqsp_blocks4convbias_rqsadd: 3,115 / 262
+  pert_blocks3bnweight: 3,048 / 356
+  pert_blocks3bnbias: 2,476 / 436
+  pert_blocks4bnweight: 2,524 / 434
+  pert_blocks4bnbias: 2,412 / 354
+  pert_fcweight_fp32: 6,726 / 578
+  rqsp_blocks1convweight_int8: 73,557 / 800
+  _MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose: 3,292 / 774
+  rqsp_blocks2convweight_int8: 73,251 / 776
+  _MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose: 3,365 / 739
+  rqsp_blocks3convweight_int8: 126,962 / 1,170
+  _MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose: 4,372 / 1,138
+  rqsp_blocks4convweight_int8: 249,539 / 2,096
+  _MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose: 7,905 / 2,096
+  QCDQ_blocks_0_conv_input_quant_1Clip_Quant: 73,474 / 2,780
+  _MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose: 14,450 / 2,782
+  _MERGE_CONVRQ_PASS_0: 1,327,311 / 20,452
+  QCDQ_blocks_0_conv_output_dequantMul_Dequant: 119,621 / 81,826
+  bnBatchNormalization: 473,783 / 82,216
+  poolMaxPool: 141,662 / 10,778
+  poolMaxPool_poolMaxPool_pre_relu_pre_transpose: 22,006 / 10,298
+  reluRelu: 25,192 / 10,298
+  QCDQ_blocks_1_conv_input_quant_1Clip_Quant: 73,934 / 2,768
+  _MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose: 11,672 / 2,766
+  _MERGE_CONVRQ_PASS_1: 796,564 / 5,334
+  QCDQ_blocks_1_conv_output_dequantMul_Dequant: 30,495 / 20,621
+  bn_1BatchNormalization: 136,818 / 20,960
+  pool_1MaxPool: 48,361 / 5,330
+  pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose: 17,757 / 5,297
+  relu_1Relu: 13,217 / 5,294
+  QCDQ_blocks_2_conv_input_quant_1Clip_Quant: 37,942 / 1,524
+  _MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose: 8,081 / 1,520
+  _MERGE_CONVRQ_PASS_2: 223,530 / 1,542
+  QCDQ_blocks_2_conv_output_dequantMul_Dequant: 8,510 / 5,606
+  bn_2BatchNormalization: 38,934 / 5,604
+  pool_2MaxPool: 12,995 / 1,404
+  pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose: 1,840 / 1,367
+  relu_2Relu: 3,602 / 1,406
+  QCDQ_blocks_3_conv_input_quant_1Clip_Quant: 9,364 / 542
+  _MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose: 1,874 / 546
+  _MERGE_CONVRQ_PASS_3: 53,438 / 578
+  QCDQ_blocks_3_conv_output_dequantMul_Dequant: 2,834 / 1,572
+  bn_3BatchNormalization: 30,039 / 1,662
+  bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose: 2,579 / 1,531
+  relu_3Relu: 4,055 / 1,570
+  QCDQ_blocks_4_conv_input_quant_1Clip_Quant: 10,544 / 582
+  _MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose: 2,045 / 544
+  _MERGE_CONVRQ_PASS_4: 60,636 / 346
+  QCDQ_blocks_4_conv_output_dequantMul_Dequant: 1,290 / 586
+  bn_4BatchNormalization: 29,622 / 650
+  bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose: 1,656 / 541
+  relu_4Relu: 1,675 / 578
+  global_poolGlobalAveragePool: 1,810 / 238
+  wrappedInnerForwardImpl_5Gemm: 7,513 / 236
+  CrossEntropyLoss: 8,857 / 286
+  rqsp_upd_blocks0convbias_rqsadd: 1,599 / 140
+  pert_upd_blocks0bnweight: 1,742 / 139
+  pert_upd_blocks0bnbias: 1,286 / 193
+  pert_upd_fcbias_fp32: 1,400 / 199
+  rqsp_upd_blocks1convbias_rqsadd: 1,626 / 119
+  rqsp_upd_blocks2convbias_rqsadd: 1,377 / 119
+  pert_upd_blocks1bnweight: 1,742 / 194
+  pert_upd_blocks1bnbias: 1,421 / 160
+  pert_upd_blocks2bnweight: 1,472 / 194
+  pert_upd_blocks2bnbias: 1,470 / 158
+  rqsp_upd_blocks0convweight_int8: 2,072 / 138
+  rqsp_upd_blocks3convbias_rqsadd: 1,913 / 138
+  rqsp_upd_blocks4convbias_rqsadd: 1,621 / 138
+  pert_upd_blocks3bnweight: 1,428 / 194
+  pert_upd_blocks3bnbias: 1,191 / 158
+  pert_upd_blocks4bnweight: 1,167 / 194
+  pert_upd_blocks4bnbias: 1,186 / 162
+  pert_upd_fcweight_fp32: 3,263 / 274
+  rqsp_upd_blocks1convweight_int8: 40,263 / 370
+  rqsp_upd_blocks2convweight_int8: 40,046 / 388
+  rqsp_upd_blocks3convweight_int8: 69,562 / 585
+  rqsp_upd_blocks4convweight_int8: 136,736 / 1,047

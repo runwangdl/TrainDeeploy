@@ -1,0 +1,64 @@
+The target board you have sourced is : gap9_evk, GAP9_V2.
+Release version: 0.0.0
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVP.py", line 335, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2689, in parse
+    newCtxt, typeCheckSuccess = self._typeCheckNode(currentLayer, newCtxt)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2616, in _typeCheckNode
+    newCtxt, LayerBindSuccess = node.typeCheck(ctxt)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2072, in typeCheck
+    newCtxt, ret = self.mapper.typeCheck(newCtxt, self.node)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1768, in typeCheck
+    newCtxt, ret = binder.typeCheck(ctxt.copy(), node, self.parser.operatorRepresentation)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1606, in typeCheck
+    newCtxt, ret = self.typeChecker.typeCheck(ctxt.copy(), node, operatorRepresentation)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1381, in typeCheck
+    if not self.typeCheckNodeInputs(newCtxt, node):
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1324, in typeCheckNodeInputs
+    reference._instance = _type(inputNode.name, ctxt)
+  File "/app/Deeploy/Deeploy/AbstractDataTypes.py", line 379, in __init__
+    self._mangledReferenceName = ctxt._mangle(_value)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 691, in _mangle
+    repStr = re.sub('\.', '_', repStr)
+  File "/usr/lib/python3.10/re.py", line 209, in sub
+    return _compile(pattern, flags).sub(repl, string, count)
+  File "/usr/lib/python3.10/re.py", line 293, in _compile
+    return _cache[type(pattern), pattern, flags]
+KeyboardInterrupt
+[Deeploy] Network generation failed with return code -2
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : b1_pw_ne16
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/NE16/b1_pw_ne16
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/NE16/b1_pw_ne16
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test b1_pw_ne16 FAILED with exception: Network generation failed for b1_pw_ne16[0m
+RUNNER_EXIT=1

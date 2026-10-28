@@ -1,0 +1,574 @@
+/app/ETH/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+Consolidate compiler generated dependencies of target pulp-nnx
+[  0%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  3%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 95%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[ 95%] Building C object TargetLibraries/PULPOpen/CMakeFiles/deeploypulp.dir/src/GlobalAveragePool.c.obj
+[ 95%] Linking C static library ../../lib/libdeeploypulp.a
+warning: failed to compute relocation: R_RISCV_SET8, Invalid data was encountered while parsing the file
+warning: failed to compute relocation: R_RISCV_SET8, Invalid data was encountered while parsing the file
+warning: failed to compute relocation: R_RISCV_SET8, Invalid data was encountered while parsing the file
+[ 98%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/OptimizerNetwork.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/OptimizerNetwork.c:1:
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/OptimizerNetwork.h:8:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m17 warnings generated.
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[100%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:5:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:4334:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_3_blocks_0_blocks_0_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:6490:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_7_blocks_1_blocks_1_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:8474:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_11_blocks_2_blocks_2_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:10396:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_15_blocks_3_blocks_3_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:12123:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_18_blocks_4_blocks_4_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:12288:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_GlobalAveragePool_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_GlobalAveragePool_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_19_global_pool_GlobalAveragePool_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:12818:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Gemm_fp32_fp32_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+    PULP_Gemm_fp32_fp32_fp32_fp32(
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13195:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13196:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13182:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13209:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13222:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13208:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13221:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13244:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_5_blocks_1_blocks_1_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_5_blocks_1_blocks_1_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13243:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_1_blocks_0_blocks_0_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_1_blocks_0_blocks_0_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13246:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_13_blocks_3_blocks_3_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_13_blocks_3_blocks_3_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13247:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_16_blocks_4_blocks_4_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_16_blocks_4_blocks_4_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13233:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13245:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_9_blocks_2_blocks_2_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_9_blocks_2_blocks_2_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13234:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/TrainingNetwork.c:13183:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m39 warnings generated.
+[100%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_zo_train_2step
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/speechnet_zo_train_2step.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/speechnet_zo_train_2step.dir/src/deeploymezotest.c.obj
+In file included from /app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:64:
+In file included from /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step/OptimizerNetwork.h:8:
+[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:220:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("=== Siracusa MeZO (ZO) Training Harness ===\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:246:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Initializing TrainingNetwork (zo_train)...\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:251:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("[PHASE] InitTrainingNetwork done\r\n");             // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:259:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Initializing OptimizerNetwork (zo_update)...\r\n");  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:264:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("[PHASE] InitOptimizerNetwork done\r\n");             // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:306:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+  ZTRACE("Starting ZO training (%u update steps x %u accum steps)...\r\n",  // -- QW
+[0;1;32m  ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:325:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("  update %u/%u  accum %u/%u  (mini-batch %u)  seed_base=%u\r\n",  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:350:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps forward START\r\n");                  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:358:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps forward DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:370:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] +eps loss read OK: lp_bits=0x%08x\r\n", (unsigned)lp_bits);  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:399:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps forward START\r\n");                  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:407:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps forward DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:418:7: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+      ZTRACE("[PHASE] -eps loss read OK: lm_bits=0x%08x\r\n", (unsigned)lm_bits);  // -- QW
+[0;1;32m      ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:421:40: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+        for (int _k = 0; _k < 9; _k++) ZTRACE("[LP- %d]=0x%08x\r\n", _k, (unsigned)lpb9[_k]); }  // -- QW
+[0;1;32m                                       ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:454:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+    ZTRACE("[PHASE] update (zo_update) START\r\n");            // -- QW
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:462:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'fflush' is invalid in C99 [-Wimplicit-function-declaration][0m
+    ZTRACE("[PHASE] update (zo_update) DONE (%u cyc)\r\n", (unsigned)getCycles());  // -- QW
+[0;1;32m    ^
+[0m[1m/app/ETH/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:216:47: [0m[0;1;30mnote: [0mexpanded from macro 'ZTRACE'[0m
+#define ZTRACE(...) do { printf(__VA_ARGS__); fflush(stdout); } while (0)
+[0;1;32m                                              ^
+[0m33 warnings generated.
+[100%] Linking C executable ../../../bin/speechnet_zo_train_2step
+clang-15: [0;1;35mwarning: [0m[1margument unused during compilation: '-nostartfiles' [-Wunused-command-line-argument][0m
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/string/memchr.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/tinystdio/fflush.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_config.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_exp.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_log.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_uflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_oflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_divzerof.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/machine/riscv/machine/math.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train_2step': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_invalidf.c
+[100%] Built target speechnet_zo_train_2step
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_zo_train_2step
+  Test Directory      : /app/ETH/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train_2step
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DZO_TRACE_POOLIN=1
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  0%] Built target pulp-nnx
+[  3%] Built target deeploybasic
+[  8%] Built target pulp-sdk
+[ 94%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[ 97%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 97%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[ 98%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_zo_train_2step
+[ 98%] Built target speechnet_zo_train_2step
+[100%] POST_BUILD
+Error copying file (if different) from "/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/*.bin" to "/app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/gvsoc_workdir/".
+=== Siracusa MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=1  N_ACCUM_STEPS=1  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.001000000  ZO_Q=1  ZO_SEED=42
+Initializing TrainingNetwork (zo_train)...
+[PHASE] InitTrainingNetwork done
+Initializing OptimizerNetwork (zo_update)...
+[PHASE] InitOptimizerNetwork done
+[WIN  0]=0x3e5df07d 0xbc6e77e2 0xbeeadcce 0x3eae3e1b
+[WIN  1]=0xb55ec410 0x31597c36 0xb5e0670f 0xb4987d8d
+[WIN  2]=0x3f879100 0x3f665050 0x3f742abb 0x3f7699a0
+[WIN  3]=0xbd9041bf 0x3d5f07ef 0xbdaadce3 0x3de9d8e4
+[WIN  4]=0x3d9dd387 0x3da8c9c4 0x3d94db6e 0x3d97104d
+[WIN  5]=0x36734edb 0x36d021eb 0xb61595e9 0x3680cc64
+[WIN  6]=0x3f83499a 0x3f91f9bd 0x3fa568f0 0x3f615c92
+[WIN  7]=0x3e540765 0x3e29e7d1 0x3e537cea 0xbd879b18
+[WIN  8]=0x3dc5345c 0xbd517554 0x3ba1649a 0xbd80cfeb
+[WIN  9]=0x3745f723 0x3610f3de 0x35d5411c 0xb70c2aab
+[WIN 10]=0x3f6e7d52 0x3f72750a 0x3f911497 0x3f8add16
+[WIN 11]=0x3d836407 0xbdae48d3 0xbd084cdb 0xbbf2bc19
+[WIN 12]=0xbe05d20d 0xbd6fcfcb 0xbaf07e0d 0xba894a47
+[WIN 13]=0xb6bef60a 0x365c1644 0x3694f7d6 0xb4af3a7d
+[WIN 14]=0x3f859b72 0x3f777265 0x3f72af7f 0x3f8419a6
+[WIN 15]=0x3c1e9e97 0xbd96de6b 0xbe00f9dd 0xbe165cc1
+[WIN 16]=0x3c7cf45a 0xbd15d74d 0xbbf04cf0 0xbdc28fe2
+[WIN 17]=0xb6e20245 0x355133ee 0x34f3eb16 0xb6cf724e
+[WIN 18]=0x3fca55d4 0x3fbe58ea 0x3fc77c21 0x3fc3615e
+[WIN 19]=0x3e8762fd 0x3e312792 0x3e42c466 0x3e75e395
+[WIN 20]=0xbeac388b 0x3eae62d6 0xbec82ae2 0xbee0e081
+[WIN 21]=0x3df103c0 0x3e1aba46 0x3e396494 0xbe2b5d3b
+Starting ZO training (1 update steps x 1 accum steps)...
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+update 1/1  accum 1/1  (mini-batch 0)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (17828159 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c6cea00
+[POOLIN  0]=0x3d8623d3
+[POOLIN  1]=0x00000000
+[POOLIN  2]=0x3dd27c3a
+[POOLIN  3]=0x00000000
+[POOLIN  4]=0x00000000
+[POOLIN  5]=0x00000000
+[POOLIN  6]=0x00000000
+[POOLIN  7]=0x00000000
+[POOLIN  8]=0x00000000
+[POOLIN  9]=0x00000000
+[POOLIN 10]=0x00000000
+[POOLIN 11]=0x3f205de3
+[POOLIN 12]=0x00000000
+[POOLIN 13]=0x3f68f9e4
+[POOLIN 14]=0x3f7dee35
+[POOLIN 15]=0x3e788582
+[POOLIN 16]=0x3fa1fdc0
+[POOLIN 17]=0x3f13a16b
+[POOLIN 18]=0x3f5a3045
+[POOLIN 19]=0x3f676421
+[POOLIN 20]=0x3e4af092
+[POOLIN 21]=0x00000000
+[POOLIN 22]=0x00000000
+[POOLIN 23]=0x00000000
+[POOLIN 24]=0x00000000
+[POOLIN 25]=0x00000000
+[POOLIN 26]=0x00000000
+[POOLIN 27]=0x00000000
+[POOLIN 28]=0x00000000
+[POOLIN 29]=0x00000000
+[POOLIN 30]=0x00000000
+[POOLIN 31]=0x3e247c96
+[POOLIN 32]=0x00000000
+[POOLIN 33]=0x00000000
+[POOLIN 34]=0x00000000
+[POOLIN 35]=0x00000000
+[POOLIN 36]=0x3f285247
+[POOLIN 37]=0x00000000
+[POOLIN 38]=0x00000000
+[POOLIN 39]=0x3e0e1ce5
+[PW  0]=0xc125f5b8
+[PW  1]=0xc1174ed8
+[PW  2]=0xc134d3ce
+[PW  3]=0xc13eb420
+[PW  4]=0xc109e9e8
+[PW  5]=0xc1043805
+[PW  6]=0xc144c90c
+[PW  7]=0xc089182d
+[PW  8]=0xbc6cea00
+[PW  9]=0x3c6cea00
+[PW 10]=0x3c38de85
+[PW 11]=0x3fcdda17
+[PW 12]=0x400e5010
+[PW 13]=0x40022173
+[PW 14]=0x00000000
+[PW 15]=0x401c58fd
+[PW 16]=0x400f85ea
+[PW 17]=0x3ed21d97
+[PW 18]=0x402c6c73
+[PW 19]=0x3e642938
+[PW 20]=0x3f63fcfb
+[PW 21]=0x3cd480aa
+[PW 22]=0x3c0ccd51
+[PW 23]=0x3e1d2257
+[PW 24]=0x3ebc3525
+[PW 25]=0x4017389e
+[PW 26]=0x3d72db43
+[PW 27]=0x401f939a
+[PW 28]=0x3d5e8505
+[PW 29]=0x3df31385
+[PW 30]=0x3d9663fe
+[PW 31]=0x40242f4d
+[PW 32]=0xbeb15743
+[PW 33]=0x3eb3818e
+[PW 34]=0xbec30c2a
+[PW 35]=0xbedbc1c9
+[PW 36]=0xbec714fe
+[PW 37]=0xbeca160f
+[PW 38]=0x3e9a2e57
+[PW 39]=0xbe91866a
+[PHASE] -eps forward START
+[PHASE] -eps forward DONE (17826280 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3d7e9c00
+[LP- 0]=0xc1052e31
+[LP- 1]=0xc0e7d26a
+[LP- 2]=0xc11a8f04
+[LP- 3]=0xc114acf2
+[LP- 4]=0xc0e215f7
+[LP- 5]=0xc0fdada3
+[LP- 6]=0xc121a58a
+[LP- 7]=0xc03656e6
+[LP- 8]=0xbd7e9c00
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (140759 cyc)
+[loss+ 0] computed=0.014460  ref=0.016488  diff=0.002028  TOL=0.001000
+[loss- 0] computed=0.062160  ref=0.069274  diff=0.007114  TOL=0.001000
+Errors: 2 out of 2
+BENCH train_cycles=35654439 opt_cycles=140759
+Input error: Platform returned an error (exitcode: 1)
+gmake[3]: *** [DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train_2step.dir/build.make:72: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train_2step] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:441: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train_2step.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:448: DeeployTest/Platforms/Siracusa/CMakeFiles/gvsoc_speechnet_zo_train_2step.dir/rule] Error 2
+gmake: *** [Makefile:241: gvsoc_speechnet_zo_train_2step] Error 2
+
+[91m✗ Test speechnet_zo_train_2step FAILED - 2 errors out of 2[0m

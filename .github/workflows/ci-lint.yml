@@ -6,12 +6,13 @@
 name: CI • Lint & Licenses
 
 "on":
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*.*.*"
-  pull_request:
+  # RW 2026-10-13: auto-trigger off on this branch; only ci-speechnet.yml runs on push / pull_request.
+  # push:
+  #   branches:
+  #     - "**"
+  #   tags:
+  #     - "v*.*.*"
+  # pull_request:
   workflow_dispatch:
 
 jobs:

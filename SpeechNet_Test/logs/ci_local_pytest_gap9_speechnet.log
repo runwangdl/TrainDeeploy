@@ -1,0 +1,14 @@
+    memoryMap = self.tiler.computeMemoryMap(self.ctxt, tilingSolution)
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 848, in computeMemoryMap
+    memoryMap[memoryLevel][idx] = self.minimalloc(
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 746, in minimalloc
+    header = next(reader)
+StopIteration
+------------------------------ Captured log call -------------------------------
+WARNING  Deeploy:paths.py:46 Test path /app/Deeploy/SpeechNet_Test/speechnet_train_QZO_single_step is outside base directory. Using /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step
+INFO     Deeploy:execution.py:288 ################## Testing speechnet_train_QZO_single_step on GAP9 Platform ##################
+============================= Performance Summary ==============================
+  [PASS] DeeployTest/test_platforms.py::test_gap9_tiled_speechnet_bp_single_step  train=  20,398,788 cyc  opt=   266,277 cyc  trainable_bytes=  61,956 B
+=========================== short test summary info ============================
+FAILED test_platforms.py::test_gap9_tiled_speechnet_mezo[SpeechNet_QZO_single_step]
+=================== 1 failed, 4 passed in 367.49s (0:06:07) ====================

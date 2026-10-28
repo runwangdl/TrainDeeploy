@@ -5,12 +5,13 @@
 from functools import partial
 from typing import List, Optional, Sequence, Tuple, TypeVar, Union
 
+import os
 import numpy as np
 import onnx_graphsurgeon as gs
 
 from Deeploy.CommonExtensions.OptimizationPasses.Matchers import Match, NonBranchingMatcher
-from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import ReplaceSequentialPatternPass, SequentialPass, \
-    contextagnostic
+from Deeploy.CommonExtensions.OptimizationPasses.PassClasses import Pass, ReplaceSequentialPatternPass, \
+    SequentialPass, contextagnostic
 from Deeploy.TilingExtension.TilingCodegen import HyperRectangle
 
 
@@ -183,6 +184,31 @@ def _transformLayoutDwWeightConst(const: gs.Constant, targetChannelsFirst: bool)
     const.values = const.values.transpose(perm)
 
 
+def _foldLayoutIntoPerturb(weightVar: gs.Variable, spatialDims: int, targetChannelsFirst: bool) -> bool:  # -- QW
+    """ZO (MeZO) weights are produced at runtime by a Perturb node, so the NCHW->NHWC layout change
+    can't be folded into a constant. Rather than emit a runtime Transpose (which materialises a SECOND
+    full-size weight buffer next to the Perturb output — the source of the ~100x slowdown), push the
+    permutation into the Perturb node's CONSTANT base weight at compile time and relabel the Perturb
+    output's shape. Layout-preserving: perturb is elementwise (out shape tracks in shape) and the conv
+    permutation keeps axis 0 (out channels) fixed. Ported from Deeploy zo-support. Returns True iff
+    folded; callers fall back to a runtime Transpose otherwise. -- QW
+    """  # -- QW
+    if weightVar.shape is None or len(weightVar.shape) < 2:  # -- QW
+        return False  # -- QW
+    if len(weightVar.inputs) != 1:  # -- QW
+        return False  # -- QW
+    perturbNode = weightVar.inputs[0]  # -- QW
+    if "Perturb" not in perturbNode.op:  # -- QW
+        return False  # -- QW
+    baseWeight = perturbNode.inputs[0]  # -- QW  data_in: the constant base weight
+    if not isinstance(baseWeight, gs.Constant) or list(baseWeight.shape) != list(weightVar.shape):  # -- QW
+        return False  # -- QW
+    perm = _transformLayoutPermutation(len(weightVar.shape), spatialDims, targetChannelsFirst)  # -- QW
+    baseWeight.values = baseWeight.values.transpose(perm)  # -- QW
+    weightVar.shape = _permute(weightVar.shape, perm)  # -- QW
+    return True  # -- QW
+
+
 def _transposeMatMulInputs_fun(graph: gs.Graph, match: Match, name: str):
     node = next(iter((match.nodes_map.values())))
 
@@ -234,10 +260,32 @@ def _NCHWtoNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_f
         tensorIn = node.inputs[0]
         tensorOut = node.outputs[0]
 
-        if node.op in ["RequantizedConv", "Conv"]:
-            spatialDims = len(node.inputs[1].shape) - 2
-        elif node.op in ["MaxPool", "MaxPoolGrad", "AveragePool", "AveragePoolGrad"]:
+        if node.op in ["RequantizedConv", "Conv", "RequantizedDualConv"]:  # QW exp5: +RequantizedDualConv -- QW
+            # QW (exp16a): this infers the SPATIAL rank from the WEIGHT's rank, which assumes the
+            #     weight is still the logical NCHW [cout, cin, *spatial] tensor. That holds for
+            #     every ordinary conv, and for NE16 convs whose weight is encoded LATER by
+            #     NE16AdjustWeightMemoryLayoutPass. It does NOT hold when the weight arrives
+            #     ALREADY bit-serial-encoded (rank 3) as a runtime graph input: spatialDims then
+            #     comes out as 1 and this pass builds a 1-D permutation [0,1,3,2] for a 4-D
+            #     activation, silently swapping H and W. Take the spatial rank from kernel_shape
+            #     in that case -- for any ordinary conv the two agree, so nothing else changes.
+            if "ne16_weight_preencoded" in node.attrs and "kernel_shape" in node.attrs:  # -- QW
+                spatialDims = len(node.attrs["kernel_shape"])  # -- QW
+            else:
+                spatialDims = len(node.inputs[1].shape) - 2
+        elif node.op in [
+                "MaxPool", "MaxPoolGrad", "MaxPoolArgmax", "MaxPoolGradMask", "AveragePool", "AveragePoolGrad"
+        ]:  # QW: +MaxPoolArgmax/MaxPoolGradMask (Part-4) -- QW
             spatialDims = len(node.attrs["kernel_shape"])
+        elif node.op in ["Quant", "Dequant"]:
+            # QW: Quant/Dequant are ELEMENTWISE — NHWC is a pure layout permutation of the activation.
+            #     Making them NHWC (like their MaxPool/RequantizedConv neighbours) lets the transpose-merge
+            #     passes CANCEL the round-trip transposes (NHWC→NCHW→Quant→NCHW→NHWC) that otherwise
+            #     scramble C>1 inter-block quant on device (block-0 C=1 hid it; block-1 C=8 exposed it). -- QW
+            spatialDims = len(tensorIn.shape) - 2
+        elif node.op == "BatchNormInternal":  # RW 2026-10-13: frozen-stat BN, elementwise per channel
+            spatialDims = len(tensorIn.shape) - 2
+            node.attrs["bn_nhwc"] = 1
         elif node.op == "Pad":
             spatialDims = 2  # Hack based on current status
         else:
@@ -250,8 +298,10 @@ def _NCHWtoNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_f
         permuteOut = _transformLayoutPermutation(len(tensorOut.shape), spatialDims, channels_first)
         graph.nodes.append(_prependTranspose(tensorOut, node, permuteOut))
 
+        _maxPoolGradXDone = False  # RW merge: devel's shared-transpose path below owns MaxPoolGrad's X
         if node.op == "MaxPoolGrad" and len(node.inputs) > 1 and node.inputs[1].shape is not None \
                 and len(node.inputs[1].shape) == len(tensorIn.shape):
+            _maxPoolGradXDone = True
             # MaxPoolGrad(dY, X): the kernel reads X in the same layout as dY. X is the
             # forward pool's input, which that pool already transposed; read that copy
             # rather than transposing the (large) activation a second time.
@@ -264,17 +314,50 @@ def _NCHWtoNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_f
             else:
                 graph.nodes.append(_appendTranspose(x, node, permX))
 
-        if node.op in ["Conv", "RequantizedConv"]:
+        if node.op in ["Conv", "RequantizedConv", "RequantizedDualConv"]:  # QW exp5: +RequantizedDualConv (inputs[1:] = weight, mul, add, wmul, bmul) -- QW
+            # QW (exp16a): a PRE-ENCODED NE16 weight is already in the accelerator's bit-serial
+            #     layout -- it is NOT a logical [cout, cin, *spatial] tensor and must never be
+            #     layout-permuted. Skip input[1] for such nodes; mul/add/shift still get handled.
+            # _skipWeight = "ne16_weight_preencoded" in node.attrs  # -- QW (exp16a original)
+            # QW (dual_pass_fusion exp7): the 7-input RequantizedDualConv takes its weight in RAW CHW order
+            #     (attr weight_chw) and perturbs it in that order inside the kernel -- leave it untransposed.
+            #     Its x- (input 6, rank 4) needs no special case: the loop below transposes it with the 4-D
+            #     NCHW->NHWC permutation, which is the activation's. -- QW
+            _skipWeight = "ne16_weight_preencoded" in node.attrs or bool(int(node.attrs.get("weight_chw", 0)))  # -- QW
             # In the case of Conv: [weights, opt. bias], RequantizedConv: [weights, mul, add, opt. shift]
-            for tensor in node.inputs[1:]:
+            for _tIdx, tensor in enumerate(node.inputs[1:]):
+                if _skipWeight and _tIdx == 0:  # -- QW
+                    continue  # -- QW
                 if isinstance(tensor, gs.Constant):
                     # Inference graph: weight is a fixed constant — permute its data in-place.
                     _transformLayoutConst(tensor, spatialDims, default_channels_first)
                 elif isinstance(tensor, gs.Variable) and tensor.shape is not None and len(tensor.shape) >= 2:
-                    # Training graph: weight is a Variable (updated by the optimizer) — cannot permute
-                    # in-place, so insert an explicit Transpose node that will run at inference/forward time.
+                    # ZO (MeZO): weight is a Perturb-node output. Use a runtime Transpose (exactly like the
+                    # BP/training path), NOT _foldLayoutIntoPerturb. Folding the NCHW->NHWC permutation into
+                    # the perturb's constant base weight makes the perturb kernel generate its Rademacher z
+                    # over the TRANSPOSED flat buffer, so for in_ch>1 conv weights z lands on different
+                    # elements than the reference (which perturbs in logical NCHW order) -> device perturbed
+                    # weight != reference -> wrong loss (verified: conv1-4 diverge, conv0 in_ch=1 does not).
+                    # The perturb MUST run in logical order to match the reference; the Transpose then
+                    # converts the already-perturbed weight to NHWC for the conv. (The fold's "~100x slowdown"
+                    # rationale was a misdiagnosis — that was the FP-on-FPU-less-FC illegal-instr trap, now
+                    # fixed in deeploymezotest.c.) -- QW
                     perm = _transformLayoutPermutation(len(tensor.shape), spatialDims, default_channels_first)
                     graph.nodes.append(_appendTranspose(tensor, node, perm))
+
+        # QW: transpose the 2nd activation input to NHWC like the primary input.
+        #     MaxPoolGrad: inputs[1] = forward X (recompute source); MaxPoolGradMask (Part-4):
+        #     inputs[1] = the argmax mask (pooled shape). Both are 4D activations that must
+        #     match the NHWC layout, else the channel-tiler tiles the wrong axis. -- QW
+        if node.op == "MaxPoolGradMask" or (node.op == "MaxPoolGrad" and not _maxPoolGradXDone):  # RW merge: no double transpose
+            # MaxPoolGrad has a SECOND activation input (inputs[1] = the forward input X,
+            # used to recompute the argmax). The HWC kernel reads it in NHWC, so it must be
+            # transposed like the primary input. Without this, X stays NCHW while dY/dX are
+            # NHWC, so the kernel reads wrong window values and routes the gradient to the
+            # wrong positions — a silent correctness bug for non-square / asymmetric pools.
+            tensorX = node.inputs[1]
+            permuteX = _transformLayoutPermutation(len(tensorX.shape), spatialDims, default_channels_first)
+            graph.nodes.append(_appendTranspose(tensorX, node, permuteX))  # -- QW
 
         node.attrs["channels_first"] = default_channels_first
 
@@ -288,6 +371,72 @@ class NCHWtoNHWCMaxPoolPass(ReplaceSequentialPatternPass):
         graph = _singleNodePattern(op = "MaxPool")
         name = "_NCHW_TO_NHWC_MAXPOOL_PASS"
         super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
+
+
+@contextagnostic
+class NCHWtoNHWCQuantPass(ReplaceSequentialPatternPass):
+    # QW: wrap elementwise Quant in the NHWC layout so MaxPool→Quant→RequantizedConv are all NHWC and the
+    #     redundant round-trip transposes cancel (fixes C>1 inter-block quant on device). -- QW
+    def __init__(self, default_channels_first: bool = True):
+        graph = _singleNodePattern(op = "Quant")
+        name = "_NCHW_TO_NHWC_QUANT_PASS"
+        super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
+
+
+@contextagnostic
+class NCHWtoNHWCDequantPass(ReplaceSequentialPatternPass):  # QW -- QW
+    def __init__(self, default_channels_first: bool = True):
+        graph = _singleNodePattern(op = "Dequant")
+        name = "_NCHW_TO_NHWC_DEQUANT_PASS"
+        super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
+
+
+def _bnFrozenNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_first: bool = True):
+    # RW 2026-10-13: only when the generator was asked for frozen-stat BN (DEEPLOY_BN_FROZEN_NHWC, set by the MeZO
+    # runner for -D BN_FROZEN_STATS=ON) and nothing reads the statistics outputs (forward-only graphs; BP graphs
+    # feed saved_mean / saved_inv_std to BatchNormalizationGrad and keep NCHW). Then BN is an elementwise
+    # per-channel affine map and channels-last lets the transposes around it cancel with the conv's / pool's.
+    node = next(iter((match.nodes_map.values())))
+    if os.environ.get("DEEPLOY_BN_FROZEN_NHWC", "0") != "1":
+        return graph
+    if len(node.inputs[0].shape) != 4 or any(len(o.outputs) > 0 for o in node.outputs[1:]):
+        return graph
+    return _NCHWtoNHWC_fun(graph, match, name, default_channels_first)
+
+
+def _dequantNHWC_fun(graph: gs.Graph, match: Match, name: str, default_channels_first: bool = True):
+    # RW 2026-10-13: per-tensor Dequant between a channels-last conv and a channels-last BN; 4-D only.
+    node = next(iter((match.nodes_map.values())))
+    if os.environ.get("DEEPLOY_BN_FROZEN_NHWC", "0") != "1" or len(node.inputs[0].shape) != 4:
+        return graph
+    if not all(c.op == "BatchNormInternal" for c in node.outputs[0].outputs):
+        return graph
+    return _NCHWtoNHWC_fun(graph, match, name, default_channels_first)
+
+
+@contextagnostic
+class NCHWtoNHWCBatchNormInternalPass(Pass):
+    # A plain node walk: the single-node pattern matcher does not match BatchNormInternal's five outputs.
+
+    def __init__(self, default_channels_first: bool = True):
+        super().__init__()
+        self.default_channels_first = default_channels_first
+        self.name = "_NCHW_TO_NHWC_BATCHNORMINTERNAL_PASS"
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        for node in [n for n in graph.nodes if n.op == "BatchNormInternal"]:
+            graph = _bnFrozenNHWC_fun(graph, Match(None, {"bn": node}), self.name, self.default_channels_first)
+        graph.cleanup().toposort()
+        return graph
+
+
+@contextagnostic
+class NCHWtoNHWCDequantBeforeBNPass(ReplaceSequentialPatternPass):
+
+    def __init__(self, default_channels_first: bool = True):
+        graph = _singleNodePattern(op = "Dequant")
+        name = "_NCHW_TO_NHWC_DEQUANT_BEFORE_BN_PASS"
+        super().__init__(graph, partial(_dequantNHWC_fun, default_channels_first = default_channels_first), name)
 
 
 @contextagnostic
@@ -317,11 +466,31 @@ class NCHWtoNHWCMaxPoolGradPass(ReplaceSequentialPatternPass):
         super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
 
 
+# QW: Part-4 layout passes for the argmax-mask ops (mirror MaxPool/MaxPoolGrad); without these
+# their activations stay NCHW and the HWC channel-tiler tiles the wrong axis. -- QW
+@contextagnostic
+class NCHWtoNHWCMaxPoolArgmaxPass(ReplaceSequentialPatternPass):
+
+    def __init__(self, default_channels_first: bool = True):
+        graph = _singleNodePattern(op = "MaxPoolArgmax")
+        name = "_NCHW_TO_NHWC_MAXPOOLARGMAX_PASS"
+        super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
+
+
+@contextagnostic
+class NCHWtoNHWCMaxPoolGradMaskPass(ReplaceSequentialPatternPass):
+
+    def __init__(self, default_channels_first: bool = True):
+        graph = _singleNodePattern(op = "MaxPoolGradMask")
+        name = "_NCHW_TO_NHWC_MAXPOOLGRADMASK_PASS"
+        super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name)
+
+
 @contextagnostic
 class NCHWtoNHWCConvPass(ReplaceSequentialPatternPass):
 
     def __init__(self, default_channels_first: bool = True):
-        graph = _singleNodePattern(op = "Conv|RequantizedConv")
+        graph = _singleNodePattern(op = "Conv|RequantizedConv|RequantizedDualConv")  # QW exp5 -- QW
         name = "_NCHW_TO_NHWC_CONV_PASS"
         super().__init__(graph, partial(_NCHWtoNHWC_fun, default_channels_first = default_channels_first), name,
                          NonBranchingMatcher(regex_op = True))
@@ -438,10 +607,48 @@ class PULPNCHWtoNHWCPass(SequentialPass):
             NCHWtoNHWCAveragePoolPass(default_channels_first),
             NCHWtoNHWCAveragePoolGradPass(default_channels_first),
             NCHWtoNHWCMaxPoolGradPass(default_channels_first),
+            NCHWtoNHWCMaxPoolArgmaxPass(default_channels_first),   # QW: Part-4 -- QW
+            NCHWtoNHWCMaxPoolGradMaskPass(default_channels_first),  # QW: Part-4 -- QW
+            # QW: NCHWtoNHWCQuantPass DISABLED — cancels the MaxPool→Quant→Conv transposes structurally but
+            #     changes the numerics net-worse (L- 10.36→20.89); the transposes (verified correct perms)
+            #     were NOT the root cause. Left the pass class defined for future use. -- QW
             PULPNCHWtoNHWCDwConvPass(default_channels_first),
             NCHWtoNHWCConvPass(default_channels_first),
+            NCHWtoNHWCDequantBeforeBNPass(default_channels_first),  # RW 2026-10-13: before the BN pass (checks its consumer)
+            NCHWtoNHWCBatchNormInternalPass(default_channels_first),  # RW 2026-10-13: frozen-stat BN only
         ]
         super().__init__(*passes)
+
+
+# QW: Part-4. Merge sibling Transpose nodes (same input tensor + same perm) into a single
+# Transpose feeding all consumers. The layout passes create a SEPARATE input transpose for each
+# op that reads the same block activation (MaxPool, MaxPoolArgmax, MaxPoolGradMask), and each costs
+# a full-size buffer. Deduping them removes the redundant 314 KB-class transpose buffers. Must run
+# AFTER the last TransposeSplitPass so it is not re-split. -- QW
+@contextagnostic
+class MergeSiblingTransposesPass(Pass):
+
+    def __init__(self):
+        super().__init__()
+        self.name = "_MERGE_SIBLING_TRANSPOSES_PASS"
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        seen: dict = {}
+        for node in list(graph.nodes):
+            if node.op != "Transpose" or not node.inputs or not node.outputs:
+                continue
+            key = (node.inputs[0].name, tuple(node.attrs.get("perm", [])))
+            if key in seen:
+                keepOut = seen[key].outputs[0]
+                dupOut = node.outputs[0]
+                for consumer in list(dupOut.outputs):
+                    consumer.inputs = [keepOut if inp is dupOut else inp for inp in consumer.inputs]
+                node.inputs = []
+                node.outputs = []
+            else:
+                seen[key] = node
+        graph.cleanup().toposort()
+        return graph
 
 
 def _requantized_gemm_to_pw_fun(graph: gs.Graph, match: Match, name: str):

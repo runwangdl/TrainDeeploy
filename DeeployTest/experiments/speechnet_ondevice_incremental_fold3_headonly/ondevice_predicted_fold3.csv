@@ -1,0 +1,6 @@
+batch,note,ondevice_pred
+1,zero-shot,80.56
+2,FT on b1..b1,89.44
+3,FT on b1..b2,80.0
+4,FT on b1..b3,83.89
+5,FT on b1..b4,82.22

@@ -1,0 +1,339 @@
+# Copyright (C) 2023, Advanced Micro Devices, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+from typing import Optional
+from typing import Tuple
+from typing import Union
+
+import torch
+from torch import Tensor
+from torch.nn import Module
+
+import brevitas
+from brevitas.core.function_wrapper import TensorClamp
+from brevitas.core.quant.delay import DelayWrapper
+from brevitas.core.scaling import TruncMsbScaling
+from brevitas.core.utils import StatelessBuffer
+from brevitas.function.ops import max_int
+from brevitas.function.ops import min_int
+from brevitas.function.ops_ste import round_ste
+
+
+class PrescaledRestrictIntQuantWithInputBitWidth(brevitas.jit.ScriptModule):
+    """
+    ScriptModule that wraps around an integer quantization implementation like
+    :class:`~brevitas.core.quant.IntQuant`. Zero-point is set to zero, scale is taken as input,
+    bit-width is computed from an input bit-width.
+
+    Args:
+        int_quant (Module): Module that implements integer quantization.
+        bit_width_impl (Module): Module that takes the input bit-width in and returns the bit-width
+            to be used for quantization.
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor]: Quantized output in de-quantized format, scale,
+            zero-point, bit_width.
+
+    Examples:
+        >>> from brevitas.core.scaling import ConstScaling
+        >>> from brevitas.core.function_wrapper import Identity
+        >>> from brevitas.core.quant import IntQuant
+        >>> int_quant = IntQuant(narrow_range=True, signed=True)
+        >>> int_quant_wrapper = PrescaledRestrictIntQuantWithInputBitWidth(int_quant, Identity())
+        >>> scale, input_bit_width = torch.tensor(0.01), torch.tensor(4.)
+        >>> inp = torch.Tensor([0.042, -0.053, 0.31, -0.44])
+        >>> out, scale, zero_point, bit_width = int_quant_wrapper(inp, scale, input_bit_width)
+        >>> out
+        tensor([ 0.0400, -0.0500,  0.0700, -0.0700])
+        >>> scale
+        tensor(0.0100)
+        >>> zero_point
+        tensor(0.)
+        >>> bit_width
+        tensor(4.)
+
+    Note:
+        Set env variable BREVITAS_JIT=1 to enable TorchScript compilation of this module.
+    """
+
+    def __init__(self, int_quant: Module, bit_width_impl: Module):
+        super(PrescaledRestrictIntQuantWithInputBitWidth, self).__init__()
+        self.int_quant = int_quant
+        self.msb_clamp_bit_width_impl = bit_width_impl
+        self.zero_point = StatelessBuffer(torch.tensor(0.0))
+
+    @brevitas.jit.script_method
+    def forward(self, x: Tensor, scale: Tensor,
+                input_bit_width: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+        bit_width = self.msb_clamp_bit_width_impl(input_bit_width)
+        zero_point = self.zero_point()
+        y = self.int_quant(scale, zero_point, bit_width, x)
+        return y, scale, zero_point, bit_width
+
+
+class PrescaledRestrictIntQuant(brevitas.jit.ScriptModule):
+    """
+    """
+
+    def __init__(self, int_quant: Module, bit_width_impl: Module):
+        super(PrescaledRestrictIntQuant, self).__init__()
+        self.int_quant = int_quant
+        self.msb_clamp_bit_width_impl = bit_width_impl
+        self.zero_point = StatelessBuffer(torch.tensor(0.0))
+
+    @brevitas.jit.script_method
+    def forward(self, x: Tensor, scale: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+        msb_clamp_bit_width = self.msb_clamp_bit_width_impl()
+        zero_point = self.zero_point()
+        y = self.int_quant(scale, zero_point, msb_clamp_bit_width, x)
+        return y, scale, zero_point, msb_clamp_bit_width
+
+
+class RescalingIntQuant(brevitas.jit.ScriptModule):
+    """
+    ScriptModule that wraps around an integer quantization implementation like
+    :class:`~brevitas.core.quant.IntQuant`. Scale, zero-point and bit-width are returned from their
+    respective implementations and passed on to the integer quantization implementation.
+
+    Args:
+        int_quant (Module): Module that implements integer quantization.
+        scaling_impl (Module): Module that takes in the input to quantize and returns a scale factor,
+            here interpreted as threshold on the floating-point range of quantization.
+        int_scaling_impl (Module): Module that takes in a bit-width and returns an integer scale
+            factor, here interpreted as threshold on the integer range of quantization.
+        zero_point_impl (Module): Module that returns an integer zero-point.
+        bit_width_impl (Module): Module that returns a bit-width.
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor]: Quantized output in de-quantized format, scale,
+            zero-point, bit_width.
+
+    Examples:
+        >>> from brevitas.core.scaling import ConstScaling
+        >>> from brevitas.core.zero_point import ZeroZeroPoint
+        >>> from brevitas.core.scaling import IntScaling
+        >>> from brevitas.core.quant import IntQuant
+        >>> from brevitas.core.bit_width import BitWidthConst
+        >>> int_quant_wrapper = RescalingIntQuant(
+        ...                         IntQuant(narrow_range=True, signed=True),
+        ...                         ConstScaling(0.1),
+        ...                         IntScaling(signed=True, narrow_range=True),
+        ...                         ZeroZeroPoint(),
+        ...                         BitWidthConst(4))
+        >>> inp = torch.Tensor([0.042, -0.053, 0.31, -0.44])
+        >>> out, scale, zero_point, bit_width = int_quant_wrapper(inp)
+        >>> out
+        tensor([ 0.0429, -0.0571,  0.1000, -0.1000])
+        >>> scale
+        tensor(0.0143)
+        >>> zero_point
+        tensor(0.)
+        >>> bit_width
+        tensor(4.)
+
+    Note:
+        scale = scaling_impl(x) / int_scaling_impl(bit_width)
+
+    Note:
+        Set env variable BREVITAS_JIT=1 to enable TorchScript compilation of this module.
+    """
+
+    def __init__(
+            self,
+            int_quant: Module,
+            scaling_impl: Module,
+            int_scaling_impl: Module,
+            zero_point_impl: Module,
+            bit_width_impl: Module):
+        super(RescalingIntQuant, self).__init__()
+        self.int_quant = int_quant
+        self.scaling_impl = scaling_impl
+        self.int_scaling_impl = int_scaling_impl
+        self.zero_point_impl = zero_point_impl
+        self.msb_clamp_bit_width_impl = bit_width_impl
+        self.observer_only = brevitas.jit.Attribute(False, bool)
+
+    @brevitas.jit.script_method
+    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+        bit_width = self.msb_clamp_bit_width_impl()
+        int_threshold = self.int_scaling_impl(bit_width)
+        scale = self.scaling_impl(x, int_threshold)
+        zero_point = self.zero_point_impl(x, scale, bit_width)
+        if self.observer_only:
+            y = x
+        else:
+            y = self.int_quant(scale, zero_point, bit_width, x)
+        return y, scale, zero_point, bit_width
+
+
+class DecoupledRescalingIntQuant(brevitas.jit.ScriptModule):
+
+    def __init__(
+            self,
+            decoupled_int_quant: Module,
+            pre_scaling_impl: Module,
+            scaling_impl: Module,
+            int_scaling_impl: Module,
+            pre_zero_point_impl: Module,
+            zero_point_impl: Module,
+            bit_width_impl: Module):
+        super(DecoupledRescalingIntQuant, self).__init__()
+        self.decoupled_int_quant = decoupled_int_quant
+        self.pre_scaling_impl = pre_scaling_impl
+        self.scaling_impl = scaling_impl
+        self.int_scaling_impl = int_scaling_impl
+        self.pre_zero_point_impl = pre_zero_point_impl
+        self.zero_point_impl = zero_point_impl
+        self.msb_clamp_bit_width_impl = bit_width_impl
+        self.observer_only = brevitas.jit.Attribute(False, bool)
+
+    @brevitas.jit.script_method
+    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        bit_width = self.msb_clamp_bit_width_impl()
+        int_threshold = self.int_scaling_impl(bit_width)
+        pre_threshold = self.pre_scaling_impl(x)
+        pre_scale = pre_threshold / int_threshold
+        pre_zero_point = self.pre_zero_point_impl(x, pre_scale, bit_width)
+        scale = self.scaling_impl(x, int_threshold)
+        zero_point = self.zero_point_impl(x, scale, bit_width)
+        if self.observer_only:
+            y = x
+        else:
+            y = self.decoupled_int_quant(pre_scale, pre_zero_point, scale, zero_point, bit_width, x)
+        return y, scale, zero_point, bit_width, pre_scale, pre_zero_point
+
+
+class TruncIntQuant(brevitas.jit.ScriptModule):
+    """
+    ScriptModule that requantizes some integer quantization format to another integer quantization
+    format. The signed parameter is maintained from the previous format.
+
+    Args:
+        float_to_int_impl (Module): Module that performs the conversion from floating point to
+            integer representation.
+        bit_width_impl (Module): Module that returns a bit-width.
+        trunc_scaling_impl (Module): Module that returns the truncation scale, an extra
+            multiplicative factor that is applied before the truncation. Default: TruncMsbScaling()
+        narrow_range (bool): Flag that determines whether restrict quantization to a narrow range
+            or not. Default: False
+        tensor_clamp_impl (Module): Module that performs clamping. Default: TensorClamp()
+        quant_delay_steps (int): Number of training steps to delay quantization for. Default: 0
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor]: Quantized output in de-quantized format, scale,
+            zero-point, bit_width.
+
+    Examples:
+        >>> from brevitas.core.quant import TruncIntQuant
+        >>> from brevitas.core.function_wrapper import RoundSte
+        >>> from brevitas.core.bit_width import BitWidthConst
+        >>> trunc_quant = TruncIntQuant(RoundSte(), BitWidthConst(4))
+        >>> scale, zero_point, bit_width, signed = torch.tensor(0.01), torch.tensor(0.), torch.tensor(8.), torch.tensor(True)
+        >>> inp = torch.Tensor([0.04, -0.05, 0.31, -0.44])
+        >>> out, scale, zero_point, bit_width = trunc_quant(inp, scale, zero_point, bit_width, signed)
+        >>> out
+        >>> tensor([ 0.0000, -0.0000,  0.3200, -0.4800])
+        >>> scale
+        tensor(0.1600)
+        >>> zero_point
+        tensor(0.)
+        >>> bit_width
+        tensor(4.)
+
+    Note:
+        Maps to quant_type == QuantType.INT == 'INT' == 'int' in higher-level APIs.
+
+    Note:
+        Set env variable BREVITAS_JIT=1 to enable TorchScript compilation of this module.
+    """
+
+    __constants__ = ['narrow_range']
+
+    def __init__(
+            self,
+            float_to_int_impl: Module,
+            bit_width_impl: Module,
+            trunc_scaling_impl: Module = TruncMsbScaling(),
+            narrow_range: bool = False,
+            tensor_clamp_impl: Module = TensorClamp(),
+            quant_delay_steps: int = 0):
+        super(TruncIntQuant, self).__init__()
+        self.narrow_range = narrow_range
+        self.msb_clamp_bit_width_impl = bit_width_impl
+        self.trunc_scaling_impl = trunc_scaling_impl
+        self.float_to_int_impl = float_to_int_impl
+        self.tensor_clamp_impl = tensor_clamp_impl
+        self.delay_wrapper = DelayWrapper(quant_delay_steps)
+
+    @brevitas.jit.script_method
+    def min_int(self, bit_width: Tensor, signed: Union[bool, Tensor]):
+        return min_int(signed, self.narrow_range, bit_width)
+
+    @brevitas.jit.script_method
+    def max_int(self, bit_width: Tensor, signed: Union[bool, Tensor]):
+        return max_int(signed, self.narrow_range, bit_width)
+
+    @brevitas.jit.script_method
+    def forward(
+            self,
+            x: Tensor,
+            scale: Tensor,
+            zero_point: Tensor,
+            input_bit_width: Tensor,
+            signed: Union[bool, Tensor]) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+        y = x / scale
+        y = y + zero_point
+        y = round_ste(y)  # clean up floating point error
+        output_bit_width = self.msb_clamp_bit_width_impl()
+        trunc_scale = self.trunc_scaling_impl(y, input_bit_width, output_bit_width, signed)
+        y = y / trunc_scale
+        min_int_val = self.min_int(output_bit_width, signed)
+        max_int_val = self.max_int(output_bit_width, signed)
+        y = self.float_to_int_impl(y)
+        y = self.tensor_clamp_impl(y, min_val=min_int_val, max_val=max_int_val)
+        output_scale = scale * trunc_scale
+        output_zero_point = zero_point / trunc_scale
+        y = y - output_zero_point
+        y = y * output_scale
+        y = self.delay_wrapper(x, y)
+        return y, output_scale, output_zero_point, output_bit_width
+
+
+class DecoupledRescalingIntQuantWithInput(DecoupledRescalingIntQuant):
+
+    def __init__(
+        self,
+        decoupled_int_quant: Module,
+        pre_scaling_impl: Module,
+        scaling_impl: Module,
+        int_scaling_impl: Module,
+        pre_zero_point_impl: Module,
+        zero_point_impl: Module,
+        bit_width_impl: Module,
+    ):
+        super().__init__(
+            decoupled_int_quant,
+            pre_scaling_impl,
+            scaling_impl,
+            int_scaling_impl,
+            pre_zero_point_impl,
+            zero_point_impl,
+            bit_width_impl,
+        )
+        # TODO - check the make sure the pre-scaling module takes the input bit-width and sign
+
+    @brevitas.jit.script_method
+    def forward(self, x: Tensor, input_bit_width: Tensor,
+                input_is_signed: bool) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+        bit_width = self.msb_clamp_bit_width_impl()
+        int_threshold = self.int_scaling_impl(bit_width)
+        pre_threshold = self.pre_scaling_impl(x, input_bit_width, input_is_signed)
+        pre_scale = pre_threshold / int_threshold
+        pre_zero_point = self.pre_zero_point_impl(x, pre_scale, bit_width)
+        scale = self.scaling_impl(x, int_threshold)
+        zero_point = self.zero_point_impl(x, scale, bit_width)
+        if self.observer_only:
+            y = x
+        else:
+            y = self.decoupled_int_quant(pre_scale, pre_zero_point, scale, zero_point, bit_width, x)
+        return y, scale, zero_point, bit_width, pre_scale, pre_zero_point

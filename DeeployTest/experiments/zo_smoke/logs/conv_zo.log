@@ -1,0 +1,48 @@
+[Deeploy] Test path /app/ETH/Onnx4Deeploy/onnx/model/conv_zo_train is outside base directory. Using /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/conv_zo_train
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : conv_zo_train
+  Test Directory      : /app/ETH/Onnx4Deeploy/onnx/model/conv_zo_train
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/conv_zo_train
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[W] colored module is not installed, will not use colors when logging. To enable colors, please install the colored module: python3 -m pip install colored
+[W] Inference failed. You may want to try enabling partitioning to see better results. Note: Error was:
+[ONNXRuntimeError] : 10 : INVALID_GRAPH : This is an invalid model. In Node, ("_0", PerturbRademacher, "", -1) : ("conv0_weight_tensor": tensor(float),) -> ("pcw_tensor": tensor(float),) , Error No Op registered for PerturbRademacher with domain_version of 21
+Traceback (most recent call last):
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPTraining.py", line 333, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPTraining.py", line 161, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3455, in frontEnd
+    self._assertTensorsHaveShape()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3404, in _assertTensorsHaveShape
+    assert len(missingShapes) == 0, \
+AssertionError: Shape inference is not supported.
+Found tensors with missing shape annotation: ['o1_tensor', 'o2_tensor', 'o3_tensor', 'o4_tensor']
+
+[91m✗ Test conv_zo_train FAILED with exception: Tiled MeZO network generation failed for conv_zo_train[0m

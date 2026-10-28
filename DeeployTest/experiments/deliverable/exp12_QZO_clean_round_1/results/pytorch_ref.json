@@ -1,0 +1,7 @@
+{
+ "zero_shot": 85.00000000000001,
+ "after": 89.44444444444444,
+ "lr": 1e-05,
+ "steps": 2700,
+ "fc": "float(device-faithful)"
+}

@@ -1,0 +1,295 @@
+{
+ "float_zo": {
+  "total_kernel": 34324322,
+  "total_overhead": 1493008,
+  "total": 35817330,
+  "per_class": {
+   "Conv": {
+    "kernel": 29156830,
+    "overhead": 275589,
+    "nodes": 5
+   },
+   "Transpose": {
+    "kernel": 1627647,
+    "overhead": 565912,
+    "nodes": 15
+   },
+   "MaxPool": {
+    "kernel": 1670404,
+    "overhead": 144971,
+    "nodes": 3
+   },
+   "BatchNorm": {
+    "kernel": 1190650,
+    "overhead": 219101,
+    "nodes": 5
+   },
+   "ReLU": {
+    "kernel": 268223,
+    "overhead": 219711,
+    "nodes": 5
+   },
+   "Perturb": {
+    "kernel": 392806,
+    "overhead": 65186,
+    "nodes": 44
+   },
+   "Loss(SCE)": {
+    "kernel": 8697,
+    "overhead": 756,
+    "nodes": 1
+   },
+   "Gemm/FC": {
+    "kernel": 7343,
+    "overhead": 928,
+    "nodes": 1
+   },
+   "GlobalAvgPool": {
+    "kernel": 1722,
+    "overhead": 854,
+    "nodes": 1
+   }
+  },
+  "top_nodes": [
+   {
+    "node": "node_1_blocks_0_blocks_0_0_Conv_L2",
+    "kernel": 14611046,
+    "overhead": 197625,
+    "tiles": 8
+   },
+   {
+    "node": "node_5_blocks_1_blocks_1_0_Conv_L2",
+    "kernel": 12193533,
+    "overhead": 49628,
+    "tiles": 4
+   },
+   {
+    "node": "node_9_blocks_2_blocks_2_0_Conv_L2",
+    "kernel": 1841123,
+    "overhead": 12678,
+    "tiles": 2
+   },
+   {
+    "node": "node_4_blocks_0_blocks_0_3_MaxPool_L2",
+    "kernel": 1526133,
+    "overhead": 112979,
+    "tiles": 8
+   },
+   {
+    "node": "node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2",
+    "kernel": 1370899,
+    "overhead": 239984,
+    "tiles": 16
+   },
+   {
+    "node": "node_2_blocks_0_blocks_0_1_BatchNormalization_L2",
+    "kernel": 1109508,
+    "overhead": 162247,
+    "tiles": 16
+   },
+   {
+    "node": "node_3_blocks_0_blocks_0_2_Relu_L2",
+    "kernel": 198098,
+    "overhead": 161999,
+    "tiles": 10
+   },
+   {
+    "node": "node_13_blocks_3_blocks_3_0_Conv_L2",
+    "kernel": 343821,
+    "overhead": 6432,
+    "tiles": 2
+   },
+   {
+    "node": "node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2",
+    "kernel": 99606,
+    "overhead": 161338,
+    "tiles": 10
+   },
+   {
+    "node": "node_16_blocks_4_blocks_4_0_Conv_L2",
+    "kernel": 167307,
+    "overhead": 9226,
+    "tiles": 2
+   },
+   {
+    "node": "node_8_blocks_1_blocks_1_3_MaxPool_L2",
+    "kernel": 115458,
+    "overhead": 25240,
+    "tiles": 2
+   },
+   {
+    "node": "perturbrademacher_24_blocks_4_0_weight_L2",
+    "kernel": 98012,
+    "overhead": 15050,
+    "tiles": 2
+   },
+   {
+    "node": "node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2",
+    "kernel": 62866,
+    "overhead": 40994,
+    "tiles": 4
+   },
+   {
+    "node": "node_6_blocks_1_blocks_1_1_BatchNormalization_L2",
+    "kernel": 56636,
+    "overhead": 41395,
+    "tiles": 4
+   },
+   {
+    "node": "node_7_blocks_1_blocks_1_2_Relu_L2",
+    "kernel": 50696,
+    "overhead": 42392,
+    "tiles": 4
+   }
+  ]
+ },
+ "qzo": {
+  "total_kernel": 375234025,
+  "total_overhead": 1173868,
+  "total": 376407893,
+  "per_class": {
+   "Quant/Dequant": {
+    "kernel": 368408619,
+    "overhead": 176973,
+    "nodes": 10
+   },
+   "Conv": {
+    "kernel": 3078638,
+    "overhead": 55323,
+    "nodes": 25
+   },
+   "MaxPool": {
+    "kernel": 1673532,
+    "overhead": 142956,
+    "nodes": 3
+   },
+   "BatchNorm": {
+    "kernel": 1190105,
+    "overhead": 218930,
+    "nodes": 5
+   },
+   "Transpose": {
+    "kernel": 554454,
+    "overhead": 349213,
+    "nodes": 21
+   },
+   "ReLU": {
+    "kernel": 268239,
+    "overhead": 219516,
+    "nodes": 5
+   },
+   "Other": {
+    "kernel": 42428,
+    "overhead": 8593,
+    "nodes": 24
+   },
+   "Loss(SCE)": {
+    "kernel": 8702,
+    "overhead": 735,
+    "nodes": 1
+   },
+   "Gemm/FC": {
+    "kernel": 7459,
+    "overhead": 793,
+    "nodes": 1
+   },
+   "GlobalAvgPool": {
+    "kernel": 1849,
+    "overhead": 836,
+    "nodes": 1
+   }
+  },
+  "top_nodes": [
+   {
+    "node": "QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2",
+    "kernel": 218079600,
+    "overhead": 104373,
+    "tiles": 32
+   },
+   {
+    "node": "QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2",
+    "kernel": 51771737,
+    "overhead": 25859,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2",
+    "kernel": 29149958,
+    "overhead": 12753,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2",
+    "kernel": 28670930,
+    "overhead": 12801,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2",
+    "kernel": 14863340,
+    "overhead": 7206,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2",
+    "kernel": 13125679,
+    "overhead": 6851,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2",
+    "kernel": 4556324,
+    "overhead": 2117,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2",
+    "kernel": 3719213,
+    "overhead": 1905,
+    "tiles": 8
+   },
+   {
+    "node": "QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2",
+    "kernel": 3537213,
+    "overhead": 2137,
+    "tiles": 8
+   },
+   {
+    "node": "poolMaxPool_L2",
+    "kernel": 1529358,
+    "overhead": 110753,
+    "tiles": 32
+   },
+   {
+    "node": "_MERGE_CONVRQ_PASS_0_L2",
+    "kernel": 1326440,
+    "overhead": 23087,
+    "tiles": 8
+   },
+   {
+    "node": "bnBatchNormalization_L2",
+    "kernel": 1109336,
+    "overhead": 161975,
+    "tiles": 64
+   },
+   {
+    "node": "QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2",
+    "kernel": 934622,
+    "overhead": 968,
+    "tiles": 8
+   },
+   {
+    "node": "_MERGE_CONVRQ_PASS_1_L2",
+    "kernel": 797135,
+    "overhead": 8451,
+    "tiles": 8
+   },
+   {
+    "node": "reluRelu_L2",
+    "kernel": 198126,
+    "overhead": 162131,
+    "tiles": 40
+   }
+  ]
+ }
+}

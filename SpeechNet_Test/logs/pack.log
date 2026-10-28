@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/app/TrainDeeploy/DeeployTest/experiments/zo_smoke/pack_2step_fixture.py", line 24, in <module>
+    shutil.copy(EXPORT / "inputs.npz", d / "inputs.npz")
+  File "/usr/local/lib/python3.10/shutil.py", line 417, in copy
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+  File "/usr/local/lib/python3.10/shutil.py", line 254, in copyfile
+    with open(src, 'rb') as fsrc:
+FileNotFoundError: [Errno 2] No such file or directory: '/app/TrainDeeploy/SpeechNet_Test/exports/zo_single_step/inputs.npz'
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZO_single_step  (network.onnx 24 inputs / 25 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZO_single_step (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_ZO_single_step  (network.onnx 24 inputs / 10 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_ZO_single_step (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZO_single_step  (network.onnx 24 inputs / 25 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZO_single_step (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_ZO_round1  (network.onnx 24 inputs / 10 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_ZO_round1 (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZO_single_step  (network.onnx 24 inputs / 25 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZO_single_step (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_single_update_step  (network.onnx 24 inputs / 25 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZOECO_full_fused_single_update_step (network.onnx 22 inputs / 22 outputs)
+train  : /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_round1  (network.onnx 24 inputs / 25 inits)
+update : /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZOECO_full_fused_round1 (network.onnx 22 inputs / 22 outputs)

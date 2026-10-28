@@ -39,7 +39,7 @@ from testUtils.tilingUtils import TrainingDBTiler, TrainingSBTiler
 from testUtils.trainingUtils import _memoryMinimisingScheduler, add_optimizer_training_dir_arg
 
 from Deeploy.AbstractDataTypes import PointerClass
-from Deeploy.CommonExtensions.DataTypes import float32_t
+from Deeploy.CommonExtensions.DataTypes import float32_t, int8_t, int32_t, uint8_t  # -- QW: int8/int32 for QZO update
 from Deeploy.DeeployTypes import CodeGenVerbosity, _NoVerbosity
 from Deeploy.Logging import DEFAULT_LOGGER as log
 from Deeploy.MemoryLevelExtension.MemoryLevels import MemoryHierarchy, MemoryLevel
@@ -49,6 +49,8 @@ from Deeploy.MemoryLevelExtension.OptimizationPasses.MemoryLevelAnnotationPasses
 from Deeploy.Targets.GAP9.Platform import GAP9ClusterEngine
 from Deeploy.Targets.PULPOpen.Platform import PULPClusterEngine
 from Deeploy.TilingExtension.TilerExtension import TilerDeployerWrapper
+from Deeploy.EngineExtension.NetworkDeployers.EngineColoringDeployer import \
+    EngineColoringDeployerWrapper  # -- QW (GAP9_w_NE16)
 
 
 def generateTiledOptimizerNetwork(args) -> None:
@@ -70,9 +72,24 @@ def generateTiledOptimizerNetwork(args) -> None:
     for cluster in clusters:
         cluster.n_cores = args.cores
 
-    # 3. All optimizer inputs are float32 (weights + grad acc buffers).
+    # 3. Optimizer input types: derive from each ONNX input's declared dtype so
+    #    mixed-precision (quantized-ZO) update graphs type-check.  The float BP
+    #    optimizer keeps all-float32 inputs; the QZO update graph feeds int8
+    #    weights whose RQSPerturb binding requires int8_t (a hardcoded float32_t
+    #    made partialOrderUpcast(float32->int8) fail -> "no adequate mapping").  -- QW
     graph_input_names = [inp.name for inp in onnx_model.graph.input]
-    inputTypes = {f"input_{i}": PointerClass(float32_t) for i in range(len(graph_input_names))}
+    _ONNX_ELEM_TO_PTR = {  # -- QW
+        onnx.TensorProto.FLOAT: float32_t,
+        onnx.TensorProto.INT8: int8_t,
+        onnx.TensorProto.INT32: int32_t,
+        onnx.TensorProto.UINT8: uint8_t,
+    }
+
+    def _ptrForInput(inp):  # -- QW
+        et = inp.type.tensor_type.elem_type
+        return PointerClass(_ONNX_ELEM_TO_PTR.get(et, float32_t))
+
+    inputTypes = {f"input_{i}": _ptrForInput(inp) for i, inp in enumerate(onnx_model.graph.input)}
     inputOffsets = {f"input_{i}": 0 for i in range(len(graph_input_names))}
 
     # 4. Create deployer with the memory-minimising scheduler (the Tiler requires
@@ -86,6 +103,16 @@ def generateTiledOptimizerNetwork(args) -> None:
                            deeployStateDir = _DEEPLOYSTATEDIR,
                            inputOffsets = inputOffsets,
                            scheduler = _memoryMinimisingScheduler)
+
+    # QW: make the deployer engine-color-aware for composite platforms (GAP9 + NE16).
+    #     Mirrors testMVP.py:98-100. MUST sit between mapDeployer() and setupMemoryPlatform():
+    #     EngineColoringDeployer interleaves an EngineColoringPass between every pair of lowering
+    #     passes, and setupMemoryPlatform requires an UNWRAPPED platform. On a non-composite
+    #     platform this is a no-op, so it is gated by name rather than applied unconditionally.
+    #     NOTE: the ZO update graph is perturbation-ops only (no Conv), so NE16 colours nothing
+    #     here today; wired anyway so the two graphs stay symmetric. -- QW
+    if args.platform in ("Siracusa_w_neureka", "GAP9_w_NE16"):  # -- QW
+        deployer = EngineColoringDeployerWrapper(deployer)  # -- QW
 
     # 5. Set up memory hierarchy.
     #    Tiles execute in L1; optimizer I/O (weights, grads) live in L2 (or L3).
@@ -198,6 +225,7 @@ if __name__ == '__main__':
         default = 0.001,
         help = "Learning rate (informational only; embedded in optimizer ONNX attributes). Default: 0.001.",
     )
+
     parser.add_argument("--l1", type = int, default = 64_000, help = "L1 size in bytes. Default: 64000.")
     parser.add_argument("--l2", type = int, default = 1_024_000, help = "L2 size in bytes. Default: 1024000.")
     parser.add_argument("--defaultMemLevel",

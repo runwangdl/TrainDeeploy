@@ -1,0 +1,50 @@
+exp6 -- dual-pass fusion on NE16 (GAP9) via the GAP9 SDK's im2col + 1x1 route.  All numbers measured on GAP9 GVSoC,
+8 cluster cores, tiled (L1 92,000 / L2 1,500,000, --defaultMemLevel L2), block-0 conv fixtures, exact integer compare.
+2026-10-01.
+
+FIXTURE LEVEL (NCHW in / NCHW out, both passes)                           cycles      vs A        exactness
+  A    2 x pulp_nn_conv on the GAP9 cluster (exp3 fixture)             1,468,898     1.00x      0/78512 per pass
+  A'   2 x exp16c per-tap NE16 path (4 streamin dispatches, cited)    10,961,344     0.13x      0/78512 per pass (exp16c)
+  B    2 x NE16 im2col route, single pass (task 1)                       759,938     1.93x      0/78512 per pass
+  C_cl exp5's fused DualConv on the GAP9 cluster                         925,593     1.59x      0/157024
+  C    NE16 im2col route, FUSED (task 2)                                 541,345     2.71x      0/157024
+
+  ratios:  A/B  = 1.93  (SDK route vs pulp-nn, single pass)      A'/B = 14.4 (SDK route vs our per-tap NE16 path)
+           B/C  = 1.40  (fusion on NE16)                         C_cl/C = 1.71 (fused NE16 vs fused cluster -- the decision number)
+
+PER-NODE (master-core wall time per node; the FC replays the counters)   A (x2)      B (x2)      C_cl        C
+  perturb W + perturb b (exp3's two nodes)                               9,962       9,962        --          --
+  NE16DualPerturbEncode + NE16DualBias (task 2)                             --          --        --        8,591
+  NE16SignedInputBias + NE16WeightEncode (task 1)                           --       9,058        --          --
+  input transpose (NCHW->NHWC) / weight transpose                        19,528          --      9,855         --
+  im2col column buffer (cluster, NE16Im2ColU8)                              --     284,400        --      142,171
+  conv: pulp-nn / NE16 1x1 job(s) / DualConv                          1,204,186     209,644    660,752     136,618
+  output transpose (NHWC->NCHW)                                         259,778     259,812    258,392     258,351
+  outside nodes (DMA, tiling)                                            -24,556       2,742     -3,406      -4,386  (runtime - node sum)
+  TOTAL                                                               1,468,898     759,938    925,593     541,345
+  conv-equivalent (im2col + NE16 job, or the cluster conv)            1,204,186     494,044    660,752     278,789
+
+WHAT FUSION BUYS ON NE16 (B -> C, 218,593 cycles = 29 %):
+  im2col built once instead of twice                                   -142,229
+  one NE16 job of Cout=16 instead of two of Cout=8  (209,644 -> 136,618)  -73,026   (the fused job costs +30 %, not 2x)
+  preparation nodes (encode once, 2 small nodes)                           -467
+  output transpose: unchanged (one 2x tensor == two 1x tensors)              +0
+  -> the NE16 job retires TP_OUT = 32 output channels per pass; 8 or 16 of them in use costs nearly the same.
+
+WHAT THE SDK ROUTE BUYS ON NE16 (A' -> B, 14.4x): one 1x1 job over Cin*K = 4 folded channels instead of 4 streamin
+  dispatches with int32 accumulator round-trips through L1, requant on NE16 instead of a cluster RequantShift,
+  padding + the signed-input +128 offset done by the cores while building the column.
+
+WHERE THE FUSED NE16 RUN SPENDS ITS TIME (C):  output transpose 47 %, im2col 26 %, NE16 job 25 %, prep 2 %.
+  The two cluster-side data-movement nodes (transpose + im2col) are 74 % -- the accelerator itself is a quarter.
+
+TILING: NE16 conv 4 tiles (both tasks), im2col 1 tile, output transpose 2 (B) / 4 (C) tiles; C_cl: conv 2, transpose 4.
+CODE SIZE (GAP9 GCC, llvm-nm on libdeeploygap9.a): Im2ColU8 308 B, NE16DualPerturbEncode 222 B, NE16DualBias 618 B,
+  NE16WeightEncode 346 B, NE16SignedInputBias 78 B; (DualConv 1,200 B, FlatConv 454 B with GCC -- vs 1,828 / 896 B with
+  Siracusa's clang).
+COUNTER CAVEAT (GAP9): the profiling wrappers run on the cluster MASTER core (core 8), which dispatches the 8 workers
+  and waits -- its "cycles" are the node's wall time (what we need), but its instruction/IPC/stall columns describe an
+  idle core and are NOT comparable to the Siracusa core-0 figures. Cluster printf is invisible on GAP9 GVSoC; the
+  records are replayed by the fabric controller after the run ("[perf] records=N" marker in the logs).
+NE16 arithmetic: norm/quant = (acc*scale + bias) >> shift, truncating, saturate [-128,127] (gvsoc gap/ne16/src) --
+  identical to pulp-nn's requant with the +div/2 carried in `add`; hence 0 errors without any tolerance.

@@ -1,0 +1,751 @@
+-- Building for platform 'GAP9_w_NE16'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9_w_NE16
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L2 mode: No hex files found, -DNOFLASH set
+-- [Deeploy GAP9] If you expect L3 mode, ensure Python codegen created hex files in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/hex/
+-- [Deeploy GAP9] L2 mode: using gapy with mram boot (no readfs)
+-- [Deeploy GAP9] Board deployment target: QZO_DualConv2in_NE16P_B2
+-- [Log] none
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- [PULP-NNX] Using the NE16 accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    GVSOC_INSTALL_DIR
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_mb
+Consolidate compiler generated dependencies of target pmsis_printf
+[  1%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  3%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  5%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  6%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+Consolidate compiler generated dependencies of target pmsis
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[  7%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[  7%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[  9%] Linking C static library ../lib/libpmsis.a
+[ 34%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 38%] Built target pmsis_backend
+Scanning dependencies of target freertos
+Consolidate compiler generated dependencies of target freertos
+[ 50%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 51%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/bsp/ne16_pulp_bsp.c.obj
+[ 52%] Linking C static library ../../../lib/libpulp-nnx.a
+[ 54%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[ 72%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualConv2in.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualPrep.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Conv4x2.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv2In.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/FlatConv.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Im2ColU8.c.obj
+[ 84%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerfRecords.c.obj
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZOEco.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c.obj
+[ 96%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c.obj
+[ 96%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c.obj
+[ 97%] Linking C static library ../../lib/libdeeploygap9.a
+[ 97%] Built target deeploygap9
+[ 98%] Building C object DeeployTest/CMakeFiles/network.dir/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c.obj
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c: In function 'RunNetwork':
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:205:38: warning: 'b2_out_nchw_perf_start.tcdm_cont' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->tcdm_cont = end->tcdm_cont - start->tcdm_cont;
+                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.tcdm_cont' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:204:40: warning: 'b2_out_nchw_perf_start.st_ext_cyc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st_ext_cyc = end->st_ext_cyc - start->st_ext_cyc;
+                        ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.st_ext_cyc' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:203:40: warning: 'b2_out_nchw_perf_start.ld_ext_cyc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_ext_cyc = end->ld_ext_cyc - start->ld_ext_cyc;
+                        ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.ld_ext_cyc' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:202:32: warning: 'b2_out_nchw_perf_start.st_ext' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st_ext = end->st_ext - start->st_ext;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.st_ext' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:201:32: warning: 'b2_out_nchw_perf_start.ld_ext' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_ext = end->ld_ext - start->ld_ext;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.ld_ext' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:200:26: warning: 'b2_out_nchw_perf_start.rvc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->rvc = end->rvc - start->rvc;
+                 ~~~~~~~~~^~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.rvc' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:199:44: warning: 'b2_out_nchw_perf_start.taken_branch' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->taken_branch = end->taken_branch - start->taken_branch;
+                          ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.taken_branch' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:198:32: warning: 'b2_out_nchw_perf_start.branch' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->branch = end->branch - start->branch;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.branch' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:197:30: warning: 'b2_out_nchw_perf_start.imiss' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->imiss = end->imiss - start->imiss;
+                   ~~~~~~~~~~~^~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.imiss' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:196:38: warning: 'b2_out_nchw_perf_start.jmp_stall' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->jmp_stall = end->jmp_stall - start->jmp_stall;
+                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.jmp_stall' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:195:36: warning: 'b2_out_nchw_perf_start.ld_stall' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_stall = end->ld_stall - start->ld_stall;
+                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.ld_stall' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:194:24: warning: 'b2_out_nchw_perf_start.st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st = end->st - start->st;
+                ~~~~~~~~^~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.st' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:193:24: warning: 'b2_out_nchw_perf_start.ld' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld = end->ld - start->ld;
+                ~~~~~~~~^~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.ld' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:192:30: warning: 'b2_out_nchw_perf_start.instr' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->instr = end->instr - start->instr;
+                   ~~~~~~~~~~~^~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.instr' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:191:32: warning: 'b2_out_nchw_perf_start.cycles' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->cycles = end->cycles - start->cycles;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1435:18: note: 'b2_out_nchw_perf_start.cycles' was declared here
+     perf_stats_t b2_out_nchw_perf_start, b2_out_nchw_perf_end, b2_out_nchw_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:205:38: warning: 'b2_dual_bias_perf_start.tcdm_cont' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->tcdm_cont = end->tcdm_cont - start->tcdm_cont;
+                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.tcdm_cont' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:204:40: warning: 'b2_dual_bias_perf_start.st_ext_cyc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st_ext_cyc = end->st_ext_cyc - start->st_ext_cyc;
+                        ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.st_ext_cyc' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:203:40: warning: 'b2_dual_bias_perf_start.ld_ext_cyc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_ext_cyc = end->ld_ext_cyc - start->ld_ext_cyc;
+                        ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.ld_ext_cyc' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:202:32: warning: 'b2_dual_bias_perf_start.st_ext' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st_ext = end->st_ext - start->st_ext;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.st_ext' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:201:32: warning: 'b2_dual_bias_perf_start.ld_ext' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_ext = end->ld_ext - start->ld_ext;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.ld_ext' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:200:26: warning: 'b2_dual_bias_perf_start.rvc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->rvc = end->rvc - start->rvc;
+                 ~~~~~~~~~^~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.rvc' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:199:44: warning: 'b2_dual_bias_perf_start.taken_branch' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->taken_branch = end->taken_branch - start->taken_branch;
+                          ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.taken_branch' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:198:32: warning: 'b2_dual_bias_perf_start.branch' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->branch = end->branch - start->branch;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.branch' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:197:30: warning: 'b2_dual_bias_perf_start.imiss' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->imiss = end->imiss - start->imiss;
+                   ~~~~~~~~~~~^~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.imiss' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:196:38: warning: 'b2_dual_bias_perf_start.jmp_stall' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->jmp_stall = end->jmp_stall - start->jmp_stall;
+                       ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.jmp_stall' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:195:36: warning: 'b2_dual_bias_perf_start.ld_stall' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld_stall = end->ld_stall - start->ld_stall;
+                      ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.ld_stall' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:194:24: warning: 'b2_dual_bias_perf_start.st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->st = end->st - start->st;
+                ~~~~~~~~^~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.st' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:193:24: warning: 'b2_dual_bias_perf_start.ld' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->ld = end->ld - start->ld;
+                ~~~~~~~~^~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.ld' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:192:30: warning: 'b2_dual_bias_perf_start.instr' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->instr = end->instr - start->instr;
+                   ~~~~~~~~~~~^~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.instr' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:6:0:
+/app/Deeploy/TargetLibraries/GAP9/../PULPOpen/inc/perf_utils.h:191:32: warning: 'b2_dual_bias_perf_start.cycles' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   result->cycles = end->cycles - start->cycles;
+                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c:1379:18: note: 'b2_dual_bias_perf_start.cycles' was declared here
+     perf_stats_t b2_dual_bias_perf_start, b2_dual_bias_perf_end, b2_dual_bias_perf_total;
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+[ 98%] Built target network
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/QZO_DualConv2in_NE16P_B2.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/QZO_DualConv2in_NE16P_B2.dir/src/deeploytest.c.obj
+[100%] Linking C executable ../../../QZO_DualConv2in_NE16P_B2
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3516 B      65532 B      5.37%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:       91952 B      1536 KB      5.85%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  6%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 34%] Built target pmsis
+[ 38%] Built target pmsis_backend
+[ 50%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 54%] Built target pulp-nnx
+[ 72%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 97%] Built target deeploygap9
+Consolidate compiler generated dependencies of target network
+[ 98%] Built target network
+Consolidate compiler generated dependencies of target QZO_DualConv2in_NE16P_B2
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : QZO_DualConv2in_NE16P_B2
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_mb
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DGAP9_NETWORK_O3=ON -DNUM_CORES=8 -DSIMULATOR=gvsoc
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --input-type-map blocks.2.conv.bias_rqsadd=int32_t /blocks_2_conv_input_quant_1/Clip_output_0=int8_t /blocks_2_conv_input_quant_1/Clip_output_0_minus=int8_t --input-offset-map blocks.2.conv.bias_rqsadd=0 /blocks_2_conv_input_quant_1/Clip_output_0=0 /blocks_2_conv_input_quant_1/Clip_output_0_minus=0 --defaultMemLevel=L2 --l1=86000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --cores=8 --profileMicrobenchmark
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  6%] Built target fll_pmu_lib
+[ 34%] Built target pmsis
+[ 38%] Built target pmsis_backend
+[ 50%] Built target freertos
+[ 54%] Built target pulp-nnx
+[ 72%] Built target deeploybasic
+[ 97%] Built target deeploygap9
+[ 98%] Built target network
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gvsoc command - L2 mode:
+/app/install/gap9-sdk/utils/gapy_v2/bin/gapy --target=gap9.evk --target-dir=/app/install/gap9-sdk/install/workstation/generators --model-dir=/app/install/gap9-sdk/install/workstation/models --platform=gvsoc --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_mb/gvsoc_workdir --target-property=boot.flash_device=mram --target-property=boot.mode=flash --multi-flash-content=/app/install/gap9-sdk/utils/layouts/default_layout_multi_readfs.json --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_mb/QZO_DualConv2in_NE16P_B2@mram:app:binary --flash-property=/app/install/gap9-sdk/install/target/bin/fsbl@mram:fsbl:binary --flash-property=/app/install/gap9-sdk/install/target/bin/ssbl@mram:ssbl:binary --py-stack image flash run --binary=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_mb/QZO_DualConv2in_NE16P_B2
+==========================================
+[0 9] Hello World!
+Intializing
+Initialized
+Input copied
+
+=== Performance Statistics: b2_xp_hwc ===
+Cycles:                    5466
+Instructions:               133
+IPC:                      0.024
+
+--- Instruction Mix ---
+Loads:                       18 (13.53%)
+Stores:                      34 (25.56%)
+Branches:                    10 (7.52%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            34 (25.56%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             471
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              17 (94.44%)
+External Stores:             19 (55.88%)
+Ext Load Cycles:           4709 (avg: 277.00)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+
+=== Performance Statistics: b2_xm_hwc ===
+Cycles:                    5494
+Instructions:               130
+IPC:                      0.024
+
+--- Instruction Mix ---
+Loads:                       17 (13.08%)
+Stores:                      34 (26.15%)
+Branches:                    10 (7.69%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            36 (27.69%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             484
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              17 (100.00%)
+External Stores:             19 (55.88%)
+Ext Load Cycles:           4727 (avg: 278.06)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+
+=== Performance Statistics: b2_dual_wenc ===
+Cycles:                   32208
+Instructions:               148
+IPC:                      0.005
+
+--- Instruction Mix ---
+Loads:                       18 (12.16%)
+Stores:                      39 (26.35%)
+Branches:                    10 (6.76%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            43 (29.05%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             580
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              18 (100.00%)
+External Stores:             22 (56.41%)
+Ext Load Cycles:          31327 (avg: 1740.39)
+Ext Store Cycles:            44 (avg: 2.00)
+========================================
+
+
+=== Performance Statistics: b2_dual_bias ===
+Cycles:                   12058
+Instructions:               214
+IPC:                      0.018
+
+--- Instruction Mix ---
+Loads:                       27 (12.62%)
+Stores:                      56 (26.17%)
+Branches:                    17 (7.94%)
+Taken Branches:              16 (94.12%)
+Compressed (RVC):            62 (28.97%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  4
+Jump Stalls:                  0
+I-cache Misses:             855
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              22 (81.48%)
+External Stores:             31 (55.36%)
+Ext Load Cycles:          10704 (avg: 486.55)
+Ext Store Cycles:            80 (avg: 2.58)
+========================================
+
+
+=== Performance Statistics: b2_ne16_dualconv ===
+Cycles:                   61303
+Instructions:              7405
+IPC:                      0.121
+
+--- Instruction Mix ---
+Loads:                     1336 (18.04%)
+Stores:                    1123 (15.17%)
+Branches:                   521 (7.04%)
+Taken Branches:             521 (100.00%)
+Compressed (RVC):          4941 (66.73%)
+
+--- Stalls & Hazards ---
+Load Stalls:                106
+Jump Stalls:                  0
+I-cache Misses:            3449
+TCDM Contentions:            25
+
+--- Memory Hierarchy ---
+External Loads:             462 (34.58%)
+External Stores:            440 (39.18%)
+Ext Load Cycles:          44447 (avg: 96.21)
+Ext Store Cycles:          1296 (avg: 2.95)
+========================================
+
+
+=== Performance Statistics: b2_out_nchw ===
+Cycles:                    8081
+Instructions:               153
+IPC:                      0.019
+
+--- Instruction Mix ---
+Loads:                       17 (11.11%)
+Stores:                      33 (21.57%)
+Branches:                    17 (11.11%)
+Taken Branches:              16 (94.12%)
+Compressed (RVC):            32 (20.92%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             524
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              16 (94.12%)
+External Stores:             19 (57.58%)
+Ext Load Cycles:           7177 (avg: 448.56)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+[perf] records=6
+
+=== Performance Statistics: b2_xp_hwc ===
+Cycles:                    5466
+Instructions:               133
+IPC:                      0.024
+
+--- Instruction Mix ---
+Loads:                       18 (13.53%)
+Stores:                      34 (25.56%)
+Branches:                    10 (7.52%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            34 (25.56%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             471
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              17 (94.44%)
+External Stores:             19 (55.88%)
+Ext Load Cycles:           4709 (avg: 277.00)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+
+=== Performance Statistics: b2_xm_hwc ===
+Cycles:                    5494
+Instructions:               130
+IPC:                      0.024
+
+--- Instruction Mix ---
+Loads:                       17 (13.08%)
+Stores:                      34 (26.15%)
+Branches:                    10 (7.69%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            36 (27.69%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             484
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              17 (100.00%)
+External Stores:             19 (55.88%)
+Ext Load Cycles:           4727 (avg: 278.06)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+
+=== Performance Statistics: b2_dual_wenc ===
+Cycles:                   32208
+Instructions:               148
+IPC:                      0.005
+
+--- Instruction Mix ---
+Loads:                       18 (12.16%)
+Stores:                      39 (26.35%)
+Branches:                    10 (6.76%)
+Taken Branches:              10 (100.00%)
+Compressed (RVC):            43 (29.05%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             580
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              18 (100.00%)
+External Stores:             22 (56.41%)
+Ext Load Cycles:          31327 (avg: 1740.39)
+Ext Store Cycles:            44 (avg: 2.00)
+========================================
+
+
+=== Performance Statistics: b2_dual_bias ===
+Cycles:                   12058
+Instructions:               214
+IPC:                      0.018
+
+--- Instruction Mix ---
+Loads:                       27 (12.62%)
+Stores:                      56 (26.17%)
+Branches:                    17 (7.94%)
+Taken Branches:              16 (94.12%)
+Compressed (RVC):            62 (28.97%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  4
+Jump Stalls:                  0
+I-cache Misses:             855
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              22 (81.48%)
+External Stores:             31 (55.36%)
+Ext Load Cycles:          10704 (avg: 486.55)
+Ext Store Cycles:            80 (avg: 2.58)
+========================================
+
+
+=== Performance Statistics: b2_ne16_dualconv ===
+Cycles:                   61303
+Instructions:              7405
+IPC:                      0.121
+
+--- Instruction Mix ---
+Loads:                     1336 (18.04%)
+Stores:                    1123 (15.17%)
+Branches:                   521 (7.04%)
+Taken Branches:             521 (100.00%)
+Compressed (RVC):          4941 (66.73%)
+
+--- Stalls & Hazards ---
+Load Stalls:                106
+Jump Stalls:                  0
+I-cache Misses:            3449
+TCDM Contentions:            25
+
+--- Memory Hierarchy ---
+External Loads:             462 (34.58%)
+External Stores:            440 (39.18%)
+Ext Load Cycles:          44447 (avg: 96.21)
+Ext Store Cycles:          1296 (avg: 2.95)
+========================================
+
+
+=== Performance Statistics: b2_out_nchw ===
+Cycles:                    8081
+Instructions:               153
+IPC:                      0.019
+
+--- Instruction Mix ---
+Loads:                       17 (11.11%)
+Stores:                      33 (21.57%)
+Branches:                    17 (11.11%)
+Taken Branches:              16 (94.12%)
+Compressed (RVC):            32 (20.92%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  2
+Jump Stalls:                  0
+I-cache Misses:             524
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:              16 (94.12%)
+External Stores:             19 (57.58%)
+Ext Load Cycles:           7177 (avg: 448.56)
+Ext Store Cycles:            32 (avg: 1.68)
+========================================
+
+Output:
+Runtime: 8129 cycles
+Errors: 0 out of 10304
+[100%] Built target gvsoc_QZO_DualConv2in_NE16P_B2
+
+[92m✓ Test QZO_DualConv2in_NE16P_B2 PASSED - No errors found[0m
+[92m  Runtime: 8129 cycles[0m

@@ -1,0 +1,16 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+[fixture] injected 22 dumped tensors
+[fixture] RQS add initializers: ['blocks.0.conv.bias_rqsadd', 'blocks.1.conv.bias_rqsadd']… (5), div={65536}
+[fixture] stripped div/2 from 5 adds for the device graph
+  reference 30/180
+  reference 60/180
+  reference 90/180
+  reference 120/180
+  reference 150/180
+  reference 180/180
+[fixture] 180 windows; host-reference balanced accuracy = 85.56%

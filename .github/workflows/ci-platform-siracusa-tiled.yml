@@ -6,12 +6,13 @@
 name: CI • Siracusa (Tiled)
 
 "on":
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*.*.*"
-  pull_request:
+  # RW 2026-10-13: auto-trigger off on this branch; only ci-speechnet.yml runs on push / pull_request.
+  # push:
+  #   branches:
+  #     - "**"
+  #   tags:
+  #     - "v*.*.*"
+  # pull_request:
   workflow_dispatch:
     inputs:
       docker_image_deeploy:
@@ -37,3 +38,39 @@ jobs:
       runner: ${{ needs.select-env.outputs.runner }}
       docker-image: ${{ needs.select-env.outputs.image }}
       pytest-marker: "promote and not training"
+
+  # Training L3 + PromoteTensorsToL2 regression (MobileNetV1 + CCT)
+  siracusa-training-tiled-promote:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "promote and training"
+
+  # -- QW: SpeechNet MeZO single step (float ZO + quantized ZO), fixtures in SpeechNet_Test/
+  siracusa-speechnet-zo-single-step:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "zo_training"
+
+  # -- QW: SpeechNet block-0 QZO conv kernels on the cluster (fused DualConv + unfused pulp-nn)
+  siracusa-speechnet-qzo-block0-kernels:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "qzo_block0"
+
+  # -- QW 2026-10-14: SpeechNet blocks 1-4 QZO conv kernels on the cluster (fused two-input DualConv + unfused pulp-nn)
+  siracusa-speechnet-qzo-blocks-kernels:
+    needs: select-env
+    uses: ./.github/workflows/_runner-siracusa-tiled.yml
+    with:
+      runner: ${{ needs.select-env.outputs.runner }}
+      docker-image: ${{ needs.select-env.outputs.image }}
+      pytest-marker: "qzo_blocks"

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from Deeploy.Logging import DEFAULT_LOGGER as log
 
-from ..trainingUtils import add_training_cmake_flags, run_training_codegen
+from ..trainingUtils import add_mezo_cmake_flags, add_training_cmake_flags, run_training_codegen, run_zo_codegen  # -- QW
 from .config import DeeployTestConfig
 from .output_parser import TestResult, parse_test_output
 
@@ -27,6 +27,10 @@ def generate_network(config: DeeployTestConfig, skip: bool = False) -> None:
         return
 
     script_dir = Path(__file__).parent.parent.parent
+
+    if getattr(config, 'mezo', False):  # QW: MeZO (ZO) two-graph codegen — checked before BP training -- QW
+        run_zo_codegen(config, script_dir)  # -- QW
+        return  # -- QW
 
     if config.training:
         run_training_codegen(config, script_dir)
@@ -117,6 +121,12 @@ def configure_cmake(config: DeeployTestConfig) -> None:
     add_training_cmake_flags(cmd, config.training, config.n_train_steps, config.n_accum_steps,
                              config.training_num_data_inputs)
 
+    if getattr(config, 'mezo', False):  # QW: append MeZO (ZO) cmake flags -- QW
+        add_mezo_cmake_flags(cmd, config)  # -- QW
+    else:  # -- QW: reset it explicitly (like -DTRAINING=OFF): CMake caches -D flags, so a MeZO build in the
+        #    same build dir would otherwise leave MEZO_TRAINING=ON for the next inference/kernel test. -- QW
+        cmd.append("-DMEZO_TRAINING=OFF")  # -- QW
+
     # Last argument is the source directory
     script_dir = Path(__file__).parent.parent.parent
     cmd.append(str(script_dir.parent))
@@ -148,7 +158,7 @@ def build_binary(config: DeeployTestConfig) -> None:
 
     # GAP9 board deployment: generate mram.bin + flash.bin via image_<name>.
     # GAP9 GVSOC simulation: generate GVSOC image via the generic 'image' target.
-    if config.platform == 'GAP9':
+    if config.platform in ('GAP9', 'GAP9_w_NE16'):  # -- QW: NE16 variant needs the image too
         if config.simulator == 'board':
             cmd.append(f"image_{config.test_name}")
         else:

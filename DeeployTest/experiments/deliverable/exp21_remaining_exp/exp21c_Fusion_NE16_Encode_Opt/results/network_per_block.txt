@@ -1,0 +1,62 @@
+exp21c task 3 -- whole-network node accounting, ONE update step (n_accum 4 windows), --profileTiling wall clock summed over all tiles and all graph runs; per-window = /4.
+columns: eco = logs/net_eco_prof.log, ne16 = logs/net_ne16_prof.log, fus = logs/net_fus_prof.log
+
+ block node kind                                                        eco /window      ne16 /window       fus /window
+    in input quant + transpose                                               44,634            18,756            18,717
+     0 BN perturbation (fp32)                                                 3,655             2,225             1,938
+     0 BN+pool+ReLU+Quant tail                                              499,504           493,701           493,344
+     0 NE16 prep: bias (re-perturb + row sums)                                    0             2,542                 0
+     0 NE16 prep: perturb + encode (wenc)                                         0             2,916                 0
+     0 conv                                                               1,200,531           129,191                 0
+     0 conv (fused cluster DualConv2In, incl. perturbation)                       0                 0           578,099
+     0 conv perturbation (int8 w / int32 b)                                   4,618                 0                 0
+     0 im2col (block 0)                                                           0           119,944                 0
+     0 weight transpose                                                       1,068                 0                 0
+     1 BN perturbation (fp32)                                                 3,604             2,170             1,858
+     1 BN+pool+ReLU+Quant tail                                              203,446           199,914           200,932
+     1 NE16 prep: bias (re-perturb + row sums)                                    0            10,630                 0
+     1 NE16 prep: perturb + encode (wenc)                                         0            30,100                 0
+     1 conv                                                                 618,453                 0                 0
+     1 conv (NE16 node)                                                           0           222,336                 0
+     1 conv (fused cluster DualConv2In, incl. perturbation)                       0                 0           426,764
+     1 conv perturbation (int8 w / int32 b)                                  32,626                 0                 0
+     1 weight transpose                                                       4,314                 0                 0
+     2 BN perturbation (fp32)                                                 3,352             2,175             1,876
+     2 BN+pool+ReLU+Quant tail                                               54,434            51,901            52,791
+     2 NE16 prep: bias (re-perturb + row sums)                                    0            10,683                 0
+     2 NE16 prep: perturb + encode (wenc)                                         0            30,298                 0
+     2 conv                                                                 172,256                 0                 0
+     2 conv (NE16 node)                                                           0            60,087                 0
+     2 conv (fused cluster DualConv2In, incl. perturbation)                       0                 0           127,924
+     2 conv perturbation (int8 w / int32 b)                                  32,136                 0                 0
+     2 weight transpose                                                       4,929                 0                 0
+     3 BN perturbation (fp32)                                                 3,278             1,899             1,830
+     3 BN+pool+ReLU+Quant tail                                               52,243            50,346            50,308
+     3 conv                                                                  38,595                 0                 0
+     3 conv (fused cluster DualConv2In, incl. perturbation)                       0            48,219            48,153
+     3 conv perturbation (int8 w / int32 b)                                  54,670                 0                 0
+     3 weight transpose                                                       7,376                 0                 0
+     4 BN perturbation (fp32)                                                 3,014             1,892             1,870
+     4 BN/ReLU/pool (block 4, untailed)                                      22,441            19,777            19,655
+     4 conv                                                                  40,674                 0                 0
+     4 conv (fused cluster DualConv2In, incl. perturbation)                       0            40,371            40,407
+     4 conv perturbation (int8 w / int32 b)                                 101,961                 0                 0
+     4 weight transpose                                                       9,096                 0                 0
+  head FC + loss (+ fc perturbation)                                         21,822            22,639            22,306
+   opt update graph                                                         136,071           136,113           136,069
+
+per block (all node kinds of the block), per window:
+    in                                                                       44,634            18,756            18,717
+     0                                                                    1,709,376           750,519         1,073,381
+     1                                                                      862,444           465,149           629,554
+     2                                                                      267,108           155,144           182,591
+     3                                                                      156,162           100,464           100,291
+     4                                                                      177,185            62,039            61,932
+  head                                                                       21,822            22,639            22,306
+   opt                                                                      136,071           136,113           136,069
+
+eco: training node sum 12,954,923 (/window 3,238,731); update node sum 544,284; plain BENCH train 13,288,673 opt 557,957; prof BENCH train 41,854,859 (printf-inflated)
+    outside the nodes (plain BENCH - node sum): 333,750 (2.5 %)
+ne16: training node sum 6,298,838 (/window 1,574,710); update node sum 544,453; plain BENCH train 6,543,740 opt 550,427; prof BENCH train 21,639,572 (printf-inflated)
+    outside the nodes (plain BENCH - node sum): 244,902 (3.7 %)
+fus: training node sum 8,355,091 (/window 2,088,773); update node sum 544,276; plain BENCH train None opt None; prof BENCH train 21,438,936 (printf-inflated)

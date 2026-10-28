@@ -16,7 +16,7 @@ from Deeploy.Targets.Generic.Bindings import BasicGEMMBindings, BasicPad1DBindin
 from Deeploy.Targets.Generic.Layers import AddLayer, AveragePoolGradLayer, AveragePoolLayer, \
     BatchNormalizationGradLayer, BatchNormInternalLayer, ConcatLayer, ConvGradBLayer, ConvGradWLayer, ConvGradXLayer, \
     ConvLayer, GatherLayer, GELUGradLayer, GELULayer, GlobalAveragePoolGradLayer, GlobalAveragePoolLayer, \
-    InPlaceAccumulatorV2Layer, LayerNormGradLayer, LayerNormLayer, MatMulLayer, MaxPoolGradLayer, MaxPoolLayer, \
+    InPlaceAccumulatorV2Layer, PerturbRademacherLayer, LayerNormGradLayer, LayerNormLayer, MatMulLayer, MaxPoolGradLayer, MaxPoolLayer, \
     MSELossGradLayer, MSELossLayer, PadLayer, QuantLayer, ReduceMeanLayer, ReduceSumLayer, ReluGradLayer, ReluLayer, \
     RequantShiftLayer, ReshapeLayer, RQIntegerDivLayer, RQSiGELULayer, RQSiHardswishLayer, SGDLayer, SliceLayer, \
     SoftmaxCrossEntropyLossGradLayer, SoftmaxCrossEntropyLossLayer, SoftmaxGradLayer, SoftmaxLayer, TransposeLayer, \
@@ -24,7 +24,7 @@ from Deeploy.Targets.Generic.Layers import AddLayer, AveragePoolGradLayer, Avera
 from Deeploy.Targets.Generic.Parsers import AddParser, AveragePool2DParser, BatchNormalizationGradParser, \
     BatchNormInternalParser, ConcatParser, Conv2DGradBParser, DequantParser, FlattenParser, GatherParser, \
     GELUGradParser, GELUParser, GEMMParser, GlobalAveragePoolGradParser, GlobalAveragePoolParser, \
-    InPlaceAccumulatorV2Parser, LayerNormGradParser, LayerNormParser, MatMulParser, MaxPool1DParser, MaxPool2DParser, \
+    InPlaceAccumulatorV2Parser, PerturbRademacherParser, LayerNormGradParser, LayerNormParser, MatMulParser, MaxPool1DParser, MaxPool2DParser, \
     MaxPoolGradParser, MSELossGradParser, MSELossParser, MulParser, Pad1DParser, Pad2DParser, QuantParser, \
     ReduceSumParser, ReluGradParser, ReluParser, RequantShiftParser, ReshapeParser, RQAddParser, RQIntegerDivParser, \
     RQSiGELUParser, RQSiHardswishParser, SGDParser, SliceParser, SoftmaxCrossEntropyLossGradParser, \
@@ -50,10 +50,11 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPDWConvGradX2DTilingReadyBindings, PULPFlattenTilingReadyBindings, PULPFPGELUGradTilingReadyBindings, \
     PULPFPGELUTilingReadyBindings, PULPFPGEMMTilingReadyBindings, PULPGatherTilingReadyBindings, \
     PULPGlobalAveragePool2DTilingReadyBindings, PULPGlobalAveragePoolGrad2DTilingReadyBindings, \
-    PULPiHardswishTilingReadyBindings, PULPInPlaceAccumulatorV2TilingReadyBindings, PULPiRMSNormTilingReadyBindings, \
+    PULPiHardswishTilingReadyBindings, PULPInPlaceAccumulatorV2TilingReadyBindings, PULPPerturbRademacherTilingReadyBindings, PULPiRMSNormTilingReadyBindings, \
     PULPiRQSGELUTilingReadyBindings, PULPLayernormGradTilingReadyBindings, PULPLayernormTilingReadyBindings, \
     PULPMatMulTilingReadyBindings, PULPMaxPool1DTilingReadyBindings, PULPMaxPool2DTilingReadyBindings, \
-    PULPMaxPoolGrad2DTilingReadyBindings, PULPMSELossGradTilingReadyBindings, PULPMSELossTilingReadyBindings, \
+    PULPMaxPoolGrad2DTilingReadyBindings, PULPMaxPoolArgmaxTilingReadyBindings, \
+    PULPMaxPoolGradMaskTilingReadyBindings, PULPMSELossGradTilingReadyBindings, PULPMSELossTilingReadyBindings, \
     PULPMulTilingReadyBindings, PULPPWConvGradW2DTilingReadyBindings, PULPPWConvGradX2DTilingReadyBindings, \
     PULPReduceMeanTilingReadyBindings, PULPReduceSumTilingReadyBindings, PULPReluGradTilingReadyBindings, \
     PULPReluTilingReadyBindings, PULPRQAddTilingReadyBindings, PULPRQSConv1DTilingReadyBindings, \
@@ -65,7 +66,7 @@ from Deeploy.Targets.PULPOpen.Tiler import PULPAddTilingReadyBindings, PULPAvera
     PULPUniformRQSTilingReadyBindings
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.Passes import FoldActivationTransposeIntoGemmPass, \
     FoldDequantIntoMatMulPass, MaxPoolGradReadInputPass, PULPAddRequantMergePass, PULPConvRequantMergePass, \
-    PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, TransposeGemmSquashPass
+    PULPGEMMRequantMergePass, PULPMatMulRequantMergePass, SwapReluMaxPoolPass, FoldDequantIntoFrozenBNPass, TransposeGemmSquashPass
 from Deeploy.Targets.PULPOpen.TopologyOptimizationPasses.SplitConvGradPass import SplitConvGradPass
 
 RQAddMapper = NodeMapper(RQAddParser(), PULPRQAddTilingReadyBindings)
@@ -93,7 +94,25 @@ RQGELU_int8_Mapper = NodeMapper(RQSiGELUParser(), PULPiRQSGELUTilingReadyBinding
 Conv1DMapper = NodeMapper(PULPConv1DParser(), PULPRQSConv1DTilingReadyBindings)
 DWConv1DMapper = NodeMapper(PULPDWConv1DParser(), [PULPDWConv1DBinding])
 FPConv2DMapper = NodeMapper(PULPFPConv2DParser(), PULPConv2DTilingReadyBindings)
-Conv2DMapper = NodeMapper(PULPConv2DParser(), PULPRQSConv2DTilingReadyBindings)
+# -- QW (dual_pass_fusion exp5a): KERNEL SWITCH for every int8 RequantizedConv on this target.
+#    default  = pulp_nn_conv_i8_i8_i8 (PULPRQSConv2DTilingReadyBindings)
+#    exp5a    = PULP_FlatConv2d_i8_i8_i8_HWC, the single-pass control kernel (PULPRQSConv2DFlatTilingReadyBindings)
+#    To switch, comment/uncomment the two lines below. See DeeployTest/experiments/dual_pass_fusion/exp5a_breakdown. -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPRQSConv2DFlatTilingReadyBindings  # -- QW exp5a
+Conv2DMapper = NodeMapper(PULPConv2DParser(), PULPRQSConv2DTilingReadyBindings)        # default: pulp-nn  -- QW exp5a
+# Conv2DMapper = NodeMapper(PULPConv2DParser(), PULPRQSConv2DFlatTilingReadyBindings)  # exp5a: flat kernel -- QW exp5a
+# -- QW (dual_pass_fusion exp7a step 2a): select the kernel WITHOUT editing this file. DEEPLOY_RQCONV_KERNEL =
+#    unset / "pulpnn" -> the line above (default, unchanged); "flat" -> exp5a FlatConv; "4x2" -> exp7a Conv4x2.
+#    Read at import time, i.e. once per generator run. -- QW
+import os as _os  # -- QW
+_rqconv_kernel = _os.environ.get("DEEPLOY_RQCONV_KERNEL", "pulpnn")  # -- QW
+if _rqconv_kernel == "flat":  # -- QW
+    Conv2DMapper = NodeMapper(PULPConv2DParser(), PULPRQSConv2DFlatTilingReadyBindings)  # -- QW
+elif _rqconv_kernel == "4x2":  # -- QW
+    from Deeploy.Targets.PULPOpen.Tiler import PULPRQSConv2D4x2TilingReadyBindings  # -- QW
+    Conv2DMapper = NodeMapper(PULPConv2DParser(), PULPRQSConv2D4x2TilingReadyBindings)  # -- QW
+elif _rqconv_kernel != "pulpnn":  # -- QW
+    raise ValueError(f"DEEPLOY_RQCONV_KERNEL={_rqconv_kernel!r}: expected pulpnn, flat or 4x2")  # -- QW
 FPDWConv2DMapper = NodeMapper(PULPFPDWConv2DParser(), PULPDWConv2DTilingReadyBindings)
 DWConv2DMapper = NodeMapper(PULPDWConv2DParser(), PULPRQSDWConv2DTilingReadyBindings)
 GEMMMapper = NodeMapper(PULPGEMMParser(), PULPRQSGEMMTilingReadyBindings)
@@ -102,9 +121,13 @@ MatrixVecMapper = NodeMapper(PULPMatrixVecParser(), PULPRQSMatrixVecTilingReadyB
 TallGEMMMapper = NodeMapper(PULPTallGEMMParser(), PULPRQSTallGEMMTilingReadyBindings)
 MaxPool1DMapper = NodeMapper(MaxPool1DParser(), PULPMaxPool1DTilingReadyBindings)
 MaxPool2DMapper = NodeMapper(MaxPool2DParser(), PULPMaxPool2DTilingReadyBindings)
+# QW: Part-4 MaxPoolArgmax reuses MaxPool2DParser (same attrs/shapes, uint8 output). -- QW
+MaxPoolArgmaxMapper = NodeMapper(MaxPool2DParser(), PULPMaxPoolArgmaxTilingReadyBindings)
 AveragePool2DMapper = NodeMapper(AveragePool2DParser(), PULPAveragePool2DTilingReadyBindings)
 AveragePoolGrad2DMapper = NodeMapper(AveragePool2DParser(), PULPAveragePoolGrad2DTilingReadyBindings)
 MaxPoolGrad2DMapper = NodeMapper(MaxPoolGradParser(), PULPMaxPoolGrad2DTilingReadyBindings)
+# QW: Part-4 mask-grad reuses MaxPoolGradParser (2nd input = fp32 offset mask). -- QW
+MaxPoolGradMaskMapper = NodeMapper(MaxPoolGradParser(), PULPMaxPoolGradMaskTilingReadyBindings)
 GlobalAveragePoolMapper = NodeMapper(GlobalAveragePoolParser(), PULPGlobalAveragePool2DTilingReadyBindings)
 GlobalAveragePoolGradMapper = NodeMapper(GlobalAveragePoolGradParser(), PULPGlobalAveragePoolGrad2DTilingReadyBindings)
 BatchNormInternalMapper = NodeMapper(BatchNormInternalParser(), PULPBatchNormInternalTilingReadyBindings)
@@ -134,8 +157,38 @@ SoftmaxCrossEntropyLossGradMapper = NodeMapper(SoftmaxCrossEntropyLossGradParser
                                                PULPSoftmaxCrossEntropyGradTilingReadyBindings)
 SGDMapper = NodeMapper(SGDParser(), PULPSGDTilingReadyBindings)
 InPlaceAccumulatorV2Mapper = NodeMapper(InPlaceAccumulatorV2Parser(), PULPInPlaceAccumulatorV2TilingReadyBindings)
-QuantMapper = NodeMapper(QuantParser(), BasicQuantBindings)
-DequantMapper = NodeMapper(DequantParser(), PULPDequantTilingReadyBindings)
+PerturbRademacherMapper = NodeMapper(PerturbRademacherParser(), PULPPerturbRademacherTilingReadyBindings)  # -- QW (FP32 ZO op)
+from Deeploy.Targets.PULPOpen.Parsers import PerturbRademacherFixedParser as _PRFixedParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbRademacherFixedTilingReadyBindings as _PRFixedTRB  # -- QW exp8
+PerturbRademacherFixedMapper = NodeMapper(_PRFixedParser(), _PRFixedTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Parsers import DualHalfParser as _DualHalfParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualHalfTilingReadyBindings as _DualHalfTRB  # -- QW exp8
+DualHalfMapper = NodeMapper(_DualHalfParser(), _DualHalfTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen import FrozenBNTail as _FBT  # -- QW exp9
+FrozenBNPoolReluQuantMapper = NodeMapper(_FBT.FrozenBNPoolReluQuantParser(), _FBT.tilingReadyBindings())  # -- QW exp9
+# -- QW: RQSPerturbRademacher mapper (quantized ZO), ported from shipped Deeploy
+from Deeploy.Targets.Generic.Parsers import RQSPerturbRademacherParser as _RQSPRParser  # -- QW
+from Deeploy.Targets.Generic.Layers import RQSPerturbRademacherLayer as _RQSPRLayer  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPRQSPerturbRademacherTilingReadyBindings as _RQSPRTRB  # -- QW
+RQSPerturbRademacherMapper = NodeMapper(_RQSPRParser(), _RQSPRTRB)  # -- QW
+# -- QW (dual_pass_fusion exp5): fused dual-pass QZO conv (RequantizedDualConv)
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DParser as _PULPDualConv2DParser  # -- QW
+from Deeploy.Targets.PULPOpen.Layers import PULPDualConvLayer as _PULPDualConvLayer  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DTilingReadyBindings as _PULPDualConv2DTRB  # -- QW
+DualConv2DMapper = NodeMapper(_PULPDualConv2DParser(), _PULPDualConv2DTRB)  # -- QW
+# -- QW (dual_pass_fusion exp7 step 3): 7-input variant (blocks 1-4); the parsers separate the two by input count.
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2D2InParser as _PULPDualConv2D2InParser  # -- QW
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2D2InTilingReadyBindings as _PULPDualConv2D2InTRB  # -- QW
+DualConv2D2InMapper = NodeMapper(_PULPDualConv2D2InParser(), _PULPDualConv2D2InTRB)  # -- QW
+from Deeploy.Targets.PULPOpen.Parsers import PULPDualConv2DStackedParser as _PULPDualConv2DStackedParser  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Tiler import PULPDualConv2DStackedTilingReadyBindings as _PULPDualConv2DStackedTRB  # -- QW exp8
+DualConv2DStackedMapper = NodeMapper(_PULPDualConv2DStackedParser(), _PULPDualConv2DStackedTRB)  # -- QW exp8
+from Deeploy.Targets.PULPOpen.Parsers import PULPPerturbConv2DParser as _PULPPerturbConv2DParser  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Tiler import PULPPerturbConv2DTilingReadyBindings as _PULPPerturbConv2DTRB  # -- QW exp11
+PerturbConv2DMapper = NodeMapper(_PULPPerturbConv2DParser(), _PULPPerturbConv2DTRB)  # -- QW exp11
+from Deeploy.Targets.PULPOpen.Tiler import PULPQuantTilingReadyBindings, PULPDequantTilingReadyBindings  # -- QW
+QuantMapper = NodeMapper(QuantParser(), PULPQuantTilingReadyBindings)      # -- QW (tiling-ready for mixed quant graph)
+DequantMapper = NodeMapper(DequantParser(), PULPDequantTilingReadyBindings)  # -- QW
 GEMMDequantMapper = NodeMapper(PULPGEMMParser(), BasicGEMMBindings)
 
 ConvGradXMapper = NodeMapper(PULPConvGradX2DParser(), PULPConvGradX2DTilingReadyBindings)
@@ -152,6 +205,9 @@ PULPMapping = {
     'ConvGradW': ConvGradWLayer([PWConvGradW2DMapper, DwConvGradWMapper, ConvGradWMapper]),
     'ConvGradB': ConvGradBLayer([ConvGradBMapper]),
     'RequantizedConv': PULPRQSConvLayer([Conv2DMapper, DWConv2DMapper, Conv1DMapper, DWConv1DMapper]),
+    # 'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper]),  # -- QW (dual_pass_fusion exp5)
+    # 'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper, DualConv2D2InMapper, DualConv2DStackedMapper]),  # -- QW exp5 + exp7
+    'RequantizedDualConv': _PULPDualConvLayer([DualConv2DMapper, DualConv2D2InMapper, DualConv2DStackedMapper, PerturbConv2DMapper]),  # -- QW exp5 + exp7 + exp11
     'RequantizedGemm': PULPRQSGEMMLayer([MatrixVecMapper, TallGEMMMapper, GEMMMapper]),
     'Gemm': PULPGEMMLayer([FloatGEMMMapper, GEMMDequantMapper]),
     'Gelu': GELULayer([GELUMapper]),
@@ -159,9 +215,11 @@ PULPMapping = {
     'LayerNormalization': LayerNormLayer([LayerNormMapper]),
     'LayerNormalizationGrad': LayerNormGradLayer([LayerNormGradMapper]),
     'MaxPool': MaxPoolLayer([MaxPool1DMapper, MaxPool2DMapper]),
+    'MaxPoolArgmax': MaxPoolLayer([MaxPoolArgmaxMapper]),  # QW: Part-4 argmax-mask op -- QW
     'AveragePool': AveragePoolLayer([AveragePool2DMapper]),
     'AveragePoolGrad': AveragePoolGradLayer([AveragePoolGrad2DMapper]),
     'MaxPoolGrad': MaxPoolGradLayer([MaxPoolGrad2DMapper]),
+    'MaxPoolGradMask': MaxPoolGradLayer([MaxPoolGradMaskMapper]),  # QW: Part-4 -- QW
     'GlobalAveragePool': GlobalAveragePoolLayer([GlobalAveragePoolMapper]),
     'GlobalAveragePoolGrad': GlobalAveragePoolGradLayer([GlobalAveragePoolGradMapper]),
     'BatchNormInternal': BatchNormInternalLayer([BatchNormInternalMapper]),
@@ -201,6 +259,11 @@ PULPMapping = {
     'SoftmaxCrossEntropyLossGrad': SoftmaxCrossEntropyLossGradLayer([SoftmaxCrossEntropyLossGradMapper]),
     'SGD': SGDLayer([SGDMapper]),
     'InPlaceAccumulatorV2': InPlaceAccumulatorV2Layer([InPlaceAccumulatorV2Mapper]),
+    'PerturbRademacher': PerturbRademacherLayer([PerturbRademacherMapper]),  # -- QW (FP32 ZO op)
+    'PerturbRademacherFixed': PerturbRademacherLayer([PerturbRademacherFixedMapper]),  # -- QW exp8 (dual-pass graph)
+    'DualHalf': PerturbRademacherLayer([DualHalfMapper]),  # -- QW exp8 (dual-pass tail; generic layer, size-based ops)
+    _FBT.OP: _FBT.FrozenBNPoolReluQuantLayer([FrozenBNPoolReluQuantMapper]),  # -- QW exp9 (frozen BN tail, memory)
+    'RQSPerturbRademacher': _RQSPRLayer([RQSPerturbRademacherMapper]),  # -- QW (quantized ZO)
 }
 
 
@@ -304,6 +367,8 @@ PULPOptimizer = TopologyOptimizer(
         PULPAddRequantMergePass(),
         RemoveEmptyConvBiasPass(),
         RemoveOnlySingletonReduceMeanPass(),
+        SwapReluMaxPoolPass(),  # RW 2026-10-13
+        FoldDequantIntoFrozenBNPass(),  # RW 2026-10-15: frozen-stat BN reads the int8 tensor
     ],
     name = "PULPOptimizer")
 

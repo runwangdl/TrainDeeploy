@@ -67,3 +67,18 @@ class UnaryTileConstraint(TileConstraint):
         variableReplacementSchedule = VariableReplacementScheme(replacements, replacementTypes)
 
         return variableReplacementSchedule, tilingSchedule
+
+
+class UnaryRowTileConstraint(UnaryTileConstraint):
+    """RW 2026-10-13: elementwise op on a 4-D activation tiled along dim 1 only (H for NHWC, C for NCHW), so every
+    tile is one contiguous block. The free UnaryTileConstraint may cut the innermost axis, which for an NHWC
+    SpeechNet activation (C = 8) meant a strided 32-byte DMA per pixel. Other ranks: as UnaryTileConstraint."""
+
+    @staticmethod
+    def addPolicyConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        name = parseDict['data_in']
+        shape = ctxt.lookup(name).shape
+        if len(shape) == 4:
+            for dim in (0, 2, 3):
+                tilerModel.addConstraint(tilerModel.getTensorDimVar(tensorName = name, dimIdx = dim) == shape[dim])
+        return tilerModel

@@ -1,0 +1,1770 @@
+  [testData->L3] 2117232 B of baked test inputs moved out of L2 to L3 (hex-loaded)
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1
+-- Building for platform 'GAP9'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L3 mode: Found 30 hex file(s)
+-- ==== HEXLIST ====
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex
+-- GAPY_RUNNER_ARGS: --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex@flash:readfs_flash:files
+-- [Deeploy GAP9] L3 mode: using gapy with readfs
+-- [Deeploy GAP9] Adding 30 readfs file(s)
+-- [Deeploy GAP9] Board deployment target: speechnet_train_QZOECO_full_fused_round1
+-- [Log] none
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    GVSOC_INSTALL_DIR
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9/build_x21c_net_fus_prof
+[  1%] Building C object pmsis/printf/CMakeFiles/pmsis_printf.dir/printf.c.obj
+[  2%] Linking C static library ../../lib/libpmsis_printf.a
+[  2%] Built target pmsis_printf
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc_pool.c.obj
+[  3%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc.c.obj
+[  3%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/pi_malloc.c.obj
+[  4%] Linking C static library ../../../lib/libpulp_allocator.a
+[  4%] Built target pulp_allocator
+[  4%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/errno.c.obj
+[  5%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/stdlib.c.obj
+[  5%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/string.c.obj
+[  6%] Linking C static library ../../../../lib/libfreertos_libs.a
+[  6%] Built target freertos_libs
+[  7%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/fll/fll.c.obj
+[  7%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/pmu/maestro_voltage.c.obj
+[  8%] Linking C static library ../../lib/libfll_pmu_lib.a
+[  8%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro.c.obj
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro_irq.c.obj
+[ 10%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio.c.obj
+[ 10%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio_asm.S.obj
+[ 11%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/efuse/driver/efuse.c.obj
+[ 11%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gap_iet.S.obj
+[ 12%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes.c.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes_internal.c.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes_dual_core/driver/aes_dual_core_internal.c.obj
+[ 14%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/quiddikey/driver/quiddikey_internal.c.obj
+[ 14%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-cc.S.obj
+[ 15%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster.c.obj
+[ 15%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-team.S.obj
+[ 17%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-workgroup.S.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/malloc/pi_cl_malloc.c.obj
+[ 18%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_core/driver/udma_core.c.obj
+[ 18%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/fc_event/driver/fc_event.c.obj
+[ 19%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/pad/driver/pad.c.obj
+[ 20%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/asm_util.S.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/ctors_dtors.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/host_sync_access.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[ 22%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/pi_log.c.obj
+[ 22%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/time.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/device.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/os/system_gap.c.obj
+[ 24%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/startup_gap.S.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/timer/driver/pi_timer.c.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi.c.obj
+[ 26%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi_asm.S.obj
+[ 26%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/fs.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9evk_v1_3.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9mod_v1_0_b.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/crc/crc32/crc32.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/api/flash.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mram/mram-v2.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mx25u51245g/mx25u51245g.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/api/powersupply.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/powersupplygpio/powersupplygpio.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/ram.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/alloc_extern.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/aps256xxn/aps256xxn.c.obj
+[ 36%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[ 37%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[ 37%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[ 38%] Linking C static library ../lib/libpmsis.a
+[ 38%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+[ 38%] Building ASM object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/main.S.obj
+[ 39%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/custom_list.c.obj
+[ 39%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_evt.c.obj
+[ 40%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_task.c.obj
+[ 40%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/sync_obj.c.obj
+[ 41%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/os.c.obj
+[ 41%] Linking C static library ../../../../../lib/libpmsis_backend.a
+[ 41%] Built target pmsis_backend
+Scanning dependencies of target freertos
+[ 41%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port_asm.S.obj
+[ 42%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port.c.obj
+[ 42%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/list.c.obj
+[ 43%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/queue.c.obj
+[ 43%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/tasks.c.obj
+[ 44%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/freertos_task.S.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/timers.c.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event_groups.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/stream_buffer.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/scheduler.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/sync_obj-v3.c.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/semaphore-v2.c.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/task-v3.c.obj
+[ 50%] Building C object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer.c.obj
+[ 50%] Building ASM object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer_asm.S.obj
+[ 51%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/config/FreeRTOS_util.c.obj
+[ 52%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/freertos_it.c.obj
+[ 52%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/gap_it.c.obj
+[ 53%] Linking C static library ../lib/libfreertos.a
+[ 53%] Built target freertos
+[ 53%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualConv2in.c.obj
+[ 54%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualPrep.c.obj
+[ 54%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 55%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 55%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 56%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 56%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 57%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 58%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Conv4x2.c.obj
+[ 58%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 59%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 59%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 60%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 60%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv.c.obj
+[ 61%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv2In.c.obj
+[ 61%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/FlatConv.c.obj
+[ 62%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 63%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 63%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 64%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Im2ColU8.c.obj
+[ 64%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 65%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 65%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 67%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 67%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerfRecords.c.obj
+[ 68%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerturbConv4x2.c.obj
+[ 68%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 69%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 70%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 70%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 71%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 71%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZOEco.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c.obj
+[ 79%] Linking C static library ../../lib/libdeeploygap9.a
+[ 79%] Built target deeploygap9
+[ 79%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/BatchNorm_fp32.c.obj
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c: In function 'BatchNorm_fp32':
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c:13:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ #pragma omp parallel for
+ 
+[ 80%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/ConvTranspose1d_fp32.c.obj
+[ 80%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_fp32.c.obj
+[ 81%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_s8.c.obj
+[ 81%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_fp32.c.obj
+[ 82%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_s8.c.obj
+[ 82%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_fp32.c.obj
+[ 84%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_s32.c.obj
+[ 85%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_fp32.c.obj
+[ 85%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_s8.c.obj
+[ 86%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_fp32.c.obj
+[ 86%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_s8.c.obj
+[ 87%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Hardswish_s8.c.obj
+[ 87%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_fp32.c.obj
+[ 88%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_s8.c.obj
+[ 88%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_fp32.c.obj
+[ 89%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_s8.c.obj
+[ 89%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_fp32.c.obj
+[ 90%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_s8.c.obj
+[ 91%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Pow_fp32.c.obj
+[ 91%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQDiv_s8.c.obj
+[ 92%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQGELU_s8.c.obj
+[ 92%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQHardswish.c.obj
+[ 93%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Relu_fp32.c.obj
+[ 93%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RequantShift_s8.c.obj
+[ 94%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_fp32.c.obj
+[ 94%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_s8.c.obj
+[ 95%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Sqrt_fp32.c.obj
+[ 96%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Util.c.obj
+[ 96%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/iRMSNorm_s8.c.obj
+[ 97%] Linking C static library ../../lib/libdeeploybasic.a
+[ 97%] Built target deeploybasic
+[ 98%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_fcbias_fp32_mode1__dual44_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:624:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_mode1__dual44_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:626:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_mode1__dual44_L2_prefix[] = "[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:652:87: warning: implicit declaration of function 'getCycles' [-Wimplicit-function-declaration]
+     pert_fcbias_fp32_mode1__dual44_L2_ingress_dma_wait_start_measurements[TILING_I] = getCycles();
+                                                                                       ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:702:3: warning: implicit declaration of function 'StopTimer' [-Wimplicit-function-declaration]
+   StopTimer();
+   ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:739:3: warning: implicit declaration of function 'StartTimer'; did you mean 'strftime'? [-Wimplicit-function-declaration]
+   StartTimer();
+   ^~~~~~~~~~
+   strftime
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_fcbias_fp32_mode2__dual50_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:858:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_mode2__dual50_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:860:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_mode2__dual50_L2_prefix[] = "[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks0bnweight_mode0__dual3_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1098:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnweight_mode0__dual3_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1100:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnweight_mode0__dual3_L2_prefix[] = "[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks0bnbias_mode0__dual5_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1339:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnbias_mode0__dual5_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1341:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnbias_mode0__dual5_L2_prefix[] = "[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks1bnweight_mode0__dual10_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1582:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnweight_mode0__dual10_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1584:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnweight_mode0__dual10_L2_prefix[] = "[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks1bnbias_mode0__dual12_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1823:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnbias_mode0__dual12_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:1825:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnbias_mode0__dual12_L2_prefix[] = "[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks2bnweight_mode0__dual17_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2066:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnweight_mode0__dual17_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2068:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnweight_mode0__dual17_L2_prefix[] = "[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks2bnbias_mode0__dual19_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2307:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnbias_mode0__dual19_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2309:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnbias_mode0__dual19_L2_prefix[] = "[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImplConv__dual1_input_12_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2590:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_input_12_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2592:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_input_12_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks3bnweight_mode0__dual24_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2855:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnweight_mode0__dual24_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:2857:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnweight_mode0__dual24_L2_prefix[] = "[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks3bnbias_mode0__dual26_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3096:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnbias_mode0__dual26_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3098:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnbias_mode0__dual26_L2_prefix[] = "[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks4bnweight_mode0__dual31_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3339:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnweight_mode0__dual31_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3341:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnweight_mode0__dual31_L2_prefix[] = "[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_blocks4bnbias_mode0__dual33_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3580:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnbias_mode0__dual33_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3582:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnbias_mode0__dual33_L2_prefix[] = "[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_fcweight_fp32_mode1__dual42_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3817:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_mode1__dual42_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:3819:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_mode1__dual42_L2_prefix[] = "[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_pert_fcweight_fp32_mode2__dual48_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4054:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_mode2__dual48_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4056:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_mode2__dual48_L2_prefix[] = "[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_QCDQ_blocks_0_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4306:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4308:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4606:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:4608:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImplConv__dual1_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5007:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5009:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImplConv__dual1_L2_prefix[] = "[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bnBatchNormalization_tail_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5371:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bnBatchNormalization_tail_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5373:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bnBatchNormalization_tail_L2_prefix[] = "[bnBatchNormalization_tail_L2][SB][155904 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_1Conv__dual8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5734:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_1Conv__dual8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:5736:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_1Conv__dual8_L2_prefix[] = "[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bn_1BatchNormalization_tail_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6053:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_1BatchNormalization_tail_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6055:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_1BatchNormalization_tail_L2_prefix[] = "[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_2Conv__dual15_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6396:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_2Conv__dual15_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6398:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_2Conv__dual15_L2_prefix[] = "[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bn_2BatchNormalization_tail_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6715:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_2BatchNormalization_tail_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:6717:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_2BatchNormalization_tail_L2_prefix[] = "[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_3Conv__dual22_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7058:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_3Conv__dual22_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7060:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_3Conv__dual22_L2_prefix[] = "[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bn_3BatchNormalization_tail_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7377:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_tail_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7379:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_tail_L2_prefix[] = "[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_4Conv__dual29_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7720:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_4Conv__dual29_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:7722:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_4Conv__dual29_L2_prefix[] = "[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bn_4BatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8051:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8053:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_L2_prefix[] = "[bn_4BatchNormalization_L2][SB][4480 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8455:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8457:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_relu_4Relu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8707:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_4Relu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8709:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_4Relu_L2_prefix[] = "[relu_4Relu_L2][SB][640 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_global_poolGlobalAveragePool_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8928:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char global_poolGlobalAveragePool_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:8930:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char global_poolGlobalAveragePool_L2_prefix[] = "[global_poolGlobalAveragePool_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_half0__dual38_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9177:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_half0__dual38_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9179:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_half0__dual38_L2_prefix[] = "[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9458:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9460:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_L2_prefix[] = "[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_half1__dual40_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9744:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_half1__dual40_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:9746:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_half1__dual40_L2_prefix[] = "[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_minus__dual46_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10040:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_minus__dual46_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10042:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_minus__dual46_L2_prefix[] = "[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_CrossEntropyLoss_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10353:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10355:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_L2_prefix[] = "[CrossEntropyLoss_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c: In function '_CrossEntropyLoss_minus__dual52_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10650:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_minus__dual52_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/TrainingNetwork.c:10652:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_minus__dual52_L2_prefix[] = "[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile ";
+   ^~~~~
+[ 98%] Built target training_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks0convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:372:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:374:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:399:88: warning: implicit declaration of function 'getCycles' [-Wimplicit-function-declaration]
+     rqsp_upd_blocks0convbias_rqsadd_L2_ingress_dma_wait_start_measurements[TILING_I] = getCycles();
+                                                                                        ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:453:3: warning: implicit declaration of function 'StopTimer' [-Wimplicit-function-declaration]
+   StopTimer();
+   ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:491:3: warning: implicit declaration of function 'StartTimer'; did you mean 'strftime'? [-Wimplicit-function-declaration]
+   StartTimer();
+   ^~~~~~~~~~
+   strftime
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks0bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:621:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:623:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnweight_L2_prefix[] = "[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks0bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:859:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:861:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnbias_L2_prefix[] = "[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_fcbias_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1092:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcbias_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1094:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcbias_fp32_L2_prefix[] = "[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks1convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1350:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1352:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks2convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1622:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1624:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks1bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1871:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:1873:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnweight_L2_prefix[] = "[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks1bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2109:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2111:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnbias_L2_prefix[] = "[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks2bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2347:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2349:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnweight_L2_prefix[] = "[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks2bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2585:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2587:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnbias_L2_prefix[] = "[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks0convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2847:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:2849:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convweight_int8_L2_prefix[] = "[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks3convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3119:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3121:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks4convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3391:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3393:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks3bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3640:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3642:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnweight_L2_prefix[] = "[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks3bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3878:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:3880:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnbias_L2_prefix[] = "[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks4bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4116:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4118:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnweight_L2_prefix[] = "[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_blocks4bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4354:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4356:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnbias_L2_prefix[] = "[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_pert_upd_fcweight_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4589:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcweight_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4591:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcweight_fp32_L2_prefix[] = "[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks1convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4851:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:4853:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convweight_int8_L2_prefix[] = "[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks2convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5124:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5126:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convweight_int8_L2_prefix[] = "[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks3convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5397:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5399:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convweight_int8_L2_prefix[] = "[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function '_rqsp_upd_blocks4convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5670:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:5672:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convweight_int8_L2_prefix[] = "[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c: In function 'InitOptimizerNetwork':
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6074:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_0 = (float32_t *)DeeployNetwork_input_12;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6075:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_1 = (float32_t *)DeeployNetwork_input_17;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6076:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_2 = (float32_t *)DeeployNetwork_input_13;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6077:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_3 = (float32_t *)DeeployNetwork_input_18;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6078:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_4 = (float32_t *)DeeployNetwork_input_14;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6079:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_5 = (float32_t *)DeeployNetwork_input_19;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6080:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_6 = (float32_t *)DeeployNetwork_input_15;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6081:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_7 = (float32_t *)DeeployNetwork_input_20;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6082:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_8 = (float32_t *)DeeployNetwork_input_16;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6083:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_9 = (float32_t *)DeeployNetwork_input_21;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6096:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_0 = (float32_t *)DeeployNetwork_input_12;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6097:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_1 = (float32_t *)DeeployNetwork_input_17;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6098:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_2 = (float32_t *)DeeployNetwork_input_13;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6099:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_3 = (float32_t *)DeeployNetwork_input_18;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6100:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_4 = (float32_t *)DeeployNetwork_input_14;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6101:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_5 = (float32_t *)DeeployNetwork_input_19;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6102:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_6 = (float32_t *)DeeployNetwork_input_15;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6103:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_7 = (float32_t *)DeeployNetwork_input_20;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6104:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_8 = (float32_t *)DeeployNetwork_input_16;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/OptimizerNetwork.c:6105:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_9 = (float32_t *)DeeployNetwork_input_21;  /* in-place, shared with TrainingNetwork */
+                              ^
+[ 98%] Built target optimizer_network
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZOECO_full_fused_round1.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZOECO_full_fused_round1.dir/src/deeploymezotest.c.obj
+[100%] Linking C executable ../../../speechnet_train_QZOECO_full_fused_round1
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3564 B      65532 B      5.44%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:      156448 B      1536 KB      9.95%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target speechnet_train_QZOECO_full_fused_round1
+Consolidate compiler generated dependencies of target pmsis_printf
+[  2%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  4%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  6%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  8%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 38%] Built target pmsis
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 41%] Built target pmsis_backend
+Consolidate compiler generated dependencies of target freertos
+[ 53%] Built target freertos
+Consolidate compiler generated dependencies of target deeploygap9
+[ 53%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 54%] Linking C static library ../../lib/libdeeploygap9.a
+[ 79%] Built target deeploygap9
+Consolidate compiler generated dependencies of target deeploybasic
+[ 97%] Built target deeploybasic
+Consolidate compiler generated dependencies of target training_network
+[ 98%] Built target training_network
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target speechnet_train_QZOECO_full_fused_round1
+[ 98%] Linking C executable ../../../speechnet_train_QZOECO_full_fused_round1
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3564 B      65532 B      5.44%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:      156448 B      1536 KB      9.95%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target speechnet_train_QZOECO_full_fused_round1
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_QZOECO_full_fused_round1
+  Test Directory      : /app/Deeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9/build_x21c_net_fus_prof
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DSIMULATOR=gvsoc -DBN_FROZEN_STATS=ON -DGAP9_NETWORK_O3=ON -DZO_ECO=ON -DZO_ECO_SR=ON -DZO_FUSED_DUAL=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --zo-fused-dual --defaultMemLevel=L2 --l1=114000 --l2=1340000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --profileTiling
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  2%] Built target pmsis_printf
+[  4%] Built target pulp_allocator
+[  6%] Built target freertos_libs
+[  8%] Built target fll_pmu_lib
+[ 37%] Built target pmsis
+[ 41%] Built target pmsis_backend
+[ 52%] Built target freertos
+Consolidate compiler generated dependencies of target deeploygap9
+[ 78%] Built target deeploygap9
+[ 96%] Built target deeploybasic
+[ 97%] Built target training_network
+[ 97%] Built target optimizer_network
+[ 98%] Built target speechnet_train_QZOECO_full_fused_round1
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gapy command (L3 mode with readfs):
+/app/install/gap9-sdk/utils/gapy_v2/bin/gapy --target=gap9.evk --target-dir=/app/install/gap9-sdk/install/workstation/generators --model-dir=/app/install/gap9-sdk/install/workstation/models --platform=gvsoc --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9/build_x21c_net_fus_prof/gvsoc_workdir --target-property=boot.flash_device=mram --target-property=boot.mode=flash --multi-flash-content=/app/install/gap9-sdk/utils/layouts/default_layout_multi_readfs.json --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/build_x21c_net_fus_prof/speechnet_train_QZOECO_full_fused_round1@mram:app:binary --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb0_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb1_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb2_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testData_mb3_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_10.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_11.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_12.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_13.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_14.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_15.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_16.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_17.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_18.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_19.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_2.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_20.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_21.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_3.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_4.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_5.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_6.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_7.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_8.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/fixtures/speechnet_train_QZOECO_full_fused_round1/hex/testInitWeight_9.hex@flash:readfs_flash:files --flash-property=/app/install/gap9-sdk/install/target/bin/fsbl@mram:fsbl:binary --flash-property=/app/install/gap9-sdk/install/target/bin/ssbl@mram:ssbl:binary --py-stack image flash run --binary=/app/Deeploy/DeeployTest/TEST_GAP9/build_x21c_net_fus_prof/speechnet_train_QZOECO_full_fused_round1
+==========================================
+=== GAP9 MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=1  N_ACCUM_STEPS=4  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.000003000  ZO_Q=1  ZO_SEED=42
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Initializing TrainingNetwork (zo_train)...
+[PHASE] InitTrainingNetwork done
+[PHASE] LoadTestDataL3 done
+Initializing OptimizerNetwork (zo_update)...
+[PHASE] InitOptimizerNetwork done
+Starting ZO training (1 update steps x 4 accum steps)...
+[ECO] memory-free error feedback, beta=0.9f sr=1, 61956 B momentum
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+[WSUM s=init] 0xe1ca5c8d
+update 1/1  accum 1/4  (mini-batch 0)  seed_base=0
+[PHASE] +eps forward START
+===== Profiling pert_fcbias_fp32_mode1__dual44_L2 =====
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Pre-Kernel :   201 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Kernel     :   758 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Total      :  1144 cycles (66.3% Kernel + 33.7% Overhead, 758 + 386)
+===== Profiling pert_fcbias_fp32_mode2__dual50_L2 =====
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Pre-Kernel :   237 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Kernel     :   609 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Post-Kernel:   147 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Total      :   993 cycles (61.3% Kernel + 38.7% Overhead, 609 + 384)
+===== Profiling pert_blocks0bnweight_mode0__dual3_L2 =====
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Pre-Kernel :   223 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Kernel     :   810 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Total      :  1236 cycles (65.5% Kernel + 34.5% Overhead, 810 + 426)
+===== Profiling pert_blocks0bnbias_mode0__dual5_L2 =====
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Kernel     :   763 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Total      :  1169 cycles (65.3% Kernel + 34.7% Overhead, 763 + 406)
+===== Profiling pert_blocks1bnweight_mode0__dual10_L2 =====
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Pre-Kernel :   258 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Kernel     :   751 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Total      :  1194 cycles (62.9% Kernel + 37.1% Overhead, 751 + 443)
+===== Profiling pert_blocks1bnbias_mode0__dual12_L2 =====
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Pre-Kernel :   242 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Kernel     :   772 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Total      :  1199 cycles (64.4% Kernel + 35.6% Overhead, 772 + 427)
+===== Profiling pert_blocks2bnweight_mode0__dual17_L2 =====
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Kernel     :   726 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Total      :  1150 cycles (63.1% Kernel + 36.9% Overhead, 726 + 424)
+===== Profiling pert_blocks2bnbias_mode0__dual19_L2 =====
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Pre-Kernel :   259 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Kernel     :   730 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Total      :  1192 cycles (61.2% Kernel + 38.8% Overhead, 730 + 462)
+===== Profiling wrappedInnerForwardImplConv__dual1_input_12_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   200 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Kernel     :   272 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   182 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Total      :   654 cycles (41.6% Kernel + 58.4% Overhead, 272 + 382)
+===== Profiling pert_blocks3bnweight_mode0__dual24_L2 =====
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Pre-Kernel :   250 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Kernel     :   702 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Post-Kernel:   184 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Total      :  1136 cycles (61.8% Kernel + 38.2% Overhead, 702 + 434)
+===== Profiling pert_blocks3bnbias_mode0__dual26_L2 =====
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Kernel     :   701 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Post-Kernel:   224 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Total      :  1145 cycles (61.2% Kernel + 38.8% Overhead, 701 + 444)
+===== Profiling pert_blocks4bnweight_mode0__dual31_L2 =====
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Kernel     :   681 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Total      :  1117 cycles (61.0% Kernel + 39.0% Overhead, 681 + 436)
+===== Profiling pert_blocks4bnbias_mode0__dual33_L2 =====
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Pre-Kernel :   227 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Kernel     :   733 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Post-Kernel:   260 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Total      :  1220 cycles (60.1% Kernel + 39.9% Overhead, 733 + 487)
+===== Profiling pert_fcweight_fp32_mode1__dual42_L2 =====
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Pre-Kernel :   349 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Kernel     :   994 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Total      :  1677 cycles (59.3% Kernel + 40.7% Overhead, 994 + 683)
+===== Profiling pert_fcweight_fp32_mode2__dual48_L2 =====
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Pre-Kernel :   338 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Kernel     :   915 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Post-Kernel:   316 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Total      :  1569 cycles (58.3% Kernel + 41.7% Overhead, 915 + 654)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5393 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17290 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24112 cycles (71.7% Kernel + 28.3% Overhead, 17290 + 6822)
+===== Profiling wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1487 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2218 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1427 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5132 cycles (43.2% Kernel + 56.8% Overhead, 2218 + 2914)
+===== Profiling wrappedInnerForwardImplConv__dual1_L2 =====
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Pre-Kernel :  1252 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Kernel     :376069 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Post-Kernel: 14043 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Total      :391364 cycles (96.1% Kernel + 3.9% Overhead, 376069 + 15295)
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Pre-Kernel :   611 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Kernel     :176971 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Post-Kernel:  6633 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Total      :184215 cycles (96.1% Kernel + 3.9% Overhead, 176971 + 7244)
+===== Profiling bnBatchNormalization_tail_L2 =====
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Pre-Kernel : 13661 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Kernel     :311669 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Post-Kernel:  1818 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Total      :327148 cycles (95.3% Kernel + 4.7% Overhead, 311669 + 15479)
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Pre-Kernel :  7611 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Kernel     :178051 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Post-Kernel:  1026 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Total      :186688 cycles (95.4% Kernel + 4.6% Overhead, 178051 + 8637)
+===== Profiling wrappedInnerForwardImpl_1Conv__dual8_L2 =====
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Pre-Kernel :  3083 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Kernel     :421465 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Post-Kernel:  5292 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Total      :429840 cycles (98.1% Kernel + 1.9% Overhead, 421465 + 8375)
+===== Profiling bn_1BatchNormalization_tail_L2 =====
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Pre-Kernel :  5509 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Kernel     :199640 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Post-Kernel:  1439 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Total      :206588 cycles (96.6% Kernel + 3.4% Overhead, 199640 + 6948)
+===== Profiling wrappedInnerForwardImpl_2Conv__dual15_L2 =====
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Pre-Kernel :  1850 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Kernel     :126296 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Post-Kernel:  1497 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Total      :129643 cycles (97.4% Kernel + 2.6% Overhead, 126296 + 3347)
+===== Profiling bn_2BatchNormalization_tail_L2 =====
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1648 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Kernel     : 52875 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Post-Kernel:   493 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Total      : 55016 cycles (96.1% Kernel + 3.9% Overhead, 52875 + 2141)
+===== Profiling wrappedInnerForwardImpl_3Conv__dual22_L2 =====
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Pre-Kernel :  1040 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Kernel     : 47629 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Post-Kernel:   521 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Total      : 49190 cycles (96.8% Kernel + 3.2% Overhead, 47629 + 1561)
+===== Profiling bn_3BatchNormalization_tail_L2 =====
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Pre-Kernel :   674 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Kernel     : 49692 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Post-Kernel:   540 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Total      : 50906 cycles (97.6% Kernel + 2.4% Overhead, 49692 + 1214)
+===== Profiling wrappedInnerForwardImpl_4Conv__dual29_L2 =====
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Pre-Kernel :  1560 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Kernel     : 40196 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Post-Kernel:   289 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Total      : 42045 cycles (95.6% Kernel + 4.4% Overhead, 40196 + 1849)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Pre-Kernel :   818 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Kernel     : 14990 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Post-Kernel:   671 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Total      : 16479 cycles (91.0% Kernel + 9.0% Overhead, 14990 + 1489)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   668 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   483 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1695 cycles (39.4% Kernel + 60.6% Overhead, 668 + 1027)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][640 ops][Tile 0] Pre-Kernel :   547 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Kernel     :  1136 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Post-Kernel:   499 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Total      :  2182 cycles (52.1% Kernel + 47.9% Overhead, 1136 + 1046)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   989 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   202 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1735 cycles (57.0% Kernel + 43.0% Overhead, 989 + 746)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half0__dual38_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Pre-Kernel :   245 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Kernel     :   284 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Post-Kernel:   207 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Total      :   736 cycles (38.6% Kernel + 61.4% Overhead, 284 + 452)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   551 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  2998 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3734 cycles (80.3% Kernel + 19.7% Overhead, 2998 + 736)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half1__dual40_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Pre-Kernel :   229 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Kernel     :   302 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Total      :   716 cycles (42.2% Kernel + 57.8% Overhead, 302 + 414)
+===== Profiling wrappedInnerForwardImpl_5Gemm_minus__dual46_L2 =====
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Pre-Kernel :   565 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Kernel     :  2827 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Total      :  3577 cycles (79.0% Kernel + 21.0% Overhead, 2827 + 750)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   355 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5227 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5899 cycles (88.6% Kernel + 11.4% Overhead, 5227 + 672)
+===== Profiling CrossEntropyLoss_minus__dual52_L2 =====
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Pre-Kernel :   335 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Kernel     :  4974 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Total      :  5626 cycles (88.4% Kernel + 11.6% Overhead, 4974 + 652)
+[PHASE] +eps forward DONE (5360815 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d1df660
+[PHASE] fused dual pass: lm_bits=0x3cbc996f
+update 1/1  accum 2/4  (mini-batch 1)  seed_base=0
+[PHASE] +eps forward START
+===== Profiling pert_fcbias_fp32_mode1__dual44_L2 =====
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Pre-Kernel :   201 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Kernel     :   758 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Post-Kernel:   183 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Total      :  1142 cycles (66.4% Kernel + 33.6% Overhead, 758 + 384)
+===== Profiling pert_fcbias_fp32_mode2__dual50_L2 =====
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Kernel     :   577 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Post-Kernel:   147 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Total      :   945 cycles (61.1% Kernel + 38.9% Overhead, 577 + 368)
+===== Profiling pert_blocks0bnweight_mode0__dual3_L2 =====
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Kernel     :   778 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Total      :  1202 cycles (64.7% Kernel + 35.3% Overhead, 778 + 424)
+===== Profiling pert_blocks0bnbias_mode0__dual5_L2 =====
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Kernel     :   760 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Total      :  1166 cycles (65.2% Kernel + 34.8% Overhead, 760 + 406)
+===== Profiling pert_blocks1bnweight_mode0__dual10_L2 =====
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Pre-Kernel :   226 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Kernel     :   752 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Total      :  1163 cycles (64.7% Kernel + 35.3% Overhead, 752 + 411)
+===== Profiling pert_blocks1bnbias_mode0__dual12_L2 =====
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Pre-Kernel :   228 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Kernel     :   742 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Total      :  1155 cycles (64.2% Kernel + 35.8% Overhead, 742 + 413)
+===== Profiling pert_blocks2bnweight_mode0__dual17_L2 =====
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Kernel     :   723 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Total      :  1147 cycles (63.0% Kernel + 37.0% Overhead, 723 + 424)
+===== Profiling pert_blocks2bnbias_mode0__dual19_L2 =====
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Pre-Kernel :   243 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Kernel     :   724 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Total      :  1170 cycles (61.9% Kernel + 38.1% Overhead, 724 + 446)
+===== Profiling wrappedInnerForwardImplConv__dual1_input_12_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   200 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Kernel     :   258 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   182 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Total      :   640 cycles (40.3% Kernel + 59.7% Overhead, 258 + 382)
+===== Profiling pert_blocks3bnweight_mode0__dual24_L2 =====
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Pre-Kernel :   250 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Kernel     :   733 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Post-Kernel:   184 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Total      :  1167 cycles (62.8% Kernel + 37.2% Overhead, 733 + 434)
+===== Profiling pert_blocks3bnbias_mode0__dual26_L2 =====
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Kernel     :   685 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Post-Kernel:   242 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Total      :  1147 cycles (59.7% Kernel + 40.3% Overhead, 685 + 462)
+===== Profiling pert_blocks4bnweight_mode0__dual31_L2 =====
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Kernel     :   679 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Total      :  1115 cycles (60.9% Kernel + 39.1% Overhead, 679 + 436)
+===== Profiling pert_blocks4bnbias_mode0__dual33_L2 =====
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Pre-Kernel :   227 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Kernel     :   705 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Post-Kernel:   260 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Total      :  1192 cycles (59.1% Kernel + 40.9% Overhead, 705 + 487)
+===== Profiling pert_fcweight_fp32_mode1__dual42_L2 =====
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Pre-Kernel :   349 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Kernel     :  1042 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Total      :  1725 cycles (60.4% Kernel + 39.6% Overhead, 1042 + 683)
+===== Profiling pert_fcweight_fp32_mode2__dual48_L2 =====
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Pre-Kernel :   338 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Kernel     :   913 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Post-Kernel:   316 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Total      :  1567 cycles (58.3% Kernel + 41.7% Overhead, 913 + 654)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5393 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17293 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24115 cycles (71.7% Kernel + 28.3% Overhead, 17293 + 6822)
+===== Profiling wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1487 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2217 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1427 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5131 cycles (43.2% Kernel + 56.8% Overhead, 2217 + 2914)
+===== Profiling wrappedInnerForwardImplConv__dual1_L2 =====
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Pre-Kernel :  1236 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Kernel     :376369 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Post-Kernel: 14043 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Total      :391648 cycles (96.1% Kernel + 3.9% Overhead, 376369 + 15279)
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Pre-Kernel :   611 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Kernel     :177248 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Post-Kernel:  6633 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Total      :184492 cycles (96.1% Kernel + 3.9% Overhead, 177248 + 7244)
+===== Profiling bnBatchNormalization_tail_L2 =====
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Pre-Kernel : 13659 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Kernel     :313963 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Post-Kernel:  1818 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Total      :329440 cycles (95.3% Kernel + 4.7% Overhead, 313963 + 15477)
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Pre-Kernel :  7611 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Kernel     :178867 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Post-Kernel:  1026 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Total      :187504 cycles (95.4% Kernel + 4.6% Overhead, 178867 + 8637)
+===== Profiling wrappedInnerForwardImpl_1Conv__dual8_L2 =====
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Pre-Kernel :  3119 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Kernel     :421273 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Post-Kernel:  5294 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Total      :429686 cycles (98.0% Kernel + 2.0% Overhead, 421273 + 8413)
+===== Profiling bn_1BatchNormalization_tail_L2 =====
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Pre-Kernel :  5525 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Kernel     :200056 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Post-Kernel:  1441 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Total      :207022 cycles (96.6% Kernel + 3.4% Overhead, 200056 + 6966)
+===== Profiling wrappedInnerForwardImpl_2Conv__dual15_L2 =====
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Pre-Kernel :  1850 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Kernel     :126462 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Post-Kernel:  1497 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Total      :129809 cycles (97.4% Kernel + 2.6% Overhead, 126462 + 3347)
+===== Profiling bn_2BatchNormalization_tail_L2 =====
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1634 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Kernel     : 52502 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Post-Kernel:   493 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Total      : 54629 cycles (96.1% Kernel + 3.9% Overhead, 52502 + 2127)
+===== Profiling wrappedInnerForwardImpl_3Conv__dual22_L2 =====
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Pre-Kernel :  1040 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Kernel     : 47596 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Post-Kernel:   521 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Total      : 49157 cycles (96.8% Kernel + 3.2% Overhead, 47596 + 1561)
+===== Profiling bn_3BatchNormalization_tail_L2 =====
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Pre-Kernel :   674 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Kernel     : 49748 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Post-Kernel:   540 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Total      : 50962 cycles (97.6% Kernel + 2.4% Overhead, 49748 + 1214)
+===== Profiling wrappedInnerForwardImpl_4Conv__dual29_L2 =====
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Pre-Kernel :  1560 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Kernel     : 40232 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Post-Kernel:   287 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Total      : 42079 cycles (95.6% Kernel + 4.4% Overhead, 40232 + 1847)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Pre-Kernel :   820 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Kernel     : 14987 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Post-Kernel:   671 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Total      : 16478 cycles (91.0% Kernel + 9.0% Overhead, 14987 + 1491)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   528 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   673 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   481 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1682 cycles (40.0% Kernel + 60.0% Overhead, 673 + 1009)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][640 ops][Tile 0] Pre-Kernel :   531 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Kernel     :  1149 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Post-Kernel:   499 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Total      :  2179 cycles (52.7% Kernel + 47.3% Overhead, 1149 + 1030)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   989 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   202 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1735 cycles (57.0% Kernel + 43.0% Overhead, 989 + 746)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half0__dual38_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Pre-Kernel :   233 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Kernel     :   284 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Post-Kernel:   203 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Total      :   720 cycles (39.4% Kernel + 60.6% Overhead, 284 + 436)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   553 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  3031 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   191 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3775 cycles (80.3% Kernel + 19.7% Overhead, 3031 + 744)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half1__dual40_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Pre-Kernel :   247 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Kernel     :   303 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Total      :   735 cycles (41.2% Kernel + 58.8% Overhead, 303 + 432)
+===== Profiling wrappedInnerForwardImpl_5Gemm_minus__dual46_L2 =====
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Pre-Kernel :   567 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Kernel     :  2786 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Total      :  3538 cycles (78.7% Kernel + 21.3% Overhead, 2786 + 752)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   353 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5174 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   335 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5862 cycles (88.3% Kernel + 11.7% Overhead, 5174 + 688)
+===== Profiling CrossEntropyLoss_minus__dual52_L2 =====
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Pre-Kernel :   335 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Kernel     :  5076 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Total      :  5728 cycles (88.6% Kernel + 11.4% Overhead, 5076 + 652)
+[PHASE] +eps forward DONE (5363549 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e3307ec
+[PHASE] fused dual pass: lm_bits=0x3f364fef
+update 1/1  accum 3/4  (mini-batch 2)  seed_base=0
+[PHASE] +eps forward START
+===== Profiling pert_fcbias_fp32_mode1__dual44_L2 =====
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Pre-Kernel :   201 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Kernel     :   758 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Total      :  1144 cycles (66.3% Kernel + 33.7% Overhead, 758 + 386)
+===== Profiling pert_fcbias_fp32_mode2__dual50_L2 =====
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Pre-Kernel :   237 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Kernel     :   580 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Post-Kernel:   147 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Total      :   964 cycles (60.2% Kernel + 39.8% Overhead, 580 + 384)
+===== Profiling pert_blocks0bnweight_mode0__dual3_L2 =====
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Pre-Kernel :   205 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Kernel     :   757 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Total      :  1165 cycles (65.0% Kernel + 35.0% Overhead, 757 + 408)
+===== Profiling pert_blocks0bnbias_mode0__dual5_L2 =====
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Pre-Kernel :   205 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Kernel     :   779 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Total      :  1169 cycles (66.6% Kernel + 33.4% Overhead, 779 + 390)
+===== Profiling pert_blocks1bnweight_mode0__dual10_L2 =====
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Pre-Kernel :   242 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Kernel     :   739 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Total      :  1168 cycles (63.3% Kernel + 36.7% Overhead, 739 + 429)
+===== Profiling pert_blocks1bnbias_mode0__dual12_L2 =====
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Pre-Kernel :   226 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Kernel     :   739 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Total      :  1150 cycles (64.3% Kernel + 35.7% Overhead, 739 + 411)
+===== Profiling pert_blocks2bnweight_mode0__dual17_L2 =====
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Pre-Kernel :   205 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Kernel     :   733 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Total      :  1141 cycles (64.2% Kernel + 35.8% Overhead, 733 + 408)
+===== Profiling pert_blocks2bnbias_mode0__dual19_L2 =====
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Pre-Kernel :   243 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Kernel     :   753 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Total      :  1199 cycles (62.8% Kernel + 37.2% Overhead, 753 + 446)
+===== Profiling wrappedInnerForwardImplConv__dual1_input_12_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   200 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Kernel     :   240 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   182 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Total      :   622 cycles (38.6% Kernel + 61.4% Overhead, 240 + 382)
+===== Profiling pert_blocks3bnweight_mode0__dual24_L2 =====
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Pre-Kernel :   234 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Kernel     :   716 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Post-Kernel:   184 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Total      :  1134 cycles (63.1% Kernel + 36.9% Overhead, 716 + 418)
+===== Profiling pert_blocks3bnbias_mode0__dual26_L2 =====
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Kernel     :   723 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Post-Kernel:   224 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Total      :  1167 cycles (62.0% Kernel + 38.0% Overhead, 723 + 444)
+===== Profiling pert_blocks4bnweight_mode0__dual31_L2 =====
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Kernel     :   702 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Total      :  1138 cycles (61.7% Kernel + 38.3% Overhead, 702 + 436)
+===== Profiling pert_blocks4bnbias_mode0__dual33_L2 =====
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Kernel     :   718 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Post-Kernel:   260 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Total      :  1209 cycles (59.4% Kernel + 40.6% Overhead, 718 + 491)
+===== Profiling pert_fcweight_fp32_mode1__dual42_L2 =====
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Pre-Kernel :   349 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Kernel     :  1018 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Total      :  1701 cycles (59.8% Kernel + 40.2% Overhead, 1018 + 683)
+===== Profiling pert_fcweight_fp32_mode2__dual48_L2 =====
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Pre-Kernel :   338 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Kernel     :   905 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Post-Kernel:   316 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Total      :  1559 cycles (58.1% Kernel + 41.9% Overhead, 905 + 654)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5393 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17300 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24122 cycles (71.7% Kernel + 28.3% Overhead, 17300 + 6822)
+===== Profiling wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1487 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2236 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1427 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5150 cycles (43.4% Kernel + 56.6% Overhead, 2236 + 2914)
+===== Profiling wrappedInnerForwardImplConv__dual1_L2 =====
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Pre-Kernel :  1252 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Kernel     :376138 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Post-Kernel: 14043 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Total      :391433 cycles (96.1% Kernel + 3.9% Overhead, 376138 + 15295)
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Pre-Kernel :   613 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Kernel     :177202 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Post-Kernel:  6633 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Total      :184448 cycles (96.1% Kernel + 3.9% Overhead, 177202 + 7246)
+===== Profiling bnBatchNormalization_tail_L2 =====
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Pre-Kernel : 13661 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Kernel     :310865 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Post-Kernel:  1818 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Total      :326344 cycles (95.3% Kernel + 4.7% Overhead, 310865 + 15479)
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Pre-Kernel :  7611 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Kernel     :177360 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Post-Kernel:  1026 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Total      :185997 cycles (95.4% Kernel + 4.6% Overhead, 177360 + 8637)
+===== Profiling wrappedInnerForwardImpl_1Conv__dual8_L2 =====
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Pre-Kernel :  3103 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Kernel     :421563 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Post-Kernel:  5292 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Total      :429958 cycles (98.0% Kernel + 2.0% Overhead, 421563 + 8395)
+===== Profiling bn_1BatchNormalization_tail_L2 =====
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Pre-Kernel :  5525 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Kernel     :198671 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Post-Kernel:  1439 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Total      :205635 cycles (96.6% Kernel + 3.4% Overhead, 198671 + 6964)
+===== Profiling wrappedInnerForwardImpl_2Conv__dual15_L2 =====
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Pre-Kernel :  1834 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Kernel     :126393 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Post-Kernel:  1497 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Total      :129724 cycles (97.4% Kernel + 2.6% Overhead, 126393 + 3331)
+===== Profiling bn_2BatchNormalization_tail_L2 =====
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1648 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Kernel     : 52899 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Post-Kernel:   493 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Total      : 55040 cycles (96.1% Kernel + 3.9% Overhead, 52899 + 2141)
+===== Profiling wrappedInnerForwardImpl_3Conv__dual22_L2 =====
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Pre-Kernel :  1024 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Kernel     : 47617 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Post-Kernel:   523 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Total      : 49164 cycles (96.9% Kernel + 3.1% Overhead, 47617 + 1547)
+===== Profiling bn_3BatchNormalization_tail_L2 =====
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Pre-Kernel :   674 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Kernel     : 49849 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Post-Kernel:   542 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Total      : 51065 cycles (97.6% Kernel + 2.4% Overhead, 49849 + 1216)
+===== Profiling wrappedInnerForwardImpl_4Conv__dual29_L2 =====
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Pre-Kernel :  1560 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Kernel     : 40061 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Post-Kernel:   289 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Total      : 41910 cycles (95.6% Kernel + 4.4% Overhead, 40061 + 1849)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Pre-Kernel :   818 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Kernel     : 15003 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Post-Kernel:   673 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Total      : 16494 cycles (91.0% Kernel + 9.0% Overhead, 15003 + 1491)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   675 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   481 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1700 cycles (39.7% Kernel + 60.3% Overhead, 675 + 1025)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][640 ops][Tile 0] Pre-Kernel :   529 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Kernel     :  1157 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Post-Kernel:   499 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Total      :  2185 cycles (53.0% Kernel + 47.0% Overhead, 1157 + 1028)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :  1018 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   204 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1766 cycles (57.6% Kernel + 42.4% Overhead, 1018 + 748)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half0__dual38_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Pre-Kernel :   249 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Kernel     :   294 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Post-Kernel:   203 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Total      :   746 cycles (39.4% Kernel + 60.6% Overhead, 294 + 452)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   551 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  2995 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   187 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3733 cycles (80.2% Kernel + 19.8% Overhead, 2995 + 738)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half1__dual40_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Pre-Kernel :   245 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Kernel     :   338 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Total      :   768 cycles (44.0% Kernel + 56.0% Overhead, 338 + 430)
+===== Profiling wrappedInnerForwardImpl_5Gemm_minus__dual46_L2 =====
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Pre-Kernel :   567 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Kernel     :  2834 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Post-Kernel:   203 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Total      :  3604 cycles (78.6% Kernel + 21.4% Overhead, 2834 + 770)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   337 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5153 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5807 cycles (88.7% Kernel + 11.3% Overhead, 5153 + 654)
+===== Profiling CrossEntropyLoss_minus__dual52_L2 =====
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Pre-Kernel :   339 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Kernel     :  5052 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Total      :  5708 cycles (88.5% Kernel + 11.5% Overhead, 5052 + 656)
+[PHASE] +eps forward DONE (5356940 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c272ee5
+[PHASE] fused dual pass: lm_bits=0x3da5e5c9
+update 1/1  accum 4/4  (mini-batch 3)  seed_base=0
+[PHASE] +eps forward START
+===== Profiling pert_fcbias_fp32_mode1__dual44_L2 =====
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Pre-Kernel :   185 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Kernel     :   757 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_fcbias_fp32_mode1__dual44_L2][SB][9 ops][Tile 0] Total      :  1127 cycles (67.2% Kernel + 32.8% Overhead, 757 + 370)
+===== Profiling pert_fcbias_fp32_mode2__dual50_L2 =====
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Pre-Kernel :   237 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Kernel     :   619 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Post-Kernel:   147 cycles
+[pert_fcbias_fp32_mode2__dual50_L2][SB][9 ops][Tile 0] Total      :  1003 cycles (61.7% Kernel + 38.3% Overhead, 619 + 384)
+===== Profiling pert_blocks0bnweight_mode0__dual3_L2 =====
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Kernel     :   812 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks0bnweight_mode0__dual3_L2][SB][8 ops][Tile 0] Total      :  1236 cycles (65.7% Kernel + 34.3% Overhead, 812 + 424)
+===== Profiling pert_blocks0bnbias_mode0__dual5_L2 =====
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Kernel     :   740 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks0bnbias_mode0__dual5_L2][SB][8 ops][Tile 0] Total      :  1146 cycles (64.6% Kernel + 35.4% Overhead, 740 + 406)
+===== Profiling pert_blocks1bnweight_mode0__dual10_L2 =====
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Pre-Kernel :   258 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Kernel     :   716 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnweight_mode0__dual10_L2][SB][16 ops][Tile 0] Total      :  1159 cycles (61.8% Kernel + 38.2% Overhead, 716 + 443)
+===== Profiling pert_blocks1bnbias_mode0__dual12_L2 =====
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Pre-Kernel :   242 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Kernel     :   741 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_blocks1bnbias_mode0__dual12_L2][SB][16 ops][Tile 0] Total      :  1168 cycles (63.4% Kernel + 36.6% Overhead, 741 + 427)
+===== Profiling pert_blocks2bnweight_mode0__dual17_L2 =====
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Kernel     :   743 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Post-Kernel:   203 cycles
+[pert_blocks2bnweight_mode0__dual17_L2][SB][16 ops][Tile 0] Total      :  1167 cycles (63.7% Kernel + 36.3% Overhead, 743 + 424)
+===== Profiling pert_blocks2bnbias_mode0__dual19_L2 =====
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Pre-Kernel :   259 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Kernel     :   746 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_blocks2bnbias_mode0__dual19_L2][SB][16 ops][Tile 0] Total      :  1210 cycles (61.7% Kernel + 38.3% Overhead, 746 + 464)
+===== Profiling wrappedInnerForwardImplConv__dual1_input_12_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   200 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Kernel     :   260 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   182 cycles
+[wrappedInnerForwardImplConv__dual1_input_12_transpose_L2][SB][0 ops][Tile 0] Total      :   642 cycles (40.5% Kernel + 59.5% Overhead, 260 + 382)
+===== Profiling pert_blocks3bnweight_mode0__dual24_L2 =====
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Pre-Kernel :   250 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Kernel     :   718 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Post-Kernel:   184 cycles
+[pert_blocks3bnweight_mode0__dual24_L2][SB][32 ops][Tile 0] Total      :  1152 cycles (62.3% Kernel + 37.7% Overhead, 718 + 434)
+===== Profiling pert_blocks3bnbias_mode0__dual26_L2 =====
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Pre-Kernel :   204 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Kernel     :   692 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Post-Kernel:   224 cycles
+[pert_blocks3bnbias_mode0__dual26_L2][SB][32 ops][Tile 0] Total      :  1120 cycles (61.8% Kernel + 38.2% Overhead, 692 + 428)
+===== Profiling pert_blocks4bnweight_mode0__dual31_L2 =====
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Pre-Kernel :   215 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Kernel     :   681 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_blocks4bnweight_mode0__dual31_L2][SB][32 ops][Tile 0] Total      :  1101 cycles (61.9% Kernel + 38.1% Overhead, 681 + 420)
+===== Profiling pert_blocks4bnbias_mode0__dual33_L2 =====
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Pre-Kernel :   227 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Kernel     :   721 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Post-Kernel:   260 cycles
+[pert_blocks4bnbias_mode0__dual33_L2][SB][32 ops][Tile 0] Total      :  1208 cycles (59.7% Kernel + 40.3% Overhead, 721 + 487)
+===== Profiling pert_fcweight_fp32_mode1__dual42_L2 =====
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Pre-Kernel :   349 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Kernel     :   995 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_mode1__dual42_L2][SB][288 ops][Tile 0] Total      :  1678 cycles (59.3% Kernel + 40.7% Overhead, 995 + 683)
+===== Profiling pert_fcweight_fp32_mode2__dual48_L2 =====
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Pre-Kernel :   338 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Kernel     :   889 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Post-Kernel:   316 cycles
+[pert_fcweight_fp32_mode2__dual48_L2][SB][288 ops][Tile 0] Total      :  1543 cycles (57.6% Kernel + 42.4% Overhead, 889 + 654)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5393 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17269 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24091 cycles (71.7% Kernel + 28.3% Overhead, 17269 + 6822)
+===== Profiling wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1487 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2253 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1427 cycles
+[wrappedInnerForwardImplConv__dual1_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5167 cycles (43.6% Kernel + 56.4% Overhead, 2253 + 2914)
+===== Profiling wrappedInnerForwardImplConv__dual1_L2 =====
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Pre-Kernel :  1236 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Kernel     :376239 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Post-Kernel: 14043 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 0] Total      :391518 cycles (96.1% Kernel + 3.9% Overhead, 376239 + 15279)
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Pre-Kernel :   647 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Kernel     :177067 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Post-Kernel:  6633 cycles
+[wrappedInnerForwardImplConv__dual1_L2][SB][2571268 ops][Tile 1] Total      :184347 cycles (96.1% Kernel + 3.9% Overhead, 177067 + 7280)
+===== Profiling bnBatchNormalization_tail_L2 =====
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Pre-Kernel : 13659 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Kernel     :311875 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Post-Kernel:  1818 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 0] Total      :327352 cycles (95.3% Kernel + 4.7% Overhead, 311875 + 15477)
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Pre-Kernel :  7611 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Kernel     :179349 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Post-Kernel:  1026 cycles
+[bnBatchNormalization_tail_L2][SB][155904 ops][Tile 1] Total      :187986 cycles (95.4% Kernel + 4.6% Overhead, 179349 + 8637)
+===== Profiling wrappedInnerForwardImpl_1Conv__dual8_L2 =====
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Pre-Kernel :  3083 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Kernel     :421579 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Post-Kernel:  5296 cycles
+[wrappedInnerForwardImpl_1Conv__dual8_L2][SB][40377568 ops][Tile 0] Total      :429958 cycles (98.1% Kernel + 1.9% Overhead, 421579 + 8379)
+===== Profiling bn_1BatchNormalization_tail_L2 =====
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Pre-Kernel :  5543 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Kernel     :199604 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Post-Kernel:  1439 cycles
+[bn_1BatchNormalization_tail_L2][SB][39424 ops][Tile 0] Total      :206586 cycles (96.6% Kernel + 3.4% Overhead, 199604 + 6982)
+===== Profiling wrappedInnerForwardImpl_2Conv__dual15_L2 =====
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Pre-Kernel :  1850 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Kernel     :126558 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Post-Kernel:  1497 cycles
+[wrappedInnerForwardImpl_2Conv__dual15_L2][SB][10553228 ops][Tile 0] Total      :129905 cycles (97.4% Kernel + 2.6% Overhead, 126558 + 3347)
+===== Profiling bn_2BatchNormalization_tail_L2 =====
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1630 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Kernel     : 50916 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Post-Kernel:   493 cycles
+[bn_2BatchNormalization_tail_L2][SB][8960 ops][Tile 0] Total      : 53039 cycles (96.0% Kernel + 4.0% Overhead, 50916 + 2123)
+===== Profiling wrappedInnerForwardImpl_3Conv__dual22_L2 =====
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Pre-Kernel :  1040 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Kernel     : 47685 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Post-Kernel:   521 cycles
+[wrappedInnerForwardImpl_3Conv__dual22_L2][SB][2294000 ops][Tile 0] Total      : 49246 cycles (96.8% Kernel + 3.2% Overhead, 47685 + 1561)
+===== Profiling bn_3BatchNormalization_tail_L2 =====
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Pre-Kernel :   674 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Kernel     : 49779 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Post-Kernel:   540 cycles
+[bn_3BatchNormalization_tail_L2][SB][2560 ops][Tile 0] Total      : 50993 cycles (97.6% Kernel + 2.4% Overhead, 49779 + 1214)
+===== Profiling wrappedInnerForwardImpl_4Conv__dual29_L2 =====
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Pre-Kernel :  1560 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Kernel     : 39988 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Post-Kernel:   287 cycles
+[wrappedInnerForwardImpl_4Conv__dual29_L2][SB][1146940 ops][Tile 0] Total      : 41835 cycles (95.6% Kernel + 4.4% Overhead, 39988 + 1847)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Pre-Kernel :   820 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Kernel     : 14989 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Post-Kernel:   671 cycles
+[bn_4BatchNormalization_L2][SB][4480 ops][Tile 0] Total      : 16480 cycles (91.0% Kernel + 9.0% Overhead, 14989 + 1491)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   544 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   683 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   481 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1708 cycles (40.0% Kernel + 60.0% Overhead, 683 + 1025)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][640 ops][Tile 0] Pre-Kernel :   545 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Kernel     :  1106 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Post-Kernel:   499 cycles
+[relu_4Relu_L2][SB][640 ops][Tile 0] Total      :  2150 cycles (51.4% Kernel + 48.6% Overhead, 1106 + 1044)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   528 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   991 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   202 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1721 cycles (57.6% Kernel + 42.4% Overhead, 991 + 730)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half0__dual38_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Pre-Kernel :   249 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Kernel     :   294 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Post-Kernel:   203 cycles
+[wrappedInnerForwardImpl_5Gemm_half0__dual38_L2][SB][32 ops][Tile 0] Total      :   746 cycles (39.4% Kernel + 60.6% Overhead, 294 + 452)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   535 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  3028 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   203 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3766 cycles (80.4% Kernel + 19.6% Overhead, 3028 + 738)
+===== Profiling wrappedInnerForwardImpl_5Gemm_half1__dual40_L2 =====
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Pre-Kernel :   245 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Kernel     :   338 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_half1__dual40_L2][SB][32 ops][Tile 0] Total      :   768 cycles (44.0% Kernel + 56.0% Overhead, 338 + 430)
+===== Profiling wrappedInnerForwardImpl_5Gemm_minus__dual46_L2 =====
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Pre-Kernel :   549 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Kernel     :  2785 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_minus__dual46_L2][SB][603 ops][Tile 0] Total      :  3519 cycles (79.1% Kernel + 20.9% Overhead, 2785 + 734)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   353 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5202 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   317 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5872 cycles (88.6% Kernel + 11.4% Overhead, 5202 + 670)
+===== Profiling CrossEntropyLoss_minus__dual52_L2 =====
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Pre-Kernel :   335 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Kernel     :  4997 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Post-Kernel:   319 cycles
+[CrossEntropyLoss_minus__dual52_L2][SB][0 ops][Tile 0] Total      :  5651 cycles (88.4% Kernel + 11.6% Overhead, 4997 + 654)
+[PHASE] +eps forward DONE (5357632 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x4022b37b
+[PHASE] fused dual pass: lm_bits=0x4012c406
+[ECO g s=0] 0xc0896f9b
+[PHASE] update (zo_update) START
+===== Profiling rqsp_upd_blocks0convbias_rqsadd_L2 =====
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Pre-Kernel :   251 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Kernel     :  2220 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Post-Kernel:   203 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Total      :  2674 cycles (83.0% Kernel + 17.0% Overhead, 2220 + 454)
+===== Profiling pert_upd_blocks0bnweight_L2 =====
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Pre-Kernel :   200 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Kernel     :  1088 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Total      :  1493 cycles (72.9% Kernel + 27.1% Overhead, 1088 + 405)
+===== Profiling pert_upd_blocks0bnbias_L2 =====
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Pre-Kernel :   164 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Kernel     :   872 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Post-Kernel:   185 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Total      :  1221 cycles (71.4% Kernel + 28.6% Overhead, 872 + 349)
+===== Profiling pert_upd_fcbias_fp32_L2 =====
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Pre-Kernel :   200 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Kernel     :   875 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Post-Kernel:   167 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Total      :  1242 cycles (70.5% Kernel + 29.5% Overhead, 875 + 367)
+===== Profiling rqsp_upd_blocks1convbias_rqsadd_L2 =====
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   254 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :  2516 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   206 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  2976 cycles (84.5% Kernel + 15.5% Overhead, 2516 + 460)
+===== Profiling rqsp_upd_blocks2convbias_rqsadd_L2 =====
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   223 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :  2305 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   208 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  2736 cycles (84.2% Kernel + 15.8% Overhead, 2305 + 431)
+===== Profiling pert_upd_blocks1bnweight_L2 =====
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   239 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Kernel     :  1124 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   223 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Total      :  1586 cycles (70.9% Kernel + 29.1% Overhead, 1124 + 462)
+===== Profiling pert_upd_blocks1bnbias_L2 =====
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   223 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Kernel     :   923 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   204 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Total      :  1350 cycles (68.4% Kernel + 31.6% Overhead, 923 + 427)
+===== Profiling pert_upd_blocks2bnweight_L2 =====
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   186 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Kernel     :   902 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Total      :  1293 cycles (69.8% Kernel + 30.2% Overhead, 902 + 391)
+===== Profiling pert_upd_blocks2bnbias_L2 =====
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   238 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Kernel     :   862 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Total      :  1287 cycles (67.0% Kernel + 33.0% Overhead, 862 + 425)
+===== Profiling rqsp_upd_blocks0convweight_int8_L2 =====
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Pre-Kernel :   233 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Kernel     :  3134 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Post-Kernel:   204 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Total      :  3571 cycles (87.8% Kernel + 12.2% Overhead, 3134 + 437)
+===== Profiling rqsp_upd_blocks3convbias_rqsadd_L2 =====
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   263 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  3010 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   206 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  3479 cycles (86.5% Kernel + 13.5% Overhead, 3010 + 469)
+===== Profiling rqsp_upd_blocks4convbias_rqsadd_L2 =====
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   251 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  2880 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   224 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  3355 cycles (85.8% Kernel + 14.2% Overhead, 2880 + 475)
+===== Profiling pert_upd_blocks3bnweight_L2 =====
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   213 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Kernel     :  1174 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   186 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Total      :  1573 cycles (74.6% Kernel + 25.4% Overhead, 1174 + 399)
+===== Profiling pert_upd_blocks3bnbias_L2 =====
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Kernel     :   909 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   204 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Total      :  1344 cycles (67.6% Kernel + 32.4% Overhead, 909 + 435)
+===== Profiling pert_upd_blocks4bnweight_L2 =====
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   240 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Kernel     :   877 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Total      :  1304 cycles (67.3% Kernel + 32.7% Overhead, 877 + 427)
+===== Profiling pert_upd_blocks4bnbias_L2 =====
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   245 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Kernel     :   905 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   223 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Total      :  1373 cycles (65.9% Kernel + 34.1% Overhead, 905 + 468)
+===== Profiling pert_upd_fcweight_fp32_L2 =====
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Pre-Kernel :   319 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Kernel     :  2596 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Post-Kernel:   333 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Total      :  3248 cycles (79.9% Kernel + 20.1% Overhead, 2596 + 652)
+===== Profiling rqsp_upd_blocks1convweight_int8_L2 =====
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   484 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 71174 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   453 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 72111 cycles (98.7% Kernel + 1.3% Overhead, 71174 + 937)
+===== Profiling rqsp_upd_blocks2convweight_int8_L2 =====
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   472 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 70832 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   435 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 71739 cycles (98.7% Kernel + 1.3% Overhead, 70832 + 907)
+===== Profiling rqsp_upd_blocks3convweight_int8_L2 =====
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Pre-Kernel :   702 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Kernel     :123080 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Post-Kernel:   616 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Total      :124398 cycles (98.9% Kernel + 1.1% Overhead, 123080 + 1318)
+===== Profiling rqsp_upd_blocks4convweight_int8_L2 =====
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Pre-Kernel :  1162 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Kernel     :243658 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Post-Kernel:  1096 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Total      :245916 cycles (99.1% Kernel + 0.9% Overhead, 243658 + 2258)
+[PHASE] update (zo_update) DONE (2274683 cyc)
+[WSUM s=0] 0xfa1f7dd2
+[loss+ 0] computed=0.038565  ref=0.038565  diff=0.000000  TOL=0.001000
+[loss+ 3] computed=2.542205  ref=2.542204  diff=0.000000  TOL=0.001000
+[loss- 0] computed=0.023022  ref=0.023022  diff=0.000000  TOL=0.001000
+[loss- 3] computed=2.293214  ref=2.293214  diff=0.000000  TOL=0.001000
+[WCHK] changed 17/22 trainable tensors after 1 updates
+Errors: 0 out of 8
+BENCH train_cycles_hi=0 train_cycles_lo=21438936 opt_cycles_hi=0 opt_cycles_lo=2274683
+[100%] Built target gvsoc_speechnet_train_QZOECO_full_fused_round1
+
+[92m✓ Test speechnet_train_QZOECO_full_fused_round1 PASSED - No errors found[0m

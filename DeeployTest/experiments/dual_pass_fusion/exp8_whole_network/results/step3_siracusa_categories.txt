@@ -1,0 +1,12 @@
+category                 step0_siracusa_prof.log  step3_siracusa_fused_pro
+conv (pulp-nn)                         2,489,731                         0
+conv (fused dual)                              0                 1,443,947
+BN                                       826,595                   878,982
+conv perturbation                        849,663                   303,422
+Quant/Dequant                            486,415                   443,475
+pool                                     281,143                   257,713
+conv transposes                           70,963                    33,738
+ReLU                                      66,887                    65,239
+fp32 perturbation                         65,719                    57,328
+fc + loss                                 16,892                    18,651
+sum                                    5,154,008                 3,502,495

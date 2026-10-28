@@ -1,0 +1,1993 @@
+[Deeploy] Test path /app/Deeploy/SpeechNet_Test/speechnet_train_QZO_single_step is outside base directory. Using /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step
+[0;93m2026-10-14 11:23:54.401911512 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze_1[m
+[0;93m2026-10-14 11:23:54.402908637 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze[m
+  [testData->L3] 39208 B of baked test inputs moved out of L2 to L3 (hex-loaded)
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step
+-- Building for platform 'GAP9'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L3 mode: Found 24 hex file(s)
+-- ==== HEXLIST ====
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_0.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_1.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_10.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_11.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_12.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_13.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_14.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_15.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_16.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_17.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_18.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_19.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_2.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_20.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_21.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_3.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_4.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_5.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_6.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_7.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_8.hex
+--   /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_9.hex
+-- GAPY_RUNNER_ARGS: --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_0.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_1.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_10.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_11.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_12.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_13.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_14.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_15.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_16.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_17.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_18.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_19.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_2.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_20.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_21.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_3.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_4.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_5.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_6.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_7.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_8.hex@flash:readfs_flash:files;--flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_9.hex@flash:readfs_flash:files
+-- [Deeploy GAP9] L3 mode: using gapy with readfs
+-- [Deeploy GAP9] Adding 24 readfs file(s)
+-- [Deeploy GAP9] Board deployment target: speechnet_train_QZO_single_step
+-- [Log] none
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    GVSOC_INSTALL_DIR
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9/build_e8gpu
+[  1%] Building C object pmsis/printf/CMakeFiles/pmsis_printf.dir/printf.c.obj
+[  2%] Linking C static library ../../lib/libpmsis_printf.a
+[  2%] Built target pmsis_printf
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc_pool.c.obj
+[  3%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc.c.obj
+[  3%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/pi_malloc.c.obj
+[  4%] Linking C static library ../../../lib/libpulp_allocator.a
+[  4%] Built target pulp_allocator
+[  5%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/errno.c.obj
+[  6%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/stdlib.c.obj
+[  6%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/string.c.obj
+[  7%] Linking C static library ../../../../lib/libfreertos_libs.a
+[  7%] Built target freertos_libs
+[  7%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/fll/fll.c.obj
+[  8%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/pmu/maestro_voltage.c.obj
+[  8%] Linking C static library ../../lib/libfll_pmu_lib.a
+[  8%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro.c.obj
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro_irq.c.obj
+[ 10%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio.c.obj
+[ 10%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio_asm.S.obj
+[ 11%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/efuse/driver/efuse.c.obj
+[ 11%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gap_iet.S.obj
+[ 12%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes.c.obj
+[ 12%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes_internal.c.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes_dual_core/driver/aes_dual_core_internal.c.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/quiddikey/driver/quiddikey_internal.c.obj
+[ 14%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-cc.S.obj
+[ 15%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster.c.obj
+[ 15%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-team.S.obj
+[ 16%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-workgroup.S.obj
+[ 16%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/malloc/pi_cl_malloc.c.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_core/driver/udma_core.c.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/fc_event/driver/fc_event.c.obj
+[ 18%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/pad/driver/pad.c.obj
+[ 18%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/asm_util.S.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/ctors_dtors.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/host_sync_access.c.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[ 22%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/pi_log.c.obj
+[ 22%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/time.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/device.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/os/system_gap.c.obj
+[ 24%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/startup_gap.S.obj
+[ 24%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/timer/driver/pi_timer.c.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi.c.obj
+[ 26%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi_asm.S.obj
+[ 26%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/fs.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9evk_v1_3.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9mod_v1_0_b.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/crc/crc32/crc32.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/api/flash.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mram/mram-v2.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mx25u51245g/mx25u51245g.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/api/powersupply.c.obj
+[ 33%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/powersupplygpio/powersupplygpio.c.obj
+[ 33%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/ram.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/alloc_extern.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/aps256xxn/aps256xxn.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[ 36%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[ 37%] Linking C static library ../lib/libpmsis.a
+[ 37%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+[ 37%] Building ASM object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/main.S.obj
+[ 38%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/custom_list.c.obj
+[ 38%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_evt.c.obj
+[ 40%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_task.c.obj
+[ 40%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/sync_obj.c.obj
+[ 41%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/os.c.obj
+[ 41%] Linking C static library ../../../../../lib/libpmsis_backend.a
+[ 41%] Built target pmsis_backend
+Scanning dependencies of target freertos
+[ 42%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port_asm.S.obj
+[ 42%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port.c.obj
+[ 43%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/list.c.obj
+[ 44%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/queue.c.obj
+[ 44%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/tasks.c.obj
+[ 45%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/freertos_task.S.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/timers.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event_groups.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/stream_buffer.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/scheduler.c.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/sync_obj-v3.c.obj
+[ 49%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/semaphore-v2.c.obj
+[ 49%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/task-v3.c.obj
+[ 50%] Building C object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer.c.obj
+[ 50%] Building ASM object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer_asm.S.obj
+[ 51%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/config/FreeRTOS_util.c.obj
+[ 51%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/freertos_it.c.obj
+[ 52%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/gap_it.c.obj
+[ 52%] Linking C static library ../lib/libfreertos.a
+[ 52%] Built target freertos
+[ 52%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualConv2in.c.obj
+[ 53%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualPrep.c.obj
+[ 53%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 54%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 54%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 55%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 56%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 56%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 57%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Conv4x2.c.obj
+[ 57%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 58%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 58%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 60%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 60%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv.c.obj
+[ 61%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv2In.c.obj
+[ 62%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/FlatConv.c.obj
+[ 62%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 63%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 63%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 64%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Im2ColU8.c.obj
+[ 64%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 65%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 65%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 66%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 67%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerfRecords.c.obj
+[ 67%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 68%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 68%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 69%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 69%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 70%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 70%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 71%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZOEco.c.obj
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c.obj
+[ 78%] Linking C static library ../../lib/libdeeploygap9.a
+[ 78%] Built target deeploygap9
+[ 78%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/BatchNorm_fp32.c.obj
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c: In function 'BatchNorm_fp32':
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c:13:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ #pragma omp parallel for
+ 
+[ 80%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/ConvTranspose1d_fp32.c.obj
+[ 80%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_fp32.c.obj
+[ 81%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_s8.c.obj
+[ 81%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_fp32.c.obj
+[ 82%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_s8.c.obj
+[ 82%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_fp32.c.obj
+[ 83%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_s32.c.obj
+[ 84%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_fp32.c.obj
+[ 84%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_s8.c.obj
+[ 85%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_fp32.c.obj
+[ 85%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_s8.c.obj
+[ 86%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Hardswish_s8.c.obj
+[ 86%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_fp32.c.obj
+[ 87%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_s8.c.obj
+[ 87%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_fp32.c.obj
+[ 88%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_s8.c.obj
+[ 89%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_fp32.c.obj
+[ 89%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_s8.c.obj
+[ 90%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Pow_fp32.c.obj
+[ 90%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQDiv_s8.c.obj
+[ 91%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQGELU_s8.c.obj
+[ 91%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQHardswish.c.obj
+[ 92%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Relu_fp32.c.obj
+[ 92%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RequantShift_s8.c.obj
+[ 93%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_fp32.c.obj
+[ 94%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_s8.c.obj
+[ 94%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Sqrt_fp32.c.obj
+[ 95%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Util.c.obj
+[ 95%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/iRMSNorm_s8.c.obj
+[ 96%] Linking C static library ../../lib/libdeeploybasic.a
+[ 96%] Built target deeploybasic
+[ 97%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks0convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:835:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks0convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:837:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks0convbias_rqsadd_L2_prefix[] = "[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:862:84: warning: implicit declaration of function 'getCycles' [-Wimplicit-function-declaration]
+     rqsp_blocks0convbias_rqsadd_L2_ingress_dma_wait_start_measurements[TILING_I] = getCycles();
+                                                                                    ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:916:3: warning: implicit declaration of function 'StopTimer' [-Wimplicit-function-declaration]
+   StopTimer();
+   ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:952:3: warning: implicit declaration of function 'StartTimer'; did you mean 'strftime'? [-Wimplicit-function-declaration]
+   StartTimer();
+   ^~~~~~~~~~
+   strftime
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks0bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1077:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1079:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnweight_L2_prefix[] = "[pert_blocks0bnweight_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks0bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1309:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1311:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks0bnbias_L2_prefix[] = "[pert_blocks0bnbias_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_fcbias_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1540:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1542:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcbias_fp32_L2_prefix[] = "[pert_fcbias_fp32_L2][SB][9 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks1convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1790:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks1convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:1792:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks1convbias_rqsadd_L2_prefix[] = "[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks2convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2055:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks2convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2057:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks2convbias_rqsadd_L2_prefix[] = "[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks1bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2297:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2299:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnweight_L2_prefix[] = "[pert_blocks1bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks1bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2529:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2531:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks1bnbias_L2_prefix[] = "[pert_blocks1bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks2bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2760:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2762:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnweight_L2_prefix[] = "[pert_blocks2bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks2bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2992:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:2994:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks2bnbias_L2_prefix[] = "[pert_blocks2bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks0convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3247:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks0convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3249:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks0convweight_int8_L2_prefix[] = "[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3537:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3539:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks3convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3836:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks3convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:3838:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks3convbias_rqsadd_L2_prefix[] = "[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks4convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4101:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks4convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4103:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks4convbias_rqsadd_L2_prefix[] = "[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks3bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4343:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4345:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnweight_L2_prefix[] = "[pert_blocks3bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks3bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4575:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4577:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks3bnbias_L2_prefix[] = "[pert_blocks3bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks4bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4806:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:4808:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnweight_L2_prefix[] = "[pert_blocks4bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_blocks4bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5038:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5040:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_blocks4bnbias_L2_prefix[] = "[pert_blocks4bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pert_fcweight_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5269:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5271:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_fcweight_fp32_L2_prefix[] = "[pert_fcweight_fp32_L2][SB][288 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks1convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5524:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks1convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5526:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks1convweight_int8_L2_prefix[] = "[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5814:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:5816:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks2convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6114:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks2convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6116:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks2convweight_int8_L2_prefix[] = "[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6404:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6406:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks3convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6704:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks3convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6706:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks3convweight_int8_L2_prefix[] = "[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6994:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:6996:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_rqsp_blocks4convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7294:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks4convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7296:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_blocks4convweight_int8_L2_prefix[] = "[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7584:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7586:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_0_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7869:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:7871:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8167:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8169:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_0_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8463:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8465:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_0_L2_prefix[] = "[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_0_conv_output_dequantMul_Dequant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8790:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:8792:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2_prefix[] = "[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bnBatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9123:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bnBatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9125:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bnBatchNormalization_L2_prefix[] = "[bnBatchNormalization_L2][SB][549584 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_poolMaxPool_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9493:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char poolMaxPool_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9495:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char poolMaxPool_L2_prefix[] = "[poolMaxPool_L2][SB][68208 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_poolMaxPool_poolMaxPool_pre_relu_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9787:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:9789:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2_prefix[] = "[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_reluRelu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10024:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char reluRelu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10026:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char reluRelu_L2_prefix[] = "[reluRelu_L2][SB][9744 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_1_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10273:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10275:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10574:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10576:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_1_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10870:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:10872:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_1_L2_prefix[] = "[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_1_conv_output_dequantMul_Dequant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11184:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11186:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2_prefix[] = "[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_1BatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11504:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_1BatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11506:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_1BatchNormalization_L2_prefix[] = "[bn_1BatchNormalization_L2][SB][137984 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pool_1MaxPool_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11865:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_1MaxPool_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:11867:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_1MaxPool_L2_prefix[] = "[pool_1MaxPool_L2][SB][14784 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12145:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12147:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2_prefix[] = "[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_relu_1Relu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12384:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_1Relu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12386:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_1Relu_L2_prefix[] = "[relu_1Relu_L2][SB][4928 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_2_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12633:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12635:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12934:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:12936:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_2_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13230:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13232:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_2_L2_prefix[] = "[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_2_conv_output_dequantMul_Dequant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13544:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13546:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2_prefix[] = "[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_2BatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13857:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_2BatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:13859:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_2BatchNormalization_L2_prefix[] = "[bn_2BatchNormalization_L2][SB][36064 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pool_2MaxPool_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14197:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_2MaxPool_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14199:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_2MaxPool_L2_prefix[] = "[pool_2MaxPool_L2][SB][3360 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14477:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14479:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2_prefix[] = "[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_relu_2Relu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14716:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_2Relu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14718:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_2Relu_L2_prefix[] = "[relu_2Relu_L2][SB][1120 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_3_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14965:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:14967:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15266:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15268:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_3_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15562:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15564:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_3_L2_prefix[] = "[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_3_conv_output_dequantMul_Dequant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15876:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:15878:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2_prefix[] = "[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_3BatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16189:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16191:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_L2_prefix[] = "[bn_3BatchNormalization_L2][SB][8960 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16593:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16595:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_relu_3Relu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16845:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_3Relu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:16847:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_3Relu_L2_prefix[] = "[relu_3Relu_L2][SB][1280 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_4_conv_input_quant_1Clip_Quant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17094:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17096:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2_prefix[] = "[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17395:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17397:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '__MERGE_CONVRQ_PASS_4_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17691:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:17693:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char _MERGE_CONVRQ_PASS_4_L2_prefix[] = "[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_QCDQ_blocks_4_conv_output_dequantMul_Dequant_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18004:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18006:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2_prefix[] = "[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_4BatchNormalization_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18317:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18319:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_L2_prefix[] = "[bn_4BatchNormalization_L2][SB][2240 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18721:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18723:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2_prefix[] =
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_relu_4Relu_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18973:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_4Relu_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:18975:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char relu_4Relu_L2_prefix[] = "[relu_4Relu_L2][SB][320 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_global_poolGlobalAveragePool_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19194:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char global_poolGlobalAveragePool_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19196:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char global_poolGlobalAveragePool_L2_prefix[] = "[global_poolGlobalAveragePool_L2][SB][0 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19475:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19477:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char wrappedInnerForwardImpl_5Gemm_L2_prefix[] = "[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c: In function '_CrossEntropyLoss_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19772:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/TrainingNetwork.c:19774:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char CrossEntropyLoss_L2_prefix[] = "[CrossEntropyLoss_L2][SB][0 ops][Tile ";
+   ^~~~~
+[ 97%] Built target training_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks0convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:372:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:374:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:399:88: warning: implicit declaration of function 'getCycles' [-Wimplicit-function-declaration]
+     rqsp_upd_blocks0convbias_rqsadd_L2_ingress_dma_wait_start_measurements[TILING_I] = getCycles();
+                                                                                        ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:453:3: warning: implicit declaration of function 'StopTimer' [-Wimplicit-function-declaration]
+   StopTimer();
+   ^~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:491:3: warning: implicit declaration of function 'StartTimer'; did you mean 'strftime'? [-Wimplicit-function-declaration]
+   StartTimer();
+   ^~~~~~~~~~
+   strftime
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks0bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:621:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:623:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnweight_L2_prefix[] = "[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks0bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:859:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:861:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks0bnbias_L2_prefix[] = "[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_fcbias_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1092:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcbias_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1094:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcbias_fp32_L2_prefix[] = "[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks1convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1350:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1352:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks2convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1622:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1624:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks1bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1871:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:1873:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnweight_L2_prefix[] = "[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks1bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2109:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2111:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks1bnbias_L2_prefix[] = "[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks2bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2347:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2349:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnweight_L2_prefix[] = "[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks2bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2585:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2587:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks2bnbias_L2_prefix[] = "[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks0convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2847:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:2849:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks0convweight_int8_L2_prefix[] = "[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks3convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3119:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3121:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks4convbias_rqsadd_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3391:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convbias_rqsadd_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3393:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convbias_rqsadd_L2_prefix[] = "[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks3bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3640:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3642:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnweight_L2_prefix[] = "[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks3bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3878:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:3880:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks3bnbias_L2_prefix[] = "[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks4bnweight_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4116:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnweight_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4118:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnweight_L2_prefix[] = "[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_blocks4bnbias_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4354:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnbias_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4356:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_blocks4bnbias_L2_prefix[] = "[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_pert_upd_fcweight_fp32_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4589:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcweight_fp32_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4591:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char pert_upd_fcweight_fp32_L2_prefix[] = "[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks1convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4851:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:4853:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks1convweight_int8_L2_prefix[] = "[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks2convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5124:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5126:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks2convweight_int8_L2_prefix[] = "[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks3convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5397:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5399:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks3convweight_int8_L2_prefix[] = "[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function '_rqsp_upd_blocks4convweight_int8_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5670:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convweight_int8_L2_suffix[] = " cycles \n";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:5672:3: warning: 'static' is not at beginning of declaration [-Wold-style-declaration]
+   const static char rqsp_upd_blocks4convweight_int8_L2_prefix[] = "[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile ";
+   ^~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c: In function 'InitOptimizerNetwork':
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6074:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_0 = (float32_t *)DeeployNetwork_input_12;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6075:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_1 = (float32_t *)DeeployNetwork_input_17;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6076:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_2 = (float32_t *)DeeployNetwork_input_13;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6077:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_3 = (float32_t *)DeeployNetwork_input_18;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6078:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_4 = (float32_t *)DeeployNetwork_input_14;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6079:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_5 = (float32_t *)DeeployNetwork_input_19;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6080:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_6 = (float32_t *)DeeployNetwork_input_15;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6081:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_7 = (float32_t *)DeeployNetwork_input_20;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6082:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_8 = (float32_t *)DeeployNetwork_input_16;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6083:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_9 = (float32_t *)DeeployNetwork_input_21;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6096:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_0 = (float32_t *)DeeployNetwork_input_12;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6097:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_1 = (float32_t *)DeeployNetwork_input_17;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6098:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_2 = (float32_t *)DeeployNetwork_input_13;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6099:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_3 = (float32_t *)DeeployNetwork_input_18;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6100:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_4 = (float32_t *)DeeployNetwork_input_14;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6101:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_5 = (float32_t *)DeeployNetwork_input_19;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6102:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_6 = (float32_t *)DeeployNetwork_input_15;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6103:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_7 = (float32_t *)DeeployNetwork_input_20;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6104:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_8 = (float32_t *)DeeployNetwork_input_16;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/OptimizerNetwork.c:6105:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_9 = (float32_t *)DeeployNetwork_input_21;  /* in-place, shared with TrainingNetwork */
+                              ^
+[ 98%] Built target optimizer_network
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZO_single_step.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_train_QZO_single_step.dir/src/deeploymezotest.c.obj
+[100%] Linking C executable ../../../speechnet_train_QZO_single_step
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3580 B      65532 B      5.46%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:      194768 B      1536 KB     12.38%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target speechnet_train_QZO_single_step
+Consolidate compiler generated dependencies of target pmsis_printf
+[  2%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  4%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  7%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  8%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 37%] Built target pmsis
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 41%] Built target pmsis_backend
+Consolidate compiler generated dependencies of target freertos
+[ 52%] Built target freertos
+Consolidate compiler generated dependencies of target deeploygap9
+[ 78%] Built target deeploygap9
+Consolidate compiler generated dependencies of target deeploybasic
+[ 96%] Built target deeploybasic
+Consolidate compiler generated dependencies of target training_network
+[ 97%] Built target training_network
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target speechnet_train_QZO_single_step
+[100%] Built target speechnet_train_QZO_single_step
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_QZO_single_step
+  Test Directory      : /app/Deeploy/SpeechNet_Test/speechnet_train_QZO_single_step
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9/build_e8gpu
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DSIMULATOR=gvsoc -DBN_FROZEN_STATS=ON -DGAP9_NETWORK_O3=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=114000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --profileTiling
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  2%] Built target pmsis_printf
+[  4%] Built target pulp_allocator
+[  7%] Built target freertos_libs
+[  8%] Built target fll_pmu_lib
+[ 37%] Built target pmsis
+[ 40%] Built target pmsis_backend
+[ 52%] Built target freertos
+[ 78%] Built target deeploygap9
+[ 95%] Built target deeploybasic
+[ 96%] Built target training_network
+[ 97%] Built target optimizer_network
+[ 98%] Built target speechnet_train_QZO_single_step
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gapy command (L3 mode with readfs):
+/app/install/gap9-sdk/utils/gapy_v2/bin/gapy --target=gap9.evk --target-dir=/app/install/gap9-sdk/install/workstation/generators --model-dir=/app/install/gap9-sdk/install/workstation/models --platform=gvsoc --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9/build_e8gpu/gvsoc_workdir --target-property=boot.flash_device=mram --target-property=boot.mode=flash --multi-flash-content=/app/install/gap9-sdk/utils/layouts/default_layout_multi_readfs.json --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/build_e8gpu/speechnet_train_QZO_single_step@mram:app:binary --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testData_mb0_buf1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_0.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_1.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_10.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_11.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_12.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_13.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_14.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_15.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_16.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_17.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_18.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_19.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_2.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_20.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_21.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_3.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_4.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_5.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_6.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_7.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_8.hex@flash:readfs_flash:files --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9/speechnet_train_QZO_single_step/hex/testInitWeight_9.hex@flash:readfs_flash:files --flash-property=/app/install/gap9-sdk/install/target/bin/fsbl@mram:fsbl:binary --flash-property=/app/install/gap9-sdk/install/target/bin/ssbl@mram:ssbl:binary --py-stack image flash run --binary=/app/Deeploy/DeeployTest/TEST_GAP9/build_e8gpu/speechnet_train_QZO_single_step
+==========================================
+=== GAP9 MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=1  N_ACCUM_STEPS=1  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.000010000  ZO_Q=1  ZO_SEED=42
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Initializing TrainingNetwork (zo_train)...
+[PHASE] InitTrainingNetwork done
+[PHASE] LoadTestDataL3 done
+Initializing OptimizerNetwork (zo_update)...
+[PHASE] InitOptimizerNetwork done
+Starting ZO training (1 update steps x 1 accum steps)...
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+[WSUM s=init] 0xe1ca5c8d
+update 1/1  accum 1/1  (mini-batch 0)  seed_base=0
+[PHASE] +eps forward START
+===== Profiling rqsp_blocks0convbias_rqsadd_L2 =====
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Pre-Kernel :   251 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Kernel     :  1008 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Post-Kernel:   166 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Total      :  1425 cycles (70.7% Kernel + 29.3% Overhead, 1008 + 417)
+===== Profiling pert_blocks0bnweight_L2 =====
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Pre-Kernel :   222 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Kernel     :   805 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Post-Kernel:   224 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Total      :  1251 cycles (64.3% Kernel + 35.7% Overhead, 805 + 446)
+===== Profiling pert_blocks0bnbias_L2 =====
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Pre-Kernel :   182 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Kernel     :   705 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Post-Kernel:   192 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Total      :  1079 cycles (65.3% Kernel + 34.7% Overhead, 705 + 374)
+===== Profiling pert_fcbias_fp32_L2 =====
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Pre-Kernel :   200 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Kernel     :   620 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Post-Kernel:   170 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Total      :   990 cycles (62.6% Kernel + 37.4% Overhead, 620 + 370)
+===== Profiling rqsp_blocks1convbias_rqsadd_L2 =====
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   273 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :   953 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   205 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1431 cycles (66.6% Kernel + 33.4% Overhead, 953 + 478)
+===== Profiling rqsp_blocks2convbias_rqsadd_L2 =====
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   258 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :   768 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   186 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1212 cycles (63.4% Kernel + 36.6% Overhead, 768 + 444)
+===== Profiling pert_blocks1bnweight_L2 =====
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   207 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Kernel     :   737 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   189 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Total      :  1133 cycles (65.0% Kernel + 35.0% Overhead, 737 + 396)
+===== Profiling pert_blocks1bnbias_L2 =====
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Kernel     :   658 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   226 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Total      :  1104 cycles (59.6% Kernel + 40.4% Overhead, 658 + 446)
+===== Profiling pert_blocks2bnweight_L2 =====
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Kernel     :   617 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   192 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Total      :  1029 cycles (60.0% Kernel + 40.0% Overhead, 617 + 412)
+===== Profiling pert_blocks2bnbias_L2 =====
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   223 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Kernel     :   620 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   207 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Total      :  1050 cycles (59.0% Kernel + 41.0% Overhead, 620 + 430)
+===== Profiling rqsp_blocks0convweight_int8_L2 =====
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Pre-Kernel :   270 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Kernel     :  1105 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Post-Kernel:   184 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Total      :  1559 cycles (70.9% Kernel + 29.1% Overhead, 1105 + 454)
+===== Profiling _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   220 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   266 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   187 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :   673 cycles (39.5% Kernel + 60.5% Overhead, 266 + 407)
+===== Profiling rqsp_blocks3convbias_rqsadd_L2 =====
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   245 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  1117 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   204 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1566 cycles (71.3% Kernel + 28.7% Overhead, 1117 + 449)
+===== Profiling rqsp_blocks4convbias_rqsadd_L2 =====
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   303 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :   948 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1456 cycles (65.1% Kernel + 34.9% Overhead, 948 + 508)
+===== Profiling pert_blocks3bnweight_L2 =====
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   230 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Kernel     :   621 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   208 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Total      :  1059 cycles (58.6% Kernel + 41.4% Overhead, 621 + 438)
+===== Profiling pert_blocks3bnbias_L2 =====
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   260 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Kernel     :   559 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   206 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Total      :  1025 cycles (54.5% Kernel + 45.5% Overhead, 559 + 466)
+===== Profiling pert_blocks4bnweight_L2 =====
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Kernel     :   520 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   189 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Total      :   940 cycles (55.3% Kernel + 44.7% Overhead, 520 + 420)
+===== Profiling pert_blocks4bnbias_L2 =====
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   211 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Kernel     :   597 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   226 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Total      :  1034 cycles (57.7% Kernel + 42.3% Overhead, 597 + 437)
+===== Profiling pert_fcweight_fp32_L2 =====
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Pre-Kernel :   320 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Kernel     :  1004 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Total      :  1658 cycles (60.6% Kernel + 39.4% Overhead, 1004 + 654)
+===== Profiling rqsp_blocks1convweight_int8_L2 =====
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   488 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 14699 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   474 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 15661 cycles (93.9% Kernel + 6.1% Overhead, 14699 + 962)
+===== Profiling _MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   478 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1722 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   491 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2691 cycles (64.0% Kernel + 36.0% Overhead, 1722 + 969)
+===== Profiling rqsp_blocks2convweight_int8_L2 =====
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   490 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 14707 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   472 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 15669 cycles (93.9% Kernel + 6.1% Overhead, 14707 + 962)
+===== Profiling _MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   459 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2054 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   455 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2968 cycles (69.2% Kernel + 30.8% Overhead, 2054 + 914)
+===== Profiling rqsp_blocks3convweight_int8_L2 =====
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Pre-Kernel :   711 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Kernel     : 25454 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Post-Kernel:   656 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Total      : 26821 cycles (94.9% Kernel + 5.1% Overhead, 25454 + 1367)
+===== Profiling _MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   682 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2917 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   671 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  4270 cycles (68.3% Kernel + 31.7% Overhead, 2917 + 1353)
+===== Profiling rqsp_blocks4convweight_int8_L2 =====
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Pre-Kernel :  1178 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Kernel     : 48845 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Post-Kernel:  1096 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Total      : 51119 cycles (95.6% Kernel + 4.4% Overhead, 48845 + 2274)
+===== Profiling _MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1171 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3477 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1133 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5781 cycles (60.1% Kernel + 39.9% Overhead, 3477 + 2304)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5389 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17282 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24100 cycles (71.7% Kernel + 28.3% Overhead, 17282 + 6818)
+===== Profiling _MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1488 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2196 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1449 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5133 cycles (42.8% Kernel + 57.2% Overhead, 2196 + 2937)
+===== Profiling _MERGE_CONVRQ_PASS_0_L2 =====
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Pre-Kernel :  1714 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Kernel     :591878 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Post-Kernel: 10304 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Total      :603896 cycles (98.0% Kernel + 2.0% Overhead, 591878 + 12018)
+===== Profiling QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :  3160 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     : 15038 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel: 11746 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      : 29944 cycles (50.2% Kernel + 49.8% Overhead, 15038 + 14906)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Pre-Kernel :  3105 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Kernel     : 14774 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Post-Kernel: 11692 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Total      : 29571 cycles (50.0% Kernel + 50.0% Overhead, 14774 + 14797)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Pre-Kernel :  3105 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Kernel     : 14844 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Post-Kernel: 11692 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Total      : 29641 cycles (50.1% Kernel + 49.9% Overhead, 14844 + 14797)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Pre-Kernel :  1615 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Kernel     :  7457 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Post-Kernel:  5909 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Total      : 14981 cycles (49.8% Kernel + 50.2% Overhead, 7457 + 7524)
+===== Profiling bnBatchNormalization_L2 =====
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Pre-Kernel :  6453 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Kernel     : 12902 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Post-Kernel:  6117 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Total      : 25472 cycles (50.7% Kernel + 49.3% Overhead, 12902 + 12570)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Pre-Kernel :  6173 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Kernel     : 12325 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Post-Kernel:  5955 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Total      : 24453 cycles (50.4% Kernel + 49.6% Overhead, 12325 + 12128)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Kernel     : 12417 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Total      : 24520 cycles (50.6% Kernel + 49.4% Overhead, 12417 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Kernel     : 12362 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Total      : 24465 cycles (50.5% Kernel + 49.5% Overhead, 12362 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Kernel     : 12310 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Total      : 24413 cycles (50.4% Kernel + 49.6% Overhead, 12310 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Kernel     : 12431 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Total      : 24534 cycles (50.7% Kernel + 49.3% Overhead, 12431 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Kernel     : 12431 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Total      : 24534 cycles (50.7% Kernel + 49.3% Overhead, 12431 + 12103)
+===== Profiling poolMaxPool_L2 =====
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Pre-Kernel : 12113 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Kernel     : 19336 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Post-Kernel:  1650 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Total      : 33099 cycles (58.4% Kernel + 41.6% Overhead, 19336 + 13763)
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Pre-Kernel : 12041 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Kernel     : 18377 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Post-Kernel:  1560 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Total      : 31978 cycles (57.5% Kernel + 42.5% Overhead, 18377 + 13601)
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Pre-Kernel : 12041 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Kernel     : 18365 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Post-Kernel:  1560 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Total      : 31966 cycles (57.5% Kernel + 42.5% Overhead, 18365 + 13601)
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Pre-Kernel :  6083 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Kernel     :  9418 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Post-Kernel:   842 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Total      : 16343 cycles (57.6% Kernel + 42.4% Overhead, 9418 + 6925)
+===== Profiling poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2 =====
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  5381 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  6130 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5210 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 16721 cycles (36.7% Kernel + 63.3% Overhead, 6130 + 10591)
+===== Profiling reluRelu_L2 =====
+[reluRelu_L2][SB][9744 ops][Tile 0] Pre-Kernel :  5381 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Kernel     : 11208 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Post-Kernel:  5228 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Total      : 21817 cycles (51.4% Kernel + 48.6% Overhead, 11208 + 10609)
+===== Profiling QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5392 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 16793 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1425 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 23610 cycles (71.1% Kernel + 28.9% Overhead, 16793 + 6817)
+===== Profiling _MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1512 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  5059 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1445 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  8016 cycles (63.1% Kernel + 36.9% Overhead, 5059 + 2957)
+===== Profiling _MERGE_CONVRQ_PASS_1_L2 =====
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Pre-Kernel :  2036 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Kernel     :307011 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Post-Kernel:  2712 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Total      :311759 cycles (98.5% Kernel + 1.5% Overhead, 307011 + 4748)
+===== Profiling QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :  2805 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     : 13367 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel: 10333 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      : 26505 cycles (50.4% Kernel + 49.6% Overhead, 13367 + 13138)
+===== Profiling bn_1BatchNormalization_L2 =====
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Pre-Kernel :  7945 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Kernel     : 22600 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Post-Kernel:  7574 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Total      : 38119 cycles (59.3% Kernel + 40.7% Overhead, 22600 + 15519)
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Pre-Kernel :  3193 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Kernel     :  8077 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Post-Kernel:  3096 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Total      : 14366 cycles (56.2% Kernel + 43.8% Overhead, 8077 + 6289)
+===== Profiling pool_1MaxPool_L2 =====
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Pre-Kernel : 10690 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Kernel     : 22049 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Post-Kernel:  2710 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Total      : 35449 cycles (62.2% Kernel + 37.8% Overhead, 22049 + 13400)
+===== Profiling pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2 =====
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2795 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  4992 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2692 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 10479 cycles (47.6% Kernel + 52.4% Overhead, 4992 + 5487)
+===== Profiling relu_1Relu_L2 =====
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Pre-Kernel :  2808 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Kernel     :  6539 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Post-Kernel:  2768 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Total      : 12115 cycles (54.0% Kernel + 46.0% Overhead, 6539 + 5576)
+===== Profiling QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  2790 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  8600 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   819 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 12209 cycles (70.4% Kernel + 29.6% Overhead, 8600 + 3609)
+===== Profiling _MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   855 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3433 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   839 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5127 cycles (67.0% Kernel + 33.0% Overhead, 3433 + 1694)
+===== Profiling _MERGE_CONVRQ_PASS_2_L2 =====
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Pre-Kernel :  1358 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Kernel     : 85264 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Post-Kernel:   831 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Total      : 87453 cycles (97.5% Kernel + 2.5% Overhead, 85264 + 2189)
+===== Profiling QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   887 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :  3711 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:  2878 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  7476 cycles (49.6% Kernel + 50.4% Overhead, 3711 + 3765)
+===== Profiling bn_2BatchNormalization_L2 =====
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Pre-Kernel :  3195 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Kernel     :  8224 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Post-Kernel:  2964 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Total      : 14383 cycles (57.2% Kernel + 42.8% Overhead, 8224 + 6159)
+===== Profiling pool_2MaxPool_L2 =====
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Pre-Kernel :  2907 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Kernel     :  5945 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Post-Kernel:   741 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Total      :  9593 cycles (62.0% Kernel + 38.0% Overhead, 5945 + 3648)
+===== Profiling pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2 =====
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   781 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   810 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   741 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2332 cycles (34.7% Kernel + 65.3% Overhead, 810 + 1522)
+===== Profiling relu_2Relu_L2 =====
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Pre-Kernel :   799 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Kernel     :  1637 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Post-Kernel:   705 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Total      :  3141 cycles (52.1% Kernel + 47.9% Overhead, 1637 + 1504)
+===== Profiling QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :   782 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  2237 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   328 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      :  3347 cycles (66.8% Kernel + 33.2% Overhead, 2237 + 1110)
+===== Profiling _MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   335 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   814 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   330 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  1479 cycles (55.0% Kernel + 45.0% Overhead, 814 + 665)
+===== Profiling _MERGE_CONVRQ_PASS_3_L2 =====
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Pre-Kernel :  1083 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Kernel     : 19084 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Post-Kernel:   354 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Total      : 20521 cycles (93.0% Kernel + 7.0% Overhead, 19084 + 1437)
+===== Profiling QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   367 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :  1205 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:   851 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  2423 cycles (49.7% Kernel + 50.3% Overhead, 1205 + 1218)
+===== Profiling bn_3BatchNormalization_L2 =====
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1272 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Kernel     :  7965 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Post-Kernel:  1028 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Total      : 10265 cycles (77.6% Kernel + 22.4% Overhead, 7965 + 2300)
+===== Profiling bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   867 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   905 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   793 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2565 cycles (35.3% Kernel + 64.7% Overhead, 905 + 1660)
+===== Profiling relu_3Relu_L2 =====
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Pre-Kernel :   867 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Kernel     :  1958 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Post-Kernel:   811 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Total      :  3636 cycles (53.9% Kernel + 46.1% Overhead, 1958 + 1678)
+===== Profiling QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :   899 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  2600 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   316 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      :  3815 cycles (68.2% Kernel + 31.8% Overhead, 2600 + 1215)
+===== Profiling _MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   323 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1101 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   316 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  1740 cycles (63.3% Kernel + 36.7% Overhead, 1101 + 639)
+===== Profiling _MERGE_CONVRQ_PASS_4_L2 =====
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Pre-Kernel :  1595 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Kernel     : 20271 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Post-Kernel:   225 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Total      : 22091 cycles (91.8% Kernel + 8.2% Overhead, 20271 + 1820)
+===== Profiling QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   265 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :   509 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:   334 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  1108 cycles (45.9% Kernel + 54.1% Overhead, 509 + 599)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Pre-Kernel :   729 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Kernel     :  7865 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Post-Kernel:   513 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Total      :  9107 cycles (86.4% Kernel + 13.6% Overhead, 7865 + 1242)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   374 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   512 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   298 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1184 cycles (43.2% Kernel + 56.8% Overhead, 512 + 672)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][320 ops][Tile 0] Pre-Kernel :   356 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Kernel     :   787 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Post-Kernel:   334 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Total      :  1477 cycles (53.3% Kernel + 46.7% Overhead, 787 + 690)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   396 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   798 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   184 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1378 cycles (57.9% Kernel + 42.1% Overhead, 798 + 580)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   561 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  2965 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3711 cycles (79.9% Kernel + 20.1% Overhead, 2965 + 746)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   353 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5224 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   299 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5876 cycles (88.9% Kernel + 11.1% Overhead, 5224 + 652)
+[PHASE] +eps forward DONE (8562860 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3d1df660
+[PHASE] -eps forward START
+===== Profiling rqsp_blocks0convbias_rqsadd_L2 =====
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Pre-Kernel :   251 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Kernel     :  1010 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Post-Kernel:   168 cycles
+[rqsp_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Total      :  1429 cycles (70.7% Kernel + 29.3% Overhead, 1010 + 419)
+===== Profiling pert_blocks0bnweight_L2 =====
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Pre-Kernel :   222 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Kernel     :   778 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Post-Kernel:   224 cycles
+[pert_blocks0bnweight_L2][SB][8 ops][Tile 0] Total      :  1224 cycles (63.6% Kernel + 36.4% Overhead, 778 + 446)
+===== Profiling pert_blocks0bnbias_L2 =====
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Pre-Kernel :   182 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Kernel     :   638 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Post-Kernel:   190 cycles
+[pert_blocks0bnbias_L2][SB][8 ops][Tile 0] Total      :  1010 cycles (63.2% Kernel + 36.8% Overhead, 638 + 372)
+===== Profiling pert_fcbias_fp32_L2 =====
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Pre-Kernel :   200 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Kernel     :   622 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Post-Kernel:   170 cycles
+[pert_fcbias_fp32_L2][SB][9 ops][Tile 0] Total      :   992 cycles (62.7% Kernel + 37.3% Overhead, 622 + 370)
+===== Profiling rqsp_blocks1convbias_rqsadd_L2 =====
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   275 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :   909 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   205 cycles
+[rqsp_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1389 cycles (65.4% Kernel + 34.6% Overhead, 909 + 480)
+===== Profiling rqsp_blocks2convbias_rqsadd_L2 =====
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   258 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :   747 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   186 cycles
+[rqsp_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1191 cycles (62.7% Kernel + 37.3% Overhead, 747 + 444)
+===== Profiling pert_blocks1bnweight_L2 =====
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   223 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Kernel     :   713 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   189 cycles
+[pert_blocks1bnweight_L2][SB][16 ops][Tile 0] Total      :  1125 cycles (63.4% Kernel + 36.6% Overhead, 713 + 412)
+===== Profiling pert_blocks1bnbias_L2 =====
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Kernel     :   649 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   226 cycles
+[pert_blocks1bnbias_L2][SB][16 ops][Tile 0] Total      :  1095 cycles (59.3% Kernel + 40.7% Overhead, 649 + 446)
+===== Profiling pert_blocks2bnweight_L2 =====
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Kernel     :   643 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   190 cycles
+[pert_blocks2bnweight_L2][SB][16 ops][Tile 0] Total      :  1053 cycles (61.1% Kernel + 38.9% Overhead, 643 + 410)
+===== Profiling pert_blocks2bnbias_L2 =====
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   223 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Kernel     :   609 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   211 cycles
+[pert_blocks2bnbias_L2][SB][16 ops][Tile 0] Total      :  1043 cycles (58.4% Kernel + 41.6% Overhead, 609 + 434)
+===== Profiling rqsp_blocks0convweight_int8_L2 =====
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Pre-Kernel :   270 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Kernel     :  1103 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Post-Kernel:   166 cycles
+[rqsp_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Total      :  1539 cycles (71.7% Kernel + 28.3% Overhead, 1103 + 436)
+===== Profiling _MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   220 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   270 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   187 cycles
+[_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :   677 cycles (39.9% Kernel + 60.1% Overhead, 270 + 407)
+===== Profiling rqsp_blocks3convbias_rqsadd_L2 =====
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   229 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  1128 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   204 cycles
+[rqsp_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1561 cycles (72.3% Kernel + 27.7% Overhead, 1128 + 433)
+===== Profiling rqsp_blocks4convbias_rqsadd_L2 =====
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   303 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :   887 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   203 cycles
+[rqsp_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1393 cycles (63.7% Kernel + 36.3% Overhead, 887 + 506)
+===== Profiling pert_blocks3bnweight_L2 =====
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   230 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Kernel     :   652 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   208 cycles
+[pert_blocks3bnweight_L2][SB][32 ops][Tile 0] Total      :  1090 cycles (59.8% Kernel + 40.2% Overhead, 652 + 438)
+===== Profiling pert_blocks3bnbias_L2 =====
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   260 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Kernel     :   565 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   206 cycles
+[pert_blocks3bnbias_L2][SB][32 ops][Tile 0] Total      :  1031 cycles (54.8% Kernel + 45.2% Overhead, 565 + 466)
+===== Profiling pert_blocks4bnweight_L2 =====
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   231 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Kernel     :   556 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   191 cycles
+[pert_blocks4bnweight_L2][SB][32 ops][Tile 0] Total      :   978 cycles (56.9% Kernel + 43.1% Overhead, 556 + 422)
+===== Profiling pert_blocks4bnbias_L2 =====
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   227 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Kernel     :   575 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   226 cycles
+[pert_blocks4bnbias_L2][SB][32 ops][Tile 0] Total      :  1028 cycles (55.9% Kernel + 44.1% Overhead, 575 + 453)
+===== Profiling pert_fcweight_fp32_L2 =====
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Pre-Kernel :   320 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Kernel     :  1033 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Post-Kernel:   334 cycles
+[pert_fcweight_fp32_L2][SB][288 ops][Tile 0] Total      :  1687 cycles (61.2% Kernel + 38.8% Overhead, 1033 + 654)
+===== Profiling rqsp_blocks1convweight_int8_L2 =====
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   488 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 14717 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   472 cycles
+[rqsp_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 15677 cycles (93.9% Kernel + 6.1% Overhead, 14717 + 960)
+===== Profiling _MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   478 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1716 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   491 cycles
+[_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2685 cycles (63.9% Kernel + 36.1% Overhead, 1716 + 969)
+===== Profiling rqsp_blocks2convweight_int8_L2 =====
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   490 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 14747 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   472 cycles
+[rqsp_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 15709 cycles (93.9% Kernel + 6.1% Overhead, 14747 + 962)
+===== Profiling _MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   459 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2078 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   455 cycles
+[_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2992 cycles (69.5% Kernel + 30.5% Overhead, 2078 + 914)
+===== Profiling rqsp_blocks3convweight_int8_L2 =====
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Pre-Kernel :   711 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Kernel     : 25386 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Post-Kernel:   656 cycles
+[rqsp_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Total      : 26753 cycles (94.9% Kernel + 5.1% Overhead, 25386 + 1367)
+===== Profiling _MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   682 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2910 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   671 cycles
+[_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  4263 cycles (68.3% Kernel + 31.7% Overhead, 2910 + 1353)
+===== Profiling rqsp_blocks4convweight_int8_L2 =====
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Pre-Kernel :  1178 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Kernel     : 48844 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Post-Kernel:  1096 cycles
+[rqsp_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Total      : 51118 cycles (95.6% Kernel + 4.4% Overhead, 48844 + 2274)
+===== Profiling _MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1171 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3502 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1133 cycles
+[_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5806 cycles (60.3% Kernel + 39.7% Overhead, 3502 + 2304)
+===== Profiling QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5405 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 17270 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1429 cycles
+[QCDQ_blocks_0_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 24104 cycles (71.6% Kernel + 28.4% Overhead, 17270 + 6834)
+===== Profiling _MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1488 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2236 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1449 cycles
+[_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5173 cycles (43.2% Kernel + 56.8% Overhead, 2236 + 2937)
+===== Profiling _MERGE_CONVRQ_PASS_0_L2 =====
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Pre-Kernel :  1726 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Kernel     :591341 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Post-Kernel: 10304 cycles
+[_MERGE_CONVRQ_PASS_0_L2][SB][657538 ops][Tile 0] Total      :603371 cycles (98.0% Kernel + 2.0% Overhead, 591341 + 12030)
+===== Profiling QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :  3160 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     : 15038 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel: 11746 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      : 29944 cycles (50.2% Kernel + 49.8% Overhead, 15038 + 14906)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Pre-Kernel :  3105 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Kernel     : 14869 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Post-Kernel: 11692 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 1] Total      : 29666 cycles (50.1% Kernel + 49.9% Overhead, 14869 + 14797)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Pre-Kernel :  3105 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Kernel     : 14844 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Post-Kernel: 11692 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 2] Total      : 29641 cycles (50.1% Kernel + 49.9% Overhead, 14844 + 14797)
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Pre-Kernel :  1615 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Kernel     :  7457 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Post-Kernel:  5909 cycles
+[QCDQ_blocks_0_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 3] Total      : 14981 cycles (49.8% Kernel + 50.2% Overhead, 7457 + 7524)
+===== Profiling bnBatchNormalization_L2 =====
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Pre-Kernel :  6453 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Kernel     : 13007 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Post-Kernel:  6117 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 0] Total      : 25577 cycles (50.9% Kernel + 49.1% Overhead, 13007 + 12570)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Pre-Kernel :  6149 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Kernel     : 12233 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Post-Kernel:  5960 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 1] Total      : 24342 cycles (50.3% Kernel + 49.7% Overhead, 12233 + 12109)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Kernel     : 12427 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 2] Total      : 24530 cycles (50.7% Kernel + 49.3% Overhead, 12427 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Kernel     : 12519 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 3] Total      : 24622 cycles (50.8% Kernel + 49.2% Overhead, 12519 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Kernel     : 12554 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 4] Total      : 24657 cycles (50.9% Kernel + 49.1% Overhead, 12554 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Kernel     : 12380 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 5] Total      : 24483 cycles (50.6% Kernel + 49.4% Overhead, 12380 + 12103)
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Pre-Kernel :  6147 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Kernel     : 12431 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Post-Kernel:  5956 cycles
+[bnBatchNormalization_L2][SB][549584 ops][Tile 6] Total      : 24534 cycles (50.7% Kernel + 49.3% Overhead, 12431 + 12103)
+===== Profiling poolMaxPool_L2 =====
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Pre-Kernel : 12113 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Kernel     : 19271 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Post-Kernel:  1650 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 0] Total      : 33034 cycles (58.3% Kernel + 41.7% Overhead, 19271 + 13763)
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Pre-Kernel : 12041 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Kernel     : 18461 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Post-Kernel:  1560 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 1] Total      : 32062 cycles (57.6% Kernel + 42.4% Overhead, 18461 + 13601)
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Pre-Kernel : 12041 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Kernel     : 18427 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Post-Kernel:  1560 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 2] Total      : 32028 cycles (57.5% Kernel + 42.5% Overhead, 18427 + 13601)
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Pre-Kernel :  6083 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Kernel     :  9442 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Post-Kernel:   842 cycles
+[poolMaxPool_L2][SB][68208 ops][Tile 3] Total      : 16367 cycles (57.7% Kernel + 42.3% Overhead, 9442 + 6925)
+===== Profiling poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2 =====
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  5381 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  6130 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5210 cycles
+[poolMaxPool_poolMaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 16721 cycles (36.7% Kernel + 63.3% Overhead, 6130 + 10591)
+===== Profiling reluRelu_L2 =====
+[reluRelu_L2][SB][9744 ops][Tile 0] Pre-Kernel :  5381 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Kernel     : 11117 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Post-Kernel:  5228 cycles
+[reluRelu_L2][SB][9744 ops][Tile 0] Total      : 21726 cycles (51.2% Kernel + 48.8% Overhead, 11117 + 10609)
+===== Profiling QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  5392 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     : 16780 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:  1425 cycles
+[QCDQ_blocks_1_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 23597 cycles (71.1% Kernel + 28.9% Overhead, 16780 + 6817)
+===== Profiling _MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1512 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  5059 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1445 cycles
+[_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  8016 cycles (63.1% Kernel + 36.9% Overhead, 5059 + 2957)
+===== Profiling _MERGE_CONVRQ_PASS_1_L2 =====
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Pre-Kernel :  2052 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Kernel     :306673 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Post-Kernel:  2712 cycles
+[_MERGE_CONVRQ_PASS_1_L2][SB][5049968 ops][Tile 0] Total      :311437 cycles (98.5% Kernel + 1.5% Overhead, 306673 + 4764)
+===== Profiling QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :  2805 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     : 13367 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel: 10333 cycles
+[QCDQ_blocks_1_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      : 26505 cycles (50.4% Kernel + 49.6% Overhead, 13367 + 13138)
+===== Profiling bn_1BatchNormalization_L2 =====
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Pre-Kernel :  7945 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Kernel     : 23085 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Post-Kernel:  7574 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 0] Total      : 38604 cycles (59.8% Kernel + 40.2% Overhead, 23085 + 15519)
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Pre-Kernel :  3191 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Kernel     :  8211 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Post-Kernel:  3092 cycles
+[bn_1BatchNormalization_L2][SB][137984 ops][Tile 1] Total      : 14494 cycles (56.7% Kernel + 43.3% Overhead, 8211 + 6283)
+===== Profiling pool_1MaxPool_L2 =====
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Pre-Kernel : 10688 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Kernel     : 22009 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Post-Kernel:  2710 cycles
+[pool_1MaxPool_L2][SB][14784 ops][Tile 0] Total      : 35407 cycles (62.2% Kernel + 37.8% Overhead, 22009 + 13398)
+===== Profiling pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2 =====
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2807 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  4992 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2692 cycles
+[pool_1MaxPool_pool_1MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 10491 cycles (47.6% Kernel + 52.4% Overhead, 4992 + 5499)
+===== Profiling relu_1Relu_L2 =====
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Pre-Kernel :  2824 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Kernel     :  6572 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Post-Kernel:  2768 cycles
+[relu_1Relu_L2][SB][4928 ops][Tile 0] Total      : 12164 cycles (54.0% Kernel + 46.0% Overhead, 6572 + 5592)
+===== Profiling QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :  2806 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  8539 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   819 cycles
+[QCDQ_blocks_2_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      : 12164 cycles (70.2% Kernel + 29.8% Overhead, 8539 + 3625)
+===== Profiling _MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   871 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3404 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   839 cycles
+[_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5114 cycles (66.6% Kernel + 33.4% Overhead, 3404 + 1710)
+===== Profiling _MERGE_CONVRQ_PASS_2_L2 =====
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Pre-Kernel :  1356 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Kernel     : 85617 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Post-Kernel:   831 cycles
+[_MERGE_CONVRQ_PASS_2_L2][SB][1319878 ops][Tile 0] Total      : 87804 cycles (97.5% Kernel + 2.5% Overhead, 85617 + 2187)
+===== Profiling QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   887 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :  3711 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:  2878 cycles
+[QCDQ_blocks_2_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  7476 cycles (49.6% Kernel + 50.4% Overhead, 3711 + 3765)
+===== Profiling bn_2BatchNormalization_L2 =====
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Pre-Kernel :  3195 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Kernel     :  8239 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Post-Kernel:  2960 cycles
+[bn_2BatchNormalization_L2][SB][36064 ops][Tile 0] Total      : 14394 cycles (57.2% Kernel + 42.8% Overhead, 8239 + 6155)
+===== Profiling pool_2MaxPool_L2 =====
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Pre-Kernel :  2907 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Kernel     :  5902 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Post-Kernel:   741 cycles
+[pool_2MaxPool_L2][SB][3360 ops][Tile 0] Total      :  9550 cycles (61.8% Kernel + 38.2% Overhead, 5902 + 3648)
+===== Profiling pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2 =====
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   781 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   804 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   741 cycles
+[pool_2MaxPool_pool_2MaxPool_pre_relu_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2326 cycles (34.6% Kernel + 65.4% Overhead, 804 + 1522)
+===== Profiling relu_2Relu_L2 =====
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Pre-Kernel :   801 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Kernel     :  1674 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Post-Kernel:   705 cycles
+[relu_2Relu_L2][SB][1120 ops][Tile 0] Total      :  3180 cycles (52.6% Kernel + 47.4% Overhead, 1674 + 1506)
+===== Profiling QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :   782 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  2261 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   328 cycles
+[QCDQ_blocks_3_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      :  3371 cycles (67.1% Kernel + 32.9% Overhead, 2261 + 1110)
+===== Profiling _MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   335 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   819 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   330 cycles
+[_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  1484 cycles (55.2% Kernel + 44.8% Overhead, 819 + 665)
+===== Profiling _MERGE_CONVRQ_PASS_3_L2 =====
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Pre-Kernel :  1081 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Kernel     : 19017 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Post-Kernel:   336 cycles
+[_MERGE_CONVRQ_PASS_3_L2][SB][286840 ops][Tile 0] Total      : 20434 cycles (93.1% Kernel + 6.9% Overhead, 19017 + 1417)
+===== Profiling QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   367 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :  1205 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:   851 cycles
+[QCDQ_blocks_3_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  2423 cycles (49.7% Kernel + 50.3% Overhead, 1205 + 1218)
+===== Profiling bn_3BatchNormalization_L2 =====
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Pre-Kernel :  1272 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Kernel     :  7964 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Post-Kernel:  1064 cycles
+[bn_3BatchNormalization_L2][SB][8960 ops][Tile 0] Total      : 10300 cycles (77.3% Kernel + 22.7% Overhead, 7964 + 2336)
+===== Profiling bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   867 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   905 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   793 cycles
+[bn_3BatchNormalization_bn_3BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2565 cycles (35.3% Kernel + 64.7% Overhead, 905 + 1660)
+===== Profiling relu_3Relu_L2 =====
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Pre-Kernel :   867 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Kernel     :  1941 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Post-Kernel:   795 cycles
+[relu_3Relu_L2][SB][1280 ops][Tile 0] Total      :  3603 cycles (53.9% Kernel + 46.1% Overhead, 1941 + 1662)
+===== Profiling QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2 =====
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Pre-Kernel :   899 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Kernel     :  2594 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Post-Kernel:   316 cycles
+[QCDQ_blocks_4_conv_input_quant_1Clip_Quant_L2][SB][0 ops][Tile 0] Total      :  3809 cycles (68.1% Kernel + 31.9% Overhead, 2594 + 1215)
+===== Profiling _MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2 =====
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   327 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1104 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   316 cycles
+[_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  1747 cycles (63.2% Kernel + 36.8% Overhead, 1104 + 643)
+===== Profiling _MERGE_CONVRQ_PASS_4_L2 =====
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Pre-Kernel :  1595 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Kernel     : 20353 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Post-Kernel:   225 cycles
+[_MERGE_CONVRQ_PASS_4_L2][SB][143390 ops][Tile 0] Total      : 22173 cycles (91.8% Kernel + 8.2% Overhead, 20353 + 1820)
+===== Profiling QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2 =====
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Pre-Kernel :   265 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Kernel     :   508 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Post-Kernel:   334 cycles
+[QCDQ_blocks_4_conv_output_dequantMul_Dequant_L2][SB][0 ops][Tile 0] Total      :  1107 cycles (45.9% Kernel + 54.1% Overhead, 508 + 599)
+===== Profiling bn_4BatchNormalization_L2 =====
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Pre-Kernel :   729 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Kernel     :  7837 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Post-Kernel:   513 cycles
+[bn_4BatchNormalization_L2][SB][2240 ops][Tile 0] Total      :  9079 cycles (86.3% Kernel + 13.7% Overhead, 7837 + 1242)
+===== Profiling bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2 =====
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   358 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   506 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   298 cycles
+[bn_4BatchNormalization_bn_4BatchNormalization_output_0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1162 cycles (43.5% Kernel + 56.5% Overhead, 506 + 656)
+===== Profiling relu_4Relu_L2 =====
+[relu_4Relu_L2][SB][320 ops][Tile 0] Pre-Kernel :   344 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Kernel     :   825 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Post-Kernel:   334 cycles
+[relu_4Relu_L2][SB][320 ops][Tile 0] Total      :  1503 cycles (54.9% Kernel + 45.1% Overhead, 825 + 678)
+===== Profiling global_poolGlobalAveragePool_L2 =====
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   392 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   786 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   184 cycles
+[global_poolGlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1362 cycles (57.7% Kernel + 42.3% Overhead, 786 + 576)
+===== Profiling wrappedInnerForwardImpl_5Gemm_L2 =====
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   561 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Kernel     :  2953 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   185 cycles
+[wrappedInnerForwardImpl_5Gemm_L2][SB][603 ops][Tile 0] Total      :  3699 cycles (79.8% Kernel + 20.2% Overhead, 2953 + 746)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   353 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  5252 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   301 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  5906 cycles (88.9% Kernel + 11.1% Overhead, 5252 + 654)
+[PHASE] -eps forward DONE (8559460 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3cbc996f
+[PHASE] update (zo_update) START
+===== Profiling rqsp_upd_blocks0convbias_rqsadd_L2 =====
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Pre-Kernel :   251 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Kernel     :  1306 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Post-Kernel:   186 cycles
+[rqsp_upd_blocks0convbias_rqsadd_L2][SB][8 ops][Tile 0] Total      :  1743 cycles (74.9% Kernel + 25.1% Overhead, 1306 + 437)
+===== Profiling pert_upd_blocks0bnweight_L2 =====
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Pre-Kernel :   200 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Kernel     :   856 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks0bnweight_L2][SB][8 ops][Tile 0] Total      :  1261 cycles (67.9% Kernel + 32.1% Overhead, 856 + 405)
+===== Profiling pert_upd_blocks0bnbias_L2 =====
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Pre-Kernel :   218 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Kernel     :   688 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Post-Kernel:   166 cycles
+[pert_upd_blocks0bnbias_L2][SB][8 ops][Tile 0] Total      :  1072 cycles (64.2% Kernel + 35.8% Overhead, 688 + 384)
+===== Profiling pert_upd_fcbias_fp32_L2 =====
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Pre-Kernel :   218 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Kernel     :   699 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Post-Kernel:   149 cycles
+[pert_upd_fcbias_fp32_L2][SB][9 ops][Tile 0] Total      :  1066 cycles (65.6% Kernel + 34.4% Overhead, 699 + 367)
+===== Profiling rqsp_upd_blocks1convbias_rqsadd_L2 =====
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   255 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :  1348 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   204 cycles
+[rqsp_upd_blocks1convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1807 cycles (74.6% Kernel + 25.4% Overhead, 1348 + 459)
+===== Profiling rqsp_upd_blocks2convbias_rqsadd_L2 =====
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Pre-Kernel :   273 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Kernel     :  1085 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Post-Kernel:   221 cycles
+[rqsp_upd_blocks2convbias_rqsadd_L2][SB][16 ops][Tile 0] Total      :  1579 cycles (68.7% Kernel + 31.3% Overhead, 1085 + 494)
+===== Profiling pert_upd_blocks1bnweight_L2 =====
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   221 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Kernel     :   814 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   186 cycles
+[pert_upd_blocks1bnweight_L2][SB][16 ops][Tile 0] Total      :  1221 cycles (66.7% Kernel + 33.3% Overhead, 814 + 407)
+===== Profiling pert_upd_blocks1bnbias_L2 =====
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   222 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Kernel     :   657 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks1bnbias_L2][SB][16 ops][Tile 0] Total      :  1084 cycles (60.6% Kernel + 39.4% Overhead, 657 + 427)
+===== Profiling pert_upd_blocks2bnweight_L2 =====
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Pre-Kernel :   240 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Kernel     :   701 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks2bnweight_L2][SB][16 ops][Tile 0] Total      :  1128 cycles (62.1% Kernel + 37.9% Overhead, 701 + 427)
+===== Profiling pert_upd_blocks2bnbias_L2 =====
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Pre-Kernel :   238 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Kernel     :   667 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks2bnbias_L2][SB][16 ops][Tile 0] Total      :  1092 cycles (61.1% Kernel + 38.9% Overhead, 667 + 425)
+===== Profiling rqsp_upd_blocks0convweight_int8_L2 =====
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Pre-Kernel :   214 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Kernel     :  1587 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Post-Kernel:   206 cycles
+[rqsp_upd_blocks0convweight_int8_L2][SB][32 ops][Tile 0] Total      :  2007 cycles (79.1% Kernel + 20.9% Overhead, 1587 + 420)
+===== Profiling rqsp_upd_blocks3convbias_rqsadd_L2 =====
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   274 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  1513 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   186 cycles
+[rqsp_upd_blocks3convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1973 cycles (76.7% Kernel + 23.3% Overhead, 1513 + 460)
+===== Profiling rqsp_upd_blocks4convbias_rqsadd_L2 =====
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Pre-Kernel :   244 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Kernel     :  1270 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Post-Kernel:   206 cycles
+[rqsp_upd_blocks4convbias_rqsadd_L2][SB][32 ops][Tile 0] Total      :  1720 cycles (73.8% Kernel + 26.2% Overhead, 1270 + 450)
+===== Profiling pert_upd_blocks3bnweight_L2 =====
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   195 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Kernel     :   747 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks3bnweight_L2][SB][32 ops][Tile 0] Total      :  1147 cycles (65.1% Kernel + 34.9% Overhead, 747 + 400)
+===== Profiling pert_upd_blocks3bnbias_L2 =====
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   265 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Kernel     :   619 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks3bnbias_L2][SB][32 ops][Tile 0] Total      :  1071 cycles (57.8% Kernel + 42.2% Overhead, 619 + 452)
+===== Profiling pert_upd_blocks4bnweight_L2 =====
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Pre-Kernel :   222 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Kernel     :   574 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Post-Kernel:   187 cycles
+[pert_upd_blocks4bnweight_L2][SB][32 ops][Tile 0] Total      :   983 cycles (58.4% Kernel + 41.6% Overhead, 574 + 409)
+===== Profiling pert_upd_blocks4bnbias_L2 =====
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Pre-Kernel :   220 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Kernel     :   654 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Post-Kernel:   205 cycles
+[pert_upd_blocks4bnbias_L2][SB][32 ops][Tile 0] Total      :  1079 cycles (60.6% Kernel + 39.4% Overhead, 654 + 425)
+===== Profiling pert_upd_fcweight_fp32_L2 =====
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Pre-Kernel :   319 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Kernel     :  1084 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Post-Kernel:   332 cycles
+[pert_upd_fcweight_fp32_L2][SB][288 ops][Tile 0] Total      :  1735 cycles (62.5% Kernel + 37.5% Overhead, 1084 + 651)
+===== Profiling rqsp_upd_blocks1convweight_int8_L2 =====
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   490 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 29899 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   418 cycles
+[rqsp_upd_blocks1convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 30807 cycles (97.1% Kernel + 2.9% Overhead, 29899 + 908)
+===== Profiling rqsp_upd_blocks2convweight_int8_L2 =====
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Pre-Kernel :   490 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Kernel     : 29571 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Post-Kernel:   436 cycles
+[rqsp_upd_blocks2convweight_int8_L2][SB][2048 ops][Tile 0] Total      : 30497 cycles (97.0% Kernel + 3.0% Overhead, 29571 + 926)
+===== Profiling rqsp_upd_blocks3convweight_int8_L2 =====
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Pre-Kernel :   702 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Kernel     : 51501 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Post-Kernel:   616 cycles
+[rqsp_upd_blocks3convweight_int8_L2][SB][3584 ops][Tile 0] Total      : 52819 cycles (97.5% Kernel + 2.5% Overhead, 51501 + 1318)
+===== Profiling rqsp_upd_blocks4convweight_int8_L2 =====
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Pre-Kernel :  1158 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Kernel     :100824 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Post-Kernel:  1096 cycles
+[rqsp_upd_blocks4convweight_int8_L2][SB][7168 ops][Tile 0] Total      :103078 cycles (97.8% Kernel + 2.2% Overhead, 100824 + 2254)
+[PHASE] update (zo_update) DONE (1966972 cyc)
+[WSUM s=0] 0x97e57471
+[loss+ 0] computed=0.038565  ref=0.038565  diff=0.000000  TOL=0.001000
+[loss- 0] computed=0.023022  ref=0.023022  diff=0.000000  TOL=0.001000
+[WCHK] changed 12/22 trainable tensors after 1 updates
+Errors: 0 out of 2
+BENCH train_cycles_hi=0 train_cycles_lo=17122320 opt_cycles_hi=0 opt_cycles_lo=1966972
+[100%] Built target gvsoc_speechnet_train_QZO_single_step
+
+[92m✓ Test speechnet_train_QZO_single_step PASSED - No errors found[0m

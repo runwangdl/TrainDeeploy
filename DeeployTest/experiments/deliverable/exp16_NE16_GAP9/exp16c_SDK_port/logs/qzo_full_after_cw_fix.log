@@ -1,0 +1,554 @@
+[0;93m2026-09-14 01:29:15.522432472 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze_1[m
+[0;93m2026-09-14 01:29:15.523331013 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze[m
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+-- Building for platform 'GAP9_w_NE16'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9_w_NE16
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L2 mode: No hex files found, -DNOFLASH set
+-- [Deeploy GAP9] If you expect L3 mode, ensure Python codegen created hex files in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/hex/
+-- [Deeploy GAP9] L2 mode: using traditional gvsoc without flash
+-- [Deeploy GAP9] Running on Board
+-- [Log] none
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- [PULP-NNX] Using the NE16 accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+[  1%] Building C object pmsis/printf/CMakeFiles/pmsis_printf.dir/printf.c.obj
+[  1%] Linking C static library ../../lib/libpmsis_printf.a
+[  1%] Built target pmsis_printf
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc_pool.c.obj
+[  2%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/alloc.c.obj
+[  3%] Building C object pmsis/tools/allocator/CMakeFiles/pulp_allocator.dir/src/pi_malloc.c.obj
+[  4%] Linking C static library ../../../lib/libpulp_allocator.a
+[  4%] Built target pulp_allocator
+[  5%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/errno.c.obj
+[  6%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/stdlib.c.obj
+[  6%] Building C object freertos/vendors/gwt/libs/CMakeFiles/freertos_libs.dir/src/string.c.obj
+[  7%] Linking C static library ../../../../lib/libfreertos_libs.a
+[  7%] Built target freertos_libs
+[  8%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/fll/fll.c.obj
+[  8%] Building C object pmsis/fll_pmu/CMakeFiles/fll_pmu_lib.dir/pmu/maestro_voltage.c.obj
+[  9%] Linking C static library ../../lib/libfll_pmu_lib.a
+[  9%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro.c.obj
+[ 10%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/maestro/driver/maestro_irq.c.obj
+[ 10%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio.c.obj
+[ 11%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gpio/driver/gpio_asm.S.obj
+[ 12%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/efuse/driver/efuse.c.obj
+[ 12%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/gap_iet.S.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes.c.obj
+[ 13%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes/driver/aes_internal.c.obj
+[ 14%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_aes_dual_core/driver/aes_dual_core_internal.c.obj
+[ 14%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/quiddikey/driver/quiddikey_internal.c.obj
+[ 15%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-cc.S.obj
+[ 16%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster.c.obj
+[ 16%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-team.S.obj
+[ 17%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/cluster/driver/cluster-pe-workgroup.S.obj
+[ 17%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/malloc/pi_cl_malloc.c.obj
+[ 18%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_core/driver/udma_core.c.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/fc_event/driver/fc_event.c.obj
+[ 20%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/pad/driver/pad.c.obj
+[ 21%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/asm_util.S.obj
+[ 21%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/ctors_dtors.c.obj
+[ 22%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/host_sync_access.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[ 23%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/pi_log.c.obj
+[ 24%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/time.c.obj
+[ 24%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/device.c.obj
+[ 25%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/rtos/os/system_gap.c.obj
+[ 25%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/utils/startup_gap.S.obj
+[ 26%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/timer/driver/pi_timer.c.obj
+[ 27%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi.c.obj
+[ 27%] Building ASM object pmsis/CMakeFiles/pmsis.dir/implem/chips/gap9/udma_octospi/driver/octospi_asm.S.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[ 28%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/fs.c.obj
+[ 29%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[ 30%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9evk_v1_3.c.obj
+[ 31%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/boards/src/bsp_gap9mod_v1_0_b.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/crc/crc32/crc32.c.obj
+[ 32%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/api/flash.c.obj
+[ 33%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mram/mram-v2.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/flash/mx25u51245g/mx25u51245g.c.obj
+[ 34%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/api/powersupply.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/powersupply/powersupplygpio/powersupplygpio.c.obj
+[ 35%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/ram.c.obj
+[ 36%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/api/alloc_extern.c.obj
+[ 37%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/ram/aps256xxn/aps256xxn.c.obj
+[ 37%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[ 38%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[ 38%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[ 40%] Linking C static library ../lib/libpmsis.a
+[ 40%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+[ 40%] Building ASM object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/main.S.obj
+[ 41%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/custom_list.c.obj
+[ 42%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_evt.c.obj
+[ 42%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/native_task.c.obj
+[ 43%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/sync_obj.c.obj
+[ 43%] Building C object freertos/vendors/gwt/pmsis/backend/CMakeFiles/pmsis_backend.dir/src/os.c.obj
+[ 44%] Linking C static library ../../../../../lib/libpmsis_backend.a
+[ 44%] Built target pmsis_backend
+Scanning dependencies of target freertos
+[ 44%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port_asm.S.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/portable/GCC/RI5CY-GAP9/port.c.obj
+[ 45%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/list.c.obj
+[ 46%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/queue.c.obj
+[ 47%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/tasks.c.obj
+[ 47%] Building ASM object freertos/CMakeFiles/freertos.dir/freertos_kernel/freertos_task.S.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/timers.c.obj
+[ 48%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event_groups.c.obj
+[ 49%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/stream_buffer.c.obj
+[ 50%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/event.c.obj
+[ 50%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/scheduler.c.obj
+[ 51%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/sync_obj-v3.c.obj
+[ 51%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/semaphore-v2.c.obj
+[ 52%] Building C object freertos/CMakeFiles/freertos.dir/freertos_kernel/task-v3.c.obj
+[ 52%] Building C object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer.c.obj
+[ 53%] Building ASM object freertos/CMakeFiles/freertos.dir/app/install/gap9-sdk/rtos/pmsis/implem/chips/gap9/timer_os/timer_asm.S.obj
+[ 54%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/config/FreeRTOS_util.c.obj
+[ 54%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/freertos_it.c.obj
+[ 55%] Building C object freertos/CMakeFiles/freertos.dir/vendors/gwt/gap9/src/device/gap_it.c.obj
+[ 55%] Linking C static library ../lib/libfreertos.a
+[ 55%] Built target freertos
+[ 56%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/util/pulp_nnx_util.c.obj
+[ 56%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/util/hwpe.c.obj
+[ 57%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/bsp/ne16_pulp_bsp.c.obj
+[ 57%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/hal/ne16.c.obj
+[ 58%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/hal/ne16_task.c.obj
+[ 60%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/src/pulp_nnx_ne16.c.obj
+[ 60%] Linking C static library ../../../lib/libpulp-nnx.a
+[ 60%] Built target pulp-nnx
+[ 60%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/BatchNorm_fp32.c.obj
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c: In function 'BatchNorm_fp32':
+/app/Deeploy/TargetLibraries/Generic/src/BatchNorm_fp32.c:13:0: warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+ #pragma omp parallel for
+ 
+[ 61%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/ConvTranspose1d_fp32.c.obj
+[ 61%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_fp32.c.obj
+[ 62%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Convolution_s8.c.obj
+[ 63%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_fp32.c.obj
+[ 63%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/DWConvolution_s8.c.obj
+[ 64%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_fp32.c.obj
+[ 64%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Div_s32.c.obj
+[ 65%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_fp32.c.obj
+[ 66%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/GELU_s8.c.obj
+[ 66%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_fp32.c.obj
+[ 67%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Gemm_s8.c.obj
+[ 67%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Hardswish_s8.c.obj
+[ 68%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_fp32.c.obj
+[ 68%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Layernorm_s8.c.obj
+[ 69%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_fp32.c.obj
+[ 70%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MatMul_s8.c.obj
+[ 70%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_fp32.c.obj
+[ 71%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/MaxPool_s8.c.obj
+[ 71%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Pow_fp32.c.obj
+[ 72%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQDiv_s8.c.obj
+[ 73%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQGELU_s8.c.obj
+[ 73%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RQHardswish.c.obj
+[ 74%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Relu_fp32.c.obj
+[ 74%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/RequantShift_s8.c.obj
+[ 75%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_fp32.c.obj
+[ 75%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Softmax_s8.c.obj
+[ 76%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Sqrt_fp32.c.obj
+[ 77%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/Util.c.obj
+[ 77%] Building C object TargetLibraries/Generic/CMakeFiles/deeploybasic.dir/src/iRMSNorm_s8.c.obj
+[ 78%] Linking C static library ../../lib/libdeeploybasic.a
+[ 78%] Built target deeploybasic
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 83%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 83%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 84%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 96%] Linking C static library ../../lib/libdeeploygap9.a
+[ 96%] Built target deeploygap9
+[ 97%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_bnBatchNormalization_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:4582:3: warning: implicit declaration of function 'PULP_BatchNormInternal_fp32'; did you mean 'BatchNorm_fp32'? [-Wimplicit-function-declaration]
+   PULP_BatchNormInternal_fp32(
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   BatchNorm_fp32
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_reluRelu_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:4853:3: warning: implicit declaration of function 'PULP_Relu_fp32_fp32'; did you mean 'Relu_fp32_fp32'? [-Wimplicit-function-declaration]
+   PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_reluRelu_data_in_ref, DeeployNetwork_TILING_CODEGEN_L1_reluRelu_data_out_ref,
+   ^~~~~~~~~~~~~~~~~~~
+   Relu_fp32_fp32
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_poolMaxPool_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5274:5: warning: implicit declaration of function 'PULP_MaxPool2d_fp32_fp32_HWC'; did you mean 'MaxPool2d_fp32_fp32_NCHW'? [-Wimplicit-function-declaration]
+     PULP_MaxPool2d_fp32_fp32_HWC(
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MaxPool2d_fp32_fp32_NCHW
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_3Conv_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11465:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11507:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11549:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11591:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11633:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11675:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:11717:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_4Conv_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14020:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14060:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14100:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14140:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14180:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14220:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:14260:15: warning: missing initializer for field 'weight_d0_stride' of 'ne16_task_t {aka struct ne16_task_t}' [-Wmissing-field-initializers]
+               }}};
+               ^
+In file included from /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:5:0:
+/app/Deeploy/TargetLibraries/third_party/pulp-nnx/ne16/hal/ne16_task.h:112:11: note: 'weight_d0_stride' declared here
+   uint8_t weight_d0_stride;
+           ^~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_global_poolGlobalAveragePool_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:16069:3: warning: implicit declaration of function 'PULP_GlobalAveragePool_fp32' [-Wimplicit-function-declaration]
+   PULP_GlobalAveragePool_fp32(DeeployNetwork_TILING_CODEGEN_L1_global_poolGlobalAveragePool_data_in_ref,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c: In function '_wrappedInnerForwardImpl_5Gemm_tiling_closure':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/TrainingNetwork.c:16562:5: warning: implicit declaration of function 'PULP_Gemm_fp32_fp32_fp32_fp32'; did you mean 'Gemm_fp32_fp32_fp32_fp32'? [-Wimplicit-function-declaration]
+     PULP_Gemm_fp32_fp32_fp32_fp32(
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     Gemm_fp32_fp32_fp32_fp32
+[ 97%] Built target training_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c.obj
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c: In function 'InitOptimizerNetwork':
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4409:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_0 = (float32_t *)DeeployNetwork_input_12;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4410:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_1 = (float32_t *)DeeployNetwork_input_17;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4411:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_2 = (float32_t *)DeeployNetwork_input_13;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4412:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_3 = (float32_t *)DeeployNetwork_input_18;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4413:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_4 = (float32_t *)DeeployNetwork_input_14;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4414:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_5 = (float32_t *)DeeployNetwork_input_19;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4415:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_6 = (float32_t *)DeeployNetwork_input_15;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4416:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_7 = (float32_t *)DeeployNetwork_input_20;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4417:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_8 = (float32_t *)DeeployNetwork_input_16;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4418:29: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_input_9 = (float32_t *)DeeployNetwork_input_21;   /* shared with TrainingNetwork */
+                             ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4431:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_0 = (float32_t *)DeeployNetwork_input_12;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4432:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_1 = (float32_t *)DeeployNetwork_input_17;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4433:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_2 = (float32_t *)DeeployNetwork_input_13;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4434:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_3 = (float32_t *)DeeployNetwork_input_18;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4435:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_4 = (float32_t *)DeeployNetwork_input_14;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4436:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_5 = (float32_t *)DeeployNetwork_input_19;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4437:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_6 = (float32_t *)DeeployNetwork_input_15;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4438:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_7 = (float32_t *)DeeployNetwork_input_20;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4439:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_8 = (float32_t *)DeeployNetwork_input_16;  /* in-place, shared with TrainingNetwork */
+                              ^
+/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/OptimizerNetwork.c:4440:30: warning: assignment from incompatible pointer type [-Wincompatible-pointer-types]
+   DeeployOptNetwork_output_9 = (float32_t *)DeeployNetwork_input_21;  /* in-place, shared with TrainingNetwork */
+                              ^
+[ 98%] Built target optimizer_network
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_qzo12_train.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/speechnet_qzo12_train.dir/src/deeploymezotest.c.obj
+[100%] Linking C executable ../../../speechnet_qzo12_train
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3580 B      65532 B      5.46%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:      321648 B      1536 KB     20.45%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:        2220 B     131068 B      1.69%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target speechnet_qzo12_train
+Consolidate compiler generated dependencies of target pmsis_printf
+[  1%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  4%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  7%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  9%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 40%] Built target pmsis
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 44%] Built target pmsis_backend
+Consolidate compiler generated dependencies of target freertos
+[ 55%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 60%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[ 78%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 96%] Built target deeploygap9
+Consolidate compiler generated dependencies of target training_network
+[ 97%] Built target training_network
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target speechnet_qzo12_train
+[100%] Built target speechnet_qzo12_train
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_qzo12_train
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DBN_FROZEN_STATS=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --enable-1xk --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  1%] Built target pmsis_printf
+[  4%] Built target pulp_allocator
+[  7%] Built target freertos_libs
+[  9%] Built target fll_pmu_lib
+[ 39%] Built target pmsis
+[ 43%] Built target pmsis_backend
+[ 55%] Built target freertos
+[ 59%] Built target pulp-nnx
+[ 78%] Built target deeploybasic
+[ 95%] Built target deeploygap9
+[ 96%] Built target training_network
+[ 97%] Built target optimizer_network
+[ 98%] Built target speechnet_qzo12_train
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gvsoc command - L2 mode:
+/app/install/gap9-sdk/install/workstation/bin/gvsoc --target=gap9.evk --binary /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master/speechnet_qzo12_train --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master/gvsoc_workdir image flash run
+==========================================
+=== GAP9 MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=1  N_ACCUM_STEPS=4  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.000010000  ZO_Q=1  ZO_SEED=42
+Initializing TrainingNetwork (zo_train)...
+[PHASE] InitTrainingNetwork done
+Initializing OptimizerNetwork (zo_update)...
+[PHASE] InitOptimizerNetwork done
+Starting ZO training (1 update steps x 4 accum steps)...
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+update 1/1  accum 1/4  (mini-batch 0)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (8519252 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3f9babd0
+[PHASE] -eps forward START
+[PHASE] -eps forward DONE (8519278 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3e943345
+update 1/1  accum 2/4  (mini-batch 1)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (8521321 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3e45409b
+[PHASE] -eps forward START
+[PHASE] -eps forward DONE (8519977 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3f92a440
+update 1/1  accum 3/4  (mini-batch 2)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (8523859 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3dda5a90
+[PHASE] -eps forward START
+[PHASE] -eps forward DONE (8522234 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3c8aa6ac
+update 1/1  accum 4/4  (mini-batch 3)  seed_base=0
+[PHASE] +eps forward START
+[PHASE] +eps forward DONE (8521730 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3fce1e50
+[PHASE] -eps forward START
+[PHASE] -eps forward DONE (8520371 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3f0b3d4e
+[PHASE] update (zo_update) START
+[PHASE] update (zo_update) DONE (372271 cyc)
+Errors: 0 out of 8
+BENCH train_cycles_hi=0 train_cycles_lo=68168022 opt_cycles_hi=0 opt_cycles_lo=372271
+[100%] Built target gvsoc_speechnet_qzo12_train
+
+[92m✓ Test speechnet_qzo12_train PASSED - No errors found[0m

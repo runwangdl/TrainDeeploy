@@ -1,0 +1,968 @@
+[PHASE] InitTrainingNetwork done
+[PHASE] InitOptimizerNetwork done
+[PHASE] +eps forward START
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  5049 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Kernel     :  8812 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5202 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Total      : 19063 cycles (46.2% Kernel + 53.8% Overhead, 8812 + 10251)
+===== Profiling perturbrademacher_0_blocks_0_0_weight_L2 =====
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   163 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Kernel     :  1423 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   139 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Total      :  1725 cycles (82.5% Kernel + 17.5% Overhead, 1423 + 302)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   140 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   353 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   117 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :   610 cycles (57.9% Kernel + 42.1% Overhead, 353 + 257)
+===== Profiling perturbrademacher_6_blocks_1_0_weight_L2 =====
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1149 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Kernel     : 14699 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Post-Kernel:  1178 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Total      : 17026 cycles (86.3% Kernel + 13.7% Overhead, 14699 + 2327)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1150 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1637 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1179 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  3966 cycles (41.3% Kernel + 58.7% Overhead, 1637 + 2329)
+===== Profiling perturbrademacher_12_blocks_2_0_weight_L2 =====
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1149 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Kernel     : 14722 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Post-Kernel:  1176 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Total      : 17047 cycles (86.4% Kernel + 13.6% Overhead, 14722 + 2325)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1147 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3510 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1157 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5814 cycles (60.4% Kernel + 39.6% Overhead, 3510 + 2304)
+===== Profiling perturbrademacher_18_blocks_3_0_weight_L2 =====
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Pre-Kernel :  1919 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Kernel     : 25105 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Post-Kernel:  1970 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Total      : 28994 cycles (86.6% Kernel + 13.4% Overhead, 25105 + 3889)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1916 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  6026 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1970 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  9912 cycles (60.8% Kernel + 39.2% Overhead, 6026 + 3886)
+===== Profiling perturbrademacher_24_blocks_4_0_weight_L2 =====
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Pre-Kernel :  3709 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Kernel     : 49004 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Post-Kernel:  3816 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Total      : 56529 cycles (86.7% Kernel + 13.3% Overhead, 49004 + 7525)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  3707 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3736 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  3797 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 11240 cycles (33.2% Kernel + 66.8% Overhead, 3736 + 7504)
+===== Profiling perturbrademacher_1_blocks_0_0_bias_L2 =====
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Pre-Kernel :   163 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Kernel     :  1695 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Post-Kernel:   140 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Total      :  1998 cycles (84.8% Kernel + 15.2% Overhead, 1695 + 303)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Pre-Kernel :  5012 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Kernel     :1827277 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Post-Kernel: 19808 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Total      :1852097 cycles (98.7% Kernel + 1.3% Overhead, 1827277 + 24820)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Pre-Kernel :  4975 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Kernel     :1826178 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Post-Kernel: 19728 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Total      :1850881 cycles (98.7% Kernel + 1.3% Overhead, 1826178 + 24703)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Pre-Kernel :  4952 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Kernel     :1826033 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Post-Kernel: 19726 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Total      :1850711 cycles (98.7% Kernel + 1.3% Overhead, 1826033 + 24678)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Pre-Kernel :  4952 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Kernel     :1826014 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Post-Kernel: 19688 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Total      :1850654 cycles (98.7% Kernel + 1.3% Overhead, 1826014 + 24640)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  9940 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 91000 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5234 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :106174 cycles (85.7% Kernel + 14.3% Overhead, 91000 + 15174)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  9864 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 88184 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Total      :103162 cycles (85.5% Kernel + 14.5% Overhead, 88184 + 14978)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Pre-Kernel :  9858 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Kernel     : 84357 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Post-Kernel:  5112 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Total      : 99327 cycles (84.9% Kernel + 15.1% Overhead, 84357 + 14970)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Kernel     : 84361 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Total      : 99335 cycles (84.9% Kernel + 15.1% Overhead, 84361 + 14974)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Kernel     : 84354 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Post-Kernel:  5116 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Total      : 99330 cycles (84.9% Kernel + 15.1% Overhead, 84354 + 14976)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Pre-Kernel :  9864 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Kernel     : 84355 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Post-Kernel:  5112 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Total      : 99331 cycles (84.9% Kernel + 15.1% Overhead, 84355 + 14976)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Kernel     : 84360 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Total      : 99334 cycles (84.9% Kernel + 15.1% Overhead, 84360 + 14974)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Kernel     : 84361 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Total      : 99335 cycles (84.9% Kernel + 15.1% Overhead, 84361 + 14974)
+===== Profiling perturbrademacher_2_blocks_0_1_weight_L2 =====
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Pre-Kernel :   168 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Kernel     :  1683 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Post-Kernel:   162 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Total      :  2013 cycles (83.6% Kernel + 16.4% Overhead, 1683 + 330)
+===== Profiling perturbrademacher_3_blocks_0_1_bias_L2 =====
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Pre-Kernel :   165 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Kernel     :  1450 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Post-Kernel:   164 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Total      :  1779 cycles (81.5% Kernel + 18.5% Overhead, 1450 + 329)
+===== Profiling node_2_blocks_0_blocks_0_1_BatchNormalization_L2 =====
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Pre-Kernel :  5062 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Kernel     : 70154 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Post-Kernel:  5298 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Total      : 80514 cycles (87.1% Kernel + 12.9% Overhead, 70154 + 10360)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Kernel     : 69343 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Post-Kernel:  5139 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Total      : 79446 cycles (87.3% Kernel + 12.7% Overhead, 69343 + 10103)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Kernel     : 69229 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Post-Kernel:  5136 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Total      : 79329 cycles (87.3% Kernel + 12.7% Overhead, 69229 + 10100)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Pre-Kernel :  4986 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Kernel     : 69200 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Total      : 79324 cycles (87.2% Kernel + 12.8% Overhead, 69200 + 10124)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Kernel     : 69197 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Total      : 79299 cycles (87.3% Kernel + 12.7% Overhead, 69197 + 10102)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Pre-Kernel :  4968 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Kernel     : 69198 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Post-Kernel:  5140 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Total      : 79306 cycles (87.3% Kernel + 12.7% Overhead, 69198 + 10108)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Kernel     : 69201 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Total      : 79303 cycles (87.3% Kernel + 12.7% Overhead, 69201 + 10102)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Pre-Kernel :  4966 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Kernel     : 69198 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Total      : 79302 cycles (87.3% Kernel + 12.7% Overhead, 69198 + 10104)
+===== Profiling node_3_blocks_0_blocks_0_2_Relu_L2 =====
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Pre-Kernel :  8112 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Kernel     : 20313 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Post-Kernel:  8450 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Total      : 36875 cycles (55.1% Kernel + 44.9% Overhead, 20313 + 16562)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Pre-Kernel :  8007 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Kernel     : 20002 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Post-Kernel:  8343 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Total      : 36352 cycles (55.0% Kernel + 45.0% Overhead, 20002 + 16350)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Pre-Kernel :  8007 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Kernel     : 19993 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Post-Kernel:  8341 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Total      : 36341 cycles (55.0% Kernel + 45.0% Overhead, 19993 + 16348)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Pre-Kernel :  8001 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Kernel     : 19997 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Post-Kernel:  8339 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Total      : 36337 cycles (55.0% Kernel + 45.0% Overhead, 19997 + 16340)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Pre-Kernel :  7499 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Kernel     : 18731 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Post-Kernel:  7892 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Total      : 34122 cycles (54.9% Kernel + 45.1% Overhead, 18731 + 15391)
+===== Profiling node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2 =====
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  8137 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     : 10409 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  8406 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 26952 cycles (38.6% Kernel + 61.4% Overhead, 10409 + 16543)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  8033 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Kernel     : 10046 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  8268 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Total      : 26347 cycles (38.1% Kernel + 61.9% Overhead, 10046 + 16301)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Pre-Kernel :  8010 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Kernel     : 10001 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Post-Kernel:  8283 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Total      : 26294 cycles (38.0% Kernel + 62.0% Overhead, 10001 + 16293)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Pre-Kernel :  8011 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Kernel     : 10026 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Post-Kernel:  8270 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Total      : 26307 cycles (38.1% Kernel + 61.9% Overhead, 10026 + 16281)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Pre-Kernel :  7503 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Kernel     :  9371 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Post-Kernel:  7748 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Total      : 24622 cycles (38.1% Kernel + 61.9% Overhead, 9371 + 15251)
+===== Profiling node_4_blocks_0_blocks_0_3_MaxPool_L2 =====
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Pre-Kernel : 13830 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Kernel     :190424 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Post-Kernel:  2591 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Total      :206845 cycles (92.1% Kernel + 7.9% Overhead, 190424 + 16421)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Pre-Kernel : 12875 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Kernel     :189958 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Post-Kernel:  2489 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Total      :205322 cycles (92.5% Kernel + 7.5% Overhead, 189958 + 15364)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Pre-Kernel :  9863 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Kernel     :192292 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Post-Kernel:  2487 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Total      :204642 cycles (94.0% Kernel + 6.0% Overhead, 192292 + 12350)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Pre-Kernel :  9863 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Kernel     :189498 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Post-Kernel:  2489 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Total      :201850 cycles (93.9% Kernel + 6.1% Overhead, 189498 + 12352)
+===== Profiling perturbrademacher_7_blocks_1_0_bias_L2 =====
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   151 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Kernel     :  1828 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   105 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Total      :  2084 cycles (87.7% Kernel + 12.3% Overhead, 1828 + 256)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Pre-Kernel :  5960 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Kernel     :3653546 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Post-Kernel: 11227 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Total      :3670733 cycles (99.5% Kernel + 0.5% Overhead, 3653546 + 17187)
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Pre-Kernel :  5050 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Kernel     :2441968 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Post-Kernel:  2577 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Total      :2449595 cycles (99.7% Kernel + 0.3% Overhead, 2441968 + 7627)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  7553 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 21077 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  7713 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 36343 cycles (58.0% Kernel + 42.0% Overhead, 21077 + 15266)
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  2599 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 10372 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  2632 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Total      : 15603 cycles (66.5% Kernel + 33.5% Overhead, 10372 + 5231)
+===== Profiling perturbrademacher_8_blocks_1_1_weight_L2 =====
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Pre-Kernel :   182 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Kernel     :  1717 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Post-Kernel:   144 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Total      :  2043 cycles (84.0% Kernel + 16.0% Overhead, 1717 + 326)
+===== Profiling perturbrademacher_9_blocks_1_1_bias_L2 =====
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   181 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Kernel     :  1507 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Total      :  1813 cycles (83.1% Kernel + 16.9% Overhead, 1507 + 306)
+===== Profiling node_6_blocks_1_blocks_1_1_BatchNormalization_L2 =====
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Pre-Kernel :  7560 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Kernel     : 19051 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Post-Kernel:  7913 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Total      : 34524 cycles (55.2% Kernel + 44.8% Overhead, 19051 + 15473)
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Pre-Kernel :  2570 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Kernel     :  9289 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Post-Kernel:  2681 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Total      : 14540 cycles (63.9% Kernel + 36.1% Overhead, 9289 + 5251)
+===== Profiling node_7_blocks_1_blocks_1_2_Relu_L2 =====
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Pre-Kernel :  8115 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Kernel     : 20291 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Post-Kernel:  8666 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Total      : 37072 cycles (54.7% Kernel + 45.3% Overhead, 20291 + 16781)
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Pre-Kernel :  2074 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Kernel     :  5054 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Post-Kernel:  2351 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Total      :  9479 cycles (53.3% Kernel + 46.7% Overhead, 5054 + 4425)
+===== Profiling node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2 =====
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  8090 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     : 10355 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  8357 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 26802 cycles (38.6% Kernel + 61.4% Overhead, 10355 + 16447)
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  2061 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Kernel     :  2599 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  2111 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Total      :  6771 cycles (38.4% Kernel + 61.6% Overhead, 2599 + 4172)
+===== Profiling node_8_blocks_1_blocks_1_3_MaxPool_L2 =====
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Pre-Kernel :  9970 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Kernel     : 57730 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Post-Kernel:  2650 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Total      : 70350 cycles (82.1% Kernel + 17.9% Overhead, 57730 + 12620)
+===== Profiling perturbrademacher_13_blocks_2_0_bias_L2 =====
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Kernel     :  1799 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   126 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Total      :  2105 cycles (85.5% Kernel + 14.5% Overhead, 1799 + 306)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Pre-Kernel :  3590 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Kernel     :921051 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Post-Kernel:  2749 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Total      :927390 cycles (99.3% Kernel + 0.7% Overhead, 921051 + 6339)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2768 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2934 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2752 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  8454 cycles (34.7% Kernel + 65.3% Overhead, 2934 + 5520)
+===== Profiling perturbrademacher_14_blocks_2_1_weight_L2 =====
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Kernel     :  1796 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Post-Kernel:   180 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Total      :  2121 cycles (84.7% Kernel + 15.3% Overhead, 1796 + 325)
+===== Profiling perturbrademacher_15_blocks_2_1_bias_L2 =====
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Kernel     :  1496 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Total      :  1801 cycles (83.1% Kernel + 16.9% Overhead, 1496 + 305)
+===== Profiling node_10_blocks_2_blocks_2_1_BatchNormalization_L2 =====
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Pre-Kernel :  2706 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Kernel     :  6376 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Post-Kernel:  2766 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Total      : 11848 cycles (53.8% Kernel + 46.2% Overhead, 6376 + 5472)
+===== Profiling node_11_blocks_2_blocks_2_2_Relu_L2 =====
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Pre-Kernel :  2765 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Kernel     :  6855 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Post-Kernel:  2749 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Total      : 12369 cycles (55.4% Kernel + 44.6% Overhead, 6855 + 5514)
+===== Profiling node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2 =====
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2693 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3884 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2765 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  9342 cycles (41.6% Kernel + 58.4% Overhead, 3884 + 5458)
+===== Profiling node_12_blocks_2_blocks_2_3_MaxPool_L2 =====
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Pre-Kernel :  2689 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Kernel     : 14396 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Post-Kernel:   687 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Total      : 17772 cycles (81.0% Kernel + 19.0% Overhead, 14396 + 3376)
+===== Profiling perturbrademacher_19_blocks_3_0_bias_L2 =====
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Kernel     :  1354 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   126 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Total      :  1660 cycles (81.6% Kernel + 18.4% Overhead, 1354 + 306)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Pre-Kernel :  2466 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Kernel     :171478 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Post-Kernel:   750 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Total      :174694 cycles (98.2% Kernel + 1.8% Overhead, 171478 + 3216)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   831 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1270 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   751 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2852 cycles (44.5% Kernel + 55.5% Overhead, 1270 + 1582)
+===== Profiling perturbrademacher_20_blocks_3_1_weight_L2 =====
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Kernel     :  1398 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   178 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Total      :  1721 cycles (81.2% Kernel + 18.8% Overhead, 1398 + 323)
+===== Profiling perturbrademacher_21_blocks_3_1_bias_L2 =====
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   182 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Kernel     :  1067 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Total      :  1374 cycles (77.7% Kernel + 22.3% Overhead, 1067 + 307)
+===== Profiling node_14_blocks_3_blocks_3_1_BatchNormalization_L2 =====
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Pre-Kernel :   802 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Kernel     :  3347 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Post-Kernel:   783 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Total      :  4932 cycles (67.9% Kernel + 32.1% Overhead, 3347 + 1585)
+===== Profiling node_15_blocks_3_blocks_3_2_Relu_L2 =====
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Pre-Kernel :   830 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Kernel     :  2031 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Post-Kernel:   750 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Total      :  3611 cycles (56.2% Kernel + 43.8% Overhead, 2031 + 1580)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   756 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1150 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   771 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2677 cycles (43.0% Kernel + 57.0% Overhead, 1150 + 1527)
+===== Profiling perturbrademacher_25_blocks_4_0_bias_L2 =====
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Kernel     :  1318 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Total      :  1606 cycles (82.1% Kernel + 17.9% Overhead, 1318 + 288)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Pre-Kernel :  4338 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Kernel     : 83437 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Post-Kernel:   275 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Total      : 88050 cycles (94.8% Kernel + 5.2% Overhead, 83437 + 4613)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   272 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   847 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   276 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1395 cycles (60.7% Kernel + 39.3% Overhead, 847 + 548)
+===== Profiling perturbrademacher_26_blocks_4_1_weight_L2 =====
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Kernel     :  1321 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   144 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Total      :  1610 cycles (82.0% Kernel + 18.0% Overhead, 1321 + 289)
+===== Profiling perturbrademacher_27_blocks_4_1_bias_L2 =====
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   181 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Kernel     :  1083 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Total      :  1389 cycles (78.0% Kernel + 22.0% Overhead, 1083 + 306)
+===== Profiling node_17_blocks_4_blocks_4_1_BatchNormalization_L2 =====
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Pre-Kernel :   378 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Kernel     :  2493 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Post-Kernel:   294 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Total      :  3165 cycles (78.8% Kernel + 21.2% Overhead, 2493 + 672)
+===== Profiling node_18_blocks_4_blocks_4_2_Relu_L2 =====
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Pre-Kernel :   297 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Kernel     :   823 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Post-Kernel:   259 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Total      :  1379 cycles (59.7% Kernel + 40.3% Overhead, 823 + 556)
+===== Profiling node_19_global_pool_GlobalAveragePool_L2 =====
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   273 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   861 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   144 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1278 cycles (67.4% Kernel + 32.6% Overhead, 861 + 417)
+===== Profiling perturbrademacher_30_fc_weight_L2 =====
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Pre-Kernel :   240 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Kernel     :  3420 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Post-Kernel:   262 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Total      :  3922 cycles (87.2% Kernel + 12.8% Overhead, 3420 + 502)
+===== Profiling perturbrademacher_31_fc_bias_L2 =====
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Pre-Kernel :   185 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Kernel     :  1474 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Total      :  1802 cycles (81.8% Kernel + 18.2% Overhead, 1474 + 328)
+===== Profiling node_22_fc_Gemm_L2 =====
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   333 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Kernel     :  3664 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   141 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Total      :  4138 cycles (88.5% Kernel + 11.5% Overhead, 3664 + 474)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   189 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  4366 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   199 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  4754 cycles (91.8% Kernel + 8.2% Overhead, 4366 + 388)
+[PHASE] +eps forward DONE (17854345 cyc)
+[PHASE] +eps loss read OK: lp_bits=0x3c871100
+[PHASE] -eps forward START
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  5053 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Kernel     :  8833 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5202 cycles
+[node_1_blocks_0_blocks_0_0_Conv_input_0_transpose_L2][SB][0 ops][Tile 0] Total      : 19088 cycles (46.3% Kernel + 53.7% Overhead, 8833 + 10255)
+===== Profiling perturbrademacher_0_blocks_0_0_weight_L2 =====
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   165 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Kernel     :  1331 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   139 cycles
+[perturbrademacher_0_blocks_0_0_weight_L2][SB][32 ops][Tile 0] Total      :  1635 cycles (81.4% Kernel + 18.6% Overhead, 1331 + 304)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   144 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :   367 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   117 cycles
+[node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :   628 cycles (58.4% Kernel + 41.6% Overhead, 367 + 261)
+===== Profiling perturbrademacher_6_blocks_1_0_weight_L2 =====
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1151 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Kernel     : 14735 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Post-Kernel:  1176 cycles
+[perturbrademacher_6_blocks_1_0_weight_L2][SB][2048 ops][Tile 0] Total      : 17062 cycles (86.4% Kernel + 13.6% Overhead, 14735 + 2327)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1148 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1637 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1177 cycles
+[node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  3962 cycles (41.3% Kernel + 58.7% Overhead, 1637 + 2325)
+===== Profiling perturbrademacher_12_blocks_2_0_weight_L2 =====
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1151 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Kernel     : 14562 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Post-Kernel:  1176 cycles
+[perturbrademacher_12_blocks_2_0_weight_L2][SB][2048 ops][Tile 0] Total      : 16889 cycles (86.2% Kernel + 13.8% Overhead, 14562 + 2327)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1151 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3490 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1155 cycles
+[node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  5796 cycles (60.2% Kernel + 39.8% Overhead, 3490 + 2306)
+===== Profiling perturbrademacher_18_blocks_3_0_weight_L2 =====
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Pre-Kernel :  1919 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Kernel     : 25151 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Post-Kernel:  1970 cycles
+[perturbrademacher_18_blocks_3_0_weight_L2][SB][3584 ops][Tile 0] Total      : 29040 cycles (86.6% Kernel + 13.4% Overhead, 25151 + 3889)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1916 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  6028 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1974 cycles
+[node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  9918 cycles (60.8% Kernel + 39.2% Overhead, 6028 + 3890)
+===== Profiling perturbrademacher_24_blocks_4_0_weight_L2 =====
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Pre-Kernel :  3709 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Kernel     : 49008 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Post-Kernel:  3816 cycles
+[perturbrademacher_24_blocks_4_0_weight_L2][SB][7168 ops][Tile 0] Total      : 56533 cycles (86.7% Kernel + 13.3% Overhead, 49008 + 7525)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  3707 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3713 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  3795 cycles
+[node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 11215 cycles (33.1% Kernel + 66.9% Overhead, 3713 + 7502)
+===== Profiling perturbrademacher_1_blocks_0_0_bias_L2 =====
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Pre-Kernel :   163 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Kernel     :  1721 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Post-Kernel:   142 cycles
+[perturbrademacher_1_blocks_0_0_bias_L2][SB][8 ops][Tile 0] Total      :  2026 cycles (84.9% Kernel + 15.1% Overhead, 1721 + 305)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Pre-Kernel :  5016 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Kernel     :1827253 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Post-Kernel: 19810 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 0] Total      :1852079 cycles (98.7% Kernel + 1.3% Overhead, 1827253 + 24826)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Pre-Kernel :  4950 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Kernel     :1826213 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Post-Kernel: 19708 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 1] Total      :1850871 cycles (98.7% Kernel + 1.3% Overhead, 1826213 + 24658)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Pre-Kernel :  4976 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Kernel     :1826029 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Post-Kernel: 19688 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 2] Total      :1850693 cycles (98.7% Kernel + 1.3% Overhead, 1826029 + 24664)
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Pre-Kernel :  4950 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Kernel     :1826049 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Post-Kernel: 19686 cycles
+[node_1_blocks_0_blocks_0_0_Conv_L2][SB][628096 ops][Tile 3] Total      :1850685 cycles (98.7% Kernel + 1.3% Overhead, 1826049 + 24636)
+===== Profiling node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  9940 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 90959 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  5234 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :106133 cycles (85.7% Kernel + 14.3% Overhead, 90959 + 15174)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 88443 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  5112 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Total      :103415 cycles (85.5% Kernel + 14.5% Overhead, 88443 + 14972)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Kernel     : 84357 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Post-Kernel:  5116 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 2] Total      : 99333 cycles (84.9% Kernel + 15.1% Overhead, 84357 + 14976)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Pre-Kernel :  9858 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Kernel     : 84362 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 3] Total      : 99334 cycles (84.9% Kernel + 15.1% Overhead, 84362 + 14972)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Pre-Kernel :  9862 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Kernel     : 84365 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Post-Kernel:  5112 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 4] Total      : 99339 cycles (84.9% Kernel + 15.1% Overhead, 84365 + 14974)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Pre-Kernel :  9864 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Kernel     : 84363 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Post-Kernel:  5110 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 5] Total      : 99337 cycles (84.9% Kernel + 15.1% Overhead, 84363 + 14974)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Kernel     : 84361 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Post-Kernel:  5112 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 6] Total      : 99333 cycles (84.9% Kernel + 15.1% Overhead, 84361 + 14972)
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Pre-Kernel :  9860 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Kernel     : 84357 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Post-Kernel:  5114 cycles
+[node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 7] Total      : 99331 cycles (84.9% Kernel + 15.1% Overhead, 84357 + 14974)
+===== Profiling perturbrademacher_2_blocks_0_1_weight_L2 =====
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Pre-Kernel :   168 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Kernel     :  1617 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Post-Kernel:   162 cycles
+[perturbrademacher_2_blocks_0_1_weight_L2][SB][8 ops][Tile 0] Total      :  1947 cycles (83.1% Kernel + 16.9% Overhead, 1617 + 330)
+===== Profiling perturbrademacher_3_blocks_0_1_bias_L2 =====
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Pre-Kernel :   165 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Kernel     :  1316 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Post-Kernel:   164 cycles
+[perturbrademacher_3_blocks_0_1_bias_L2][SB][8 ops][Tile 0] Total      :  1645 cycles (80.0% Kernel + 20.0% Overhead, 1316 + 329)
+===== Profiling node_2_blocks_0_blocks_0_1_BatchNormalization_L2 =====
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Pre-Kernel :  5062 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Kernel     : 70176 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Post-Kernel:  5298 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 0] Total      : 80536 cycles (87.1% Kernel + 12.9% Overhead, 70176 + 10360)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Pre-Kernel :  4984 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Kernel     : 69377 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Post-Kernel:  5160 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 1] Total      : 79521 cycles (87.2% Kernel + 12.8% Overhead, 69377 + 10144)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Pre-Kernel :  4984 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Kernel     : 69247 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Post-Kernel:  5136 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 2] Total      : 79367 cycles (87.2% Kernel + 12.8% Overhead, 69247 + 10120)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Pre-Kernel :  4966 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Kernel     : 69199 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 3] Total      : 79303 cycles (87.3% Kernel + 12.7% Overhead, 69199 + 10104)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Kernel     : 69200 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 4] Total      : 79302 cycles (87.3% Kernel + 12.7% Overhead, 69200 + 10102)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Pre-Kernel :  4968 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Kernel     : 69194 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Post-Kernel:  5140 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 5] Total      : 79302 cycles (87.3% Kernel + 12.7% Overhead, 69194 + 10108)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Pre-Kernel :  4964 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Kernel     : 69198 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 6] Total      : 79300 cycles (87.3% Kernel + 12.7% Overhead, 69198 + 10102)
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Pre-Kernel :  4966 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Kernel     : 69197 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Post-Kernel:  5138 cycles
+[node_2_blocks_0_blocks_0_1_BatchNormalization_L2][SB][549584 ops][Tile 7] Total      : 79301 cycles (87.3% Kernel + 12.7% Overhead, 69197 + 10104)
+===== Profiling node_3_blocks_0_blocks_0_2_Relu_L2 =====
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Pre-Kernel :  8112 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Kernel     : 20330 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Post-Kernel:  8450 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 0] Total      : 36892 cycles (55.1% Kernel + 44.9% Overhead, 20330 + 16562)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Pre-Kernel :  8024 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Kernel     : 20011 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Post-Kernel:  8343 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 1] Total      : 36378 cycles (55.0% Kernel + 45.0% Overhead, 20011 + 16367)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Pre-Kernel :  8007 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Kernel     : 19993 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Post-Kernel:  8341 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 2] Total      : 36341 cycles (55.0% Kernel + 45.0% Overhead, 19993 + 16348)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Pre-Kernel :  8001 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Kernel     : 19997 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Post-Kernel:  8339 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 3] Total      : 36337 cycles (55.0% Kernel + 45.0% Overhead, 19997 + 16340)
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Pre-Kernel :  7499 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Kernel     : 18731 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Post-Kernel:  7892 cycles
+[node_3_blocks_0_blocks_0_2_Relu_L2][SB][78512 ops][Tile 4] Total      : 34122 cycles (54.9% Kernel + 45.1% Overhead, 18731 + 15391)
+===== Profiling node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2 =====
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  8137 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     : 10440 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  8406 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 26983 cycles (38.7% Kernel + 61.3% Overhead, 10440 + 16543)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  8033 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Kernel     :  9963 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  8268 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Total      : 26264 cycles (37.9% Kernel + 62.1% Overhead, 9963 + 16301)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Pre-Kernel :  8010 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Kernel     :  9999 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Post-Kernel:  8283 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 2] Total      : 26292 cycles (38.0% Kernel + 62.0% Overhead, 9999 + 16293)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Pre-Kernel :  8011 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Kernel     :  9986 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Post-Kernel:  8270 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 3] Total      : 26267 cycles (38.0% Kernel + 62.0% Overhead, 9986 + 16281)
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Pre-Kernel :  7503 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Kernel     :  9365 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Post-Kernel:  7748 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 4] Total      : 24616 cycles (38.0% Kernel + 62.0% Overhead, 9365 + 15251)
+===== Profiling node_4_blocks_0_blocks_0_3_MaxPool_L2 =====
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Pre-Kernel : 13830 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Kernel     :190428 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Post-Kernel:  2591 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 0] Total      :206849 cycles (92.1% Kernel + 7.9% Overhead, 190428 + 16421)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Pre-Kernel : 12863 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Kernel     :190828 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Post-Kernel:  2506 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 1] Total      :206197 cycles (92.5% Kernel + 7.5% Overhead, 190828 + 15369)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Pre-Kernel :  9863 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Kernel     :193209 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Post-Kernel:  2487 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 2] Total      :205559 cycles (94.0% Kernel + 6.0% Overhead, 193209 + 12350)
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Pre-Kernel :  9863 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Kernel     :189496 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Post-Kernel:  2489 cycles
+[node_4_blocks_0_blocks_0_3_MaxPool_L2][SB][68208 ops][Tile 3] Total      :201848 cycles (93.9% Kernel + 6.1% Overhead, 189496 + 12352)
+===== Profiling perturbrademacher_7_blocks_1_0_bias_L2 =====
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   151 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Kernel     :  1768 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   105 cycles
+[perturbrademacher_7_blocks_1_0_bias_L2][SB][16 ops][Tile 0] Total      :  2024 cycles (87.4% Kernel + 12.6% Overhead, 1768 + 256)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Pre-Kernel :  5960 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Kernel     :3656148 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Post-Kernel: 11227 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 0] Total      :3673335 cycles (99.5% Kernel + 0.5% Overhead, 3656148 + 17187)
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Pre-Kernel :  5050 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Kernel     :2441871 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Post-Kernel:  2577 cycles
+[node_5_blocks_1_blocks_1_0_Conv_L2][SB][5046272 ops][Tile 1] Total      :2449498 cycles (99.7% Kernel + 0.3% Overhead, 2441871 + 7627)
+===== Profiling node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  7553 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 21082 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  7713 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 36348 cycles (58.0% Kernel + 42.0% Overhead, 21082 + 15266)
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  2599 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 10335 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  2632 cycles
+[node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 1] Total      : 15566 cycles (66.4% Kernel + 33.6% Overhead, 10335 + 5231)
+===== Profiling perturbrademacher_8_blocks_1_1_weight_L2 =====
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Pre-Kernel :   182 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Kernel     :  1750 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Post-Kernel:   144 cycles
+[perturbrademacher_8_blocks_1_1_weight_L2][SB][16 ops][Tile 0] Total      :  2076 cycles (84.3% Kernel + 15.7% Overhead, 1750 + 326)
+===== Profiling perturbrademacher_9_blocks_1_1_bias_L2 =====
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   181 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Kernel     :  1371 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_9_blocks_1_1_bias_L2][SB][16 ops][Tile 0] Total      :  1677 cycles (81.8% Kernel + 18.2% Overhead, 1371 + 306)
+===== Profiling node_6_blocks_1_blocks_1_1_BatchNormalization_L2 =====
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Pre-Kernel :  7560 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Kernel     : 19019 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Post-Kernel:  7910 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 0] Total      : 34489 cycles (55.1% Kernel + 44.9% Overhead, 19019 + 15470)
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Pre-Kernel :  2554 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Kernel     :  9277 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Post-Kernel:  2647 cycles
+[node_6_blocks_1_blocks_1_1_BatchNormalization_L2][SB][137984 ops][Tile 1] Total      : 14478 cycles (64.1% Kernel + 35.9% Overhead, 9277 + 5201)
+===== Profiling node_7_blocks_1_blocks_1_2_Relu_L2 =====
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Pre-Kernel :  8115 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Kernel     : 20306 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Post-Kernel:  8646 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 0] Total      : 37067 cycles (54.8% Kernel + 45.2% Overhead, 20306 + 16761)
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Pre-Kernel :  2074 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Kernel     :  5045 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Post-Kernel:  2351 cycles
+[node_7_blocks_1_blocks_1_2_Relu_L2][SB][19712 ops][Tile 1] Total      :  9470 cycles (53.3% Kernel + 46.7% Overhead, 5045 + 4425)
+===== Profiling node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2 =====
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  8090 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     : 10344 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  8357 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      : 26791 cycles (38.6% Kernel + 61.4% Overhead, 10344 + 16447)
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  2061 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Kernel     :  2612 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  2111 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 1] Total      :  6784 cycles (38.5% Kernel + 61.5% Overhead, 2612 + 4172)
+===== Profiling node_8_blocks_1_blocks_1_3_MaxPool_L2 =====
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Pre-Kernel :  9970 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Kernel     : 57728 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Post-Kernel:  2650 cycles
+[node_8_blocks_1_blocks_1_3_MaxPool_L2][SB][14784 ops][Tile 0] Total      : 70348 cycles (82.1% Kernel + 17.9% Overhead, 57728 + 12620)
+===== Profiling perturbrademacher_13_blocks_2_0_bias_L2 =====
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Kernel     :  1771 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   146 cycles
+[perturbrademacher_13_blocks_2_0_bias_L2][SB][16 ops][Tile 0] Total      :  2097 cycles (84.5% Kernel + 15.5% Overhead, 1771 + 326)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Pre-Kernel :  3590 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Kernel     :920072 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Post-Kernel:  2749 cycles
+[node_9_blocks_2_blocks_2_0_Conv_L2][SB][1318912 ops][Tile 0] Total      :926411 cycles (99.3% Kernel + 0.7% Overhead, 920072 + 6339)
+===== Profiling node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2767 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  2956 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2772 cycles
+[node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  8495 cycles (34.8% Kernel + 65.2% Overhead, 2956 + 5539)
+===== Profiling perturbrademacher_14_blocks_2_1_weight_L2 =====
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Kernel     :  1782 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Post-Kernel:   180 cycles
+[perturbrademacher_14_blocks_2_1_weight_L2][SB][16 ops][Tile 0] Total      :  2107 cycles (84.6% Kernel + 15.4% Overhead, 1782 + 325)
+===== Profiling perturbrademacher_15_blocks_2_1_bias_L2 =====
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Kernel     :  1406 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_15_blocks_2_1_bias_L2][SB][16 ops][Tile 0] Total      :  1711 cycles (82.2% Kernel + 17.8% Overhead, 1406 + 305)
+===== Profiling node_10_blocks_2_blocks_2_1_BatchNormalization_L2 =====
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Pre-Kernel :  2706 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Kernel     :  6398 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Post-Kernel:  2766 cycles
+[node_10_blocks_2_blocks_2_1_BatchNormalization_L2][SB][36064 ops][Tile 0] Total      : 11870 cycles (53.9% Kernel + 46.1% Overhead, 6398 + 5472)
+===== Profiling node_11_blocks_2_blocks_2_2_Relu_L2 =====
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Pre-Kernel :  2765 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Kernel     :  6856 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Post-Kernel:  2770 cycles
+[node_11_blocks_2_blocks_2_2_Relu_L2][SB][5152 ops][Tile 0] Total      : 12391 cycles (55.3% Kernel + 44.7% Overhead, 6856 + 5535)
+===== Profiling node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2 =====
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  2693 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  3865 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  2765 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  9323 cycles (41.5% Kernel + 58.5% Overhead, 3865 + 5458)
+===== Profiling node_12_blocks_2_blocks_2_3_MaxPool_L2 =====
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Pre-Kernel :  2689 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Kernel     : 14417 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Post-Kernel:   687 cycles
+[node_12_blocks_2_blocks_2_3_MaxPool_L2][SB][3360 ops][Tile 0] Total      : 17793 cycles (81.0% Kernel + 19.0% Overhead, 14417 + 3376)
+===== Profiling perturbrademacher_19_blocks_3_0_bias_L2 =====
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Kernel     :  1311 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   126 cycles
+[perturbrademacher_19_blocks_3_0_bias_L2][SB][32 ops][Tile 0] Total      :  1617 cycles (81.1% Kernel + 18.9% Overhead, 1311 + 306)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Pre-Kernel :  2466 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Kernel     :172343 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Post-Kernel:   750 cycles
+[node_13_blocks_3_blocks_3_0_Conv_L2][SB][286720 ops][Tile 0] Total      :175559 cycles (98.2% Kernel + 1.8% Overhead, 172343 + 3216)
+===== Profiling node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   831 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1304 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   751 cycles
+[node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  2886 cycles (45.2% Kernel + 54.8% Overhead, 1304 + 1582)
+===== Profiling perturbrademacher_20_blocks_3_1_weight_L2 =====
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Kernel     :  1432 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   178 cycles
+[perturbrademacher_20_blocks_3_1_weight_L2][SB][32 ops][Tile 0] Total      :  1755 cycles (81.6% Kernel + 18.4% Overhead, 1432 + 323)
+===== Profiling perturbrademacher_21_blocks_3_1_bias_L2 =====
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   182 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Kernel     :  1085 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_21_blocks_3_1_bias_L2][SB][32 ops][Tile 0] Total      :  1392 cycles (77.9% Kernel + 22.1% Overhead, 1085 + 307)
+===== Profiling node_14_blocks_3_blocks_3_1_BatchNormalization_L2 =====
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Pre-Kernel :   802 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Kernel     :  3340 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Post-Kernel:   783 cycles
+[node_14_blocks_3_blocks_3_1_BatchNormalization_L2][SB][8960 ops][Tile 0] Total      :  4925 cycles (67.8% Kernel + 32.2% Overhead, 3340 + 1585)
+===== Profiling node_15_blocks_3_blocks_3_2_Relu_L2 =====
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Pre-Kernel :   829 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Kernel     :  2039 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Post-Kernel:   750 cycles
+[node_15_blocks_3_blocks_3_2_Relu_L2][SB][1280 ops][Tile 0] Total      :  3618 cycles (56.4% Kernel + 43.6% Overhead, 2039 + 1579)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   756 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Kernel     :  1137 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   770 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose_L2][SB][0 ops][Tile 0] Total      :  2663 cycles (42.7% Kernel + 57.3% Overhead, 1137 + 1526)
+===== Profiling perturbrademacher_25_blocks_4_0_bias_L2 =====
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Kernel     :  1364 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_25_blocks_4_0_bias_L2][SB][32 ops][Tile 0] Total      :  1652 cycles (82.6% Kernel + 17.4% Overhead, 1364 + 288)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Pre-Kernel :  4338 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Kernel     : 83870 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Post-Kernel:   275 cycles
+[node_16_blocks_4_blocks_4_0_Conv_L2][SB][143360 ops][Tile 0] Total      : 88483 cycles (94.8% Kernel + 5.2% Overhead, 83870 + 4613)
+===== Profiling node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2 =====
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   272 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     :   877 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   276 cycles
+[node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose_L2][SB][0 ops][Tile 0] Total      :  1425 cycles (61.5% Kernel + 38.5% Overhead, 877 + 548)
+===== Profiling perturbrademacher_26_blocks_4_1_weight_L2 =====
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Pre-Kernel :   145 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Kernel     :  1296 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Post-Kernel:   144 cycles
+[perturbrademacher_26_blocks_4_1_weight_L2][SB][32 ops][Tile 0] Total      :  1585 cycles (81.8% Kernel + 18.2% Overhead, 1296 + 289)
+===== Profiling perturbrademacher_27_blocks_4_1_bias_L2 =====
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Pre-Kernel :   181 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Kernel     :  1140 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Post-Kernel:   125 cycles
+[perturbrademacher_27_blocks_4_1_bias_L2][SB][32 ops][Tile 0] Total      :  1446 cycles (78.8% Kernel + 21.2% Overhead, 1140 + 306)
+===== Profiling node_17_blocks_4_blocks_4_1_BatchNormalization_L2 =====
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Pre-Kernel :   379 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Kernel     :  2552 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Post-Kernel:   294 cycles
+[node_17_blocks_4_blocks_4_1_BatchNormalization_L2][SB][2240 ops][Tile 0] Total      :  3225 cycles (79.1% Kernel + 20.9% Overhead, 2552 + 673)
+===== Profiling node_18_blocks_4_blocks_4_2_Relu_L2 =====
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Pre-Kernel :   297 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Kernel     :   825 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Post-Kernel:   259 cycles
+[node_18_blocks_4_blocks_4_2_Relu_L2][SB][320 ops][Tile 0] Total      :  1381 cycles (59.7% Kernel + 40.3% Overhead, 825 + 556)
+===== Profiling node_19_global_pool_GlobalAveragePool_L2 =====
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Pre-Kernel :   273 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Kernel     :   861 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Post-Kernel:   164 cycles
+[node_19_global_pool_GlobalAveragePool_L2][SB][0 ops][Tile 0] Total      :  1298 cycles (66.3% Kernel + 33.7% Overhead, 861 + 437)
+===== Profiling perturbrademacher_30_fc_weight_L2 =====
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Pre-Kernel :   239 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Kernel     :  3397 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Post-Kernel:   262 cycles
+[perturbrademacher_30_fc_weight_L2][SB][288 ops][Tile 0] Total      :  3898 cycles (87.1% Kernel + 12.9% Overhead, 3397 + 501)
+===== Profiling perturbrademacher_31_fc_bias_L2 =====
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Pre-Kernel :   185 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Kernel     :  1518 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_31_fc_bias_L2][SB][9 ops][Tile 0] Total      :  1846 cycles (82.2% Kernel + 17.8% Overhead, 1518 + 328)
+===== Profiling node_22_fc_Gemm_L2 =====
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Pre-Kernel :   313 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Kernel     :  3679 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Post-Kernel:   141 cycles
+[node_22_fc_Gemm_L2][SB][603 ops][Tile 0] Total      :  4133 cycles (89.0% Kernel + 11.0% Overhead, 3679 + 454)
+===== Profiling CrossEntropyLoss_L2 =====
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Pre-Kernel :   169 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Kernel     :  4331 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Post-Kernel:   199 cycles
+[CrossEntropyLoss_L2][SB][0 ops][Tile 0] Total      :  4699 cycles (92.2% Kernel + 7.8% Overhead, 4331 + 368)
+[PHASE] -eps forward DONE (17857763 cyc)
+[PHASE] -eps loss read OK: lm_bits=0x3d8ddfc0
+[PHASE] update (zo_update) START
+===== Profiling perturbrademacher_blocks_0_0_weight_updated_L2 =====
+[perturbrademacher_blocks_0_0_weight_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   179 cycles
+[perturbrademacher_blocks_0_0_weight_updated_L2][SB][32 ops][Tile 0] Kernel     :  1307 cycles
+[perturbrademacher_blocks_0_0_weight_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   177 cycles
+[perturbrademacher_blocks_0_0_weight_updated_L2][SB][32 ops][Tile 0] Total      :  1663 cycles (78.6% Kernel + 21.4% Overhead, 1307 + 356)
+===== Profiling perturbrademacher_blocks_0_0_bias_updated_L2 =====
+[perturbrademacher_blocks_0_0_bias_updated_L2][SB][8 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_blocks_0_0_bias_updated_L2][SB][8 ops][Tile 0] Kernel     :  1433 cycles
+[perturbrademacher_blocks_0_0_bias_updated_L2][SB][8 ops][Tile 0] Post-Kernel:   177 cycles
+[perturbrademacher_blocks_0_0_bias_updated_L2][SB][8 ops][Tile 0] Total      :  1790 cycles (80.1% Kernel + 19.9% Overhead, 1433 + 357)
+===== Profiling perturbrademacher_blocks_0_1_weight_updated_L2 =====
+[perturbrademacher_blocks_0_1_weight_updated_L2][SB][8 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_blocks_0_1_weight_updated_L2][SB][8 ops][Tile 0] Kernel     :  1274 cycles
+[perturbrademacher_blocks_0_1_weight_updated_L2][SB][8 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_blocks_0_1_weight_updated_L2][SB][8 ops][Tile 0] Total      :  1597 cycles (79.8% Kernel + 20.2% Overhead, 1274 + 323)
+===== Profiling perturbrademacher_blocks_0_1_bias_updated_L2 =====
+[perturbrademacher_blocks_0_1_bias_updated_L2][SB][8 ops][Tile 0] Pre-Kernel :   127 cycles
+[perturbrademacher_blocks_0_1_bias_updated_L2][SB][8 ops][Tile 0] Kernel     :  1257 cycles
+[perturbrademacher_blocks_0_1_bias_updated_L2][SB][8 ops][Tile 0] Post-Kernel:   124 cycles
+[perturbrademacher_blocks_0_1_bias_updated_L2][SB][8 ops][Tile 0] Total      :  1508 cycles (83.4% Kernel + 16.6% Overhead, 1257 + 251)
+===== Profiling perturbrademacher_blocks_1_0_weight_updated_L2 =====
+[perturbrademacher_blocks_1_0_weight_updated_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1098 cycles
+[perturbrademacher_blocks_1_0_weight_updated_L2][SB][2048 ops][Tile 0] Kernel     : 14681 cycles
+[perturbrademacher_blocks_1_0_weight_updated_L2][SB][2048 ops][Tile 0] Post-Kernel:  1168 cycles
+[perturbrademacher_blocks_1_0_weight_updated_L2][SB][2048 ops][Tile 0] Total      : 16947 cycles (86.6% Kernel + 13.4% Overhead, 14681 + 2266)
+===== Profiling perturbrademacher_blocks_1_0_bias_updated_L2 =====
+[perturbrademacher_blocks_1_0_bias_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_blocks_1_0_bias_updated_L2][SB][16 ops][Tile 0] Kernel     :  1638 cycles
+[perturbrademacher_blocks_1_0_bias_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   177 cycles
+[perturbrademacher_blocks_1_0_bias_updated_L2][SB][16 ops][Tile 0] Total      :  1995 cycles (82.1% Kernel + 17.9% Overhead, 1638 + 357)
+===== Profiling perturbrademacher_blocks_1_1_weight_updated_L2 =====
+[perturbrademacher_blocks_1_1_weight_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_blocks_1_1_weight_updated_L2][SB][16 ops][Tile 0] Kernel     :  1370 cycles
+[perturbrademacher_blocks_1_1_weight_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   124 cycles
+[perturbrademacher_blocks_1_1_weight_updated_L2][SB][16 ops][Tile 0] Total      :  1674 cycles (81.8% Kernel + 18.2% Overhead, 1370 + 304)
+===== Profiling perturbrademacher_blocks_1_1_bias_updated_L2 =====
+[perturbrademacher_blocks_1_1_bias_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   144 cycles
+[perturbrademacher_blocks_1_1_bias_updated_L2][SB][16 ops][Tile 0] Kernel     :  1412 cycles
+[perturbrademacher_blocks_1_1_bias_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   179 cycles
+[perturbrademacher_blocks_1_1_bias_updated_L2][SB][16 ops][Tile 0] Total      :  1735 cycles (81.4% Kernel + 18.6% Overhead, 1412 + 323)
+===== Profiling perturbrademacher_blocks_2_0_weight_updated_L2 =====
+[perturbrademacher_blocks_2_0_weight_updated_L2][SB][2048 ops][Tile 0] Pre-Kernel :  1136 cycles
+[perturbrademacher_blocks_2_0_weight_updated_L2][SB][2048 ops][Tile 0] Kernel     : 14646 cycles
+[perturbrademacher_blocks_2_0_weight_updated_L2][SB][2048 ops][Tile 0] Post-Kernel:  1165 cycles
+[perturbrademacher_blocks_2_0_weight_updated_L2][SB][2048 ops][Tile 0] Total      : 16947 cycles (86.4% Kernel + 13.6% Overhead, 14646 + 2301)
+===== Profiling perturbrademacher_blocks_2_0_bias_updated_L2 =====
+[perturbrademacher_blocks_2_0_bias_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   125 cycles
+[perturbrademacher_blocks_2_0_bias_updated_L2][SB][16 ops][Tile 0] Kernel     :  1534 cycles
+[perturbrademacher_blocks_2_0_bias_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   105 cycles
+[perturbrademacher_blocks_2_0_bias_updated_L2][SB][16 ops][Tile 0] Total      :  1764 cycles (87.0% Kernel + 13.0% Overhead, 1534 + 230)
+===== Profiling perturbrademacher_blocks_2_1_weight_updated_L2 =====
+[perturbrademacher_blocks_2_1_weight_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   179 cycles
+[perturbrademacher_blocks_2_1_weight_updated_L2][SB][16 ops][Tile 0] Kernel     :  1421 cycles
+[perturbrademacher_blocks_2_1_weight_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   143 cycles
+[perturbrademacher_blocks_2_1_weight_updated_L2][SB][16 ops][Tile 0] Total      :  1743 cycles (81.5% Kernel + 18.5% Overhead, 1421 + 322)
+===== Profiling perturbrademacher_blocks_2_1_bias_updated_L2 =====
+[perturbrademacher_blocks_2_1_bias_updated_L2][SB][16 ops][Tile 0] Pre-Kernel :   125 cycles
+[perturbrademacher_blocks_2_1_bias_updated_L2][SB][16 ops][Tile 0] Kernel     :  1388 cycles
+[perturbrademacher_blocks_2_1_bias_updated_L2][SB][16 ops][Tile 0] Post-Kernel:   105 cycles
+[perturbrademacher_blocks_2_1_bias_updated_L2][SB][16 ops][Tile 0] Total      :  1618 cycles (85.8% Kernel + 14.2% Overhead, 1388 + 230)
+===== Profiling perturbrademacher_blocks_3_0_weight_updated_L2 =====
+[perturbrademacher_blocks_3_0_weight_updated_L2][SB][3584 ops][Tile 0] Pre-Kernel :  1886 cycles
+[perturbrademacher_blocks_3_0_weight_updated_L2][SB][3584 ops][Tile 0] Kernel     : 24986 cycles
+[perturbrademacher_blocks_3_0_weight_updated_L2][SB][3584 ops][Tile 0] Post-Kernel:  1940 cycles
+[perturbrademacher_blocks_3_0_weight_updated_L2][SB][3584 ops][Tile 0] Total      : 28812 cycles (86.7% Kernel + 13.3% Overhead, 24986 + 3826)
+===== Profiling perturbrademacher_blocks_3_0_bias_updated_L2 =====
+[perturbrademacher_blocks_3_0_bias_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   179 cycles
+[perturbrademacher_blocks_3_0_bias_updated_L2][SB][32 ops][Tile 0] Kernel     :  1178 cycles
+[perturbrademacher_blocks_3_0_bias_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   145 cycles
+[perturbrademacher_blocks_3_0_bias_updated_L2][SB][32 ops][Tile 0] Total      :  1502 cycles (78.4% Kernel + 21.6% Overhead, 1178 + 324)
+===== Profiling perturbrademacher_blocks_3_1_weight_updated_L2 =====
+[perturbrademacher_blocks_3_1_weight_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   127 cycles
+[perturbrademacher_blocks_3_1_weight_updated_L2][SB][32 ops][Tile 0] Kernel     :  1114 cycles
+[perturbrademacher_blocks_3_1_weight_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   105 cycles
+[perturbrademacher_blocks_3_1_weight_updated_L2][SB][32 ops][Tile 0] Total      :  1346 cycles (82.8% Kernel + 17.2% Overhead, 1114 + 232)
+===== Profiling perturbrademacher_blocks_3_1_bias_updated_L2 =====
+[perturbrademacher_blocks_3_1_bias_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   181 cycles
+[perturbrademacher_blocks_3_1_bias_updated_L2][SB][32 ops][Tile 0] Kernel     :  1043 cycles
+[perturbrademacher_blocks_3_1_bias_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   165 cycles
+[perturbrademacher_blocks_3_1_bias_updated_L2][SB][32 ops][Tile 0] Total      :  1389 cycles (75.1% Kernel + 24.9% Overhead, 1043 + 346)
+===== Profiling perturbrademacher_blocks_4_0_weight_updated_L2 =====
+[perturbrademacher_blocks_4_0_weight_updated_L2][SB][7168 ops][Tile 0] Pre-Kernel :  3677 cycles
+[perturbrademacher_blocks_4_0_weight_updated_L2][SB][7168 ops][Tile 0] Kernel     : 48850 cycles
+[perturbrademacher_blocks_4_0_weight_updated_L2][SB][7168 ops][Tile 0] Post-Kernel:  3786 cycles
+[perturbrademacher_blocks_4_0_weight_updated_L2][SB][7168 ops][Tile 0] Total      : 56313 cycles (86.7% Kernel + 13.3% Overhead, 48850 + 7463)
+===== Profiling perturbrademacher_blocks_4_0_bias_updated_L2 =====
+[perturbrademacher_blocks_4_0_bias_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   144 cycles
+[perturbrademacher_blocks_4_0_bias_updated_L2][SB][32 ops][Tile 0] Kernel     :  1245 cycles
+[perturbrademacher_blocks_4_0_bias_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   177 cycles
+[perturbrademacher_blocks_4_0_bias_updated_L2][SB][32 ops][Tile 0] Total      :  1566 cycles (79.5% Kernel + 20.5% Overhead, 1245 + 321)
+===== Profiling perturbrademacher_blocks_4_1_weight_updated_L2 =====
+[perturbrademacher_blocks_4_1_weight_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   180 cycles
+[perturbrademacher_blocks_4_1_weight_updated_L2][SB][32 ops][Tile 0] Kernel     :  1090 cycles
+[perturbrademacher_blocks_4_1_weight_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   126 cycles
+[perturbrademacher_blocks_4_1_weight_updated_L2][SB][32 ops][Tile 0] Total      :  1396 cycles (78.1% Kernel + 21.9% Overhead, 1090 + 306)
+===== Profiling perturbrademacher_blocks_4_1_bias_updated_L2 =====
+[perturbrademacher_blocks_4_1_bias_updated_L2][SB][32 ops][Tile 0] Pre-Kernel :   146 cycles
+[perturbrademacher_blocks_4_1_bias_updated_L2][SB][32 ops][Tile 0] Kernel     :  1057 cycles
+[perturbrademacher_blocks_4_1_bias_updated_L2][SB][32 ops][Tile 0] Post-Kernel:   181 cycles
+[perturbrademacher_blocks_4_1_bias_updated_L2][SB][32 ops][Tile 0] Total      :  1384 cycles (76.4% Kernel + 23.6% Overhead, 1057 + 327)
+===== Profiling perturbrademacher_fc_weight_updated_L2 =====
+[perturbrademacher_fc_weight_updated_L2][SB][288 ops][Tile 0] Pre-Kernel :   259 cycles
+[perturbrademacher_fc_weight_updated_L2][SB][288 ops][Tile 0] Kernel     :  3114 cycles
+[perturbrademacher_fc_weight_updated_L2][SB][288 ops][Tile 0] Post-Kernel:   261 cycles
+[perturbrademacher_fc_weight_updated_L2][SB][288 ops][Tile 0] Total      :  3634 cycles (85.7% Kernel + 14.3% Overhead, 3114 + 520)
+===== Profiling perturbrademacher_fc_bias_updated_L2 =====
+[perturbrademacher_fc_bias_updated_L2][SB][9 ops][Tile 0] Pre-Kernel :   125 cycles
+[perturbrademacher_fc_bias_updated_L2][SB][9 ops][Tile 0] Kernel     :  1577 cycles
+[perturbrademacher_fc_bias_updated_L2][SB][9 ops][Tile 0] Post-Kernel:   145 cycles
+[perturbrademacher_fc_bias_updated_L2][SB][9 ops][Tile 0] Total      :  1847 cycles (85.4% Kernel + 14.6% Overhead, 1577 + 270)
+[PHASE] update (zo_update) DONE (157521 cyc)
+[loss+ 0] computed=0.016488  ref=0.016488  diff=0.000000  TOL=0.001000
+[loss- 0] computed=0.069274  ref=0.069274  diff=0.000000  TOL=0.001000
+Errors: 0 out of 2
+BENCH train_cycles_hi=0 train_cycles_lo=35712108 opt_cycles_hi=0 opt_cycles_lo=157521

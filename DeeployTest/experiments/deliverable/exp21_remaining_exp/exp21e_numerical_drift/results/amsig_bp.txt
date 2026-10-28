@@ -1,0 +1,30 @@
+device AMSIG lines: 660
+host orig : device sig == host sig on 4/660 forwards; mismatching fwd: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+    fwd 4: device (53442,265310)  host (53464,265424)  d_sig=-22 d_sig2=-114
+    fwd 5: device (50010,244132)  host (49989,243965)  d_sig=+21 d_sig2=+167
+    fwd 6: device (51980,253270)  host (51964,253024)  d_sig=+16 d_sig2=+246
+    fwd 7: device (49844,240400)  host (49827,240249)  d_sig=+17 d_sig2=+151
+    fwd 8: device (50189,241917)  host (50211,242027)  d_sig=-22 d_sig2=-110
+    fwd 9: device (51728,254778)  host (51781,255035)  d_sig=-53 d_sig2=-257
+host ulp1 : device sig == host sig on 4/660 forwards; mismatching fwd: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+    fwd 4: device (53442,265310)  host (53464,265424)  d_sig=-22 d_sig2=-114
+    fwd 5: device (50010,244132)  host (49989,243965)  d_sig=+21 d_sig2=+167
+    fwd 6: device (51980,253270)  host (51964,253024)  d_sig=+16 d_sig2=+246
+    fwd 7: device (49844,240400)  host (49827,240249)  d_sig=+17 d_sig2=+151
+    fwd 8: device (50189,241917)  host (50211,242027)  d_sig=-22 d_sig2=-110
+    fwd 9: device (51728,254778)  host (51781,255035)  d_sig=-53 d_sig2=-257
+host ulp2 : device sig == host sig on 4/660 forwards; mismatching fwd: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+    fwd 4: device (53442,265310)  host (53464,265424)  d_sig=-22 d_sig2=-114
+    fwd 5: device (50010,244132)  host (49989,243965)  d_sig=+21 d_sig2=+167
+    fwd 6: device (51980,253270)  host (51964,253024)  d_sig=+16 d_sig2=+246
+    fwd 7: device (49844,240400)  host (49827,240249)  d_sig=+17 d_sig2=+151
+    fwd 8: device (50189,241917)  host (50211,242027)  d_sig=-22 d_sig2=-110
+    fwd 9: device (51728,254778)  host (51781,255035)  d_sig=-53 d_sig2=-257
+host f64  : device sig == host sig on 4/660 forwards; mismatching fwd: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33]
+    fwd 4: device (53442,265310)  host (53464,265424)  d_sig=-22 d_sig2=-114
+    fwd 5: device (50010,244132)  host (49989,243965)  d_sig=+21 d_sig2=+167
+    fwd 6: device (51980,253270)  host (51964,253024)  d_sig=+16 d_sig2=+246
+    fwd 7: device (49844,240400)  host (49827,240249)  d_sig=+17 d_sig2=+151
+    fwd 8: device (50189,241917)  host (50211,242027)  d_sig=-22 d_sig2=-110
+    fwd 9: device (51728,254778)  host (51781,255035)  d_sig=-53 d_sig2=-257
+short-run loss: 660 fwd, first |d|>=1e-5 at fwd 4, max 1.14e+00

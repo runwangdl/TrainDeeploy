@@ -1,0 +1,16 @@
+b1 Bpp plain: Errors: 0 out of 19712 Runtime: 247297 cycles
+b1 Bpp mb: Errors: 0 out of 19712 Runtime: 20378 cycles
+b1 Bpp probe: Errors: 0 out of 19712 Runtime: 253856 cycles
+b1 Bpp minus: Errors: 0 out of 19712 Runtime: 246732 cycles
+b2 Bpp plain: Errors: 0 out of 5152 Runtime: 79192 cycles
+b2 Bpp mb: Errors: 0 out of 5152 Runtime: 6229 cycles
+b2 Bpp probe: Errors: 0 out of 5152 Runtime: 86006 cycles
+b2 Bpp minus: Errors: 0 out of 5152 Runtime: 78851 cycles
+b3 Bpp plain: Errors: 0 out of 1280 Runtime: 32340 cycles
+b3 Bpp mb: Errors: 0 out of 1280 Runtime: 2486 cycles
+b3 Bpp probe: Errors: 0 out of 1280 Runtime: 39143 cycles
+b3 Bpp minus: Errors: 0 out of 1280 Runtime: 32032 cycles
+b4 Bpp plain: Errors: 0 out of 320 Runtime: 30840 cycles
+b4 Bpp mb: Errors: 0 out of 320 Runtime: 2651 cycles
+b4 Bpp probe: Errors: 0 out of 320 Runtime: 37758 cycles
+b4 Bpp minus: Errors: 0 out of 320 Runtime: 30797 cycles

@@ -20,8 +20,11 @@ if(TOOLCHAIN STREQUAL GCC)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-set(platform MemPool CACHE STRING "Platform (MemPool, SoftHier, QEMU, Siracusa, Siracusa_w_neureka, PULP-Open, GAP9, Generic, Snitch)")
-set_property(CACHE platform PROPERTY STRINGS MemPool SoftHier QEMU Siracusa Siracusa_w_neureka PULP-Open GAP9 Generic Snitch)
+# QW: GAP9_w_NE16 = GAP9 + the NE16 accelerator engine (upstream Deeploy PR #183). Everywhere
+#     below it is treated exactly like GAP9 (same SDK, same board, same libs); the ONLY build
+#     difference is that TargetLibraries/GAP9 additionally links pulp-nnx with USE_NE16. -- QW
+set(platform MemPool CACHE STRING "Platform (MemPool, SoftHier, QEMU, Siracusa, Siracusa_w_neureka, PULP-Open, GAP9, GAP9_w_NE16, Generic, Snitch)")
+set_property(CACHE platform PROPERTY STRINGS MemPool SoftHier QEMU Siracusa Siracusa_w_neureka PULP-Open GAP9 GAP9_w_NE16 Generic Snitch)
 
 if(platform STREQUAL MemPool)
   message(STATUS "Building for platform 'MemPool'")
@@ -33,8 +36,8 @@ elseif(platform STREQUAL Siracusa_w_neureka)
   message(STATUS "Building for platform 'Siracusa_w_neureka'")
 elseif(platform STREQUAL PULPOpen)
   message(STATUS "Building for platform 'PULP-Open'")
-elseif(platform STREQUAL GAP9)
-  message(STATUS "Building for platform 'GAP9'")
+elseif(platform STREQUAL GAP9 OR platform STREQUAL GAP9_w_NE16)  # -- QW
+  message(STATUS "Building for platform '${platform}'")  # -- QW
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
   # Select SDK config based on simulator type
@@ -61,8 +64,8 @@ endif()
 
 # Import useful functions / macros
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/Util.cmake)
-# Only if not GAP9
-if(NOT platform STREQUAL GAP9)
+# Only if not GAP9 / GAP9_w_NE16
+if(NOT platform STREQUAL GAP9 AND NOT platform STREQUAL GAP9_w_NE16)  # -- QW
   include(${CMAKE_CURRENT_LIST_DIR}/cmake/common.cmake)
 endif()
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/simulation.cmake)
@@ -231,7 +234,7 @@ if(platform STREQUAL Siracusa OR platform STREQUAL Siracusa_w_neureka OR platfor
 
 endif()
 
-if(platform STREQUAL GAP9)
+if(platform STREQUAL GAP9 OR platform STREQUAL GAP9_w_NE16)  # -- QW
   project(${TESTNAME} LANGUAGES C ASM)
   include(${CMAKE_CURRENT_LIST_DIR}/cmake/gap9/gap9_gvsoc.cmake)
   include(${CMAKE_CURRENT_LIST_DIR}/cmake/gap9/gap9_board.cmake)

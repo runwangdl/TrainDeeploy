@@ -29,7 +29,7 @@ class GAP9L3Dma(AsyncDma):
     _transferTemplates = {
         2:
             NodeTemplate(
-                "pi_cl_ram_copy_2d(get_ram_ptr(), (uint32_t) ${ext}, ${loc}, ${transfer_size}, ${stride}, ${length}, ${ext2loc}, &${future});"
+                "gap9_ram_copy_2d((uint32_t) ${ext}, (void *) ${loc}, (uint32_t) ${transfer_size}, (uint32_t) ${stride}, (uint32_t) ${length}, ${ext2loc}, &${future});"  # RW: PSRAM page-wrap guard (aac64970); a synchronous fallback leaves the req completed, so the later wait returns at once
             )
     }
     _waitingStrategy = PerTensorWaitingStrategy(GAP9L3DmaFuture)

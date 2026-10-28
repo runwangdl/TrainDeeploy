@@ -1,0 +1,89 @@
+{
+  "experiment": "exp16a_PW_single_layer",
+  "date": "2026-09-11",
+  "goal": "SpeechNet block-1 1xK conv on NE16 via K pointwise dispatches + streamin, variable pre-encoded weight",
+  "fixture_source": "speechnet_qzo12_train (TRAINING graph); weight = blocks.1.conv.weight_int8 after the real RQSPerturbRademacher (seed 42, idx 2)",
+  "spatial_crop": {
+    "status": "REMOVED 2026-09-11",
+    "how": "halo tile constraint + NHWC-native fixture (no layout transposes) + realistic --l1 92000",
+    "note": "--l1 110000 is MeZO-harness-only (stacks relocated to L2 in deeploymezotest.c); the INFERENCE harness deeploytest.c leaves ~30KB of cluster slave stacks in L1, so only ~98,256 B is usable"
+  },
+  "runs": [
+    {
+      "name": "b1_1x2_ne16_s",
+      "engine": "NE16",
+      "taps": 2,
+      "dispatches": 2,
+      "streamin_taps": 1,
+      "cluster_convs": 0,
+      "errors": "0/1600",
+      "cycles": 100704
+    },
+    {
+      "name": "b1_1x16_ne16_s",
+      "engine": "NE16",
+      "taps": 16,
+      "dispatches": 16,
+      "streamin_taps": 15,
+      "cluster_convs": 0,
+      "errors": "0/1600",
+      "cycles": 154110
+    },
+    {
+      "name": "b1_ref_1x2_s",
+      "engine": "cluster",
+      "taps": 2,
+      "dispatches": 0,
+      "errors": "0/1600",
+      "cycles": 17657
+    },
+    {
+      "name": "b1_ref_1x16_s",
+      "engine": "cluster",
+      "taps": 16,
+      "dispatches": 0,
+      "errors": "0/1600",
+      "cycles": 35715
+    },
+    {
+      "name": "b1_1x16_ne16_nhwc",
+      "engine": "NE16",
+      "taps": 16,
+      "extent": "FULL 14x87",
+      "dispatches": 16,
+      "transposes": 0,
+      "cluster_convs": 0,
+      "conv_tiles": 4,
+      "rqs_tiles": 2,
+      "errors": "0/19712",
+      "cycles": 1567096,
+      "l1": 92000
+    },
+    {
+      "name": "b1_ref_1x16",
+      "engine": "cluster",
+      "taps": 16,
+      "extent": "FULL 14x87",
+      "errors": "0/19712",
+      "cycles": 337657,
+      "l1": 92000
+    },
+    {
+      "name": "b1_1x16_ne16_s (halo, cropped)",
+      "engine": "NE16",
+      "taps": 16,
+      "extent": "4x24",
+      "conv_tiles": 4,
+      "errors": "0/1600",
+      "cycles": 241790
+    }
+  ],
+  "conf0": {
+    "tap0": 4227143,
+    "tap_j": 4243527,
+    "delta": 16384,
+    "note": "delta is exactly bit 14 = NE16_FLAG_STREAMIN; filter mode [6:5]=2 (1x1), quant bits=32, outquant=0"
+  },
+  "correctness": "PASS - bit-exact at FULL 14x87 extent (0/19712) and cropped (0/1600), K=2 and K=16",
+  "performance": "NOT YET - NE16 4.64x slower than cluster at full extent (1,567,096 vs 337,657). Cin=8 half-fills TP_IN=16; 16 dispatches x 4 tiles = 64 jobs each paying setup; 15/16 taps round-trip int32 partials through L1."
+}

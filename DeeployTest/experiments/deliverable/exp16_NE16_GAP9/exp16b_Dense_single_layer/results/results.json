@@ -1,0 +1,21 @@
+{
+  "experiment": "exp16b_Dense_single_layer",
+  "date": "2026-09-11",
+  "goal": "measure the 3x3-DENSE-chunk decomposition against exp16a's all-pointwise one, on identical block-1 data",
+  "status": "COMPLETE -- bit-exact at full extent AND faster than all-pointwise",
+  "mechanism": "1xK -> ceil(K/3) dense 3x3 dispatches, each a 3x3 kernel with only the middle row populated; infeat_addr += 3*c*ch_im_in; H padding 1/1 native (legal in 3x3 mode); streamin for chunks 1..N-1; int32 out",
+  "runs": [
+    {"name":"b1_1x16_dense3x3_d33","engine":"NE16","mode":"dense 3x3 chunks","dispatches":6,"extent":"FULL 14x87","errors":"0/19712","cycles":1364975,"status":"PASSED"},
+    {"name":"b1_1x16_ne16_nhwc (exp16a)","engine":"NE16","mode":"pointwise","dispatches":16,"extent":"FULL 14x87","errors":"0/19712","cycles":1567096,"status":"PASSED"},
+    {"name":"b1_ref_1x16 (cluster)","engine":"cluster","extent":"FULL 14x87","errors":"0/19712","cycles":337657,"status":"PASSED"},
+    {"name":"b1_1x3_dense3x3_k3","engine":"NE16","mode":"dense 3x3, SINGLE chunk, no streamin","extent":"4x24","errors":"0/1536","cycles":93534,"status":"PASSED"}
+  ],
+  "root_cause_of_earlier_failures": "NE161xKConstraint.serializeTilingSolution unconditionally used NE162DPWConvTemplate.getCounters(..., 0, 0, ...) and input_addr_offset = 0 for BOTH variants. A 3x3 job needs NE162DDenseConvTemplate.getCounters (bHi = height_out_border + 2 - padding_bottom, the +2 being the 3x3 receptive field) plus the real padding values and a non-zero input_addr_offset. With the pointwise formula the BORDER subtile declared an input window 2 pixels short in each spatial direction, so edge taps were dropped -- small int32 deficits that requantised to +-1 LSB. Fixed by an `isDense3x3 = 'ne16_chunks' in operatorRepresentation` branch. 14328/19712 -> 0/19712.",
+  "abandoned_hypotheses": [
+    "zero-weight rows failing to cancel (they cancel exactly: w_u = 128, Wmin = -128)",
+    "filter_mask to skip the zero rows -- made it WORSE (431 -> 557) because it masked a symptom, not the cause; reverted, ne16_filter_mask stays 0"
+  ],
+  "performance_finding": "dense 3x3 chunks are 1.15x FASTER than all-pointwise (1,364,975 vs 1,567,096) despite the MAC-cycle model predicting ~3x SLOWER. The model assumed the array is the bottleneck; at this size it is not -- 6 dispatches instead of 16 means 6 instead of 16 job setups and 5 instead of 15 int32 streamin round-trips through L1. The workload is DMA/setup-bound, not MAC-bound.",
+  "weight_cost": {"dense3x3_bytes": 13824, "pointwise_bytes": 4096, "note": "3.4x more weight memory: 6 of every 9 tap slots are zeros"},
+  "vs_cluster": {"cluster_cycles": 337657, "best_ne16_cycles": 1364975, "ratio": 4.04, "note": "NE16 still 4x slower than pulp_nn_conv; see exp16a/Findings.md section 5 and STEP 4"}
+}

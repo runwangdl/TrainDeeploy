@@ -1,0 +1,52 @@
+exp11 step 2 -- why blocks 3-4 run faster on the cluster than on NE16 (GAP9 GVSoC, fe1ffa2, --l1 86000, O3 network)
+Probe build -D NE16DUAL_PROBE=ON (logs/b<i>_Cprobe_{pipe,seq}.log, scripts/run_ne16_probe.sh); all runs exact.
+Prep kernels: max per-core WORK cycles of each phase (balanced: min within 2 %). Conv node: master-core cycles.
+Note: the probe resets the master's cycle counter, so `Runtime` in these logs is not the fixture total.
+
+Shapes (fixture codegen, per pass): block  Ci  Co  kernel  K=Ci*kh*kw  weight elems  out pixels  NE16 jobs/pass
+                                       1    8  16   1x16     128         2,048        1,232      18
+                                       2   16  16   1x8      128         2,048          308       6
+                                       3   16  32   7x1      112         3,584           40       3 (3x12, 1x3, 1x1)
+                                       4   32  32   7x1      224         7,168           10       2 (3x3, 1x1)
+
+1) NE16 preparation (both passes; weight elements = 2 x Co x K)
+   block  wenc: perturb   wenc: encode   bias: RE-perturb   bias: row sums   | prep total | cluster perturb (DC2 probe)
+     1        7,065         22,353          7,582             1,993        |   38,993   |     7,639
+     2        7,625         22,357          7,605             1,961        |   39,548   |     8,185
+     3       13,099         38,666         12,508             3,295        |   67,568   |    13,653
+     4       25,051         76,131         22,031             5,963        |  129,176   |    25,629
+   encode cycles per weight element: 5.46 / 5.46 / 5.39 / 5.31 -> linear in the weight size (~43 core-cycles/elem),
+     bit-by-bit plane packing (NE16WeightEncode.c), compiled at the SDK's -Os (not on TargetLibraries/GAP9 -O3 list).
+   the perturbation itself costs the same as in the cluster kernel (same dc_perturb_i8_chw: 25,051 vs 25,629),
+     but NE16DualBias perturbs the whole weight A SECOND TIME to form sum_k W+/-[c][k] for the signed-input correction.
+   => NE16-only overhead over the cluster's perturbation = encode + re-perturb + row sums:
+      block 1: 31,928   block 2: 31,923   block 3: 54,469   block 4: 104,125
+
+2) Conv node (both passes)
+   block  NE16 node: colbuild  NE16 wait (pipe / seq)  rest (task set-up+dispatch)  total(probe) | NE16 compute (seq wait)
+     1          124,542            17,474 / 122,015          45,770                 187,786    |   122,015 (36 jobs)
+     2           32,069             7,682 /  33,762          16,117                  55,868    |    33,762 (12 jobs)
+     3            8,188             1,732 /   7,114           8,665                  18,585    |     7,114 (6 jobs)
+     4            5,264             1,695 /   4,506           6,192                  13,151    |     4,506 (4 jobs)
+   cluster conv part of the fused node (node - phase 1):   block 1 417,383   2 120,731   3 36,389   4 17,044
+   NE16 conv node (microbench):                            block 1 198,062   2  61,303   3 21,911   4 17,071
+   conv saving NE16 vs cluster:                            block 1 219,321   2  59,428   3 14,478   4     -27
+
+3) Balance per block = conv saving - NE16-only prep overhead
+     block 1: +219,321 - 31,928 = +187,393  -> NE16 (measured totals 295,691 vs 482,064)
+     block 2:  +59,428 - 31,923 =  +27,505  -> NE16 (121,387 vs 146,242)
+     block 3:  +14,478 - 54,469 =  -39,991  -> cluster (100,033 vs 56,033)
+     block 4:      -27 - 104,125 = -104,152 -> cluster (158,224 vs 47,395)
+
+Why: the NE16 prep cost scales with the WEIGHT (Co x K), the NE16 gain with OUTPUT PIXELS x weight. Blocks 3-4 have the
+largest weights (3,584 / 7,168 per pass) and the fewest pixels (40 / 10 per pass): the accelerator's prep is paid in full
+and amortised over almost no work. On block 4 the NE16 node is not even faster than the cluster's conv: NE16 itself
+computes the 4 jobs in 4,506 cycles, but the per-job fixed costs (column-build fork ~1.3 k, task set-up + dispatch
+~1.5 k per job) are 11.5 k; one of the two jobs per pass computes a single pixel (1x1 remainder job, 1 of 9 subtile
+pixels used).
+
+Kx1 handling (blocks 3-4, kernel 7x1): K = 7 x Ci, one tap = Ci contiguous bytes in HWC, the column is (ky, kx, ci) =
+(ky, ci); NE16DualPerturbEncode runs with hwc=1, kh=7, kw=1, i.e. the same order; the bias row sum is order-free. pads are
+0 for these blocks. Exact against the oracle in every run (0/2560, 0/640: plain, microbench, probe pipelined and
+sequential). The prep perturbation matches the cluster's to 2 % (same routine, same work), so no path does extra or
+wrong work for Kx1.

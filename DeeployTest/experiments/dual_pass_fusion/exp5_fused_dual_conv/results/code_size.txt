@@ -1,0 +1,1 @@
+1c010088 00000724 T PULP_DualConv2d_i8_i8_i8_HWC

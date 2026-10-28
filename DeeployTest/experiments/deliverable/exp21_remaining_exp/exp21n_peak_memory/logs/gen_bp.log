@@ -1,0 +1,65 @@
+/app/Deeploy/Deeploy/Targets/Generic/TypeCheckers.py:556: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * wnLevels * weight.shape[1] *
+  [testData->L3] 2117232 B of baked test inputs moved out of L2 to L3 (hex-loaded)
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/Deeploy/DeeployTest/TEST_GAP9/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r1
+-- Building for platform 'GAP9'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- Kconfig stderr
+
+Traceback (most recent call last):
+  File "/app/install/gap9-sdk/utils/cmake/kconfigtool.py", line 32, in <module>
+    from kconfiglib import (BOOL, COMMENT, HEX, INT, MENU, STRING, TRISTATE,
+ModuleNotFoundError: No module named 'kconfiglib'
+
+CMake Error at /app/install/gap9-sdk/utils/cmake/kconfig.cmake:220 (include):
+  include could not find requested file:
+
+    /app/Deeploy/DeeployTest/TEST_GAP9/build_x21n_bp/__vars.cmake
+Call Stack (most recent call first):
+  /app/install/gap9-sdk/utils/cmake/setup.cmake:93 (setup_menuconfig)
+  /app/install/gap9-sdk/utils/cmake/setup.cmake:123 (setup_cmake)
+  CMakeLists.txt:52 (include)
+
+
+-- [[1;37mSDK[m] Version: release-v5.21.1
+CMake Error at /app/install/gap9-sdk/utils/cmake/gap_flags.cmake:90 (message):
+  [[1;34mPlatform[m] Unsupported platform[m
+Call Stack (most recent call first):
+  /app/install/gap9-sdk/utils/cmake/setup.cmake:94 (setup_gap_flags)
+  /app/install/gap9-sdk/utils/cmake/setup.cmake:123 (setup_cmake)
+  CMakeLists.txt:52 (include)
+
+
+-- Configuring incomplete, errors occurred!
+[Deeploy] CMake configuration failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_BP_r1
+  Test Directory      : /app/Deeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r1
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r1
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9/build_x21n_bp
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DSIMULATOR=gvsoc -DBN_FROZEN_STATS=ON -DCC_STACK_SIZE=4096
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=122000 --l2=1600000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_train_BP_r1 FAILED with exception: CMake configuration failed for speechnet_train_BP_r1[0m

@@ -1,0 +1,106 @@
+
+== identity: BP round 1 train
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_train_fullfrozen_b1_fold3_ref
+   eval_model.onnx              identical (bytes)
+   inputs.npz                   identical (134 arrays)
+   network.onnx                 identical (bytes)
+   network_infer.onnx           identical (bytes)
+   network_train.onnx           identical (bytes)
+   network_train_optim.onnx     identical (bytes)
+   optimizer_model.onnx         identical (bytes)
+   outputs.npz                  identical (33 arrays)
+
+== identity: BP round 1 optimizer
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_optimizer_BP_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_optimizer_fullfrozen_b1_fold3_ref
+   network.onnx                 identical (bytes)
+
+== identity: BP round 1 infer (batch 2, exp17 device weights)
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_BP_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_infer_fullfrozen_b1_fold3_ref
+   inputs.npz                   identical (2 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)
+
+== prefix: BP single step vs round 1
+   single /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_single_step
+   round1 /app/TrainDeeploy/SpeechNet_Test/speechnet_train_BP_round1
+   network.onnx                 identical (bytes)
+   inputs.npz arr_* (window 0 + initial weights): 25/25 equal to round 1
+   single-step meta {'meta_data_size': [1], 'meta_n_batches': [1], 'meta_n_accum': [1]}; extra windows 0
+   outputs loss         single [0.01145147]  round1 first [0.01145147]  equal=True
+
+== identity: ZO round 1 train
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_train_ZO_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train_b1_fold3_ref
+   inputs.npz                   identical (137 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (25 arrays)
+
+== identity: ZO round 1 update
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_update_ZO_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_update_b1_fold3_ref
+   inputs.npz                   identical (137 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (25 arrays)
+
+== identity: ZO round 1 infer (batch 2, exp18 device weights)
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_infer_b1_fold3_ref
+   inputs.npz                   identical (2 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)
+
+== prefix: ZO single step vs round 1
+   single /app/TrainDeeploy/SpeechNet_Test/speechnet_train_ZO_single_step
+   round1 /app/TrainDeeploy/SpeechNet_Test/speechnet_train_ZO_round1
+   network.onnx                 identical (bytes)
+   inputs.npz arr_* (window 0 + initial weights): 24/24 equal to round 1
+   single-step meta {'meta_data_size': [1], 'meta_n_batches': [1], 'meta_n_accum': [1], 'meta_zo_eps': [0.009999999776482582], 'meta_zo_seed': [42], 'meta_zo_lr': [3.000000106112566e-06], 'meta_zo_q': [1]}; extra windows 0
+   outputs loss_plus    single [0.00336818]  round1 first [0.00336818]  equal=True
+   outputs loss_minus   single [0.04362458]  round1 first [0.04362458]  equal=True
+
+== calibration-only difference: QZO single step (pooled@99.9) vs exp19 round 1 (pooled@99.99)
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_train_QZO_single_step
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_qzo19_train
+   graph inputs/outputs equal: True; node count 66 vs 66; op sequence equal: True
+   initializers differing: 10/25 -> ['QSTANDALONE_QCDQ_/blocks_0_conv_output_quant_1/Clip_Quant_mul_pc', 'QSTANDALONE_QCDQ_/blocks_1_conv_output_quant_1/Clip_Quant_mul_pc', 'QSTANDALONE_QCDQ_/blocks_2_conv_output_quant_1/Clip_Quant_mul_pc', 'QSTANDALONE_QCDQ_/blocks_3_conv_output_quant_1/Clip_Quant_mul_pc', 'QSTANDALONE_QCDQ_/blocks_4_conv_output_quant_1/Clip_Quant_mul_pc', 'blocks.0.conv.bias_rqsadd_pmul', 'blocks.1.conv.bias_rqsadd_pmul', 'blocks.2.conv.bias_rqsadd_pmul', 'blocks.3.conv.bias_rqsadd_pmul', 'blocks.4.conv.bias_rqsadd_pmul']
+   inputs.npz arr_* (window 0 + initial weights): 23/24 equal
+
+== calibration-only difference: QZO single-step update graph vs exp19
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_update_QZO_single_step
+   old /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_qzo19_update
+   graph inputs/outputs equal: True; node count 22 vs 22; op sequence equal: True
+   initializers differing: 5/10 -> ['blocks.0.conv.bias_rqsadd_pmul', 'blocks.1.conv.bias_rqsadd_pmul', 'blocks.2.conv.bias_rqsadd_pmul', 'blocks.3.conv.bias_rqsadd_pmul', 'blocks.4.conv.bias_rqsadd_pmul']
+   inputs.npz arr_* (window 0 + initial weights): 23/24 equal
+
+== identity: kernel speechnet_unfused_b0_cluster
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_unfused_b0_cluster
+   old /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv
+   inputs.npz                   identical (3 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)
+
+== identity: kernel speechnet_fused_b0_cluster
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_fused_b0_cluster
+   old /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv
+   inputs.npz                   identical (3 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)
+   reference_plus_minus.npz     identical (2 arrays)
+
+== identity: kernel speechnet_unfused_b0_NE16
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_unfused_b0_NE16
+   old /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv_NE16
+   col_golden.npz               identical (1 arrays)
+   inputs.npz                   identical (3 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)
+
+== identity: kernel speechnet_fused_b0_NE16
+   new /app/TrainDeeploy/SpeechNet_Test/speechnet_fused_b0_NE16
+   old /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv_NE16
+   inputs.npz                   identical (3 arrays)
+   network.onnx                 identical (bytes)
+   outputs.npz                  identical (1 arrays)

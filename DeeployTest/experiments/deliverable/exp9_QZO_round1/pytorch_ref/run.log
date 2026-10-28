@@ -1,0 +1,40 @@
+==== exp9 PyTorch reference: fc-int8 vs fc-float (device-faithful), round1 b2 ====
+[calib] fold 3: pretrain sessions (1, 2)  (1800, 1, 14, 700)
+[collect] 1800 windows, batch 64 -> 29 collector steps, 12 act sites, cap 40M/site
+   blocks.0.conv.input_quant                     N= 17,640,000  pooled=17,640,000 (100.0%)  max=59655.8242
+   blocks.0.conv.output_quant                    N=141,321,600  pooled=39,248,776 ( 27.8%)  max=54526.2852
+   blocks.1.conv.input_quant                     N= 17,539,200  pooled=17,539,200 (100.0%)  max=419.8293
+   blocks.1.conv.output_quant                    N= 35,481,600  pooled=35,481,600 (100.0%)  max=269.6406
+   blocks.2.conv.input_quant                     N=  8,870,400  pooled= 8,870,400 (100.0%)  max=111.4798
+   blocks.2.conv.output_quant                    N=  9,273,600  pooled= 9,273,600 (100.0%)  max=88.6605
+   blocks.3.conv.input_quant                     N=  2,016,000  pooled= 2,016,000 (100.0%)  max=54.2097
+   blocks.3.conv.output_quant                    N=  2,304,000  pooled= 2,304,000 (100.0%)  max=66.5421
+   blocks.4.conv.input_quant                     N=  2,304,000  pooled= 2,304,000 (100.0%)  max=33.9272
+   blocks.4.conv.output_quant                    N=    576,000  pooled=   576,000 (100.0%)  max=14.1307
+   fc_iq.act_quant                               N=     57,600  pooled=    57,600 (100.0%)  max=20.3853
+   fc.input_quant                                N=     57,600  pooled=    57,600 (100.0%)  max=20.3853
+[fc-int8] round1 b2: 85.00 -> 88.89%  conv-moved=59.1%
+[calib] fold 3: pretrain sessions (1, 2)  (1800, 1, 14, 700)
+[collect] 1800 windows, batch 64 -> 29 collector steps, 12 act sites, cap 40M/site
+   blocks.0.conv.input_quant                     N= 17,640,000  pooled=17,640,000 (100.0%)  max=59655.8242
+   blocks.0.conv.output_quant                    N=141,321,600  pooled=39,248,776 ( 27.8%)  max=54526.2852
+   blocks.1.conv.input_quant                     N= 17,539,200  pooled=17,539,200 (100.0%)  max=419.8293
+   blocks.1.conv.output_quant                    N= 35,481,600  pooled=35,481,600 (100.0%)  max=269.6406
+   blocks.2.conv.input_quant                     N=  8,870,400  pooled= 8,870,400 (100.0%)  max=111.4798
+   blocks.2.conv.output_quant                    N=  9,273,600  pooled= 9,273,600 (100.0%)  max=88.6605
+   blocks.3.conv.input_quant                     N=  2,016,000  pooled= 2,016,000 (100.0%)  max=54.2097
+   blocks.3.conv.output_quant                    N=  2,304,000  pooled= 2,304,000 (100.0%)  max=66.5421
+   blocks.4.conv.input_quant                     N=  2,304,000  pooled= 2,304,000 (100.0%)  max=33.9272
+   blocks.4.conv.output_quant                    N=    576,000  pooled=   576,000 (100.0%)  max=14.1307
+   fc_iq.act_quant                               N=     57,600  pooled=    57,600 (100.0%)  max=20.3853
+   fc.input_quant                                N=     57,600  pooled=    57,600 (100.0%)  max=20.3853
+[fc-float] round1 b2: 85.00 -> 89.44%  conv-moved=41.1%
+  fc-int8  b2 = 88.89%  (expect ~90.00)
+  fc-float b2 = 89.44%  <- device-faithful reference
+==== exp9 reference complete ====
+==== exp9 PyTorch reference: fc-int8 vs fc-float (device-faithful), round1 b2 ====
+[fc-int8] round1 b2: 85.56 -> 90.00%  conv-moved=65.9%
+[fc-float] round1 b2: 85.00 -> 88.89%  conv-moved=59.5%
+  fc-int8  b2 = 90.00%  (expect ~90.00)
+  fc-float b2 = 88.89%  <- device-faithful reference
+==== exp9 reference complete ====

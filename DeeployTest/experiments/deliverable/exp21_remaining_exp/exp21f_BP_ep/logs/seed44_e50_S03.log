@@ -1,0 +1,6 @@
+bp e50 seed44 S03: SGD lr=0.0003 n_accum=4 (SUM) epochs=50 per_class=6 seed=44 order=cyclic draw=device dropout=0.0 | frozen pretraining BN stats, batch-1
+      r1: next  62.78  held-out  78.57  train 100.00
+      r2: next  71.11  held-out  72.22  train 100.00
+      r3: next  73.89  held-out  79.37  train 100.00
+      r4: next  67.78  held-out  76.98  train 100.00
+DONE bp e50 seed44 S03: mean val_next 68.89  val_in 76.79  steps [675, 675, 675, 675]  (19s)

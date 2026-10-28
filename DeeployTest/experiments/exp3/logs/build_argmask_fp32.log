@@ -1,0 +1,53 @@
+/app/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+[Deeploy] 💥 PARSING FAILED - Backtracking exhausted at root!
+[Deeploy] ================================================================================
+[Deeploy] 🔍 Diagnosis:
+[Deeploy]    - Deepest successful exploration: Layer 12 'node_4_blocks_0_blocks_0_3_MaxPool_MaxPool_argmax'
+[Deeploy]    - Deepest layer available mappers: ['MaxPool2DParser']
+[Deeploy] ================================================================================
+[Deeploy] Error during parsing! Exporting deeploy state backend_post_binding[.onnx|.pkl]!
+Traceback (most recent call last):
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 310, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 160, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3508, in prepare
+    self.frontEnd()
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    raise e
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3455, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2713, in parse
+    raise RuntimeError(
+RuntimeError: Did not find adequate mapping for graph! Explored until layer MaxPoolLayer of node node_4_blocks_0_blocks_0_3_MaxPool_MaxPool_argmaxCandidates: ['MaxPool2DParser']. Exhausted backtracking.
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_argmask_b1
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_train_argmask_b1
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_train_argmask_b1
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DBN_FROZEN_STATS=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --plotMemAlloc
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_train_argmask_b1 FAILED with exception: Tiled training network generation failed for speechnet_train_argmask_b1[0m

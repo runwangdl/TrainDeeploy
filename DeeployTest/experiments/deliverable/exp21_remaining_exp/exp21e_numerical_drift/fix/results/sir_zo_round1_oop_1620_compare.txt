@@ -1,0 +1,6 @@
+harness: Errors: 0 out of 12960
+[new out-of-place reference] 12960 losses: max |d| 6.199e-06, median 2.149e-07, p99 2.384e-06, #>1e-3 0, bit-equal 2.9 %
+[new out-of-place reference] mean |dL-| per epoch: first 3.44e-07, epoch 60 5.47e-07, last 5.39e-07
+[old in-place reference (exp18 fixture, first 1620 steps)] 12960 losses: max |d| 9.706e-04, median 2.227e-05, p99 4.754e-04, #>1e-3 0, bit-equal 0.0 %
+[old in-place reference (exp18 fixture, first 1620 steps)] mean |dL-| per epoch: first 1.11e-06, epoch 60 7.93e-05, last 1.11e-04
+final weights (WDUMP s=1619) vs reference: max |dw| 8.941e-08, median 3 ulp, max 3876 ulp over 15489 words

@@ -1,0 +1,15 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+[QZO_Conv block 1] wrote /app/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_Conv_B1
+  nodes        : ['RQSPerturbRademacher:rqsp_blocks.1.conv.weight_int8', 'RQSPerturbRademacher:rqsp_blocks.1.conv.bias_rqsadd', 'Conv:/wrappedInnerForwardImpl_1/Conv', 'RequantShift:QSTANDALONE_QCDQ_/blocks_1_conv_output_quant_1/Clip_Quant']
+  initializers : ['QSTANDALONE_QCDQ_/blocks_1_conv_output_quant_1/Clip_Quant_mul_pc', 'blocks.1.conv.bias_rqsadd_pmul', 'blocks.1.conv.weight_int8_pmul']
+  value_info   : ['blocks.1.conv.weight_int8_pert', 'blocks.1.conv.bias_rqsadd_pert', '/wrappedInnerForwardImpl_1/Conv_output_0']
+  act (i8)     : (1, 8, 14, 87) range [0,110]  (Quant scale 0.2374267578125)
+  weight (i8)  : (16, 8, 1, 16) range [-127,127]  perturbed on device -> [-127,127], 2038/2048 elements moved
+  bias (i32)   : [32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768]
+  output (i8)  : /blocks_1_conv_output_quant_1/Clip_output_0 (1, 16, 14, 88) range [-82,52]  == full-graph tensor: True
+  MACs         : 2,523,136

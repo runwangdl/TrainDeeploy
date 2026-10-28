@@ -2936,6 +2936,10 @@ class NetworkContainer():
 
         callStack += "static const uint32_t " + self.ctxt._mangle("num_inputs") + f" = {len(inputs)};"
         callStack += "static const uint32_t " + self.ctxt._mangle("num_outputs") + f" = {len(outputs)};"
+        # ZO (MeZO) perturb controls (perturbation_sign / perturb_seed_base / perturb_eps_override) are
+        # now provided as mutable extern globals in TargetLibraries/PULPOpen/src/ZORuntime.c and declared
+        # via kernel/ZORuntime.h (pulled in through DeeployPULPMath.h). The ZO runner sets them per pass;
+        # neutral defaults reproduce the baked-attr behavior. -- QW
 
         callStack += "extern void* " + self.ctxt._mangle("inputs") + f"[{len(inputs)}];"
         callStack += "extern void* " + self.ctxt._mangle("outputs") + f"[{len(outputs)}];"
@@ -2947,6 +2951,11 @@ class NetworkContainer():
             numBytes.append(str(np.prod(node.shape) * node._type.referencedType.typeWidth // 8))
         callStack += ", ".join(numBytes)
 
+        callStack += "};"
+
+        # QW (exp8): element counts too -- the GAP9 MeZO harness sizes the ECO fp32 momentum per tensor from it
+        callStack += "static const uint32_t " + self.ctxt._mangle("inputs_elems") + f"[{len(inputs)}] = " + "{"
+        callStack += ", ".join(str(int(np.prod(node.shape))) for node in inputs)
         callStack += "};"
 
         callStack += "static const uint32_t " + self.ctxt._mangle("outputs_bytes") + f"[{len(outputs)}] = " + "{"

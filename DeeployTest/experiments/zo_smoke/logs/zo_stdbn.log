@@ -1,0 +1,52 @@
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : SpeechNetZO_stdbn
+  Test Directory      : /app/ETH/TrainDeeploy/DeeployTest/Tests/Models/SpeechNetZO_stdbn
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/SpeechNetZO_stdbn
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[Deeploy] Error during parsing! Exporting deeploy state backend_post_binding[.onnx|.pkl]!
+Traceback (most recent call last):
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVP.py", line 335, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.frontEnd()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3463, in frontEnd
+    raise e
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3459, in frontEnd
+    self.parse(self.default_channels_first)  # This reparses the lowered graph
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 2655, in parse
+    self._bindLayers()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 2600, in _bindLayers
+    engine = self._selectEngine(node)
+  File "/app/ETH/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 70, in _selectEngine
+    return self._innerObject._selectEngine(node)
+  File "/app/ETH/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 70, in _selectEngine
+    return self._innerObject._selectEngine(node)
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 2584, in _selectEngine
+    raise RuntimeError(f"No mapping found for node {node.name} with op type {node.op}")
+RuntimeError: No mapping found for node node_2_blocks_0_blocks_0_1_BatchNormalization with op type BatchNormalization
+[Deeploy] Network generation failed with return code 1
+
+[91m✗ Test SpeechNetZO_stdbn FAILED with exception: Network generation failed for SpeechNetZO_stdbn[0m

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python speechnet_loss_experiment.py)",
+      "Bash(docker exec *)",
+      "Bash(xargs -I *)"
+    ]
+  }
+}

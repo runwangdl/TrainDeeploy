@@ -1,0 +1,11 @@
+2026-10-26 01:45:55 start exp21e: read exp17/18 docs; BP ref = PyTorch frozen-BN (speechnet_exporter.py:_frozen_pytorch_reference), ZO ref = PyTorch _zo_pytorch_reference (in-place +eps/-2eps/+eps). Device harness deeploymezotest.c perturbs out-of-place.
+2026-10-26 01:51:42 ZO host replica 'orig' bit-exact vs fixture (10 steps). Launched oop/oopdev/f64 2700-step host runs (agitated_hugle, logs/zo_host_*.log)
+2026-10-26 01:56:48 launched device ZO arm A (default ffast, 2 steps, worker x21e_zo_def)
+2026-10-26 01:57:11 launched BP host variants orig,ulp1,f64,ulp2 sequentially (argmax+tie logging)
+2026-10-26 01:57:45 BP trace: flat <=2e-6 (print floor) through fwd 633; discrete jump at fwd 634 (step 158) to ~1e-5 plateau, second jump ~fwd 967-1009 (step ~242-252) to 1e-4 plateau; not exponential. ZO: smooth ~t^0.9 growth, final-weight outliers 8e-5 at |w|~0.125-0.135/0.99 (binade edges) = reference in-place ±eps round-trip bias (+0.5ulp/window x 10800 = 8.0e-5)
+2026-10-26 01:58:47 restarted all host runs with OMP_NUM_THREADS=1 (oversubscription made 10-thread runs stall; 1-thread orig still bit-exact vs fixture)
+2026-10-26 02:09:28 queued device ZO strict arm (x21e_zo_strict) after default arm PID 65051. BP host twins: ulp1/ulp2/1-thread orig all show SAME onsets as device (636/1010/1209); f64 does not. Launched ulp1F/ulp2F forced-argmax counterfactuals.
+2026-10-26 02:23:12 BP forced-argmax counterfactual: forcing orig argmax removes drift entirely (ulp1F max 3.1e-6 vs ulp1 1.21e-3). Added DEEPLOY_ARGMAX_MASK_SIG instrumentation (MaxPool.c, PULPOpen CMake ARGMAX_MASK_SIG). Launched device BP 165-step run with AMSIG (x21e_bp_sig).
+2026-10-26 02:31:27 ZO RESOLVED: device vs out-of-place host ref: median 2.3e-7, max 6.2e-6, 0 breaches, no growth; final w median 4 ulp. Old ref's in-place round trip = cause.
+2026-10-26 03:48:18 !! current-tree BP 165-step run (with AMSIG) diverges at fwd 4 (593/660 errors): first optimizer step differs from exp17. Queued 2-step runs: x21e_bp_1s (with instr+WDUMP) then x21e_bp_ctl (no instr) to tell tree regression vs instrumentation.
+2026-10-26 04:00:01 control run (no instrumentation) also broken + nondeterministic -> current-tree BP regression, not exp21e. README finalised.

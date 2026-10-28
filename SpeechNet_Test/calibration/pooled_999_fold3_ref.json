@@ -1,0 +1,14 @@
+{
+ "blocks.0.conv.input_quant": 1309.0,
+ "blocks.0.conv.output_quant": 781.0,
+ "blocks.1.conv.input_quant": 15.4296875,
+ "blocks.1.conv.output_quant": 20.375,
+ "blocks.2.conv.input_quant": 8.3125,
+ "blocks.2.conv.output_quant": 6.9921875,
+ "blocks.3.conv.input_quant": 5.546875,
+ "blocks.3.conv.output_quant": 5.96875390625064,
+ "blocks.4.conv.input_quant": 3.12109375,
+ "blocks.4.conv.output_quant": 2.216796875,
+ "fc_iq.act_quant": 3.837890625,
+ "fc.input_quant": 3.837890625
+}

@@ -1,0 +1,14 @@
+exp8 step 11 -- same step as step 10 (GAP9 + NE16 fused, n_accum 4, one update) WITH ECO (-D ZO_ECO=ON, beta 0.9,
+round-to-nearest). log: logs/step11_gap9_ne16_accum4_1step_eco.log; [ECO] 61,956 B momentum; Errors: 0 out of 2.
+First attempt failed: '[ECO] momentum alloc failed (k=19)' -- harness sized the momentum bytes*4 (4x too much for
+int32/fp32 tensors, 69,264 B) and the fused NE16 L2 arena (1,325,460 B) left too little heap. Fix: Deeploy emits
+inputs_elems, harness allocates elems*4 B (update node idx == optimizer input index, checked).
+
+                      QZO          QZO+ECO
+training (4 dual)    8,612,666    8,621,038
+update graph           242,923      508,606   (2.09x)
+one update step      8,855,589    9,129,644   (+3.1%)
+120-epoch round QZO     : 14.35 G cycles = 38.8 s @ 370 MHz, 59.8 s @ 240 MHz
+120-epoch round QZO+ECO : 14.79 G cycles = 40.0 s @ 370 MHz, 61.6 s @ 240 MHz
+unfused QZO+ECO (estimated: unfused training + measured ECO update): 69.6 s @ 370 MHz (1.74x)
+not included: L3->L2 copy of the 54-window pool (2.1 MB, cannot sit in L2), FC/host overhead, eval.

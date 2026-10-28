@@ -1,0 +1,280 @@
+1c02b7bc <expf>:
+1c02b7bc:      	fmv.x.w	a0, fa0
+1c02b7c0:      	slli	a1, a0, 1
+1c02b7c4:      	srli	a1, a1, 1
+1c02b7c8:      	lui	a2, 522240
+1c02b7cc:      	addi	a3, a2, 1
+1c02b7d0:      	bltu	a1, a3, 0x1c02b7dc <expf+0x20>
+1c02b7d4:      	fadd.s	fa0, fa0, fa0
+1c02b7d8:      	ret
+1c02b7dc:      	bne	a1, a2, 0x1c02b7ec <expf+0x30>
+1c02b7e0:      	bgez	a0, 0x1c02b9c8 <expf+0x20c>
+1c02b7e4:      	fmv.w.x	fa0, zero
+1c02b7e8:      	ret
+1c02b7ec:      	lui	a2, 273175
+1c02b7f0:      	addi	a2, a2, 536
+1c02b7f4:      	blt	a0, a2, 0x1c02b804 <expf+0x48>
+1c02b7f8:      	li	a0, 0
+1c02b7fc:      	auipc	t1, 0
+1c02b800:      	jr	1064(t1)
+1c02b804:      	li	a2, -1
+1c02b808:      	slt	a2, a2, a0
+1c02b80c:      	lui	a3, 273663
+1c02b810:      	addi	a3, a3, 438
+1c02b814:      	sltu	a3, a1, a3
+1c02b818:      	or	a2, a2, a3
+1c02b81c:      	bnez	a2, 0x1c02b82c <expf+0x70>
+1c02b820:      	li	a0, 0
+1c02b824:      	auipc	t1, 0
+1c02b828:      	jr	996(t1)
+1c02b82c:      	lui	a2, 256791
+1c02b830:      	addi	a2, a2, 537
+1c02b834:      	bltu	a1, a2, 0x1c02b87c <expf+0xc0>
+1c02b838:      	lui	a2, 260177
+1c02b83c:      	addi	a2, a2, 1425
+1c02b840:      	srli	a0, a0, 31
+1c02b844:      	bltu	a2, a1, 0x1c02b8b4 <expf+0xf8>
+1c02b848:      	lui	a1, 114689
+1c02b84c:      	addi	a1, a1, 928
+1c02b850:      	slli	a2, a0, 2
+1c02b854:      	add	a1, a2, a1
+1c02b858:      	flw	ft1, 0(a1)
+1c02b85c:      	lui	a1, 114689
+1c02b860:      	addi	a1, a1, 920
+1c02b864:      	add	a1, a2, a1
+1c02b868:      	flw	ft0, 0(a1)
+1c02b86c:      	fsub.s	ft1, fa0, ft1
+1c02b870:      	xori	a1, a0, 1
+1c02b874:      	sub	a0, a1, a0
+1c02b878:      	j	0x1c02b8f4 <expf+0x138>
+1c02b87c:      	srli	a0, a1, 26
+1c02b880:      	lui	a1, 114732
+1c02b884:      	flw	ft1, 1568(a1)
+1c02b888:      	lui	a1, 114732
+1c02b88c:      	flw	ft0, 1572(a1)
+1c02b890:      	li	a1, 12
+1c02b894:      	sltu	a0, a1, a0
+1c02b898:      	fadd.s	ft1, fa0, ft1
+1c02b89c:      	flt.s	a1, ft0, ft1
+1c02b8a0:      	xori	a1, a1, 1
+1c02b8a4:      	or	a0, a1, a0
+1c02b8a8:      	bnez	a0, 0x1c02b8fc <expf+0x140>
+1c02b8ac:      	fadd.s	fa0, fa0, ft0
+1c02b8b0:      	ret
+1c02b8b4:      	lui	a1, 114689
+1c02b8b8:      	addi	a1, a1, 912
+1c02b8bc:      	slli	a0, a0, 2
+1c02b8c0:      	add	a0, a0, a1
+1c02b8c4:      	flw	ft0, 0(a0)
+1c02b8c8:      	lui	a0, 114732
+1c02b8cc:      	flw	ft1, 1576(a0)
+1c02b8d0:      	fmadd.s	ft0, fa0, ft1, ft0
+1c02b8d4:      	lui	a0, 114732
+1c02b8d8:      	flw	ft1, 1580(a0)
+1c02b8dc:      	lui	a0, 114732
+1c02b8e0:      	flw	ft2, 1584(a0)
+1c02b8e4:      	fcvt.w.s	a0, ft0, rtz
+1c02b8e8:      	fcvt.s.w	ft0, a0
+1c02b8ec:      	fmadd.s	ft1, ft0, ft1, fa0
+1c02b8f0:      	fmul.s	ft0, ft0, ft2
+1c02b8f4:      	fsub.s	fa0, ft1, ft0
+1c02b8f8:      	j	0x1c02b900 <expf+0x144>
+1c02b8fc:      	li	a0, 0
+1c02b900:      	fmul.s	ft2, fa0, fa0
+1c02b904:      	lui	a1, 114732
+1c02b908:      	flw	ft3, 1588(a1)
+1c02b90c:      	lui	a1, 114732
+1c02b910:      	flw	ft4, 1592(a1)
+1c02b914:      	lui	a1, 114732
+1c02b918:      	flw	ft5, 1596(a1)
+1c02b91c:      	lui	a1, 114732
+1c02b920:      	flw	ft6, 1600(a1)
+1c02b924:      	lui	a1, 114732
+1c02b928:      	flw	ft7, 1604(a1)
+1c02b92c:      	fmadd.s	ft3, ft2, ft4, ft3
+1c02b930:      	fmadd.s	ft3, ft2, ft3, ft5
+1c02b934:      	fmadd.s	ft3, ft2, ft3, ft6
+1c02b938:      	fmadd.s	ft3, ft2, ft3, ft7
+1c02b93c:      	fnmsub.s	ft3, ft2, ft3, fa0
+1c02b940:      	fmul.s	ft2, fa0, ft3
+1c02b944:      	beqz	a0, 0x1c02b988 <expf+0x1cc>
+1c02b948:      	lui	a1, 114732
+1c02b94c:      	flw	ft4, 1608(a1)
+1c02b950:      	fsub.s	ft3, ft4, ft3
+1c02b954:      	lui	a1, 114732
+1c02b958:      	flw	ft4, 1572(a1)
+1c02b95c:      	fdiv.s	ft2, ft2, ft3
+1c02b960:      	fsub.s	ft0, ft0, ft2
+1c02b964:      	fsub.s	ft0, ft1, ft0
+1c02b968:      	fadd.s	ft0, ft0, ft4
+1c02b96c:      	fmv.x.w	a1, ft0
+1c02b970:      	li	a3, -125
+1c02b974:      	slli	a2, a0, 23
+1c02b978:      	blt	a0, a3, 0x1c02b9ac <expf+0x1f0>
+1c02b97c:      	add	a0, a1, a2
+1c02b980:      	fmv.w.x	fa0, a0
+1c02b984:      	ret
+1c02b988:      	lui	a0, 114732
+1c02b98c:      	flw	ft0, 1616(a0)
+1c02b990:      	lui	a0, 114732
+1c02b994:      	flw	ft1, 1572(a0)
+1c02b998:      	fadd.s	ft0, ft3, ft0
+1c02b99c:      	fdiv.s	ft0, ft2, ft0
+1c02b9a0:      	fsub.s	ft0, fa0, ft0
+1c02b9a4:      	fadd.s	fa0, ft0, ft1
+1c02b9a8:      	ret
+1c02b9ac:      	add	a0, a2, a1
+1c02b9b0:      	lui	a1, 114732
+1c02b9b4:      	flw	ft0, 1612(a1)
+1c02b9b8:      	lui	a1, 204800
+1c02b9bc:      	add	a0, a0, a1
+1c02b9c0:      	fmv.w.x	ft1, a0
+1c02b9c4:      	fmul.s	fa0, ft1, ft0
+1c02b9c8:      	ret
+
+1c02b9cc <logf>:
+1c02b9cc <logf>:
+1c02b9cc:      	fmv.x.w	a2, fa0
+1c02b9d0:      	slli	a0, a2, 1
+1c02b9d4:      	srli	a0, a0, 1
+1c02b9d8:      	beqz	a0, 0x1c02bb34 <logf+0x168>
+1c02b9dc:      	bltz	a2, 0x1c02bb40 <logf+0x174>
+1c02b9e0:      	srli	a1, a2, 23
+1c02b9e4:      	li	a0, 255
+1c02b9e8:      	bgeu	a1, a0, 0x1c02bb48 <logf+0x17c>
+1c02b9ec:      	li	a0, -127
+1c02b9f0:      	bnez	a1, 0x1c02ba08 <logf+0x3c>
+1c02b9f4:      	lui	a0, 114732
+1c02b9f8:      	flw	ft0, 1620(a0)
+1c02b9fc:      	fmul.s	ft0, fa0, ft0
+1c02ba00:      	fmv.x.w	a2, ft0
+1c02ba04:      	li	a0, -152
+1c02ba08:      	srai	a3, a2, 23
+1c02ba0c:      	lui	a4, 2048
+1c02ba10:      	addi	a5, a4, -16
+1c02ba14:      	ori	a1, a5, 15
+1c02ba18:      	and	a1, a2, a1
+1c02ba1c:      	lui	a6, 1200
+1c02ba20:      	addi	a6, a6, -1248
+1c02ba24:      	add	a6, a1, a6
+1c02ba28:      	and	a4, a6, a4
+1c02ba2c:      	or	a4, a4, a1
+1c02ba30:      	lui	a7, 260096
+1c02ba34:      	xor	a4, a4, a7
+1c02ba38:      	fmv.w.x	ft0, a4
+1c02ba3c:      	srli	a4, a6, 23
+1c02ba40:      	add	a0, a0, a3
+1c02ba44:      	lui	a3, 114732
+1c02ba48:      	flw	ft1, 1624(a3)
+1c02ba4c:      	add	a0, a0, a4
+1c02ba50:      	addi	a2, a2, 15
+1c02ba54:      	and	a2, a2, a5
+1c02ba58:      	fadd.s	ft0, ft0, ft1
+1c02ba5c:      	beqz	a2, 0x1c02bb50 <logf+0x184>
+1c02ba60:      	lui	a2, 114732
+1c02ba64:      	flw	ft1, 1628(a2)
+1c02ba68:      	fadd.s	ft1, ft0, ft1
+1c02ba6c:      	fdiv.s	ft1, ft0, ft1
+1c02ba70:      	fmul.s	ft3, ft1, ft1
+1c02ba74:      	fmul.s	ft4, ft3, ft3
+1c02ba78:      	lui	a2, 114732
+1c02ba7c:      	flw	ft2, 1632(a2)
+1c02ba80:      	lui	a2, 114732
+1c02ba84:      	flw	ft5, 1636(a2)
+1c02ba88:      	lui	a2, 114732
+1c02ba8c:      	flw	ft6, 1640(a2)
+1c02ba90:      	lui	a2, 114732
+1c02ba94:      	flw	ft7, 1644(a2)
+1c02ba98:      	lui	a2, 114732
+1c02ba9c:      	flw	fa0, 1648(a2)
+1c02baa0:      	fmadd.s	ft2, ft4, ft5, ft2
+1c02baa4:      	fmadd.s	ft5, ft4, ft2, ft6
+1c02baa8:      	fcvt.s.w	ft2, a0
+1c02baac:      	fmadd.s	ft6, ft4, fa0, ft7
+1c02bab0:      	lui	a2, 114732
+1c02bab4:      	flw	ft7, 1652(a2)
+1c02bab8:      	lui	a2, 1047798
+1c02babc:      	addi	a2, a2, -976
+1c02bac0:      	add	a2, a1, a2
+1c02bac4:      	fmadd.s	ft6, ft4, ft6, ft7
+1c02bac8:      	lui	a3, 114732
+1c02bacc:      	flw	ft7, 1656(a3)
+1c02bad0:      	lui	a3, 860
+1c02bad4:      	addi	a3, a3, 648
+1c02bad8:      	sub	a1, a3, a1
+1c02badc:      	fmul.s	ft5, ft4, ft5
+1c02bae0:      	fmadd.s	ft4, ft4, ft6, ft7
+1c02bae4:      	fmul.s	ft3, ft3, ft4
+1c02bae8:      	or	a1, a2, a1
+1c02baec:      	fadd.s	ft4, ft5, ft3
+1c02baf0:      	blez	a1, 0x1c02bb80 <logf+0x1b4>
+1c02baf4:      	lui	a1, 114732
+1c02baf8:      	flw	ft3, 1668(a1)
+1c02bafc:      	fmul.s	ft3, ft0, ft3
+1c02bb00:      	fmul.s	ft3, ft0, ft3
+1c02bb04:      	fadd.s	ft4, ft3, ft4
+1c02bb08:      	beqz	a0, 0x1c02bbac <logf+0x1e0>
+1c02bb0c:      	lui	a0, 114732
+1c02bb10:      	flw	ft5, 1672(a0)
+1c02bb14:      	fmul.s	ft5, ft2, ft5
+1c02bb18:      	lui	a0, 114732
+1c02bb1c:      	flw	ft6, 1664(a0)
+1c02bb20:      	fmadd.s	ft1, ft1, ft4, ft5
+1c02bb24:      	fsub.s	ft1, ft3, ft1
+1c02bb28:      	fsub.s	ft0, ft1, ft0
+1c02bb2c:      	fmsub.s	fa0, ft2, ft6, ft0
+1c02bb30:      	ret
+1c02bb34:      	li	a0, 1
+1c02bb38:      	auipc	t1, 0
+1c02bb3c:      	jr	264(t1)
+1c02bb40:      	auipc	t1, 0
+1c02bb44:      	jr	288(t1)
+1c02bb48:      	fadd.s	fa0, fa0, fa0
+1c02bb4c:      	ret
+1c02bb50:      	fmv.w.x	fa0, zero
+1c02bb54:      	feq.s	a1, ft0, fa0
+1c02bb58:      	beqz	a1, 0x1c02bbb4 <logf+0x1e8>
+1c02bb5c:      	beqz	a0, 0x1c02bba8 <logf+0x1dc>
+1c02bb60:      	lui	a1, 114732
+1c02bb64:      	flw	ft0, 1672(a1)
+1c02bb68:      	lui	a1, 114732
+1c02bb6c:      	flw	ft1, 1664(a1)
+1c02bb70:      	fcvt.s.w	ft2, a0
+1c02bb74:      	fmul.s	ft0, ft2, ft0
+1c02bb78:      	fmadd.s	fa0, ft2, ft1, ft0
+1c02bb7c:      	ret
+1c02bb80:      	fsub.s	ft3, ft0, ft4
+1c02bb84:      	beqz	a0, 0x1c02bc00 <logf+0x234>
+1c02bb88:      	lui	a0, 114732
+1c02bb8c:      	flw	ft4, 1660(a0)
+1c02bb90:      	lui	a0, 114732
+1c02bb94:      	flw	ft5, 1664(a0)
+1c02bb98:      	fmul.s	ft4, ft2, ft4
+1c02bb9c:      	fmadd.s	ft1, ft1, ft3, ft4
+1c02bba0:      	fsub.s	ft0, ft1, ft0
+1c02bba4:      	fmsub.s	fa0, ft2, ft5, ft0
+1c02bba8:      	ret
+1c02bbac:      	fnmsub.s	ft1, ft1, ft4, ft3
+1c02bbb0:      	j	0x1c02bbf8 <logf+0x22c>
+1c02bbb4:      	lui	a1, 114732
+1c02bbb8:      	flw	ft1, 1668(a1)
+1c02bbbc:      	lui	a1, 114732
+1c02bbc0:      	flw	ft2, 1676(a1)
+1c02bbc4:      	fmul.s	ft3, ft0, ft0
+1c02bbc8:      	fmadd.s	ft1, ft0, ft2, ft1
+1c02bbcc:      	fmul.s	ft1, ft3, ft1
+1c02bbd0:      	beqz	a0, 0x1c02bbf8 <logf+0x22c>
+1c02bbd4:      	lui	a1, 114732
+1c02bbd8:      	flw	ft2, 1660(a1)
+1c02bbdc:      	lui	a1, 114732
+1c02bbe0:      	flw	ft3, 1664(a1)
+1c02bbe4:      	fcvt.s.w	ft4, a0
+1c02bbe8:      	fmadd.s	ft1, ft4, ft2, ft1
+1c02bbec:      	fsub.s	ft0, ft1, ft0
+1c02bbf0:      	fmsub.s	fa0, ft4, ft3, ft0
+1c02bbf4:      	ret
+1c02bbf8:      	fsub.s	fa0, ft0, ft1
+1c02bbfc:      	ret
+1c02bc00:      	fnmsub.s	fa0, ft1, ft3, ft0
+1c02bc04:      	ret
+

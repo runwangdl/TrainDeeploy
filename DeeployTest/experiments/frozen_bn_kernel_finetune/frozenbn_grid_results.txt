@@ -1,0 +1,77 @@
+zero-shot batch2 = 78.33%
+data=30% lr=0.001  n_accum=1 ->  81.11% (Δ+2.78)  [device lr=1.00e-03]
+data=30% lr=0.001  n_accum=4 ->  81.67% (Δ+3.33)  [device lr=2.50e-04]
+data=30% lr=0.001  n_accum=8 ->  81.67% (Δ+3.33)  [device lr=1.25e-04]
+data=30% lr=0.002  n_accum=1 ->  83.89% (Δ+5.56)  [device lr=2.00e-03]
+data=30% lr=0.002  n_accum=4 ->  78.89% (Δ+0.56)  [device lr=5.00e-04]
+data=30% lr=0.002  n_accum=8 ->  82.22% (Δ+3.89)  [device lr=2.50e-04]
+data=30% lr=0.005  n_accum=1 ->  77.78% (Δ-0.56)  [device lr=5.00e-03]
+data=30% lr=0.005  n_accum=4 ->  81.11% (Δ+2.78)  [device lr=1.25e-03]
+data=30% lr=0.005  n_accum=8 ->  77.78% (Δ-0.56)  [device lr=6.25e-04]
+data=30% lr=0.01   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=1.00e-02]
+data=30% lr=0.01   n_accum=4 ->  53.33% (Δ-25.00)  [device lr=2.50e-03]
+data=30% lr=0.01   n_accum=8 ->  51.67% (Δ-26.67)  [device lr=1.25e-03]
+data=30% lr=0.02   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=2.00e-02]
+data=30% lr=0.02   n_accum=4 ->  11.11% (Δ-67.22)  [device lr=5.00e-03]
+data=30% lr=0.02   n_accum=8 ->  11.11% (Δ-67.22)  [device lr=2.50e-03]
+data=40% lr=0.001  n_accum=1 ->  76.11% (Δ-2.22)  [device lr=1.00e-03]
+data=40% lr=0.001  n_accum=4 ->  78.33% (Δ+0.00)  [device lr=2.50e-04]
+data=40% lr=0.001  n_accum=8 ->  82.78% (Δ+4.44)  [device lr=1.25e-04]
+data=40% lr=0.002  n_accum=1 ->  75.56% (Δ-2.78)  [device lr=2.00e-03]
+data=40% lr=0.002  n_accum=4 ->  77.78% (Δ-0.56)  [device lr=5.00e-04]
+data=40% lr=0.002  n_accum=8 ->  80.00% (Δ+1.67)  [device lr=2.50e-04]
+data=40% lr=0.005  n_accum=1 ->  76.11% (Δ-2.22)  [device lr=5.00e-03]
+data=40% lr=0.005  n_accum=4 ->  73.89% (Δ-4.44)  [device lr=1.25e-03]
+data=40% lr=0.005  n_accum=8 ->  71.11% (Δ-7.22)  [device lr=6.25e-04]
+data=40% lr=0.01   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=1.00e-02]
+data=40% lr=0.01   n_accum=4 ->  11.11% (Δ-67.22)  [device lr=2.50e-03]
+data=40% lr=0.01   n_accum=8 ->  38.33% (Δ-40.00)  [device lr=1.25e-03]
+data=40% lr=0.02   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=2.00e-02]
+data=40% lr=0.02   n_accum=4 ->  11.11% (Δ-67.22)  [device lr=5.00e-03]
+data=40% lr=0.02   n_accum=8 ->  15.00% (Δ-63.33)  [device lr=2.50e-03]
+data=50% lr=0.001  n_accum=1 ->  80.56% (Δ+2.22)  [device lr=1.00e-03]
+data=50% lr=0.001  n_accum=4 ->  83.33% (Δ+5.00)  [device lr=2.50e-04]
+data=50% lr=0.001  n_accum=8 ->  83.33% (Δ+5.00)  [device lr=1.25e-04]
+data=50% lr=0.002  n_accum=1 ->  78.89% (Δ+0.56)  [device lr=2.00e-03]
+data=50% lr=0.002  n_accum=4 ->  81.11% (Δ+2.78)  [device lr=5.00e-04]
+data=50% lr=0.002  n_accum=8 ->  82.78% (Δ+4.44)  [device lr=2.50e-04]
+data=50% lr=0.005  n_accum=1 ->  76.11% (Δ-2.22)  [device lr=5.00e-03]
+data=50% lr=0.005  n_accum=4 ->  78.89% (Δ+0.56)  [device lr=1.25e-03]
+data=50% lr=0.005  n_accum=8 ->  75.00% (Δ-3.33)  [device lr=6.25e-04]
+data=50% lr=0.01   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=1.00e-02]
+data=50% lr=0.01   n_accum=4 ->  68.89% (Δ-9.44)  [device lr=2.50e-03]
+data=50% lr=0.01   n_accum=8 ->  76.67% (Δ-1.67)  [device lr=1.25e-03]
+data=50% lr=0.02   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=2.00e-02]
+data=50% lr=0.02   n_accum=4 ->  11.11% (Δ-67.22)  [device lr=5.00e-03]
+data=50% lr=0.02   n_accum=8 ->  31.11% (Δ-47.22)  [device lr=2.50e-03]
+data=70% lr=0.001  n_accum=1 ->  79.44% (Δ+1.11)  [device lr=1.00e-03]
+data=70% lr=0.001  n_accum=4 ->  81.67% (Δ+3.33)  [device lr=2.50e-04]
+data=70% lr=0.001  n_accum=8 ->  82.78% (Δ+4.44)  [device lr=1.25e-04]
+data=70% lr=0.002  n_accum=1 ->  81.11% (Δ+2.78)  [device lr=2.00e-03]
+data=70% lr=0.002  n_accum=4 ->  81.67% (Δ+3.33)  [device lr=5.00e-04]
+data=70% lr=0.002  n_accum=8 ->  80.56% (Δ+2.22)  [device lr=2.50e-04]
+data=70% lr=0.005  n_accum=1 ->  83.89% (Δ+5.56)  [device lr=5.00e-03]
+data=70% lr=0.005  n_accum=4 ->  75.56% (Δ-2.78)  [device lr=1.25e-03]
+data=70% lr=0.005  n_accum=8 ->  78.33% (Δ+0.00)  [device lr=6.25e-04]
+data=70% lr=0.01   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=1.00e-02]
+data=70% lr=0.01   n_accum=4 ->  63.89% (Δ-14.44)  [device lr=2.50e-03]
+data=70% lr=0.01   n_accum=8 ->  82.22% (Δ+3.89)  [device lr=1.25e-03]
+data=70% lr=0.02   n_accum=1 ->  11.11% (Δ-67.22)  [device lr=2.00e-02]
+data=70% lr=0.02   n_accum=4 ->  11.11% (Δ-67.22)  [device lr=5.00e-03]
+data=70% lr=0.02   n_accum=8 ->  11.11% (Δ-67.22)  [device lr=2.50e-03]
+TOP 10:
+  data=30% lr=0.002  n_accum=1 -> 83.89% (Δ+5.56)
+  data=70% lr=0.005  n_accum=1 -> 83.89% (Δ+5.56)
+  data=50% lr=0.001  n_accum=4 -> 83.33% (Δ+5.00)
+  data=50% lr=0.001  n_accum=8 -> 83.33% (Δ+5.00)
+  data=40% lr=0.001  n_accum=8 -> 82.78% (Δ+4.44)
+  data=50% lr=0.002  n_accum=8 -> 82.78% (Δ+4.44)
+  data=70% lr=0.001  n_accum=8 -> 82.78% (Δ+4.44)
+  data=30% lr=0.002  n_accum=8 -> 82.22% (Δ+3.89)
+  data=70% lr=0.01   n_accum=8 -> 82.22% (Δ+3.89)
+  data=30% lr=0.001  n_accum=4 -> 81.67% (Δ+3.33)
+BEST per data-size:
+  30%: 83.89% (Δ+5.56) at lr=0.002 n_accum=1
+  40%: 82.78% (Δ+4.44) at lr=0.001 n_accum=8
+  50%: 83.33% (Δ+5.00) at lr=0.001 n_accum=4
+  70%: 83.89% (Δ+5.56) at lr=0.005 n_accum=1

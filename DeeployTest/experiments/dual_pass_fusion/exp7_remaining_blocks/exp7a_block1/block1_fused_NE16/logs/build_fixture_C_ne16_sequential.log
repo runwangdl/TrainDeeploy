@@ -1,0 +1,3 @@
+[QZO_DualConv2in_NE16S block 1] wrote /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv2in_NE16S_B1
+  nodes : ['Transpose:b1_xp_hwc', 'Transpose:b1_xm_hwc', 'NE16DualPerturbEncode:b1_dual_wenc', 'NE16DualBias:b1_dual_bias', 'NE16DualConv2in:b1_ne16_dualconv', 'Transpose:b1_out_nchw']
+  NE16 per job: one output row (88 px), K = 128 (8 x 16 lanes), Cout = 16; 28 jobs; column buffers 2 x 11,264 B; ne16_pipeline = 0; ref /blocks_1_conv_dual_output_0 (1, 32, 14, 88)

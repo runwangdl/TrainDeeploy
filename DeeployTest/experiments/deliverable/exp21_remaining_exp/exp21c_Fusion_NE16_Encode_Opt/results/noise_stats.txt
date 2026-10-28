@@ -1,0 +1,4 @@
+block 1: W (16, 8, 1, 16) (2048 elems)  up 7..9  dn -9..-7  channels with up != -dn: 0/16  |W|=127 elems: 16  expected clamped elems per pass: 12.5 (0.61 %), channels at risk: 16/16
+block 2: W (16, 16, 1, 8) (2048 elems)  up 5..8  dn -8..-5  channels with up != -dn: 0/16  |W|=127 elems: 16  expected clamped elems per pass: 10.5 (0.51 %), channels at risk: 16/16
+block 3: W (32, 16, 7, 1) (3584 elems)  up 3..9  dn -9..-3  channels with up != -dn: 0/32  |W|=127 elems: 32  expected clamped elems per pass: 21.0 (0.59 %), channels at risk: 32/32
+block 4: W (32, 32, 7, 1) (7168 elems)  up 4..9  dn -9..-4  channels with up != -dn: 0/32  |W|=127 elems: 33  expected clamped elems per pass: 21.0 (0.29 %), channels at risk: 32/32

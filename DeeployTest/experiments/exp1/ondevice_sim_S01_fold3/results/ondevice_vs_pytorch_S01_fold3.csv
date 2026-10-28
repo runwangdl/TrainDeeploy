@@ -1,0 +1,7 @@
+batch,note,ondevice_host,pytorch_matched,diff,drift_this_round
+1,zero-shot,80.56,80.56,0.00,-
+2,FT_on_b1,87.22,87.22,0.00,416/2160 onset133 max0.035
+3,FT_on_b1-2,81.11,81.11,0.00,0/2160 bit-exact
+4,FT_on_b1-3,82.78,83.33,-0.55,111/2160 onset594 max0.0086
+5,FT_on_b1-4,81.67,83.33,-1.66,0/2160 bit-exact
+mean_b2_5,,83.20,83.75,-0.55,

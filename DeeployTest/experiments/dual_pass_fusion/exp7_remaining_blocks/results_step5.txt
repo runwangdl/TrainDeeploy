@@ -1,0 +1,35 @@
+exp7 step 5 -- optimising the fused two-input kernel (DualConv2In.c), Siracusa GVSoC, 8 cores. Every run exact (Errors: 0).
+
+Metric (agreed 2026-10-14): fused node vs the unfused nodes it replaces (2 x [perturb weight + perturb bias + weight
+transpose + conv]); input transposes separate; output transpose / fixture boundary not counted.
+Final numbers are WALL-CLOCK per node from --profileTiling (wall_table.py). Core-0 perf counters (node_table.py) stop
+while a core sleeps in a barrier, so they hide load imbalance (the earlier "DMA grew 33 k -> 49 k" was imbalance, not
+DMA: the fused node's own DMA is 5.2 k on block 1).
+
+5a  node-level table from existing logs (node_table.py, results_step5a_nodes.txt)          blocks 1-4: 2.17x (core 0)
+5b  phase 1 (CHW-order perturbation) measured with -D DUALCONV2IN_PROBE=ON and rewritten:
+      per-channel up/dn noise (r = +-1), branch-free select, branch-free runs, out of line (inlined it reloaded its
+      pointers from the stack every element). Host-tested bit-identical to the step-3 version (kept as _v1).
+      phase 1 core-0 cycles   block 1 11.0k -> 7.3k   block 2 11.2k -> 7.9k   block 3 22.9k -> 12.9k   block 4 44.1k -> 23.7k
+      (standalone RQSPerturbRademacher: ~141 cycles per element per sign; now ~26 per element for both signs)
+5c  phase-2 split: output channels when the pixel split leaves cores idle and the channel split keeps more busy.
+      measured phase 2 (core 0): block 3 pixels 37.6k / channels 40.0k -> pixels; block 4 pixels 20.3k / channels 15.9k
+      -> channels. -D DUALCONV2IN_SPLIT=1|2 forces a split. Tried and reverted: pointer-advancing inner loop
+      (block 1 phase 2 497k -> 649k: clang loses the hardware loop).
+5d  block 1: (i) I-cache stall (~1 stall cycle per inner-loop iteration): tried an out-of-line per-pass function
+      (497k -> 526k) and x2 unrolling (-> 619k), both reverted -- the step-3 inner loop is a local optimum for this
+      clang; (ii) the border-pixel gather (byte by byte, x+ and x-) was both a cost and the phase-2 imbalance
+      (22..30 border pixels per core): word-wise gather (zero-fill padded words, copy the valid run as words).
+      whole fixture block 1 571.7k -> 526.7k, block 2 190.8k -> 161.8k.
+
+Final, wall-clock, both passes (results_step5d_wall.txt):
+block |  A unfused   C fused |   A/C
+    1 |    884,766   472,437 |  1.87
+    2 |    308,026   139,274 |  2.21
+    3 |    193,136    52,416 |  3.68
+    4 |    332,600    40,821 |  8.15
+  1-4 |  1,718,528   704,948 |  2.44      4.64 ms -> 1.91 ms @ 370 MHz
+input transposes (real in today's full network, one per pass): unchanged by fusion (2 x 1 vs 2), not included above.
+
+Open: block 1's inner loop (I-cache ~7 %, compiler-sensitive); phase 1 still ~26 cycles per element (blocks 3-4: ~half
+of the fused node); fused block-1 kernel still 16 k wall vs core-0 (residual imbalance).

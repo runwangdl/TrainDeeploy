@@ -1,0 +1,146 @@
+{
+    "base_cfg": {
+        "channel_order": [
+            0,
+            1,
+            2,
+            5,
+            3,
+            4,
+            7,
+            6,
+            8,
+            15,
+            9,
+            14,
+            10,
+            13
+        ],
+        "condition": "silent",
+        "cv": {
+            "global_cv_mode": "leave_one_batch_out",
+            "n_splits": 5,
+            "val_size": 0.2
+        },
+        "data": {
+            "data_directory": ".",
+            "model_name_id": "w1400ms",
+            "models_main_directory": "artifacts",
+            "subject_id": "S01"
+        },
+        "experiment": {
+            "include_rest": true,
+            "model_name_id": "w1400ms",
+            "seed": 42
+        },
+        "model_name_id": "w1400ms",
+        "paths": {
+            "models": "models",
+            "processed": "data_raw_and_filt",
+            "win_and_feats": "wins_and_features"
+        },
+        "window": {
+            "window_size_s": 1.4
+        }
+    },
+    "condition": "silent",
+    "experiment_type": "inter_session_ft",
+    "experimental_settings": {
+        "cv_type": {
+            "global_cv_mode": "leave_one_batch_out",
+            "n_splits": 5,
+            "val_size": 0.2
+        },
+        "include_rest": true,
+        "window_size_ms": 1400
+    },
+    "model_cfg": {
+        "model": {
+            "kind": "dl",
+            "kwargs": {
+                "blocks_config": [
+                    {
+                        "kernel": [
+                            1,
+                            4
+                        ],
+                        "out_channels": 8,
+                        "pool": [
+                            1,
+                            8
+                        ]
+                    },
+                    {
+                        "kernel": [
+                            1,
+                            16
+                        ],
+                        "out_channels": 16,
+                        "pool": [
+                            1,
+                            4
+                        ]
+                    },
+                    {
+                        "kernel": [
+                            1,
+                            8
+                        ],
+                        "out_channels": 16,
+                        "pool": [
+                            1,
+                            4
+                        ]
+                    },
+                    {
+                        "kernel": [
+                            7,
+                            1
+                        ],
+                        "out_channels": 32,
+                        "pool": [
+                            1,
+                            1
+                        ]
+                    },
+                    {
+                        "kernel": [
+                            7,
+                            1
+                        ],
+                        "out_channels": 32,
+                        "pool": [
+                            1,
+                            1
+                        ]
+                    }
+                ],
+                "global_pool": "avg",
+                "p_dropout": 0.5,
+                "train_cfg": {
+                    "early_stop_patience": 10,
+                    "lr": "1e-3",
+                    "num_epochs": 100,
+                    "optimizer_cfg": {
+                        "lr": "1e-3",
+                        "name": "adam"
+                    },
+                    "scheduler": {
+                        "factor": 0.1,
+                        "mode": "min",
+                        "name": "ReduceLROnPlateau",
+                        "patience": 2
+                    },
+                    "weight_decay": "1e-4"
+                }
+            },
+            "name": "speechnet"
+        }
+    },
+    "seeds": {
+        "random_seed": 0,
+        "rgn_seed": 42,
+        "torch_manual_seed": 42
+    },
+    "subject": "S01"
+}

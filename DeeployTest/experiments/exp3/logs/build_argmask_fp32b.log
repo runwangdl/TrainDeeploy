@@ -1,0 +1,140 @@
+/app/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=16.35 attainable=16.0F/cyc (compute-bound) overhead=1.08x tile_compute=35840 tile_dma=2792 total=38632 ideal=35840 dx_tile=[1, 32, 8, 5] dy_tile=[1, 32, 2, 5] W=[32, 32, 7, 1](L2,per-tile) dY(L2)
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost] node_16_blocks_4_blocks_4_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=4.24 attainable=4.2F/cyc (compute-bound) overhead=4.08x tile_compute=33792 tile_dma=2512 total=36584 ideal=8960
+  grad_out(L2): 1280B hoisted = 280cyc
+  data_in(L2): 5120B/tile × 1 = 520cyc
+  grad_weight(L2): 28672B/tile × 1 = 1992cyc
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost:GradX] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradX: tiles=1 AI=20.96 attainable=16.0F/cyc (compute-bound) overhead=1.07x tile_compute=31360 tile_dma=2096 total=33456 ideal=31360 dx_tile=[1, 16, 14, 5] dy_tile=[1, 32, 8, 5] W=[32, 16, 7, 1](L2,per-tile) dY(L2)
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+[TileCost] node_13_blocks_3_blocks_3_0_Conv_GradConvGrad_0_ConvGrad_backward_ConvGradW: strategy=cin_slice tiles=1 AI=15.24 attainable=15.2F/cyc (compute-bound) overhead=1.17x tile_compute=18816 tile_dma=1576 total=20912 ideal=17920
+  grad_out(L2): 5120B hoisted = 520cyc
+  data_in(L2): 4480B/tile × 1 = 480cyc
+  grad_weight(L2): 14336B/tile × 1 = 1096cyc
+Traceback (most recent call last):
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 310, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/TrainDeeploy/DeeployTest/testMVPTraining.py", line 160, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3512, in prepare
+    self.backEnd(verbose = verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 3493, in backEnd
+    self.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 62, in codeTransform
+    return self._innerObject.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/MemoryLevelExtension/NetworkDeployers/MemoryLevelDeployer.py", line 258, in codeTransform
+    super().codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 62, in codeTransform
+    return self._innerObject.codeTransform(verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2577, in codeTransform
+    self.ctxt = layer.codeTransform(self.ctxt, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2141, in codeTransform
+    newCtxt = self.mapper.binder.codeTransform(ctxt, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 1653, in codeTransform
+    ctxt, self._executionBlock = self.codeTransformer.transform(ctxt, self.executionBlock, self.nodeName, verbose)
+  File "/app/TrainDeeploy/Deeploy/DeeployTypes.py", line 2338, in transform
+    ctxt, executionBlock = _pass.apply(ctxt, executionBlock, name, verbose)
+  File "/app/TrainDeeploy/Deeploy/Targets/PULPOpen/CodeTransformationPasses/PULPClusterTiling.py", line 51, in apply
+    ctxt, executionBlock = self.SB.apply(ctxt, executionBlock, name)
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 285, in apply
+    ctxt, executionBlock, applicable = self.generateTilingLoop(ctxt, executionBlock, nodeMemoryConstraint,
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 95, in generateTilingLoop
+    return self._tilingLoop(ctxt, executionBlock, nodeMemoryConstraint, flatTilingSchedule, variableReplacement,
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/SingleBufferingTilingCodeGeneration.py", line 280, in _tilingLoop
+    ctxt, ingressDMAStatements, ingressFutures = self._generateTransferScheduleCalls(
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/SingleBufferingTilingCodeGeneration.py", line 74, in _generateTransferScheduleCalls
+    rectangles, externalBufferShape = self._legalizeTransfers(rectangles, tuple(externalBufferShape),
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/CodeTransformationPasses/TilingCodeGeneration.py", line 193, in _legalizeTransfers
+    minRect, newMinOuterShape = minimizeRectangle(paddedRect, outerShape)
+  File "/app/TrainDeeploy/Deeploy/TilingExtension/TilingCodegen.py", line 537, in minimizeRectangle
+    assert rectOffset == 0, f"Rectangle offset should be zero when the dimensions are the same. Received rectangle {rect} and reference shape {referenceShape}"
+AssertionError: Rectangle offset should be zero when the dimensions are the same. Received rectangle HyperRectangle(offset=(0, 0, 0, 5), dims=(1, 16, 14, 5)) and reference shape (1, 16, 14, 5)
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_argmask_b1
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_train_argmask_b1
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_train_argmask_b1
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DBN_FROZEN_STATS=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --plotMemAlloc
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_train_argmask_b1 FAILED with exception: Tiled training network generation failed for speechnet_train_argmask_b1[0m

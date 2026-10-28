@@ -1,0 +1,41 @@
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 319 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 159 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_2.h5 ...
+   Extracted 319 windows (subject=S01, session=3, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 159 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_3.h5 ...
+   Extracted 319 windows (subject=S01, session=3, batch=3, condition=vocalized, window=700 samples)
+   Rest downsampled: 159 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_4.h5 ...
+   Extracted 319 windows (subject=S01, session=3, batch=4, condition=vocalized, window=700 samples)
+   Rest downsampled: 159 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_5.h5 ...
+   Extracted 319 windows (subject=S01, session=3, batch=5, condition=vocalized, window=700 samples)
+   Rest downsampled: 159 → 20 (matches min command class count)
+session-3 batch 1: 180 windows, classes [0, 1, 2, 3, 4, 5, 6, 7, 8]
+session-3 batch 2: 180 windows, classes [0, 1, 2, 3, 4, 5, 6, 7, 8]
+session-3 batch 3: 180 windows, classes [0, 1, 2, 3, 4, 5, 6, 7, 8]
+session-3 batch 4: 180 windows, classes [0, 1, 2, 3, 4, 5, 6, 7, 8]
+session-3 batch 5: 180 windows, classes [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+[base model — zero-shot, NO fine-tuning]
+   session-3 batch 1: balanced acc = 70.56%
+   session-3 batch 2: balanced acc = 78.33%
+   session-3 batch 3: balanced acc = 63.33%
+   session-3 batch 4: balanced acc = 78.89%
+   session-3 batch 5: balanced acc = 66.11%
+   MEAN zero-shot over session-3 = 71.44%
+
+[INCREMENTAL fine-tuning — progressive across session-3 batches]
+  batch | model-before-FT (adapted on prev) | after FT on this batch | base(no-FT)
+    1   |           70.56%              |         98.33%         |    70.56%   (Δ incr vs base = +0.00)
+    2   |           87.78%              |         97.22%         |    78.33%   (Δ incr vs base = +9.44)
+    3   |           91.11%              |         97.78%         |    63.33%   (Δ incr vs base = +27.78)
+    4   |           91.11%              |         95.56%         |    78.89%   (Δ incr vs base = +12.22)
+    5   |           93.33%              |         97.78%         |    66.11%   (Δ incr vs base = +27.22)
+DONE

@@ -1,0 +1,15 @@
+exp7a block 1 step 7 -- GAP9 (GVSoC), both passes, exact on every variant; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes (inputs NCHW->HWC, output HWC->NCHW)
+
+variant                                          fixture   vs A     nodes   vs A   in-tr  out-tr
+A    2 x pulp-nn, cluster                        741,872  1.00x   666,950  1.00x  19,324  61,882
+B    2 x NE16 im2col (exp6 route)                911,630  0.81x   862,394  0.77x       0  61,832
+C_cl fused, cluster (DualConv2In)                502,274  1.48x   425,211  1.57x  19,200  60,445
+C    fused NE16, exp6-style (2 chains)           903,653  0.82x   853,727  0.78x       0  61,851
+C_S  fused NE16 node, word-wise, sequential      358,894  2.07x   285,083  2.34x  19,304  60,519
+C_P  fused NE16 node, word-wise, pipelined       275,034  2.70x   201,267  3.31x  19,304  60,535
+
+C_P per node: b1_xp_hwc 9,621, b1_xm_hwc 9,683, b1_dual_wenc 32,174, b1_dual_bias 12,354, b1_ne16_dualconv 156,739, b1_out_nchw 60,535
+C_S per node: b1_xp_hwc 9,621, b1_xm_hwc 9,683, b1_dual_wenc 32,174, b1_dual_bias 12,354, b1_ne16_dualconv 240,555, b1_out_nchw 60,519
+
+pipeline effect (fused NE16 node): sequential 240,555 -> pipelined 156,739 (1.53x); NE16-bound now

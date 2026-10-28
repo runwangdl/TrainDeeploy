@@ -10,6 +10,7 @@ the PMSIS standard cl_dma API for better portability and cleaner code.
 
 import itertools
 
+from Deeploy.Targets.PULPOpen.CodeTransformationPasses.PULPMicrobenchmark import PULPMicrobenchmark  # -- QW (exp6)
 from Deeploy.AbstractDataTypes import PointerClass
 from Deeploy.CommonExtensions.CodeTransformationPasses.MemoryAllocation import ArgumentStructGeneration, \
     MemoryManagementGeneration, MemoryPassthroughGeneration
@@ -72,6 +73,7 @@ GAP9Transformer = CodeTransformation([
     MemoryManagementGeneration("L2"),
     MemoryManagementGeneration("L3.*"),
     MemoryManagementGeneration(),
+    PULPMicrobenchmark(),  # -- QW (exp6): per-node counters, as in PULPOpen's ForkTransformer
 ])
 
 # GAP9-specific cluster transformer using cl_dma.h API
@@ -95,6 +97,7 @@ GAP9ClusterTransformer = CodeTransformation([
     MemoryManagementGeneration("L2"),
     MemoryManagementGeneration("L3.*"),
     MemoryManagementGeneration(),
+    PULPMicrobenchmark(),  # -- QW (exp6)
 ])
 
 # Simple transformer for non-tiling cases
@@ -383,10 +386,20 @@ GAP9SoftmaxGradBindings = [
                 FloatSoftmaxTemplate.referenceGradientTemplate, GAP9Transformer)
 ]
 
+# -- QW: SoftmaxCrossEntropyLoss has TWO outputs (loss + log_prob); the forward binding must
+#        declare both float32 output types or the second output (log_prob) is never type-annotated
+#        (AttributeError: 'GAP9VariableBuffer' has no attribute '_type'). Matches PULPOpen's binding.
+#        Only surfaced by the two-output SCE in the MeZO/training graph. Original one-output line kept
+#        below (commented) per the comment-don't-delete convention.
+# GAP9SoftmaxCrossEntropyLossBindings = [
+#     NodeBinding(
+#         SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)], [PointerClass(float32_t)]),
+#         SoftmaxCrossEntropyLossTemplate.referenceTemplate, GAP9Transformer) for type in IntegerDataTypes
+# ]
 GAP9SoftmaxCrossEntropyLossBindings = [
     NodeBinding(
         SoftmaxCrossEntropyLossChecker([PointerClass(float32_t), PointerClass(type)],
-                                       [PointerClass(float32_t), PointerClass(float32_t)]),
+                                       [PointerClass(float32_t), PointerClass(float32_t)]),  # -- QW: loss + log_prob
         SoftmaxCrossEntropyLossTemplate.referenceTemplate, GAP9Transformer) for type in IntegerDataTypes
 ]
 
@@ -569,7 +582,10 @@ GAP9GlobalAveragePoolGrad2DBindings = [
 
 GAP9BatchNormInternalBindings = [
     NodeBinding(BatchNormInternalChecker([PointerClass(float32_t)] * 5, [PointerClass(float32_t)] * 5),
-                FloatBatchNormTemplate.batchNormInternalTemplate, GAP9Transformer)
+                FloatBatchNormTemplate.batchNormInternalTemplate, GAP9Transformer),
+    # RW 2026-10-15: int8 input = a Dequant folded in by FoldDequantIntoFrozenBNPass
+    NodeBinding(BatchNormInternalChecker([PointerClass(int8_t)] + [PointerClass(float32_t)] * 4, [PointerClass(float32_t)] * 5),
+                FloatBatchNormTemplate.batchNormInternalTemplate, GAP9Transformer),
 ]
 
 GAP9BatchNormalizationGradBindings = [
@@ -615,3 +631,20 @@ GAP9LayernormGradBinding = NodeBinding(
         PointerClass(float32_t)
     ], [PointerClass(float32_t), PointerClass(float32_t),
         PointerClass(float32_t)]), FloatLayernormTemplate.referenceGradTemplate, GAP9Transformer)
+
+
+# RW 2026-10-13: Qiwen's argmax-mask MaxPool forward/backward (exp3) with the GAP9 transformer. Registering the
+# PULPOpen bindings directly gives PULPOpen's L3 tiling code on GAP9: correct in L2-resident mode, wrong in
+# L3 mode (SpeechNet BP loss 1.4856 vs 0.011451).
+from Deeploy.Targets.Generic.TypeCheckers import MaxPoolGradChecker as _MaxPoolGradChecker
+from Deeploy.Targets.PULPOpen.TypeCheckers import PULPMaxPoolChecker as _PULPMaxPoolChecker
+
+GAP9MaxPoolArgmaxBindings = [
+    NodeBinding(_PULPMaxPoolChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMaxPoolTemplate.argmaxTemplate, GAP9Transformer)
+]
+
+GAP9MaxPoolGradMaskBindings = [
+    NodeBinding(_MaxPoolGradChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMaxPoolTemplate.referenceGradMaskTemplate, GAP9Transformer)
+]

@@ -1,0 +1,92 @@
+{
+ "float ZO": {
+  "per_class": {
+   "Transpose": {
+    "kernel": 1627647,
+    "overhead": 565912
+   },
+   "Perturb": {
+    "kernel": 392806,
+    "overhead": 65186
+   },
+   "Conv": {
+    "kernel": 29156830,
+    "overhead": 275589
+   },
+   "BatchNorm": {
+    "kernel": 1190650,
+    "overhead": 219101
+   },
+   "ReLU": {
+    "kernel": 268223,
+    "overhead": 219711
+   },
+   "MaxPool": {
+    "kernel": 1670404,
+    "overhead": 144971
+   },
+   "GlobalAvgPool": {
+    "kernel": 1722,
+    "overhead": 854
+   },
+   "Gemm/FC": {
+    "kernel": 7343,
+    "overhead": 928
+   },
+   "Loss(SCE)": {
+    "kernel": 8697,
+    "overhead": 756
+   }
+  },
+  "total_kernel": 34324322,
+  "total_overhead": 1493008,
+  "total": 35817330
+ },
+ "QZO (fixed)": {
+  "per_class": {
+   "Quant/Dequant": {
+    "kernel": 367525,
+    "overhead": 175291
+   },
+   "Transpose": {
+    "kernel": 553813,
+    "overhead": 349419
+   },
+   "Perturb": {
+    "kernel": 898354,
+    "overhead": 31775
+   },
+   "Conv": {
+    "kernel": 2476028,
+    "overhead": 39851
+   },
+   "BatchNorm": {
+    "kernel": 1190495,
+    "overhead": 218939
+   },
+   "ReLU": {
+    "kernel": 268168,
+    "overhead": 219735
+   },
+   "MaxPool": {
+    "kernel": 1673380,
+    "overhead": 142143
+   },
+   "GlobalAvgPool": {
+    "kernel": 1760,
+    "overhead": 776
+   },
+   "Gemm/FC": {
+    "kernel": 7357,
+    "overhead": 794
+   },
+   "Loss(SCE)": {
+    "kernel": 8679,
+    "overhead": 670
+   }
+  },
+  "total_kernel": 7445559,
+  "total_overhead": 1179393,
+  "total": 8624952
+ }
+}

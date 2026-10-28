@@ -1,0 +1,38 @@
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+zero-shot=78.33%
+
+[variance: 8 draws x 2 seeds, 30% (6/class), frozen-BN lr2e-3 n_accum1 ep40]
+  draw 0 seed 0: full=82.78 (Δ+4.44)  head=80.56 (Δ+2.22)  full-head=+2.22
+  draw 0 seed 1: full=85.56 (Δ+7.22)  head=80.56 (Δ+2.22)  full-head=+5.00
+  draw 1 seed 0: full=75.56 (Δ-2.78)  head=82.78 (Δ+4.44)  full-head=-7.22
+  draw 1 seed 1: full=78.33 (Δ+0.00)  head=82.78 (Δ+4.44)  full-head=-4.44
+  draw 2 seed 0: full=83.33 (Δ+5.00)  head=80.00 (Δ+1.67)  full-head=+3.33
+  draw 2 seed 1: full=81.11 (Δ+2.78)  head=79.44 (Δ+1.11)  full-head=+1.67
+  draw 3 seed 0: full=80.56 (Δ+2.22)  head=80.00 (Δ+1.67)  full-head=+0.56
+  draw 3 seed 1: full=80.00 (Δ+1.67)  head=80.00 (Δ+1.67)  full-head=+0.00
+  draw 4 seed 0: full=76.67 (Δ-1.67)  head=80.56 (Δ+2.22)  full-head=-3.89
+  draw 4 seed 1: full=80.56 (Δ+2.22)  head=80.56 (Δ+2.22)  full-head=+0.00
+  draw 5 seed 0: full=85.56 (Δ+7.22)  head=79.44 (Δ+1.11)  full-head=+6.11
+  draw 5 seed 1: full=86.11 (Δ+7.78)  head=79.44 (Δ+1.11)  full-head=+6.67
+  draw 6 seed 0: full=80.56 (Δ+2.22)  head=78.89 (Δ+0.56)  full-head=+1.67
+  draw 6 seed 1: full=80.56 (Δ+2.22)  head=79.44 (Δ+1.11)  full-head=+1.11
+  draw 7 seed 0: full=77.22 (Δ-1.11)  head=80.56 (Δ+2.22)  full-head=-3.33
+  draw 7 seed 1: full=80.56 (Δ+2.22)  head=80.56 (Δ+2.22)  full-head=+0.00
+
+SUMMARY (n=16):
+  full-FT : mean Δ=+2.60  std=3.04  (range -2.78..+7.78)
+  head    : mean Δ=+2.01  std=1.06  (range +0.56..+4.44)
+  paired (full-head): mean=+0.59  std=3.73  >0 in 10/16
+
+[finer lr sweep @30%%, full-FT n_accum1 ep40]
+  lr=0.001   -> 85.56% (Δ+7.22)
+  lr=0.0015  -> 83.33% (Δ+5.00)
+  lr=0.002   -> 82.78% (Δ+4.44)
+  lr=0.0025  -> 86.67% (Δ+8.33)
+  lr=0.003   -> 86.11% (Δ+7.78)
+  lr=0.004   -> 75.56% (Δ-2.78)
+  lr=0.005   -> 82.22% (Δ+3.89)
+DONE

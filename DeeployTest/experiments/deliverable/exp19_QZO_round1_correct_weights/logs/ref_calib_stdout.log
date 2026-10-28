@@ -1,0 +1,87 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_1_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=1, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_1_batch_2.h5 ...
+   Extracted 320 windows (subject=S01, session=1, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_1_batch_3.h5 ...
+   Extracted 320 windows (subject=S01, session=1, batch=3, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_1_batch_4.h5 ...
+   Extracted 320 windows (subject=S01, session=1, batch=4, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_1_batch_5.h5 ...
+   Extracted 320 windows (subject=S01, session=1, batch=5, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_2_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=2, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_2_batch_2.h5 ...
+   Extracted 320 windows (subject=S01, session=2, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_2_batch_3.h5 ...
+   Extracted 320 windows (subject=S01, session=2, batch=3, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_2_batch_4.h5 ...
+   Extracted 320 windows (subject=S01, session=2, batch=4, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_2_batch_5.h5 ...
+   Extracted 320 windows (subject=S01, session=2, batch=5, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+[collect] 1800 windows, batch 64 -> 29 collector steps, 12 act sites, cap 40M/site
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+/app/Onnx4Deeploy/QZO_exp/exp_calibration/calib_pooled.py:122: RuntimeWarning: overflow encountered in cast
+  self.pool[name].append(a.astype(np.float16))
+   blocks.0.conv.input_quant                     N= 17,640,000  pooled=17,640,000 (100.0%)  max=59655.8242
+   blocks.0.conv.output_quant                    N=141,321,600  pooled=39,248,776 ( 27.8%)  max=80345.2734
+   blocks.1.conv.input_quant                     N= 17,539,200  pooled=17,539,200 (100.0%)  max=595.2981
+   blocks.1.conv.output_quant                    N= 35,481,600  pooled=35,481,600 (100.0%)  max=568.0861
+   blocks.2.conv.input_quant                     N=  8,870,400  pooled= 8,870,400 (100.0%)  max=192.1711
+   blocks.2.conv.output_quant                    N=  9,273,600  pooled= 9,273,600 (100.0%)  max=161.1730
+   blocks.3.conv.input_quant                     N=  2,016,000  pooled= 2,016,000 (100.0%)  max=81.4555
+   blocks.3.conv.output_quant                    N=  2,304,000  pooled= 2,304,000 (100.0%)  max=48.3917
+   blocks.4.conv.input_quant                     N=  2,304,000  pooled= 2,304,000 (100.0%)  max=40.3078
+   blocks.4.conv.output_quant                    N=    576,000  pooled=   576,000 (100.0%)  max=14.5570
+   fc_iq.act_quant                               N=     57,600  pooled=    57,600 (100.0%)  max=18.8648
+   fc.input_quant                                N=     57,600  pooled=    57,600 (100.0%)  max=18.8648
+[calib] fresh pooled@99.99 saved (12 sites); block0-in threshold=2854.0000 -> scale=22.296875
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_2.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_2.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_3.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=3, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_3.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=3, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_4.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=4, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_4.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=4, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   Stratified split: 6 samples/class × 9 classes = 54 total
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_5.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=5, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+[ref] fc-float round-1: zero-shot b2 75.00% -> after 87.78%  (THE reference accuracy)
+REFERENCE fc-float b2: 75.00 -> 87.78%

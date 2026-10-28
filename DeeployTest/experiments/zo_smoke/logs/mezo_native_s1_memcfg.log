@@ -1,0 +1,1400 @@
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_zo_train
+  Test Directory      : /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Generation Directory: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train
+  Build Directory     : /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 2
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[Deeploy] ################## Testing speechnet_zo_train on Siracusa Platform ##################
+[Deeploy] [Execution] Tiled MeZO network generation command: /usr/bin/python3 /app/TrainDeeploy/DeeployTest/testMVPTraining.py -d /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train -t /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train -p Siracusa --zo -vv --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+[Deeploy] Arguments: Namespace(dir='/app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train', platform='Siracusa', dumpdir='/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train', verbose=2, cores=8, num_data_inputs=None, n_steps=None, n_accum=None, learning_rate=0.001, tolerance_abs=0.001, l1=128000, l2=2000000, defaultMemLevel='L2', memAllocStrategy='MiniMalloc', searchStrategy='random-max', plotMemAlloc=False, profileTiling=False, profileNodes=None, zo=True, shouldFail=False, promoteToL2=False, promoteToL2Strategy='cycle-aware', promoteToL2IncludeActivations=True, promoteToL2MaxBufferBytes=0, promoteToL2MinBufferBytes=0, promoteToL2Headroom=131072)
+[Deeploy] Platform: PULPPlatform(engines=['PULPCluster'], variableBuffer=PULPVariableBuffer, constantBuffer=PULPConstantBuffer, structBuffer=PULPStructBuffer, transientBuffer=PULPTransientBuffer) (sign: False)
+[Deeploy] ================================================================================
+[Deeploy] Deeploy FrontEnd
+[Deeploy] ================================================================================
+[Deeploy] - Apply Preprocessing
+[Deeploy]  - Remove Identity Nodes
+[Deeploy]  - Mangle Tensor Names
+[Deeploy]  - Mangle Node Names
+[Deeploy]  - Sanitize Graph Names
+[Deeploy]  - Remove Empty Inputs
+[Deeploy]  - Duplicate Constants
+[Deeploy]  - Constant Folding
+[Deeploy] > Export State to middleware_pre_lowering[.onnx|.pkl]
+[Deeploy] - Perform Graph Lowering
+[Deeploy]  - Applied SplitConvGradPass (0.706 ms)
+[Deeploy]  - Applied QuantPatternPass (1.320 ms)
+[Deeploy]  - Applied DequantPatternPass (1.455 ms)
+[Deeploy]  - Applied SkipEmptyConcatPass (1.358 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (1.450 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (2.017 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (1.243 ms)
+[Deeploy]  - Applied RQSSplitPass (1.446 ms)
+[Deeploy]  - Applied MergeTrueIntegerDivRequantShiftPass (15.088 ms)
+[Deeploy]  - Applied IntegerDivRequantMergePass (1.285 ms)
+[Deeploy]  - Applied iGELURequantMergePass (1.288 ms)
+[Deeploy]  - Applied iHardswishRequantMergePass (1.230 ms)
+[Deeploy]  - Applied PULPConvRequantMergePass (1.303 ms)
+[Deeploy]  - Applied MergeConstAddAndRequantPass (1.216 ms)
+[Deeploy]  - Applied PULPGEMMRequantMergePass (1.217 ms)
+[Deeploy]  - Applied PULPMatMulRequantMergePass (1.311 ms)
+[Deeploy]  - Applied PULPAddRequantMergePass (1.539 ms)
+[Deeploy]  - Applied RemoveEmptyConvBiasPass (1.234 ms)
+[Deeploy]  - Applied RemoveOnlySingletonReduceMeanPass (1.285 ms)
+[Deeploy]  - Applied TransposeMatmulInputsPass (1.264 ms)
+[Deeploy]  - Applied PULPNCHWtoNHWCPass (7.605 ms)
+[Deeploy]  - Applied TransposeSplitPass (1.784 ms)
+[Deeploy]  - Applied RQAddTransposeSquashPass (1.949 ms)
+[Deeploy]  - Applied TransposeSplitPass (1.774 ms)
+[Deeploy]  - Applied TransposeMergePass (6.016 ms)
+[Deeploy]  - Applied TransposeConstOptPass (1.571 ms)
+[Deeploy]  - Applied ReshapeConstOptPass (1.627 ms)
+[Deeploy]  - Applied TransposeNoPermOptPass (1.579 ms)
+[Deeploy]  - Applied RemoveGlobalOutputReshapePass (1.620 ms)
+[Deeploy]  - Applied MergeSiblingTransposesPass (1.606 ms)
+[Deeploy] > Export State middleware_post_lowering[.onnx|.pkl]
+[Deeploy]  - Assert all tensors have a shape annotation
+[Deeploy] - Perform Graph Parsing
+[Deeploy]  - Create IO Bindings
+[Deeploy]  - Bind Nodes to Layers
+[Deeploy]    [92m✔[0m Bind perturbrademacher_0_blocks_0_0_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_1_blocks_0_0_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_2_blocks_0_1_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_3_blocks_0_1_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_6_blocks_1_0_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_7_blocks_1_0_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_8_blocks_1_1_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_9_blocks_1_1_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_12_blocks_2_0_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_13_blocks_2_0_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_14_blocks_2_1_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_15_blocks_2_1_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_18_blocks_3_0_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_19_blocks_3_0_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_20_blocks_3_1_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_21_blocks_3_1_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_24_blocks_4_0_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_25_blocks_4_0_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_26_blocks_4_1_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_27_blocks_4_1_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_30_fc_weight to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_31_fc_bias to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind node_1_blocks_0_blocks_0_0_Conv_input_0_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_1_blocks_0_blocks_0_0_Conv to layer ConvLayer
+[Deeploy]    [92m✔[0m Bind node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_2_blocks_0_blocks_0_1_BatchNormalization to layer BatchNormInternalLayer
+[Deeploy]    [92m✔[0m Bind node_3_blocks_0_blocks_0_2_Relu to layer ReluLayer
+[Deeploy]    [92m✔[0m Bind node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_4_blocks_0_blocks_0_3_MaxPool to layer MaxPoolLayer
+[Deeploy]    [92m✔[0m Bind node_5_blocks_1_blocks_1_0_Conv to layer ConvLayer
+[Deeploy]    [92m✔[0m Bind node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_6_blocks_1_blocks_1_1_BatchNormalization to layer BatchNormInternalLayer
+[Deeploy]    [92m✔[0m Bind node_7_blocks_1_blocks_1_2_Relu to layer ReluLayer
+[Deeploy]    [92m✔[0m Bind node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_8_blocks_1_blocks_1_3_MaxPool to layer MaxPoolLayer
+[Deeploy]    [92m✔[0m Bind node_9_blocks_2_blocks_2_0_Conv to layer ConvLayer
+[Deeploy]    [92m✔[0m Bind node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_10_blocks_2_blocks_2_1_BatchNormalization to layer BatchNormInternalLayer
+[Deeploy]    [92m✔[0m Bind node_11_blocks_2_blocks_2_2_Relu to layer ReluLayer
+[Deeploy]    [92m✔[0m Bind node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_12_blocks_2_blocks_2_3_MaxPool to layer MaxPoolLayer
+[Deeploy]    [92m✔[0m Bind node_13_blocks_3_blocks_3_0_Conv to layer ConvLayer
+[Deeploy]    [92m✔[0m Bind node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_14_blocks_3_blocks_3_1_BatchNormalization to layer BatchNormInternalLayer
+[Deeploy]    [92m✔[0m Bind node_15_blocks_3_blocks_3_2_Relu to layer ReluLayer
+[Deeploy]    [92m✔[0m Bind node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_16_blocks_4_blocks_4_0_Conv to layer ConvLayer
+[Deeploy]    [92m✔[0m Bind node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose to layer TransposeLayer
+[Deeploy]    [92m✔[0m Bind node_17_blocks_4_blocks_4_1_BatchNormalization to layer BatchNormInternalLayer
+[Deeploy]    [92m✔[0m Bind node_18_blocks_4_blocks_4_2_Relu to layer ReluLayer
+[Deeploy]    [92m✔[0m Bind node_19_global_pool_GlobalAveragePool to layer GlobalAveragePoolLayer
+[Deeploy]    [92m✔[0m Bind node_21_Reshape to layer ReshapeLayer
+[Deeploy]    [92m✔[0m Bind node_22_fc_Gemm to layer GEMMLayer
+[Deeploy]    [92m✔[0m Bind CrossEntropyLoss to layer SoftmaxCrossEntropyLossLayer
+[Deeploy]  - Parse and Type Check Network
+[Deeploy] ------------------------------- MAIN ITERATION 1  -------------------------------
+[Deeploy] [Layer 0] Trying 'perturbrademacher_0_blocks_0_0_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 1] Trying 'perturbrademacher_1_blocks_0_0_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 2] Trying 'perturbrademacher_2_blocks_0_1_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 3] Trying 'perturbrademacher_3_blocks_0_1_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 4] Trying 'perturbrademacher_6_blocks_1_0_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 5] Trying 'perturbrademacher_7_blocks_1_0_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 6] Trying 'perturbrademacher_8_blocks_1_1_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 7] Trying 'perturbrademacher_9_blocks_1_1_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 8] Trying 'perturbrademacher_12_blocks_2_0_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 9] Trying 'perturbrademacher_13_blocks_2_0_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 10] Trying 'perturbrademacher_14_blocks_2_1_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 11] Trying 'perturbrademacher_15_blocks_2_1_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 12] Trying 'perturbrademacher_18_blocks_3_0_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 13] Trying 'perturbrademacher_19_blocks_3_0_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 14] Trying 'perturbrademacher_20_blocks_3_1_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 15] Trying 'perturbrademacher_21_blocks_3_1_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 16] Trying 'perturbrademacher_24_blocks_4_0_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 17] Trying 'perturbrademacher_25_blocks_4_0_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 18] Trying 'perturbrademacher_26_blocks_4_1_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 19] Trying 'perturbrademacher_27_blocks_4_1_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 20] Trying 'perturbrademacher_30_fc_weight' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 21] Trying 'perturbrademacher_31_fc_bias' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 22] Trying 'node_1_blocks_0_blocks_0_0_Conv_input_0_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 23] Trying 'node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 24] Trying 'node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 25] Trying 'node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 26] Trying 'node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 27] Trying 'node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 28] Trying 'node_1_blocks_0_blocks_0_0_Conv' (op: Conv)
+[Deeploy]  [92m✔[0m Parser PULPFPConv2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PULPFPConv2DParser
+/app/TrainDeeploy/Deeploy/Targets/Generic/TypeCheckers.py:552: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+[Deeploy]  [92m✔[0m Type check passed for PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 29] Trying 'node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 30] Trying 'node_2_blocks_0_blocks_0_1_BatchNormalization' (op: BatchNormInternal)
+[Deeploy]  [92m✔[0m Parser BatchNormInternalParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with BatchNormInternalParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy] [Layer 31] Trying 'node_3_blocks_0_blocks_0_2_Relu' (op: Relu)
+[Deeploy]  [92m✔[0m Parser ReluParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReluParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 32] Trying 'node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 33] Trying 'node_4_blocks_0_blocks_0_3_MaxPool' (op: MaxPool)
+[Deeploy]  [91m✘[0m Parser MaxPool1DParser failed
+[Deeploy]  [92m✔[0m Parser MaxPool2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with MaxPool2DParser
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(uint8_t) -> uint8_t
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 34] Trying 'node_5_blocks_1_blocks_1_0_Conv' (op: Conv)
+[Deeploy]  [92m✔[0m Parser PULPFPConv2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PULPFPConv2DParser
+[Deeploy]  [92m✔[0m Type check passed for PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 35] Trying 'node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 36] Trying 'node_6_blocks_1_blocks_1_1_BatchNormalization' (op: BatchNormInternal)
+[Deeploy]  [92m✔[0m Parser BatchNormInternalParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with BatchNormInternalParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy] [Layer 37] Trying 'node_7_blocks_1_blocks_1_2_Relu' (op: Relu)
+[Deeploy]  [92m✔[0m Parser ReluParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReluParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 38] Trying 'node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 39] Trying 'node_8_blocks_1_blocks_1_3_MaxPool' (op: MaxPool)
+[Deeploy]  [91m✘[0m Parser MaxPool1DParser failed
+[Deeploy]  [92m✔[0m Parser MaxPool2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with MaxPool2DParser
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(uint8_t) -> uint8_t
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 40] Trying 'node_9_blocks_2_blocks_2_0_Conv' (op: Conv)
+[Deeploy]  [92m✔[0m Parser PULPFPConv2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PULPFPConv2DParser
+[Deeploy]  [92m✔[0m Type check passed for PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 41] Trying 'node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 42] Trying 'node_10_blocks_2_blocks_2_1_BatchNormalization' (op: BatchNormInternal)
+[Deeploy]  [92m✔[0m Parser BatchNormInternalParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with BatchNormInternalParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy] [Layer 43] Trying 'node_11_blocks_2_blocks_2_2_Relu' (op: Relu)
+[Deeploy]  [92m✔[0m Parser ReluParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReluParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 44] Trying 'node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 45] Trying 'node_12_blocks_2_blocks_2_3_MaxPool' (op: MaxPool)
+[Deeploy]  [91m✘[0m Parser MaxPool1DParser failed
+[Deeploy]  [92m✔[0m Parser MaxPool2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with MaxPool2DParser
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPMaxPoolTemplate(uint8_t) -> uint8_t
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 46] Trying 'node_13_blocks_3_blocks_3_0_Conv' (op: Conv)
+[Deeploy]  [92m✔[0m Parser PULPFPConv2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PULPFPConv2DParser
+[Deeploy]  [92m✔[0m Type check passed for PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 47] Trying 'node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 48] Trying 'node_14_blocks_3_blocks_3_1_BatchNormalization' (op: BatchNormInternal)
+[Deeploy]  [92m✔[0m Parser BatchNormInternalParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with BatchNormInternalParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy] [Layer 49] Trying 'node_15_blocks_3_blocks_3_2_Relu' (op: Relu)
+[Deeploy]  [92m✔[0m Parser ReluParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReluParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 50] Trying 'node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 51] Trying 'node_16_blocks_4_blocks_4_0_Conv' (op: Conv)
+[Deeploy]  [92m✔[0m Parser PULPFPConv2DParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PULPFPConv2DParser
+[Deeploy]  [92m✔[0m Type check passed for PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 52] Trying 'node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose' (op: Transpose)
+[Deeploy]  [92m✔[0m Parser TransposeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with TransposeParser
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int8_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint8_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int16_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint16_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int32_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint32_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for PULPTransposeTemplate(uint64_t) -> uint64_t
+[Deeploy]  [92m✔[0m Type check passed for PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 53] Trying 'node_17_blocks_4_blocks_4_1_BatchNormalization' (op: BatchNormInternal)
+[Deeploy]  [92m✔[0m Parser BatchNormInternalParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with BatchNormInternalParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy] [Layer 54] Trying 'node_18_blocks_4_blocks_4_2_Relu' (op: Relu)
+[Deeploy]  [92m✔[0m Parser ReluParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReluParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 55] Trying 'node_19_global_pool_GlobalAveragePool' (op: GlobalAveragePool)
+[Deeploy]  [92m✔[0m Parser GlobalAveragePoolParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with GlobalAveragePoolParser
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 56] Trying 'node_21_Reshape' (op: Reshape)
+[Deeploy]  [92m✔[0m Parser ReshapeParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with ReshapeParser
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(int8_t, int64_t) -> int8_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(uint8_t, int64_t) -> uint8_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(int16_t, int64_t) -> int16_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(uint16_t, int64_t) -> uint16_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(int32_t, int64_t) -> int32_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(uint32_t, int64_t) -> uint32_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(int64_t, int64_t) -> int64_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(uint64_t, int64_t) -> uint64_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(bfloat16_t, int64_t) -> bfloat16_t
+[Deeploy]  [91m✘[0m Type check failed for _ReshapeTemplate(float16_t, int64_t) -> float16_t
+[Deeploy]  [92m✔[0m Type check passed for _ReshapeTemplate(float32_t, int64_t) -> float32_t
+[Deeploy] [Layer 57] Trying 'node_22_fc_Gemm' (op: Gemm)
+[Deeploy]  [92m✔[0m Parser GEMMParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with GEMMParser
+[Deeploy]  [92m✔[0m Type check passed for PULPFloatGEMMTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy] [Layer 58] Trying 'CrossEntropyLoss' (op: SoftmaxCrossEntropyLoss)
+[Deeploy]  [92m✔[0m Parser SoftmaxCrossEntropyLossParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with SoftmaxCrossEntropyLossParser
+[Deeploy]  [91m✘[0m Type check failed for NodeTemplate(float32_t, int8_t) -> float32_t, float32_t
+[Deeploy]  [92m✔[0m Type check passed for NodeTemplate(float32_t, uint8_t) -> float32_t, float32_t
+[Deeploy]  [92m✔[0m Parsed network with 59 layers after 1 iterations in 101.474 ms
+[Deeploy] ================================================================================
+[Deeploy] Deeploy MidEnd
+[Deeploy] ================================================================================
+[Deeploy] - Perform Memory Level Annotation
+[Deeploy] - Map Layers to Bindings
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_0_blocks_0_0_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_1_blocks_0_0_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_2_blocks_0_1_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_3_blocks_0_1_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_6_blocks_1_0_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_7_blocks_1_0_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_8_blocks_1_1_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_9_blocks_1_1_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_12_blocks_2_0_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_13_blocks_2_0_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_14_blocks_2_1_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_15_blocks_2_1_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_18_blocks_3_0_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_19_blocks_3_0_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_20_blocks_3_1_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_21_blocks_3_1_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_24_blocks_4_0_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_25_blocks_4_0_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_26_blocks_4_1_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_27_blocks_4_1_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_30_fc_weight to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_31_fc_bias to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_1_blocks_0_blocks_0_0_Conv_input_0_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_1_blocks_0_blocks_0_0_Conv to PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_2_blocks_0_blocks_0_1_BatchNormalization to NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy]  [92m✔[0m Mapped node_3_blocks_0_blocks_0_2_Relu to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_4_blocks_0_blocks_0_3_MaxPool to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_5_blocks_1_blocks_1_0_Conv to PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_6_blocks_1_blocks_1_1_BatchNormalization to NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy]  [92m✔[0m Mapped node_7_blocks_1_blocks_1_2_Relu to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_8_blocks_1_blocks_1_3_MaxPool to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_9_blocks_2_blocks_2_0_Conv to PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_10_blocks_2_blocks_2_1_BatchNormalization to NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy]  [92m✔[0m Mapped node_11_blocks_2_blocks_2_2_Relu to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_12_blocks_2_blocks_2_3_MaxPool to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_13_blocks_3_blocks_3_0_Conv to PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_14_blocks_3_blocks_3_1_BatchNormalization to NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy]  [92m✔[0m Mapped node_15_blocks_3_blocks_3_2_Relu to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_16_blocks_4_blocks_4_0_Conv to PULP2DFloatConvIm2ColTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose to PULPTransposeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_17_blocks_4_blocks_4_1_BatchNormalization to NodeTemplate(float32_t, float32_t, float32_t, float32_t, float32_t) -> float32_t, float32_t, float32_t, float32_t, float32_t
+[Deeploy]  [92m✔[0m Mapped node_18_blocks_4_blocks_4_2_Relu to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_19_global_pool_GlobalAveragePool to NodeTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_21_Reshape to _ReshapeTemplate(float32_t, int64_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped node_22_fc_Gemm to PULPFloatGEMMTemplate(float32_t, float32_t, float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped CrossEntropyLoss to NodeTemplate(float32_t, uint8_t) -> float32_t, float32_t
+[Deeploy] - Performing Tiling and Memory Allocation
+[Deeploy]  - Setup Constraint Model
+[Deeploy]  - Solve Constraint Model
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1785856824.351349    4949 search.cc:276] Start search (memory used = 126.61 MB)
+I0000 00:00:1785856824.351696    4949 search.cc:276] Root node processed (time = 0 ms, constraints = 713, memory used = 126.61 MB)
+I0000 00:00:1785856824.352527    4949 search.cc:276] Solution #0 (objective = 0, time = 1 ms, branches = 774, failures = 330, depth = 444, memory used = 126.61 MB, limit = 0%)
+I0000 00:00:1785856824.352696    4949 search.cc:276] Finished search tree (time = 1 ms, branches = 774, failures = 445, memory used = 126.61 MB)
+I0000 00:00:1785856824.352806    4949 search.cc:276] End search (time = 1 ms, branches = 774, failures = 445, memory used = 126.61 MB, speed = 774000 branches/s)
+[Deeploy]  - Solve Memory Allocation with MiniMalloc
+[Deeploy]  [92m✔[0m Memory allocation successful!
+[Deeploy]  - Test Tiling Solution Correctness
+[Deeploy]  - Annotate Memory Levels
+[Deeploy]  - Test Memory Map Correctness
+[Deeploy] > Export State backend_post_parsing[.onnx|.pkl]
+[Deeploy] ================================================================================
+[Deeploy] Deeploy BackEnd
+[Deeploy] ================================================================================
+[Deeploy] - Performing code transformations and optimization...
+[Deeploy] > Export State backend_post_binding[.onnx|.pkl]
+[Deeploy] Auto-detected num_data_inputs=2 from inputs.npz
+[Deeploy] Auto-detected total_mb=1 from inputs.npz
+[Deeploy] Training config: n_steps=1 n_accum=1 num_data_inputs=2
+[Deeploy] Data cycling: data_size=1, total_mb=1
+[Deeploy] Reference losses loaded from outputs.npz['loss_plus']: [0.016487659886479378]
+[Deeploy] ================================================================================
+[Deeploy] Deeploy Code Generation
+[Deeploy] ================================================================================
+[Deeploy] Input:
+[Deeploy]  - 'input_0': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_1': Type: uint8_t, nLevels: 256, Signed: True, Offset: 0
+[Deeploy]  - 'input_2': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_3': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_4': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_5': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_6': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_7': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_8': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_9': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_10': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_11': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_12': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_13': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_14': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_15': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_16': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_17': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_18': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_19': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_20': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_21': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_22': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_23': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy] Output:
+[Deeploy]  - 'output_0': Type: float32_t, nLevels: 4294967296, Signed: False
+[Deeploy]  - 'output_1': Type: float32_t, nLevels: 4294967296, Signed: False
+[Deeploy] Layer 'perturbrademacher_0_blocks_0_0_weight'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_1_blocks_0_0_bias'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_2_blocks_0_1_weight'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_3_blocks_0_1_bias'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_6_blocks_1_0_weight'
+[Deeploy]   Number of Operations        : 2048
+[Deeploy] Layer 'perturbrademacher_7_blocks_1_0_bias'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_8_blocks_1_1_weight'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_9_blocks_1_1_bias'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_12_blocks_2_0_weight'
+[Deeploy]   Number of Operations        : 2048
+[Deeploy] Layer 'perturbrademacher_13_blocks_2_0_bias'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_14_blocks_2_1_weight'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_15_blocks_2_1_bias'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_18_blocks_3_0_weight'
+[Deeploy]   Number of Operations        : 3584
+[Deeploy] Layer 'perturbrademacher_19_blocks_3_0_bias'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_20_blocks_3_1_weight'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_21_blocks_3_1_bias'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_24_blocks_4_0_weight'
+[Deeploy]   Number of Operations        : 7168
+[Deeploy] Layer 'perturbrademacher_25_blocks_4_0_bias'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_26_blocks_4_1_weight'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_27_blocks_4_1_bias'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_30_fc_weight'
+[Deeploy]   Number of Operations        : 288
+[Deeploy] Layer 'perturbrademacher_31_fc_bias'
+[Deeploy]   Number of Operations        : 9
+[Deeploy] Layer 'node_1_blocks_0_blocks_0_0_Conv_input_0_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_1_blocks_0_blocks_0_0_Conv_0_blocks_0_0_weight_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_5_blocks_1_blocks_1_0_Conv_6_blocks_1_0_weight_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_9_blocks_2_blocks_2_0_Conv_12_blocks_2_0_weight_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_13_blocks_3_blocks_3_0_Conv_18_blocks_3_0_weight_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_16_blocks_4_blocks_4_0_Conv_24_blocks_4_0_weight_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_1_blocks_0_blocks_0_0_Conv'
+[Deeploy]   Number of Operations        : 628096
+[Deeploy] Layer 'node_1_blocks_0_blocks_0_0_Conv_node_0_blocks_0_blocks_0_0_Conv__0_tensor_pre_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_2_blocks_0_blocks_0_1_BatchNormalization'
+[Deeploy]   Number of Operations        : 549584
+[Deeploy] Layer 'node_3_blocks_0_blocks_0_2_Relu'
+[Deeploy]   Number of Operations        : 78512
+[Deeploy] Layer 'node_4_blocks_0_blocks_0_3_MaxPool_node_0_blocks_0_blocks_0_2_Relu__0_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_4_blocks_0_blocks_0_3_MaxPool'
+[Deeploy]   Number of Operations        : 68208
+[Deeploy] Layer 'node_5_blocks_1_blocks_1_0_Conv'
+[Deeploy]   Number of Operations        : 5046272
+[Deeploy] Layer 'node_5_blocks_1_blocks_1_0_Conv_node_0_blocks_1_blocks_1_0_Conv__0_tensor_pre_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_6_blocks_1_blocks_1_1_BatchNormalization'
+[Deeploy]   Number of Operations        : 137984
+[Deeploy] Layer 'node_7_blocks_1_blocks_1_2_Relu'
+[Deeploy]   Number of Operations        : 19712
+[Deeploy] Layer 'node_8_blocks_1_blocks_1_3_MaxPool_node_0_blocks_1_blocks_1_2_Relu__0_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_8_blocks_1_blocks_1_3_MaxPool'
+[Deeploy]   Number of Operations        : 14784
+[Deeploy] Layer 'node_9_blocks_2_blocks_2_0_Conv'
+[Deeploy]   Number of Operations        : 1318912
+[Deeploy] Layer 'node_9_blocks_2_blocks_2_0_Conv_node_0_blocks_2_blocks_2_0_Conv__0_tensor_pre_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_10_blocks_2_blocks_2_1_BatchNormalization'
+[Deeploy]   Number of Operations        : 36064
+[Deeploy] Layer 'node_11_blocks_2_blocks_2_2_Relu'
+[Deeploy]   Number of Operations        : 5152
+[Deeploy] Layer 'node_12_blocks_2_blocks_2_3_MaxPool_node_0_blocks_2_blocks_2_2_Relu__0_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_12_blocks_2_blocks_2_3_MaxPool'
+[Deeploy]   Number of Operations        : 3360
+[Deeploy] Layer 'node_13_blocks_3_blocks_3_0_Conv'
+[Deeploy]   Number of Operations        : 286720
+[Deeploy] Layer 'node_13_blocks_3_blocks_3_0_Conv_node_0_blocks_3_blocks_3_0_Conv__0_tensor_pre_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_14_blocks_3_blocks_3_1_BatchNormalization'
+[Deeploy]   Number of Operations        : 8960
+[Deeploy] Layer 'node_15_blocks_3_blocks_3_2_Relu'
+[Deeploy]   Number of Operations        : 1280
+[Deeploy] Layer 'node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_3_blocks_3_2_Relu__0_tensor_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_16_blocks_4_blocks_4_0_Conv'
+[Deeploy]   Number of Operations        : 143360
+[Deeploy] Layer 'node_16_blocks_4_blocks_4_0_Conv_node_0_blocks_4_blocks_4_0_Conv__0_tensor_pre_transpose'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_17_blocks_4_blocks_4_1_BatchNormalization'
+[Deeploy]   Number of Operations        : 2240
+[Deeploy] Layer 'node_18_blocks_4_blocks_4_2_Relu'
+[Deeploy]   Number of Operations        : 320
+[Deeploy] Layer 'node_19_global_pool_GlobalAveragePool'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_21_Reshape'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] Layer 'node_22_fc_Gemm'
+[Deeploy]   Number of Operations        : 603
+[Deeploy] Layer 'CrossEntropyLoss'
+[Deeploy]   Number of Operations        : 0
+[Deeploy] --------------------------------------------------------------------------------
+[Deeploy] Number of Ops.                : 8365612
+[Deeploy] 
+[Deeploy] Memory Usage Report:
+[Deeploy]   Level          Capacity (bytes)      Total (    Static + Dynamic   ) (Usage )
+[Deeploy]   ------------------------------------------------------------------------------
+[Deeploy]   L3                   64,000,000          0 (         0 +          0) (  0.0%)
+[Deeploy]   L2                    2,000,000    792,028 (       848 +    791,180) ( 39.6%)
+[Deeploy]   L1                      128,000    128,054 (       822 +    127,232) (100.0%)
+[Deeploy] [ZO] Re-emitted /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/testoutputs.h with loss_plus/loss_minus references (plus=1, minus=1)
+[Deeploy] Training meta written to /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/training_meta.json: {'n_train_steps': 1, 'n_accum_steps': 1, 'training_num_data_inputs': 2}
+[Deeploy] [Execution] MeZO meta: {'n_train_steps': 1, 'n_accum_steps': 1, 'training_num_data_inputs': 2}
+[Deeploy] [Execution] Tiled MeZO update network generation command: /usr/bin/python3 /app/TrainDeeploy/DeeployTest/testMVPOptimizer.py -d /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train -t /app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_update -p Siracusa --training-dir=/app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max -vv
+[Deeploy] Arguments: Namespace(dir='/app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_update', platform='Siracusa', dumpdir='/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train', verbose=2, cores=8, lr=0.001, l1=128000, l2=2000000, defaultMemLevel='L2', memAllocStrategy='MiniMalloc', searchStrategy='random-max', plotMemAlloc=False, profileTiling=False, profileNodes=None, training_dir='/app/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_zo_train', shouldFail=False, promoteToL2=False, promoteToL2Strategy='cycle-aware', promoteToL2IncludeActivations=True, promoteToL2MaxBufferBytes=0, promoteToL2MinBufferBytes=0, promoteToL2Headroom=131072)
+[Deeploy] Optimizer ONNX inputs: ['blocks_0_0_weight', 'blocks_0_0_bias', 'blocks_0_1_weight', 'blocks_0_1_bias', 'blocks_1_0_weight', 'blocks_1_0_bias', 'blocks_1_1_weight', 'blocks_1_1_bias', 'blocks_2_0_weight', 'blocks_2_0_bias', 'blocks_2_1_weight', 'blocks_2_1_bias', 'blocks_3_0_weight', 'blocks_3_0_bias', 'blocks_3_1_weight', 'blocks_3_1_bias', 'blocks_4_0_weight', 'blocks_4_0_bias', 'blocks_4_1_weight', 'blocks_4_1_bias', 'fc_weight', 'fc_bias']
+[Deeploy] Optimizer ONNX outputs: ['blocks_0_0_weight_updated', 'blocks_0_0_bias_updated', 'blocks_0_1_weight_updated', 'blocks_0_1_bias_updated', 'blocks_1_0_weight_updated', 'blocks_1_0_bias_updated', 'blocks_1_1_weight_updated', 'blocks_1_1_bias_updated', 'blocks_2_0_weight_updated', 'blocks_2_0_bias_updated', 'blocks_2_1_weight_updated', 'blocks_2_1_bias_updated', 'blocks_3_0_weight_updated', 'blocks_3_0_bias_updated', 'blocks_3_1_weight_updated', 'blocks_3_1_bias_updated', 'blocks_4_0_weight_updated', 'blocks_4_0_bias_updated', 'blocks_4_1_weight_updated', 'blocks_4_1_bias_updated', 'fc_weight_updated', 'fc_bias_updated']
+[Deeploy] Platform: PULPPlatform(engines=['PULPCluster'], variableBuffer=PULPVariableBuffer, constantBuffer=PULPConstantBuffer, structBuffer=PULPStructBuffer, transientBuffer=PULPTransientBuffer) (sign: False)
+[Deeploy] ================================================================================
+[Deeploy] Deeploy FrontEnd
+[Deeploy] ================================================================================
+[Deeploy] - Apply Preprocessing
+[Deeploy]  - Remove Identity Nodes
+[Deeploy]  - Mangle Tensor Names
+[Deeploy]  - Mangle Node Names
+[Deeploy]  - Sanitize Graph Names
+[Deeploy]  - Remove Empty Inputs
+[Deeploy]  - Duplicate Constants
+[Deeploy]  - Constant Folding
+[Deeploy] > Export State to middleware_pre_lowering[.onnx|.pkl]
+[Deeploy] - Perform Graph Lowering
+[Deeploy]  - Applied SplitConvGradPass (0.423 ms)
+[Deeploy]  - Applied QuantPatternPass (0.676 ms)
+[Deeploy]  - Applied DequantPatternPass (0.657 ms)
+[Deeploy]  - Applied SkipEmptyConcatPass (0.622 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (0.734 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (0.701 ms)
+[Deeploy]  - Applied SkipUnityRequantPass (0.637 ms)
+[Deeploy]  - Applied RQSSplitPass (0.676 ms)
+[Deeploy]  - Applied MergeTrueIntegerDivRequantShiftPass (0.649 ms)
+[Deeploy]  - Applied IntegerDivRequantMergePass (0.704 ms)
+[Deeploy]  - Applied iGELURequantMergePass (0.634 ms)
+[Deeploy]  - Applied iHardswishRequantMergePass (0.624 ms)
+[Deeploy]  - Applied PULPConvRequantMergePass (0.635 ms)
+[Deeploy]  - Applied MergeConstAddAndRequantPass (0.623 ms)
+[Deeploy]  - Applied PULPGEMMRequantMergePass (0.776 ms)
+[Deeploy]  - Applied PULPMatMulRequantMergePass (0.973 ms)
+[Deeploy]  - Applied PULPAddRequantMergePass (0.759 ms)
+[Deeploy]  - Applied RemoveEmptyConvBiasPass (0.648 ms)
+[Deeploy]  - Applied RemoveOnlySingletonReduceMeanPass (0.634 ms)
+[Deeploy]  - Applied TransposeMatmulInputsPass (0.687 ms)
+[Deeploy]  - Applied PULPNCHWtoNHWCPass (3.577 ms)
+[Deeploy]  - Applied TransposeSplitPass (0.675 ms)
+[Deeploy]  - Applied RQAddTransposeSquashPass (0.712 ms)
+[Deeploy]  - Applied TransposeSplitPass (0.604 ms)
+[Deeploy]  - Applied TransposeMergePass (0.616 ms)
+[Deeploy]  - Applied TransposeConstOptPass (14.441 ms)
+[Deeploy]  - Applied ReshapeConstOptPass (0.670 ms)
+[Deeploy]  - Applied TransposeNoPermOptPass (0.645 ms)
+[Deeploy]  - Applied RemoveGlobalOutputReshapePass (0.665 ms)
+[Deeploy]  - Applied MergeSiblingTransposesPass (0.603 ms)
+[Deeploy] > Export State middleware_post_lowering[.onnx|.pkl]
+[Deeploy]  - Assert all tensors have a shape annotation
+[Deeploy] - Perform Graph Parsing
+[Deeploy]  - Create IO Bindings
+[Deeploy]  - Bind Nodes to Layers
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_0_0_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_0_0_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_0_1_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_0_1_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_1_0_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_1_0_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_1_1_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_1_1_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_2_0_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_2_0_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_2_1_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_2_1_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_3_0_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_3_0_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_3_1_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_3_1_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_4_0_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_4_0_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_4_1_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_blocks_4_1_bias_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_fc_weight_updated to layer PerturbRademacherLayer
+[Deeploy]    [92m✔[0m Bind perturbrademacher_fc_bias_updated to layer PerturbRademacherLayer
+[Deeploy]  - Parse and Type Check Network
+[Deeploy] ------------------------------- MAIN ITERATION 1  -------------------------------
+[Deeploy] [Layer 0] Trying 'perturbrademacher_blocks_0_0_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 1] Trying 'perturbrademacher_blocks_0_0_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 2] Trying 'perturbrademacher_blocks_0_1_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 3] Trying 'perturbrademacher_blocks_0_1_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 4] Trying 'perturbrademacher_blocks_1_0_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 5] Trying 'perturbrademacher_blocks_1_0_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 6] Trying 'perturbrademacher_blocks_1_1_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 7] Trying 'perturbrademacher_blocks_1_1_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 8] Trying 'perturbrademacher_blocks_2_0_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 9] Trying 'perturbrademacher_blocks_2_0_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 10] Trying 'perturbrademacher_blocks_2_1_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 11] Trying 'perturbrademacher_blocks_2_1_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 12] Trying 'perturbrademacher_blocks_3_0_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 13] Trying 'perturbrademacher_blocks_3_0_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 14] Trying 'perturbrademacher_blocks_3_1_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 15] Trying 'perturbrademacher_blocks_3_1_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 16] Trying 'perturbrademacher_blocks_4_0_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 17] Trying 'perturbrademacher_blocks_4_0_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 18] Trying 'perturbrademacher_blocks_4_1_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 19] Trying 'perturbrademacher_blocks_4_1_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 20] Trying 'perturbrademacher_fc_weight_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] [Layer 21] Trying 'perturbrademacher_fc_bias_updated' (op: PerturbRademacher)
+[Deeploy]  [92m✔[0m Parser PerturbRademacherParser succeeded
+[Deeploy]  [92m✔[0m Context parsing succeeded with PerturbRademacherParser
+[Deeploy]  [92m✔[0m Type check passed for _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Parsed network with 22 layers after 1 iterations in 19.688 ms
+[Deeploy] ================================================================================
+[Deeploy] Deeploy MidEnd
+[Deeploy] ================================================================================
+[Deeploy] - Perform Memory Level Annotation
+[Deeploy] - Map Layers to Bindings
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_0_0_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_0_0_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_0_1_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_0_1_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_1_0_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_1_0_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_1_1_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_1_1_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_2_0_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_2_0_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_2_1_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_2_1_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_3_0_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_3_0_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_3_1_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_3_1_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_4_0_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_4_0_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_4_1_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_blocks_4_1_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_fc_weight_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy]  [92m✔[0m Mapped perturbrademacher_fc_bias_updated to _FloatPerturbRademacherTemplate(float32_t) -> float32_t
+[Deeploy] - Performing Tiling and Memory Allocation
+[Deeploy]  - Setup Constraint Model
+[Deeploy]  - Solve Constraint Model
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1785856826.659759    5036 search.cc:276] Start search (memory used = 124.71 MB)
+I0000 00:00:1785856826.659904    5036 search.cc:276] Root node processed (time = 0 ms, constraints = 154, memory used = 124.71 MB)
+I0000 00:00:1785856826.660004    5036 search.cc:276] Solution #0 (objective = 0, time = 0 ms, branches = 32, failures = 0, depth = 32, memory used = 124.71 MB, limit = 0%)
+I0000 00:00:1785856826.660047    5036 search.cc:276] Finished search tree (time = 0 ms, branches = 32, failures = 33, memory used = 124.71 MB)
+I0000 00:00:1785856826.660092    5036 search.cc:276] End search (time = 1 ms, branches = 32, failures = 33, memory used = 124.71 MB, speed = 32000 branches/s)
+[Deeploy]  - Solve Memory Allocation with MiniMalloc
+[Deeploy]  [92m✔[0m Memory allocation successful!
+[Deeploy]  - Test Tiling Solution Correctness
+[Deeploy]  - Annotate Memory Levels
+[Deeploy]  - Test Memory Map Correctness
+[Deeploy] > Export State backend_post_parsing[.onnx|.pkl]
+[Deeploy] ================================================================================
+[Deeploy] Deeploy BackEnd
+[Deeploy] ================================================================================
+[Deeploy] - Performing code transformations and optimization...
+[Deeploy] > Export State backend_post_binding[.onnx|.pkl]
+[Deeploy] [SharedBuffers] input map: {0: 2, 1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 6: 8, 7: 9, 8: 10, 9: 11, 10: 12, 11: 13, 12: 14, 13: 15, 14: 16, 15: 17, 16: 18, 17: 19, 18: 20, 19: 21, 20: 22, 21: 23}
+[Deeploy] [SharedBuffers] output map: {0: 2, 1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 6: 8, 7: 9, 8: 10, 9: 11, 10: 12, 11: 13, 12: 14, 13: 15, 14: 16, 15: 17, 16: 18, 17: 19, 18: 20, 19: 21, 20: 22, 21: 23}
+[Deeploy] [TiledOptimizerNetwork] Sharing 22 inputs and 22 outputs with TrainingNetwork
+[Deeploy] ================================================================================
+[Deeploy] Deeploy Code Generation
+[Deeploy] ================================================================================
+[Deeploy] Input:
+[Deeploy]  - 'input_0': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_1': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_2': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_3': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_4': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_5': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_6': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_7': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_8': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_9': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_10': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_11': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_12': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_13': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_14': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_15': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_16': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_17': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_18': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_19': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_20': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy]  - 'input_21': Type: float32_t, nLevels: 4294967296, Signed: True, Offset: 0
+[Deeploy] Output:
+[Deeploy]  - 'output_0': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_1': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_2': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_3': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_4': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_5': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_6': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_7': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_8': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_9': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_10': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_11': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_12': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_13': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_14': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_15': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_16': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_17': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_18': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_19': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_20': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy]  - 'output_21': Type: float32_t, nLevels: 4294967296, Signed: True
+[Deeploy] Layer 'perturbrademacher_blocks_0_0_weight_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_0_0_bias_updated'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_blocks_0_1_weight_updated'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_blocks_0_1_bias_updated'
+[Deeploy]   Number of Operations        : 8
+[Deeploy] Layer 'perturbrademacher_blocks_1_0_weight_updated'
+[Deeploy]   Number of Operations        : 2048
+[Deeploy] Layer 'perturbrademacher_blocks_1_0_bias_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_1_1_weight_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_1_1_bias_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_2_0_weight_updated'
+[Deeploy]   Number of Operations        : 2048
+[Deeploy] Layer 'perturbrademacher_blocks_2_0_bias_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_2_1_weight_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_2_1_bias_updated'
+[Deeploy]   Number of Operations        : 16
+[Deeploy] Layer 'perturbrademacher_blocks_3_0_weight_updated'
+[Deeploy]   Number of Operations        : 3584
+[Deeploy] Layer 'perturbrademacher_blocks_3_0_bias_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_3_1_weight_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_3_1_bias_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_4_0_weight_updated'
+[Deeploy]   Number of Operations        : 7168
+[Deeploy] Layer 'perturbrademacher_blocks_4_0_bias_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_4_1_weight_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_blocks_4_1_bias_updated'
+[Deeploy]   Number of Operations        : 32
+[Deeploy] Layer 'perturbrademacher_fc_weight_updated'
+[Deeploy]   Number of Operations        : 288
+[Deeploy] Layer 'perturbrademacher_fc_bias_updated'
+[Deeploy]   Number of Operations        : 9
+[Deeploy] --------------------------------------------------------------------------------
+[Deeploy] Number of Ops.                : 15489
+[Deeploy] 
+[Deeploy] Memory Usage Report:
+[Deeploy]   Level          Capacity (bytes)      Total (    Static + Dynamic   ) (Usage )
+[Deeploy]   ------------------------------------------------------------------------------
+[Deeploy]   L3                   64,000,000          0 (         0 +          0) (  0.0%)
+[Deeploy]   L2                    2,000,000    123,912 (         0 +    123,912) (  6.2%)
+[Deeploy]   L1                      128,000     57,432 (        88 +     57,344) ( 44.9%)
+[Deeploy] Tiled optimizer network code generated in: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train
+[Deeploy] [Execution] CMake command: /usr/bin/cmake -DTOOLCHAIN=LLVM -DTOOLCHAIN_INSTALL_DIR=/app/install/llvm -DGENERATED_SOURCE=/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train -Dplatform=Siracusa -DTESTNAME=speechnet_zo_train -B/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master -DGVSOC_INSTALL_DIR=/app/install/gvsoc -DNUM_CORES=8 -Dbanshee_simulation=OFF -Dgvsoc_simulation=ON -DTRAINING=OFF -DMEZO_TRAINING=ON -DZO_EPS=0.01f -DZO_LR=3e-06f -DZO_Q=1 -DZO_SEED=0 -DBN_FROZEN_STATS=ON -DN_TRAIN_STEPS=1 -DN_ACCUM_STEPS=1 -DTRAINING_NUM_DATA_INPUTS=2 /app/TrainDeeploy
+-- Building for platform 'Siracusa'
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = Siracusa
+-- [Deeploy]     use_dma                = 1
+-- ================================================================================
+-- 
+-- ============================= Siracusa Configuration ============================
+-- [cMake  ]   ISA                    = rv32imf_xpulpv2
+-- [cMake  ]   Cluster Cores          = 8
+-- [cMake  ]   Fabric Controller      = 1
+-- [cMake  ]   Number of used cores   = 8
+-- ================================================================================
+-- 
+-- [PULP-NNX] Using the N-EUREKA accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+[Deeploy] [Execution] Build command: /usr/bin/cmake --build /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master --target speechnet_zo_train
+Consolidate compiler generated dependencies of target pulp-nnx
+[  0%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[  3%] Built target deeploybasic
+Scanning dependencies of target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-sdk
+[  8%] Built target pulp-sdk
+Consolidate compiler generated dependencies of target pulp-nn-mixed
+[ 95%] Built target pulp-nn-mixed
+Consolidate compiler generated dependencies of target deeploypulp
+[ 98%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 98%] Building C object DeeployTest/CMakeFiles/optimizer_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/OptimizerNetwork.c.obj
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/OptimizerNetwork.c:1:
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/OptimizerNetwork.h:8:
+[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m17 warnings generated.
+[ 98%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[100%] Building C object DeeployTest/CMakeFiles/training_network.dir/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c.obj
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:5:
+[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:6897:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_3_blocks_0_blocks_0_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:8503:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_7_blocks_1_blocks_1_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:9934:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_11_blocks_2_blocks_2_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:11303:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_15_blocks_3_blocks_3_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:12477:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Relu_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_Relu_fp32_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_18_blocks_4_blocks_4_2_Relu_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:12642:3: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_GlobalAveragePool_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+  PULP_GlobalAveragePool_fp32(DeeployNetwork_TILING_CODEGEN_L1_node_19_global_pool_GlobalAveragePool_data_in_ref,
+[0;1;32m  ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:12818:5: [0m[0;1;35mwarning: [0m[1mimplicit declaration of function 'PULP_Gemm_fp32_fp32_fp32_fp32' is invalid in C99 [-Wimplicit-function-declaration][0m
+    PULP_Gemm_fp32_fp32_fp32_fp32(
+[0;1;32m    ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13244:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_5_blocks_1_blocks_1_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_5_blocks_1_blocks_1_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13245:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_9_blocks_2_blocks_2_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_9_blocks_2_blocks_2_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13247:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_16_blocks_4_blocks_4_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_16_blocks_4_blocks_4_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13246:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_13_blocks_3_blocks_3_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_13_blocks_3_blocks_3_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13197:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13235:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13236:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_17_blocks_4_blocks_4_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13196:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_2_blocks_0_blocks_0_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13207:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13206:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_6_blocks_1_blocks_1_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13226:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13227:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_14_blocks_3_blocks_3_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13217:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_var_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_var_tensor;
+[0;1;32m             ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13243:9: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_1_blocks_0_blocks_0_0_Conv_buffer' [-Wunused-variable][0m
+  void *DeeployNetwork_node_1_blocks_0_blocks_0_0_Conv_buffer;
+[0;1;32m        ^
+[0m[1m/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/TrainingNetwork.c:13216:14: [0m[0;1;35mwarning: [0m[1munused variable 'DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_mean_tensor' [-Wunused-variable][0m
+  float32_t *DeeployNetwork_node_10_blocks_2_blocks_2_1_BatchNormalization_running_mean_tensor;
+[0;1;32m             ^
+[0m39 warnings generated.
+[100%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_zo_train
+[100%] Building C object DeeployTest/Platforms/Siracusa/CMakeFiles/speechnet_zo_train.dir/src/deeploymezotest.c.obj
+In file included from /app/TrainDeeploy/DeeployTest/Platforms/Siracusa/src/deeploymezotest.c:64:
+In file included from /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/Tests/Models/Training/SpeechNet/speechnet_zo_train/OptimizerNetwork.h:8:
+[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:98:61: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->cycles > 0 ? (float)stats->instr / stats->cycles : 0.0f);
+[0;1;32m                                                   ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:101:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->ld / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:59: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                                 ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:103:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->st / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:63: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                                     ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:105:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->branch / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:70: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                                            ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:107:48: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->branch > 0 ? 100.0f * stats->taken_branch / stats->branch
+[0;1;32m                                      ~ ~~~~~~~^~~~~~~~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:110:47: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->instr > 0 ? 100.0f * stats->rvc / stats->instr : 0.0f);
+[0;1;32m                                     ~ ~~~~~~~^~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:118:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld > 0 ? 100.0f * stats->ld_ext / stats->ld : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:60: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                                  ~ ~~~~~~~^~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:120:44: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st > 0 ? 100.0f * stats->st_ext / stats->st : 0.0f);
+[0;1;32m                                  ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:122:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->ld_ext > 0 ? (float)stats->ld_ext_cyc / stats->ld_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m[1m/app/TrainDeeploy/TargetLibraries/PULPOpen/inc/perf_utils.h:124:66: [0m[0;1;35mwarning: [0m[1mimplicit conversion from 'unsigned int' to 'float' may lose precision [-Wimplicit-int-float-conversion][0m
+           stats->st_ext > 0 ? (float)stats->st_ext_cyc / stats->st_ext : 0.0f);
+[0;1;32m                                                        ~ ~~~~~~~^~~~~~
+[0m17 warnings generated.
+[100%] Linking C executable ../../../bin/speechnet_zo_train
+clang-15: [0;1;35mwarning: [0m[1margument unused during compilation: '-nostartfiles' [-Wunused-command-line-argument][0m
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/string/memchr.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_config.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_exp.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/math/sf_log.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_uflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_oflowf.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_divzerof.c
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libc/machine/riscv/machine/math.h
+/app/install/llvm/bin/llvm-objdump: warning: '/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/bin/speechnet_zo_train': failed to find source /app/toolchain/picolibc/build-rv32imf/../newlib/libm/common/math_errf_invalidf.c
+[100%] Built target speechnet_zo_train
+[Deeploy] [Execution] Simulation command: /usr/bin/cmake --build /app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master --target gvsoc_speechnet_zo_train
+[  0%] Built target pulp-nnx
+[  3%] Built target deeploybasic
+[  8%] Built target pulp-sdk
+[ 94%] Built target pulp-nn-mixed
+[ 97%] Built target deeploypulp
+Consolidate compiler generated dependencies of target optimizer_network
+[ 97%] Built target optimizer_network
+Consolidate compiler generated dependencies of target training_network
+[ 98%] Built target training_network
+Consolidate compiler generated dependencies of target speechnet_zo_train
+[ 98%] Built target speechnet_zo_train
+[100%] POST_BUILD
+Error copying file (if different) from "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/*.bin" to "/app/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master/gvsoc_workdir/".
+=== Siracusa MeZO (ZO) Training Harness ===
+N_TRAIN_STEPS=1  N_ACCUM_STEPS=1  DATA_INPUTS=2
+ZO_EPS=0.010000  ZO_LR=0.000003000  ZO_Q=1  ZO_SEED=0
+Initializing TrainingNetwork (zo_train)...
+Initializing OptimizerNetwork (zo_update)...
+Starting ZO training (1 update steps x 1 accum steps)...
+[BN_FROZEN_STATS] training BN uses frozen running statistics (train==inference)
+update 1/1  accum 1/1  (mini-batch 0)  seed_base=0

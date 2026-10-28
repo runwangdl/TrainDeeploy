@@ -1,0 +1,4 @@
+# regenerable large intermediates
+qinfer_round1/
+qinfer_ref_traj/
+logs/*.log

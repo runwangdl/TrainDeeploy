@@ -35,6 +35,27 @@ class _RequantShiftTemplate(NodeTemplate):
             operatorRepresentation['output_min'] = 0
             operatorRepresentation['output_max'] = operatorRepresentation['n_levels'] - 1
 
+        # QW: `rounding` must MATCH what PULPConvRequantMergePass would have done, because a
+        #     RequantShift that stays standalone and one fused into a RequantizedConv must compute
+        #     the same thing.
+        #
+        #     `_merge_conv_rq_fun` bakes `+div/2` into the add **only when the add is a CONSTANT**;
+        #     for a runtime add (a perturbed bias -- an RQSPerturbRademacher output, i.e. the
+        #     quantized-ZO case) it bakes nothing and the fused kernel truncates, matching the host
+        #     reference. This template passed `rounding = 1` unconditionally.
+        #
+        #     Constant add: the two agree by construction -- merged is
+        #     `(acc*mul + add + div/2) >> s` with div/2 baked and the kernel truncating; standalone
+        #     is the same because the kernel adds div/2 itself. VARIABLE add: they diverged by
+        #     exactly div/2, a systematic +0.5 LSB on every output element.
+        #
+        #     Invisible until NE16 started leaving RequantShifts un-merged -- with every conv fused,
+        #     no standalone RequantShift with a runtime add ever existed. This is what made
+        #     SpeechNet QZO's loss wrong on NE16 while every single-layer fixture passed (those bake
+        #     the perturbed bias into a *constant*, so they took the agreeing branch). -- QW
+        addBuffer = ctxt.lookup(operatorRepresentation['add'])
+        operatorRepresentation['rqs_rounding'] = int(hasattr(addBuffer, "values") and addBuffer.values is not None)
+
         return ctxt, operatorRepresentation, []
 
 
@@ -51,8 +72,8 @@ outSignage = "s" if signedO else "u"
 
 // RequantShift (Name: ${nodeName}, Op: ${nodeOp})
     % if channels_first:
-    RequantShift_${inSignage}${data_in_type.referencedType.typeWidth}_${outSignage}${data_out_type.referencedType.typeWidth}_NCHW(${data_in}, ${size}, ${mul}, ${add}, ${data_out}, ${log2Dstring}, ${channel_width}, 0, 0 , ${output_min}, ${output_max}, 1);
+    RequantShift_${inSignage}${data_in_type.referencedType.typeWidth}_${outSignage}${data_out_type.referencedType.typeWidth}_NCHW(${data_in}, ${size}, ${mul}, ${add}, ${data_out}, ${log2Dstring}, ${channel_width}, 0, 0 , ${output_min}, ${output_max}, ${rqs_rounding});
     % else:
-    RequantShift_${inSignage}${data_in_type.referencedType.typeWidth}_${outSignage}${data_out_type.referencedType.typeWidth}_NHWC(${data_in}, ${size}, ${mul}, ${add}, ${data_out}, ${log2Dstring}, ${channels}, 0, 0, ${output_min}, ${output_max}, 1);
+    RequantShift_${inSignage}${data_in_type.referencedType.typeWidth}_${outSignage}${data_out_type.referencedType.typeWidth}_NHWC(${data_in}, ${size}, ${mul}, ${add}, ${data_out}, ${log2Dstring}, ${channels}, 0, 0, ${output_min}, ${output_max}, ${rqs_rounding});
     %endif
 """)

@@ -13,7 +13,7 @@ from Deeploy.Targets.Generic.TileConstraints.NOPTileConstraint import NOPTileCon
 from Deeploy.Targets.Generic.TileConstraints.RQSiGELUTileConstraint import RQSiGELUTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.RQSiHardswishTileConstraint import RQSiHardswishTileConstraint
 from Deeploy.Targets.Generic.TileConstraints.TransposeTileConstraint import TransposeTileConstraint
-from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryTileConstraint
+from Deeploy.Targets.Generic.TileConstraints.UnaryTileConstraint import UnaryRowTileConstraint, UnaryTileConstraint
 from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBindings, PULPAddBindings, \
     PULPAveragePool2DBindings, PULPAveragePoolGrad2DBindings, PULPBatchNormalizationGradBindings, \
     PULPBatchNormInternalBindings, PULPConcatBindings, PULPFloatConv2DBindings, PULPFloatConvGradBBindings, \
@@ -23,12 +23,15 @@ from Deeploy.Targets.PULPOpen.Bindings import BasicDequantBindings, BasicQuantBi
     PULPGlobalAveragePool2DBindings, PULPGlobalAveragePoolGrad2DBindings, PULPiHardswishBindings, \
     PULPInPlaceAccumulatorV2Bindings, PULPiRMSNormBindings, PULPiRQSGELUBindings, PULPLayernormBinding, \
     PULPLayernormGradBinding, PULPMatMulBindings, PULPMaxPool1DBindings, PULPMaxPool2DBindings, \
+    PULPMaxPoolArgmaxBindings, PULPMaxPoolGradMaskBindings, \
     PULPMaxPoolGrad2DBindings, PULPMSELossBindings, PULPMSELossGradBindings, PULPMulBindings, PULPReduceMeanBindings, \
     PULPReduceSumBindings, PULPReluBinding, PULPReluGradBinding, PULPReshapeBindings, PULPRQAddBindings, \
     PULPRQSBindings, PULPRQSConv1DBindings, PULPRQSConv2DBindings, PULPRQSDWConv2DBindings, PULPRQSGEMMBindings, \
     PULPRQSiHardswishBindings, PULPRQSMatrixVecBindings, PULPRQSTallGEMMBindings, PULPSGDBindings, PULPSliceBindings, \
     PULPSoftmaxBindings, PULPSoftmaxCrossEntropyLossBindings, PULPSoftmaxCrossEntropyLossGradBindings, \
-    PULPSoftmaxGradBindings, PULPTransposeBindings, PULPUniformRQSBindings
+    PULPSoftmaxGradBindings, PULPTransposeBindings, PULPUniformRQSBindings, \
+    PULPPerturbRademacherBindings  # -- QW (FP32 PerturbRademacher ZO op)
+from Deeploy.Targets.PULPOpen.TileConstraints.PerturbTileConstraint import PerturbTileConstraint  # -- QW
 from Deeploy.Targets.PULPOpen.TileConstraints.AveragePoolTileConstraint import AveragePoolCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.BatchNormTileConstraint import BatchNormalizationGradTileConstraint, \
     BatchNormInternalTileConstraint
@@ -53,7 +56,8 @@ from Deeploy.Targets.PULPOpen.TileConstraints.LayernormTileConstraint import Lay
     LayernormTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MatMulTileConstraint import MatMulTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolGradTileConstraint import MaxPoolGradCTileConstraint
-from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint
+from Deeploy.Targets.PULPOpen.TileConstraints.MaxPoolTileConstraint import MaxPoolCTileConstraint, \
+    MaxPoolHCTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.MSELossTileConstraint import MSELossGradTileConstraint, \
     MSELossTileConstraint
 from Deeploy.Targets.PULPOpen.TileConstraints.ReduceMeanConstraint import ReduceMeanTileConstraint
@@ -113,7 +117,11 @@ PULPMaxPool1DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMa
                                                            tileConstraint = MaxPoolCTileConstraint())
 
 PULPMaxPool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMaxPool2DBindings,
-                                                           tileConstraint = MaxPoolCTileConstraint())
+                                                           tileConstraint = MaxPoolHCTileConstraint())  # RW 2026-10-13: row tiles, contiguous DMA
+
+# QW: Part-4 MaxPoolArgmax reuses the single-output channel-tiling constraint (like MaxPool). -- QW
+PULPMaxPoolArgmaxTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMaxPoolArgmaxBindings,
+                                                               tileConstraint = MaxPoolCTileConstraint())
 
 PULPAveragePool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPAveragePool2DBindings,
                                                                tileConstraint = AveragePoolCTileConstraint())
@@ -123,6 +131,10 @@ PULPAveragePoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings 
 
 PULPMaxPoolGrad2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMaxPoolGrad2DBindings,
                                                                tileConstraint = MaxPoolGradCTileConstraint())
+
+# QW: Part-4 mask-grad reuses the channel-tiling grad constraint (reads x_in actual shape). -- QW
+PULPMaxPoolGradMaskTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPMaxPoolGradMaskBindings,
+                                                                 tileConstraint = MaxPoolGradCTileConstraint())
 
 PULPGlobalAveragePool2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPGlobalAveragePool2DBindings,
                                                                      tileConstraint = GlobalAveragePoolTileConstraint())
@@ -157,7 +169,7 @@ PULPTransposeTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPTr
 # NodeBindings carry no tileConstraint on their template and the tiler aborts with
 # `AttributeError: '_DequantTemplate' object has no attribute 'tileConstraint'`.
 PULPDequantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicDequantBindings,
-                                                         tileConstraint = UnaryTileConstraint())
+                                                         tileConstraint = UnaryRowTileConstraint())  # RW 2026-10-13
 
 PULPQuantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = BasicQuantBindings,
                                                        tileConstraint = UnaryTileConstraint())
@@ -219,6 +231,19 @@ PULPSGDTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPSGDBindi
 PULPInPlaceAccumulatorV2TilingReadyBindings = TilingReadyNodeBindings(
     nodeBindings = PULPInPlaceAccumulatorV2Bindings, tileConstraint = InPlaceAccumulatorV2TileConstraint())
 
+# Ported from Deeploy zo-support (FP32 PerturbRademacher ZO op): per-tile seed via PerturbTileConstraint. -- QW
+PULPPerturbRademacherTilingReadyBindings = TilingReadyNodeBindings(  # -- QW
+    nodeBindings = PULPPerturbRademacherBindings, tileConstraint = PerturbTileConstraint())  # -- QW
+# -- QW (dual_pass_fusion exp8): DualHalf (dual-pass tail), untiled. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPDualHalfBindings as _DHB  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.UntiledTileConstraint import DualHalfTileConstraint  # -- QW
+PULPDualHalfTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _DHB, tileConstraint = DualHalfTileConstraint())  # -- QW
+# -- QW (dual_pass_fusion exp8): fixed-sign fp32 perturbation (dual-pass graph), untiled. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPPerturbRademacherFixedBindings as _PRFB  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.UntiledTileConstraint import PerturbRademacherFixedTileConstraint  # -- QW
+PULPPerturbRademacherFixedTilingReadyBindings = TilingReadyNodeBindings(  # -- QW
+    nodeBindings = _PRFB, tileConstraint = PerturbRademacherFixedTileConstraint())  # -- QW
+
 PULPSliceTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPSliceBindings,
                                                        tileConstraint = SliceTileConstraint())
 
@@ -245,3 +270,47 @@ PULPPWConvGradX2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PU
 
 PULPConvGradBTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = PULPFloatConvGradBBindings,
                                                            tileConstraint = ConvGradBTileConstraint())
+
+
+# -- QW: RQSPerturbRademacher tiling-ready binding (quantized ZO), ported from shipped Deeploy
+from Deeploy.Targets.PULPOpen.TileConstraints.RQSPerturbTileConstraint import RQSPerturbTileConstraint as _RQSPerturbTC  # -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPRQSPerturbRademacherBindings as _PULPRQSPRB  # -- QW
+PULPRQSPerturbRademacherTilingReadyBindings = TilingReadyNodeBindings(nodeBindings=_PULPRQSPRB, tileConstraint=_RQSPerturbTC())  # -- QW
+
+
+# -- QW: Quant/Dequant tiling-ready bindings (UnaryTileConstraint) for the unfolded-BN mixed quant graph
+from Deeploy.Targets.PULPOpen.Bindings import BasicQuantBindings as _BQB2, BasicDequantBindings as _BDB2  # -- QW
+PULPQuantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings=_BQB2, tileConstraint=UnaryTileConstraint())  # -- QW
+# PULPDequantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings=_BDB2, tileConstraint=UnaryTileConstraint())  # -- QW
+PULPDequantTilingReadyBindings = TilingReadyNodeBindings(nodeBindings=_BDB2, tileConstraint=UnaryRowTileConstraint())  # RW 2026-10-13: row tiles (contiguous DMA); this later definition is the one in effect
+
+# -- QW (dual_pass_fusion exp5): tiling-ready binding for the fused dual-pass QZO conv -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPDualConv2DBindings as _PULPDualConv2DBindings  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.DualConvTileConstraint import DualConv2DTileConstraint as _DualConv2DTC  # -- QW
+PULPDualConv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPDualConv2DBindings,  # -- QW
+                                                            tileConstraint = _DualConv2DTC())  # -- QW
+# -- QW (dual_pass_fusion exp7 step 3): 7-input RequantizedDualConv (blocks 1-4). -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPDualConv2D2InBindings as _PULPDualConv2D2InBindings  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.DualConv2InTileConstraint import \
+    DualConv2D2InTileConstraint as _DualConv2D2InTC  # -- QW
+PULPDualConv2D2InTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPDualConv2D2InBindings,  # -- QW
+                                                               tileConstraint = _DualConv2D2InTC())  # -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPDualConv2DStackedBindings as _PULPDualConv2DStackedBindings  # -- QW exp8
+PULPDualConv2DStackedTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPDualConv2DStackedBindings,  # -- QW
+                                                                   tileConstraint = _DualConv2D2InTC())  # -- QW exp8
+# -- QW (dual_pass_fusion exp11): single-pass in-kernel-perturbation conv. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPPerturbConv2DBindings as _PULPPerturbConv2DBindings  # -- QW
+from Deeploy.Targets.PULPOpen.TileConstraints.DualConv2InTileConstraint import \
+    PerturbConv2DTileConstraint as _PerturbConv2DTC  # -- QW
+PULPPerturbConv2DTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPPerturbConv2DBindings,  # -- QW
+                                                               tileConstraint = _PerturbConv2DTC())  # -- QW
+
+# -- QW (dual_pass_fusion exp5a): single-pass control kernel on the ordinary RequantizedConv; same tile constraint
+#    as pulp-nn's binding (RQConv2DTileConstraint), so the tiling is identical -- only the kernel call differs. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPRQSConv2DFlatBindings as _PULPRQSConv2DFlatBindings  # -- QW
+PULPRQSConv2DFlatTilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPRQSConv2DFlatBindings,  # -- QW
+                                                               tileConstraint = RQConv2DTileConstraint())  # -- QW
+# -- QW (dual_pass_fusion exp7a step 2a): Conv4x2 control kernel, same tile constraint as pulp-nn's binding. -- QW
+from Deeploy.Targets.PULPOpen.Bindings import PULPRQSConv2D4x2Bindings as _PULPRQSConv2D4x2Bindings  # -- QW
+PULPRQSConv2D4x2TilingReadyBindings = TilingReadyNodeBindings(nodeBindings = _PULPRQSConv2D4x2Bindings,  # -- QW
+                                                              tileConstraint = RQConv2DTileConstraint())  # -- QW

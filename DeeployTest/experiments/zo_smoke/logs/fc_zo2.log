@@ -1,0 +1,60 @@
+[Deeploy] Test path /app/ETH/Onnx4Deeploy/onnx/model/fc_zo_train is outside base directory. Using /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/fc_zo_train
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : fc_zo_train
+  Test Directory      : /app/ETH/Onnx4Deeploy/onnx/model/fc_zo_train
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/fc_zo_train
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_SIRACUSA/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : Siracusa
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=2000000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[W] colored module is not installed, will not use colors when logging. To enable colors, please install the colored module: python3 -m pip install colored
+[W] Inference failed. You may want to try enabling partitioning to see better results. Note: Error was:
+[ONNXRuntimeError] : 10 : INVALID_GRAPH : This is an invalid model. In Node, ("_0", PerturbRademacher, "", -1) : ("fc_weight_tensor": tensor(float),) -> ("p_fc_weight_tensor": tensor(float),) , Error No Op registered for PerturbRademacher with domain_version of 21
+[Deeploy] Error during binding! Exporting deeploy state!
+Traceback (most recent call last):
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPOptimizer.py", line 224, in <module>
+    generateTiledOptimizerNetwork(args)
+  File "/app/ETH/TrainDeeploy/DeeployTest/testMVPOptimizer.py", line 134, in generateTiledOptimizerNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3514, in prepare
+    self.midEnd()
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3477, in midEnd
+    raise e
+  File "/app/ETH/TrainDeeploy/Deeploy/DeeployTypes.py", line 3473, in midEnd
+    self.bind()
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerExtension.py", line 2215, in bind
+    self.tile()
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerExtension.py", line 2168, in tile
+    tilingSolution = self.tiler.computeTilingSchedule(self.ctxt)
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerExtension.py", line 730, in computeTilingSchedule
+    collector = self.tilerModel.trySolveModel()
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerModel.py", line 360, in trySolveModel
+    return self._solveModel(self.searchStrategy)
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerModel.py", line 391, in _solveModel
+    objective = self._setupObjective()
+  File "/app/ETH/TrainDeeploy/Deeploy/TilingExtension/TilerModel.py", line 345, in _setupObjective
+    _objective = self._objectives[_patternIdx]
+IndexError: list index out of range
+
+[91m✗ Test fc_zo_train FAILED with exception: Tiled MeZO update network generation failed for fc_zo_train[0m

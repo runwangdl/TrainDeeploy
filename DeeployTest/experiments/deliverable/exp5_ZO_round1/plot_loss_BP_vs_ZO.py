@@ -1,0 +1,27 @@
+import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt; import numpy as np
+from matplotlib.ticker import FuncFormatter
+bp=np.load("/tmp/bp.npy"); LP=np.load("/tmp/zolp.npy"); LM=np.load("/tmp/zolm.npy"); avg=np.load("/tmp/zoavg.npy")
+def em(a,per=54): E=len(a)//per; return a[:E*per].reshape(E,per).mean(1)
+bp_e=em(bp); av_e=em(avg); lp_e=em(LP); lm_e=em(LM)
+xb=np.arange(len(bp_e))+1; xz=np.arange(len(av_e))+1
+plt.rcParams.update({"font.size":12})
+fig,ax=plt.subplots(figsize=(9.8,5.8))
+# ZO band between epoch-mean L+ and L- (shows it's an average of the two perturbed losses)
+ax.fill_between(xz, np.minimum(lp_e,lm_e), np.maximum(lp_e,lm_e), color="#C44E52", alpha=0.12,
+                label="ZO  L⁺ / L⁻ spread (epoch mean)")
+ax.plot(xz, av_e, color="#8f2f38", lw=2.0, label="ZO  ½(L⁺+L⁻)  (epoch mean)")
+ax.plot(xb, bp_e, color="#1f3b63", lw=2.3, marker="o", ms=3, label="BP  loss (epoch mean)")
+ax.set_yscale("log")
+ax.set_xlabel("epoch", fontsize=13)
+ax.set_ylabel("training loss  (softmax cross-entropy)", fontsize=13)
+ax.set_xlim(1,200); ax.set_ylim(0.03,0.9)
+ax.set_yticks([0.03,0.05,0.07,0.1,0.15,0.2,0.3,0.5,0.7])
+ax.yaxis.set_major_formatter(FuncFormatter(lambda v,_: f"{v:g}"))
+ax.set_xticks(np.arange(0,201,20))
+ax.grid(True,which="major",color="#eaeaea"); ax.set_axisbelow(True)
+ax.axvline(40,color="#1f3b63",ls=":",lw=1)
+ax.text(41,0.033,"BP ends (40 ep)",color="#1f3b63",fontsize=9,va="bottom")
+ax.set_title("BP vs ZO round-1 fine-tuning loss — S01/fold3 (epoch mean)", fontsize=12.5)
+ax.legend(fontsize=10, loc="upper right", framealpha=0.95)
+plt.tight_layout(); plt.savefig("loss_BP_vs_ZO.png",dpi=150); plt.close()
+print(f"saved. BP {bp_e[0]:.3f}->{bp_e[-1]:.3f} (40ep) ; ZO avg {av_e[0]:.3f}->{av_e.min():.3f}->{av_e[-1]:.3f} (200ep)")

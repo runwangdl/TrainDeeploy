@@ -1,0 +1,29 @@
+{
+  "reference": {
+    "path": "artifacts_reference/models/inter_session_ft/S01/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt",
+    "sha256": "18ead42ce97428b4",
+    "epochs_ran": 47,
+    "best_epoch": 38,
+    "requested_num_epochs": 100,
+    "best_val_loss": 0.26385671986887854,
+    "best_val_acc": 0.9138888888888889,
+    "final_val_acc": 0.9083333333333333,
+    "n_tensors": 37
+  },
+  "old_mac": {
+    "path": "artifacts/models/inter_session_ft/S01/vocalized/speechnet/w1400ms/model_1/leave_one_session_out_fold_3.pt",
+    "sha256": "bef7fd6fedaaf1cb",
+    "epochs_ran": 30,
+    "best_epoch": 21,
+    "requested_num_epochs": 100,
+    "best_val_loss": 0.40009187906980515,
+    "best_val_acc": 0.8972222222222223,
+    "final_val_acc": 0.8638888888888889,
+    "n_tensors": 37
+  },
+  "diff": {
+    "n_differing": 37,
+    "n_total": 37,
+    "num_batches_tracked_delta": 765
+  }
+}

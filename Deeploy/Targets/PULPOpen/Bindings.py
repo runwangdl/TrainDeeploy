@@ -23,6 +23,7 @@ from Deeploy.Targets.Generic.TypeCheckers import AddChecker, BatchNormalizationG
     MaxPoolGradChecker, MSELossChecker, MulChecker, PULPConvGradBChecker, QuantChecker, ReduceMeanChecker, \
     ReluChecker, ReshapeChecker, RQAddChecker, RQHardswishChecker, SGDChecker, SliceChecker, SoftmaxChecker, \
     SoftmaxCrossEntropyLossChecker, TransposeChecker
+from Deeploy.Targets.Generic.TypeCheckers import PerturbZOChecker  # -- QW (FP32 PerturbRademacher ZO op)
 from Deeploy.Targets.PULPOpen.CodeTransformationPasses.PULPClusterSynch import PULPSynchCoresPass
 from Deeploy.Targets.PULPOpen.CodeTransformationPasses.PULPClusterTiling import PULPClusterTiling
 from Deeploy.Targets.PULPOpen.CodeTransformationPasses.PULPL3Tiling import PULPL3Tiling
@@ -39,8 +40,9 @@ from Deeploy.Targets.PULPOpen.Templates import ConvTemplate, DMASliceTemplate, F
     MulTemplate, ReduceMeanTemplate, RequantShiftTemplate, ReshapeTemplate, RQAddTemplate, RQSiHardswishTemplate, \
     SGDTemplate, SoftmaxCrossEntropyLossTemplate, TallGEMMTemplate, TransposeTemplate, UniformRequantShiftTemplate, \
     iRMSNormTemplate, iSoftmaxTemplate
+from Deeploy.Targets.PULPOpen.Templates import FloatPerturbRademacherTemplate  # -- QW (FP32 PerturbRademacher ZO op)
 from Deeploy.Targets.PULPOpen.TypeCheckers import PULPConvChecker, PULPDequantConvChecker, PULPDequantMatMulChecker, \
-    PULPLinearChecker, PULPMaxPoolChecker, PULPRequantShiftChecker
+    PULPLinearChecker, PULPMaxPoolArgmaxChecker, PULPMaxPoolChecker, PULPRequantShiftChecker
 from Deeploy.TilingExtension.CodeTransformationPasses.TilingVariableReplacement import TilingVariableReplacement, \
     TilingVariableReplacementUpdate
 
@@ -338,6 +340,13 @@ PULPMaxPool2DBindings = [
                 FloatMaxPoolTemplate.referenceTemplate, ForkTransformer)
 ]
 
+# QW: Part-4 MaxPoolArgmax — fp32 activation in -> fp32 within-window offset mask out
+# (offset stored as float; keeps the training graph all-float32). -- QW
+PULPMaxPoolArgmaxBindings = [
+    NodeBinding(PULPMaxPoolChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMaxPoolTemplate.argmaxTemplate, ForkTransformer)
+]
+
 PULPAveragePool2DBindings = [
     NodeBinding(PULPMaxPoolChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatAveragePoolTemplate.referenceTemplate, ForkTransformer)
@@ -351,6 +360,13 @@ PULPAveragePoolGrad2DBindings = [
 PULPMaxPoolGrad2DBindings = [
     NodeBinding(MaxPoolGradChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
                 FloatMaxPoolTemplate.referenceGradTemplate, ForkTransformer)
+]
+
+# QW: Part-4 distinct mask-consuming grad op (2nd input = fp32 argmax offset mask, pooled
+# shape). Distinct op-type MaxPoolGradMask avoids ambiguity with the recompute grad. -- QW
+PULPMaxPoolGradMaskBindings = [
+    NodeBinding(MaxPoolGradChecker([PointerClass(float32_t), PointerClass(float32_t)], [PointerClass(float32_t)]),
+                FloatMaxPoolTemplate.referenceGradMaskTemplate, ForkTransformer)
 ]
 
 PULPMSELossBindings = [
@@ -378,7 +394,10 @@ PULPGlobalAveragePoolGrad2DBindings = [
 # 5 inputs (X, gamma, beta, running_mean, running_var), 5 outputs (Y, urm, urv, saved_mean, saved_inv_std)
 PULPBatchNormInternalBindings = [
     NodeBinding(BatchNormInternalChecker([PointerClass(float32_t)] * 5, [PointerClass(float32_t)] * 5),
-                FloatBatchNormTemplate.batchNormInternalTemplate, ForkTransformer)
+                FloatBatchNormTemplate.batchNormInternalTemplate, ForkTransformer),
+    # RW 2026-10-15: int8 input = a Dequant folded in by FoldDequantIntoFrozenBNPass
+    NodeBinding(BatchNormInternalChecker([PointerClass(int8_t)] + [PointerClass(float32_t)] * 4, [PointerClass(float32_t)] * 5),
+                FloatBatchNormTemplate.batchNormInternalTemplate, ForkTransformer),
 ]
 
 # 5 inputs (dY, X, gamma, saved_mean, saved_inv_std), 3 outputs (dX, dgamma, dbeta)
@@ -496,6 +515,26 @@ PULPInPlaceAccumulatorV2Bindings = [
         ForkTransformer)
 ]
 
+# Ported from Deeploy zo-support (FP32 PerturbRademacher ZO op): in-place-capable float32 perturb. -- QW
+PULPPerturbRademacherBindings = [  # -- QW
+    NodeBinding(  # -- QW
+        PerturbZOChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),  # -- QW
+        FloatPerturbRademacherTemplate.referenceTemplate,  # -- QW
+        ForkTransformer)]  # -- QW
+
+# -- QW (dual_pass_fusion exp8): DualHalf -- one pass's half of a stacked fp32 vector. -- QW
+from Deeploy.Targets.PULPOpen.Templates import DualHalfTemplate as _DualHalfTemplate  # -- QW
+PULPDualHalfBindings = [  # -- QW
+    NodeBinding(PerturbZOChecker([PointerClass(float32_t)], [PointerClass(float32_t)]), _DualHalfTemplate.referenceTemplate,
+                ForkTransformer)  # -- QW
+]  # -- QW
+# -- QW (dual_pass_fusion exp8): fixed-sign fp32 perturbation for the dual-pass graph. -- QW
+from Deeploy.Targets.PULPOpen.Templates import FloatPerturbRademacherFixedTemplate as _FPRFixedTemplate  # -- QW
+PULPPerturbRademacherFixedBindings = [  # -- QW
+    NodeBinding(PerturbZOChecker([PointerClass(float32_t)], [PointerClass(float32_t)]),  # -- QW
+                _FPRFixedTemplate.referenceTemplate, ForkTransformer)  # -- QW
+]  # -- QW
+
 PULPTransposeBindings = [
     NodeBinding(TransposeChecker([PointerClass(type)], [PointerClass(type)]), TransposeTemplate.referenceTemplate,
                 ForkTransformer) for type in IntegerDataTypes
@@ -600,17 +639,99 @@ PULPGatherBindings = [
                 GatherTemplate.referenceTemplate, ForkTransformer) for type in IntegerDataTypes
 ]
 
+# QW: exp10 found the Generic (BEGIN_SINGLE_CORE) Quant/Dequant templates cost ~1400 cyc/element
+#     (97.9% of the QZO step). The shipped Deeploy reference DELIVERS 8-core parallel PULP
+#     templates (Targets/PULPOpen/Templates/{Quant,Dequant}Template.py) that were never wired
+#     into Bindings.py — wire them here. Originals kept commented below. -- QW
+from Deeploy.Targets.PULPOpen.Templates import QuantTemplate as PULPQuantTemplate  # -- QW
+from Deeploy.Targets.PULPOpen.Templates import DequantTemplate as PULPDequantTemplate  # -- QW
+
 BasicQuantBindings = [
-    NodeBinding(QuantChecker([PointerClass(float32_t)], [PointerClass(int8_t)]), QuantTemplate.referenceTemplate,
-                ForkTransformer),
+    NodeBinding(QuantChecker([PointerClass(float32_t)], [PointerClass(int8_t)]),
+                PULPQuantTemplate.referenceTemplate, ForkTransformer),  # -- QW parallel
+    # QW: original single-core Generic mapping (kept for reference):
+    # NodeBinding(QuantChecker([PointerClass(float32_t)], [PointerClass(int8_t)]), QuantTemplate.referenceTemplate,
+    #             ForkTransformer),
 ]
 
 # uint8 covers the output of an unsigned (ReLU) requant, e.g. an integer conv tokenizer
 # handing its features to a float backbone.
 BasicDequantBindings = [
-    NodeBinding(DequantChecker([PointerClass(type)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
-                ForkTransformer) for type in (int8_t, uint8_t)
-] + [
-    NodeBinding(DequantChecker([PointerClass(int32_t)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
-                ForkTransformer),
+    NodeBinding(DequantChecker([PointerClass(type)], [PointerClass(float32_t)]),
+                PULPDequantTemplate.referenceTemplate, ForkTransformer)  # -- QW parallel; RW merge: + uint8 from devel
+    for type in (int8_t, uint8_t, int32_t)
+    # QW: original single-core Generic mappings (kept for reference):
+    # NodeBinding(DequantChecker([PointerClass(int8_t)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
+    #             ForkTransformer),
+    # NodeBinding(DequantChecker([PointerClass(int32_t)], [PointerClass(float32_t)]), DequantTemplate.referenceTemplate,
+    #             ForkTransformer),
+]
+
+
+# -- QW: RQSPerturbRademacher bindings (quantized ZO), ported from shipped Deeploy
+from Deeploy.Targets.Generic.TypeCheckers import RQSPerturbZOChecker as _RQSPerturbZOChecker  # -- QW
+from Deeploy.Targets.PULPOpen.Templates import RQSPerturbRademacherTemplate as _RQSPRT  # -- QW
+from Deeploy.Targets.PULPOpen.Templates import RQSPerturbRademacher_i32_Template as _RQSPRT32  # -- QW
+PULPRQSPerturbRademacherBindings = [  # -- QW
+    NodeBinding(_RQSPerturbZOChecker([PointerClass(int8_t), PointerClass(int32_t)], [PointerClass(int8_t)]),
+                _RQSPRT.referenceTemplate, ForkTransformer),
+    NodeBinding(_RQSPerturbZOChecker([PointerClass(int32_t), PointerClass(int32_t)], [PointerClass(int32_t)]),
+                _RQSPRT32.referenceTemplate, ForkTransformer),
+]
+
+# -- QW (dual_pass_fusion exp5): fused dual-pass QZO conv. Six int inputs (in, W, mul, add, wmul, bmul),
+#    one int8 output carrying A+ then A- on the channel axis. Reuses PULPConvChecker (n_levels/signed). -- QW
+from Deeploy.Targets.PULPOpen.Templates import DualConvTemplate as _DualConvTemplate  # -- QW
+PULPDualConv2DBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t), PointerClass(int32_t)], [PointerClass(int8_t)]),
+        _DualConvTemplate.referenceTemplate, ForkTransformer)
+]
+
+# -- QW (dual_pass_fusion exp7 step 3): 7-input RequantizedDualConv (blocks 1-4): x+, W (raw CHW), mul, add, wmul,
+#    bmul, x-; one int8 output [A+ | A-]. Same checker / transformer as the 6-input binding. -- QW
+from Deeploy.Targets.PULPOpen.Templates import DualConv2InTemplate as _DualConv2InTemplate  # -- QW
+PULPDualConv2D2InBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t), PointerClass(int32_t), PointerClass(int8_t)], [PointerClass(int8_t)]),
+        _DualConv2InTemplate.referenceTemplate, ForkTransformer)
+]
+# -- QW (dual_pass_fusion exp11): single-pass in-kernel-perturbation conv (RequantizedDualConv, single_pass = 1). -- QW
+from Deeploy.Targets.PULPOpen.Templates import PerturbConv4x2Template as _PerturbConv4x2Template  # -- QW
+PULPPerturbConv2DBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t), PointerClass(int32_t)], [PointerClass(int8_t)]),
+        _PerturbConv4x2Template.referenceTemplate, ForkTransformer)
+]
+# -- QW (dual_pass_fusion exp8): stacked-input form (6 inputs). -- QW
+PULPDualConv2DStackedBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t), PointerClass(int32_t)], [PointerClass(int8_t)]),
+        _DualConv2InTemplate.stackedTemplate, ForkTransformer)
+]
+
+# -- QW (dual_pass_fusion exp5a): single-pass control kernel with DualConv's structure, bound to the ordinary
+#    RequantizedConv (int8 in / int8 out / int8 weight only). Same checker and transformer as PULPRQSConv2DBindings;
+#    only the template (and thus the kernel) differs. Selected via the Conv2DMapper line in Platform.py. -- QW
+from Deeploy.Targets.PULPOpen.Templates import FlatConvTemplate as _FlatConvTemplate  # -- QW
+PULPRQSConv2DFlatBindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t)], [PointerClass(int8_t)]), _FlatConvTemplate.referenceTemplate,
+        ForkTransformer)
+]
+
+# -- QW (dual_pass_fusion exp7a step 2a): single-pass control kernel PULP_Conv4x2_i8_i8_i8_HWC (4 ch x 2 px blocking,
+#    in-place input reads, flat pixel split) on the ordinary RequantizedConv. Same checker/transformer as the FlatConv
+#    binding; selected with DEEPLOY_RQCONV_KERNEL=4x2 in Platform.py. -- QW
+from Deeploy.Targets.PULPOpen.Templates import Conv4x2Template as _Conv4x2Template  # -- QW
+PULPRQSConv2D4x2Bindings = [  # -- QW
+    NodeBinding(
+        PULPConvChecker([PointerClass(int8_t), PointerClass(int8_t), PointerClass(int32_t), PointerClass(int32_t),
+                         PointerClass(int32_t)], [PointerClass(int8_t)]), _Conv4x2Template.referenceTemplate,
+        ForkTransformer)
 ]

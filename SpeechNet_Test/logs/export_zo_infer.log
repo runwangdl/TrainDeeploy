@@ -1,0 +1,1020 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+
+======================================================================
+🚀 Generating model: SpeechNet (INFER mode)
+======================================================================
+
+
+============================================================
+🚀 Exporting SpeechNet to ONNX (Inference Mode)
+============================================================
+
+📦 Creating PyTorch model...
+  Loaded pretrained weights from /app/TrainDeeploy/DeeployTest/experiments/deliverable/exp18_ZO_round1_correct_weights/results/carry_zo_b1_fold3_ref.pt
+   Input shape: (1, 1, 14, 700)
+
+📤 Exporting to ONNX...
+[W1012 15:26:28.167577913 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:28.266243913 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:28.278320580 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:28.285032330 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:28.302927622 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+✅ ONNX model saved: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+
+🔧 Running inference optimizations...
+🔧 Running optimization pipeline: 'inference'
+   Total passes: 8
+   Enabled passes: 8
+  ➤ [1/8] rename_nodes
+      Rename nodes for C compatibility
+✅ Renamed ONNX model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  ➤ [2/8] remove_identity
+      Remove Identity nodes
+✅ Removed 0 Identity node(s)
+  ➤ [3/8] reshape_fusion
+      Optimize Reshape operations
+Loading model: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+Found 0 Microsoft custom nodes. These will be preserved.
+Original model node count: 17
+Optimized model node count: 17
+Removed Reshape nodes: 0
+Optimized model saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  ➤ [4/8] unify_gemm
+      Unify GEMM input dimensions
+Processing model: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+
+Processing Gemm node: node_17_fc_Gemm
+Warning: Cannot determine shapes for node_17_fc_Gemm, skipping.
+
+Modified 0 Gemm nodes
+Created 0 unique reshaped initializers
+Saved to: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  ➤ [5/8] biasgelu_opt
+      Optimize BiasGelu operations
+✅ Shape inference completed successfully
+⚠️ No BiasGelu nodes were replaced.
+  ➤ [6/8] squeeze_unsqueeze
+      Convert Squeeze/Unsqueeze to attributes
+Modified 0 Squeeze/Unsqueeze nodes
+Saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  ➤ [7/8] sum_to_add
+      Convert Sum to Add operations
+Converted model saved to /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  ➤ [8/8] softmax_axis
+      Optimize Softmax axis
+Saving optimized model to /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+Optimization complete. Modified 0 Softmax nodes.
+
+  ✅ Pipeline complete
+     Nodes: 17 → 17 (+0)
+
+🔍 Running shape inference...
+
+🔍 Running shape inference with custom op support...
+  ℹ️  Custom op registration not available, using fallback for Microsoft ops
+  ✅ Shape inference succeeded
+  💾 Model with inferred shapes saved: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+  Saving SilentWear inference test data...
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_2.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=2, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+[W1012 15:26:33.725695166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.744574916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.751317291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.757111582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.763515499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.772230874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.784420457 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.793153832 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.800367749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.809554207 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.816636874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.832611332 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.844842541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.854157082 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.859313166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.866923624 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.883384874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.898271374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.907065041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.911687582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.916169374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.928418541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.942902041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.955202166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.966267082 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.972853541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.987851291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.002171666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.012834374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.019593582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.024817082 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.037583416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.049284541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.059342207 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.068642957 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.073828499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.085915749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.094165874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.102258166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.107290707 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.112467832 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.128606832 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.135304291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.143581291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.150507166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.156653582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.173857582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.181993499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.191094166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.198900957 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.203287332 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.215322582 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.223260457 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.232951207 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.243178874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.247393124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.257971416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.266615208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.274851708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.282301499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.286872249 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.299516083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.308280083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.317685458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.321723124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.325970624 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.347875999 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.358794874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.370603083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.375144708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.380219249 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.396087374 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.402320416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.416859416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.427893749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.435376749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.451919583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.460069041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.469241791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.474574749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.478348541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.491852416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.500560749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.509839624 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.519263749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.524696124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.541763499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.554311666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.563622333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.572192166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.577891124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.591446041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.596162749 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.601470166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.606414041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.610266333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.620996041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.632186333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:33.637603999 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.642227916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.644832916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.657218333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.662550583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.671806083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.681678541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.685074916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.698157583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.710992249 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.724627708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.733267124 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.738018208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.748884874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.756603541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.761998208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.769891916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.775075666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.790532791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.799329833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.807636583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.815664458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.819421874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.834167791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.846021541 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.858497458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.865272416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.870273916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.881100458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.886804291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.893635499 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.901389916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.906342208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.918162833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.926554874 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.936025791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.941971958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.948228500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.960403625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.974718000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.983622208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.989520958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.994874166 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.007738666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.015794000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.025372291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.031093666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.037448416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.049090375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.056481916 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.067476583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.074483000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.080639625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.095023625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.104220875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.113700958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.123422416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.126581041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.144490875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.155622583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.163209458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.168994708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.172916083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.183441666 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.195360791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.209407291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.220547458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.227651833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.250421000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.266697041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.278618333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.287684500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.290412625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.302467333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.310296583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.322833416 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.332993583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.344948833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.360343958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.369187041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.379118583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.387159583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.390679250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.400658791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.410710958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.418694250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.423465000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.428545708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.438664583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.450902291 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.460209708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.469905333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.473108250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.488237208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.494663833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.502577125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.508753333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.514185791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.548046625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.563492625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.575333833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.580846041 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.584228833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.594359000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.602955750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.609607083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.615690375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.623719791 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:34.637583958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.645586750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.652543833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.658438917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.662559958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.673961958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.681603167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.687628750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.693671250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.700269958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.707979125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.714157042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.719207042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.723680542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.727392875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.736833208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.746664833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.754038750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.758650083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.761388750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.769782375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.774501708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.779470375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.783310000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.787458417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.798309125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.803953125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.809842000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.813773958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.817375083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.826369167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.832361375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.838285792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.842287625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.845972458 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.856413125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.866124208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.877683250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.883578917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.887886750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.898386333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.905595000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.909061417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.915170167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.921430583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.935567333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.944033708 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.951912000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.957041958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.961083667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.971731875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.980357875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.985367958 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.989499125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.991965917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.005894000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.012978625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.023430125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.029778000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.033812250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.045456375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.053113167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.063434000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.068478125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.072823042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.090377125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.100046792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.108248375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.112657208 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.115456375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.126049792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.133117167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.138759375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.144615292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.147568125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.156911333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.163773750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.170164083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.176399750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.179609000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.188787000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.197294250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.203801833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.210161750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.214859417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.224177792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.233495833 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.244655042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.252530333 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.258209625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.271420083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.280926000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.288207000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.291481583 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.294392042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.308176083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.315862500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.320919250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.326674083 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.331280250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.345968084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.364623459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.371746500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.375649792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.379227500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.386176500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.390654084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.396197459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.399774959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.403352875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.413667792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.419461792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.424704000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.429633500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.433483875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.442844625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.446863167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.451463209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.455406500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.457716750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.465398000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.471787542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.476969667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.482758125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.485634875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.494209584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.501716667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.506630417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.510852500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.515780334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.525334042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.532324084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.538132875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.545548250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.549365250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.557520709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.564199792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.577313500 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.584615209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.586555292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.591971292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.597228459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.601703292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.606299000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.610684292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.621234167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.627493750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.633860459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:35.637725084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.641530625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.648831542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.655805709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.663623292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.667213625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.669866709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.680011792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.690569417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.696252000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.702496709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.705770792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.726222000 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.739013750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.746900917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.751459792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.756028042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.772085417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.776243292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.782118334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.787775334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.790615750 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.798949125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.804778542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.809619125 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.813476084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.817393709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.827859417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.836443875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.844019167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.849671917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.854583834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.863378917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.873685459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.881352625 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.886892209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.889779667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.900260834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.908879875 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.914999250 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.923853417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.928908084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.947255667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.957283542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.968254917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.974529167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.977925375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.997487375 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.006852084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.012762584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.021768334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.027167917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.037875917 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.045109501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.050118751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.052936959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.056481709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.066863834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.073877001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.078606376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.082902834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.085441959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.096311334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.101181376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.106449334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.110422042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.114410167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.125928626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.132490709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.139171876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.145590584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.147949667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.157042417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.163927792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.172139084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.176892709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.180956334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.190957792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.198801084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.204768292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.208672626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.212671292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.220982251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.228122876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.234997167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.240769876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.245869292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.253947376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.262392751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.269650417 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.273659376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.277174334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.288311167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.294943959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.302858292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.308516001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.312144501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.322314626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.329095042 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.334978376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.341359876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.346455876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.357417251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.363744459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.375734709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.386479626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.391496126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.403307626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.411345001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.416516959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.421876376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.426906167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.436623167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.443869251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.450372751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.457388667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.463527209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.475828292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.482780709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.491533542 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.501721209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.508799167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.520332501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.533649501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.548634167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.555494667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.560505292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.571123667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.579430084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.586907376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.592108626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.598975001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.609493459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.614633334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.620282459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.624536251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.627994876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:36.636613667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.644507501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.651201959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.655964751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.658233292 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.668884626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.676907876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.681350792 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.686149667 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.689917251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.700311167 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.707186709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.713540751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.719446001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.724199709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.737138709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.745770251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.752669543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.757502876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.761275543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.774934376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.780233876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.785346084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.788531626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.791040459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.801015293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.808326793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.815469168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.819465668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.823080543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.834066793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.840913293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.848220584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.853862084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.858635209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.873137626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.877865918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.884165793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.890623168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.893600834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.901566751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.907972793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.913095459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.917309334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.920825459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.927936168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.933324584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.939150626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.944868084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.948255709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.958611001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.964451793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.972959209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.976824001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.982245501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.994443418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.000724501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.009703668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.013428918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.016552959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.025093543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.030227793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.035703709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.040709668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.044449543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.055398126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.062987626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.069795001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.076689793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.082984584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.091797668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.100021626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.105689584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.111400709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.114389293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.123834876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.130291709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.138768584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.142482543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.145282584 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.155753376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.162100501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.169906459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.174929126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.177695293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.189686126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.195563168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.200630459 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.206295751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.213126793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.222929001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.234567793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.243988001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.253852084 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.257537209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.267370834 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.274122501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.280993251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.285239543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.288025334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.298743418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.307402751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.314058334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.318671209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.323215168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.332526751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.340280334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.344825334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.348207168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.351652876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.360272001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.365073209 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.369279501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.372991918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.376592334 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.383836543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.387762959 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.392412251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.395736543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.398260543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.406412543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.410990668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.415472001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.420959709 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.423946168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.431244376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.512834793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.553850543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.567938210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.574925751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.583054126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.589596001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.596732251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.603399376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.608448335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.619992710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.628741293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:37.635737335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.641512668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.645625418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.656532460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.662282251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.668216335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.672141626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.675039293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.684429668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.693397418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.703857460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.710498418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.714695876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.724082210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.731046751 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.737091043 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.741837543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.746321251 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.754592501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.759523876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.764644960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.771504126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.774424501 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.782170793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.788707543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.796152876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.800224335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.802993626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.811739585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.821111418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.828728876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.834559126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.837578001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.846877626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.851362085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.855859543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.862521668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.865600168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.875502085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.881762668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.890640001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.898447168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.902650585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.915681293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.924186710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.931440876 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.939871376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.944086960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.953948168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.960839460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.966506376 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.973741001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.980268168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.989494001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.996865835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.004226835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.009376126 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.013582001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.022953085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.030979293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.037343585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.045912085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.053983001 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.070887460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.084172918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.092608293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.097863460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.111725418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.126307626 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.136221252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.144485627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.148438960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.151425543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.161545127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.167658252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.174246252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.179570710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.183080460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.192516085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.203240210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.209044627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.214127710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.217381460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.225999293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.232615210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.240051002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.243716502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.247342377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.259492877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.265396293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.273028460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.277869752 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.280717418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.295438460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.304166627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.310651793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.314805085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.320249043 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.333176168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.339165252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.348639418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.353244210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.358659085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.368528168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.374407918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.383315002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.389444793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.394280960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.416731127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.427387502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.437497210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.442212793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.446165043 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.455341585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.462899418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.468341627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.474013210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.476011627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.486054918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.495228002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.503019127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.511265043 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.516420918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.529860877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.538200835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.550612002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.559157793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.564251252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.572322043 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.579710002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.587102127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.591587502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.595221085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.607754002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.617428668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.624418210 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.630200543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:38.633704377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.654353085 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.664553835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.672098335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.680549418 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.692334960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.705178918 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.712855502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.718744502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.722466543 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.725423168 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.736298960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.743080710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.750221835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.756132877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.760165377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.768578835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.777432293 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.784405377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.789165252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.792694710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.801847502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.809060835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.815352460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.818442752 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.822350668 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.830497793 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.836285377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.841671710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.846757669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.850723377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.860096585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.867440377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.872766835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.877055252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.880583710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.887940627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.895205835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.901673544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.906925919 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.909238835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.917783377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.924210710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.930119502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.935740585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.940471669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.947325127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.953134252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.958917669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.962916877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.965819002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.974453919 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.980370127 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.986608169 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.991926794 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.995641419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.005543627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.010888669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.021191335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.025048544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.029850294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.038991710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.042999960 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.048222460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.054760835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.058071252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.068565502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.073816044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.081463419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.085043044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.088385335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.099161835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.107109335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.114539252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.121408252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.126207252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.138871585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.147476460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.155982169 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.161266419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.166631752 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.179867169 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.190376710 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.200153752 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.206992044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.214793002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.231682544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.245213377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.255967044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.262347377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.266660044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.277780669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.284639627 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.296802502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.303367419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.307216044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.323651294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.333324294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.342598044 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.350219877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.355390794 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.366892544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.374527294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.386582252 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.399373544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.403479294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.415621835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.423628585 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.431420835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.437526460 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.442383377 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.454311544 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.464665335 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.479548294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.485026835 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.489250419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.508954419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.524187419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.531878002 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.538552336 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.545055919 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.555785919 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.562771336 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.569085419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.574149502 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.577457794 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.586562919 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.610438086 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.627447294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:39.636921669 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:40.643104419 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:40.668901711 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:40.679527086 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:40.712142877 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W1012 15:26:40.754678294 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+   Inputs: (180, 1, 14, 700)  Outputs: (180, 9)  (180 windows)
+   Balanced accuracy = 0.9000 (90.0%)  (180 windows)
+     class 0: recall = 1.000
+     class 1: recall = 0.950
+     class 2: recall = 0.900
+     class 3: recall = 0.900
+     class 4: recall = 0.650
+     class 5: recall = 0.900
+     class 6: recall = 1.000
+     class 7: recall = 0.900
+     class 8: recall = 0.900
+
+📊 Model Info: network.onnx
+   Inputs: 1
+   Outputs: 1
+   Initializers: 12
+   Nodes: 17
+
+============================================================
+✅ Export Complete!
+   Final model: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/network.onnx
+   Test data: /app/TrainDeeploy/SpeechNet_Test/speechnet_infer_ZO_round1/test_*.npy
+============================================================
+
+
+======================================================================
+✅ Inference mode model generation completed!
+======================================================================
+
+📁 Generated files:
+  ✓ network.onnx              (63.8 KB)
+  ✓ inputs.npz                (6.7 MB)
+  ✓ outputs.npz               (6.6 KB)
+
+💡 Output source: PyTorch model (for verifying ONNX correctness)

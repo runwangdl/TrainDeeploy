@@ -20,6 +20,9 @@ from Deeploy.Targets.Generic.Deployer import GenericDeployer
 from Deeploy.Targets.Generic.Platform import GenericOptimizer, GenericPlatform
 from Deeploy.Targets.MemPool.Deployer import MemPoolDeployer
 from Deeploy.Targets.MemPool.Platform import MemPoolOptimizer, MemPoolPlatform
+from Deeploy.Targets.NE16.Deployer import NE16Deployer  # -- QW (NE16 on GAP9)
+from Deeploy.Targets.NE16.Platform import MemoryNE16Platform, MemoryNE16PlatformWrapper, NE16Optimizer, \
+    NE16Platform  # -- QW
 from Deeploy.Targets.Neureka.Deployer import NeurekaDeployer
 from Deeploy.Targets.Neureka.Platform import MemoryNeurekaPlatform, MemoryNeurekaPlatformWrapper, NeurekaOptimizer, \
     NeurekaPlatform
@@ -31,7 +34,7 @@ from Deeploy.Targets.SoftHier.Deployer import SoftHierDeployer
 from Deeploy.Targets.SoftHier.Platform import SoftHierOptimizer, SoftHierPlatform
 
 _SIGNPROP_PLATFORMS = ["Apollo3", "Apollo4", "QEMU-ARM", "Generic", "MemPool", "SoftHier"]
-_NONSIGNPROP_PLATFORMS = ["Siracusa", "Siracusa_w_neureka", "PULPOpen", "Snitch", "Chimera", "GAP9"]
+_NONSIGNPROP_PLATFORMS = ["Siracusa", "Siracusa_w_neureka", "PULPOpen", "Snitch", "Chimera", "GAP9", "GAP9_w_NE16"]  # -- QW
 _PLATFORMS = _SIGNPROP_PLATFORMS + _NONSIGNPROP_PLATFORMS
 
 
@@ -64,6 +67,12 @@ def mapPlatform(platformName: str) -> Tuple[DeploymentPlatform, bool]:
     elif platformName == "GAP9":
         Platform = GAP9Platform()
 
+    # QW: NE16 accelerator engine on GAP9 (upstream Deeploy PR #183). NE16Platform subclasses
+    #     GAP9Platform, so every `isinstance(..., GAP9Platform)` branch below must be reached
+    #     only AFTER the NE16 branch, or an NE16 deployment silently degrades to plain GAP9.
+    elif platformName == "GAP9_w_NE16":  # -- QW
+        Platform = NE16Platform()  # -- QW
+
     elif platformName == "Siracusa_w_neureka":
         Platform = NeurekaPlatform()
 
@@ -90,6 +99,10 @@ def setupMemoryPlatform(platform: DeploymentPlatform, memoryHierarchy: MemoryHie
         weightMemoryLevel = memoryHierarchy.memoryLevels["WeightMemory_SRAM"] \
             if "WeightMemory_SRAM" in memoryHierarchy.memoryLevels else None
         return MemoryNeurekaPlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel, weightMemoryLevel)
+    elif isinstance(platform, NE16Platform):  # -- QW: must precede GAP9Platform (subclass)
+        weightMemoryLevel = memoryHierarchy.memoryLevels["WeightMemory_SRAM"] \
+            if "WeightMemory_SRAM" in memoryHierarchy.memoryLevels else None  # -- QW
+        return MemoryNE16PlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel, weightMemoryLevel)  # -- QW
     if isinstance(platform, GAP9Platform):
         return MemoryGAP9PlatformWrapper(platform, memoryHierarchy, defaultTargetMemoryLevel)
     else:
@@ -207,6 +220,24 @@ def mapDeployer(platform: DeploymentPlatform,
                                    name = name,
                                    default_channels_first = default_channels_first,
                                    deeployStateDir = deeployStateDir)
+
+    # QW: NE16 before GAP9 — NE16Platform is a GAP9Platform subclass.
+    elif isinstance(platform, (NE16Platform, MemoryNE16Platform, MemoryNE16PlatformWrapper)):  # -- QW
+
+        if loweringOptimizer is None:  # -- QW
+            loweringOptimizer = NE16Optimizer  # -- QW
+
+        if default_channels_first is None:  # -- QW
+            default_channels_first = False  # -- QW
+
+        deployer = NE16Deployer(graph,  # -- QW
+                                platform,
+                                inputTypes,
+                                loweringOptimizer,
+                                scheduler,
+                                name = name,
+                                default_channels_first = default_channels_first,
+                                deeployStateDir = deeployStateDir)
 
     elif isinstance(platform, (GAP9Platform, MemoryGAP9Platform, MemoryGAP9PlatformWrapper)):
 

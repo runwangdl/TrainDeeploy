@@ -284,12 +284,26 @@ def _merge_conv_rq_fun(graph: gs.Graph, match: Match, name: str):
     conv = matched_nodes[0]
     rqs = matched_nodes[1]
 
+    # QW (exp16a / STEP 2b): do NOT fuse a conv that NE16 will run as K pointwise dispatches.
+    #     Those taps accumulate via CONFIG0[14] streamin, and gvsoc fsm.cpp:50 asserts
+    #     `!(streamin && quantization_bits != 32)` -- so every dispatch in the chain must emit
+    #     INT32 and none of them may requantise. The RequantShift therefore has to stay a
+    #     separate (cluster) node. Gated on an NE16-only attribute, so no other target, and no
+    #     ordinary conv, is affected. -- QW
+    if 'ne16_taps' in conv.attrs:  # -- QW
+        return graph  # -- QW
+
+
     totalShift = int(np.log2(rqs.attrs['div'].values))
 
     # Artifically add half the shift division value to implement rounding
     rounding = 2**(totalShift - 1) if totalShift > 0 else 0
 
-    rqs.inputs[-1].values = copy.deepcopy(rqs.inputs[-1].values) + rounding
+    # QW (quantized ZO): the RequantShift `add` (bias) may be a perturbed VARIABLE (RQSPerturbRademacher
+    # output), not a constant. Only bake the rounding into a constant add; for a variable add the kernel
+    # truncates (no rounding) — matching the host reference (run_onnx_graph add_is_initializer=False). -- QW
+    if hasattr(rqs.inputs[-1], 'values') and rqs.inputs[-1].values is not None:
+        rqs.inputs[-1].values = copy.deepcopy(rqs.inputs[-1].values) + rounding
 
     _inputs = list(conv.inputs) + list(rqs.inputs[1:])
 
@@ -570,3 +584,78 @@ def _fold_dequant_fun(graph: gs.Graph, match: Match, name: str):
     dequant.outputs.clear()
     graph.cleanup()
     return graph
+
+
+# RW 2026-10-13: Relu -> MaxPool  ==>  MaxPool -> Relu. Relu is monotone, so max(relu(x)) == relu(max(x)) element
+# for element (both give either exactly 0.0f or the same x), and the Relu then runs on the pooled tensor -- 8x fewer
+# elements after SpeechNet's block-0 pool. Only when MaxPool is the Relu's sole consumer and has a single output
+# (BP graphs read the Relu output again in ReluGrad and are left alone).
+def _swap_relu_maxpool_fun(graph: gs.Graph, match: Match, name: str):
+    relu, pool = list(match.nodes_map.values())
+    if relu.op != "Relu" or pool.op != "MaxPool":
+        return graph
+    reluOut = relu.outputs[0]
+    if len(reluOut.outputs) != 1 or reluOut in graph.outputs or len(pool.outputs) != 1:
+        return graph
+    poolOut = pool.outputs[0]
+    pooled = gs.Variable(name = f"{pool.name}_pre_relu", dtype = poolOut.dtype, shape = poolOut.shape)
+    pool.inputs[0] = relu.inputs[0]
+    pool.outputs = [pooled]
+    relu.inputs = [pooled]
+    relu.outputs = [poolOut]
+    graph.cleanup().toposort()
+    return graph
+
+
+@contextagnostic
+class SwapReluMaxPoolPass(ReplaceSequentialPatternPass):
+
+    def __init__(self):
+        graph = gs.Graph()
+        _input = gs.Variable(name = 'input_1')
+        output = graph.layer(inputs = [_input], outputs = ['relu_out'], op = 'Relu', name = 'relu')
+        output = graph.layer(inputs = output, outputs = ['pool_out'], op = 'MaxPool', name = 'pool')
+        graph.outputs.append(output)
+        graph.inputs.append(_input)
+        super().__init__(graph, _swap_relu_maxpool_fun, "_SWAP_RELU_MAXPOOL_PASS")
+
+
+# RW 2026-10-15: Dequant -> BatchNormInternal  ==>  BatchNormInternal reading the int8 tensor (attrs dq_scale,
+# dq_zero_point). Only for frozen-stat BN (DEEPLOY_BN_FROZEN_NHWC, set by the MeZO runner for -D BN_FROZEN_STATS=ON),
+# where BN is an elementwise per-channel map: the kernel dequantizes each element exactly as the Dequant kernel does
+# ((float)q - zp) * scale) and goes on with it, so the result is bit-identical while the fp32 dequantized tensor
+# never exists. SpeechNet block 0: that tensor and the BN output were the L2 peak (2 x 628 KB in the dual-pass graph).
+def _fold_dequant_bn_fun(graph: gs.Graph, match: Match, name: str):
+    import os as _os
+    if _os.environ.get("DEEPLOY_BN_FROZEN_NHWC", "0") != "1":
+        return graph
+    dq, bn = list(match.nodes_map.values())
+    if dq.op != "Dequant" or bn.op != "BatchNormInternal":
+        return graph
+    t = dq.outputs[0]
+    if len(t.outputs) != 1 or t in graph.outputs or any(len(o.outputs) > 0 for o in bn.outputs[1:]):
+        return graph
+    bn.attrs["dq_scale"] = float(dq.attrs["scale"])
+    bn.attrs["dq_zero_point"] = float(dq.attrs.get("zero_point", 0.0))
+    bn.inputs[0] = dq.inputs[0]
+    dq.inputs = []
+    dq.outputs = []
+    graph.cleanup().toposort()
+    return graph
+
+
+@contextagnostic
+class FoldDequantIntoFrozenBNPass(Pass):
+    # A plain node walk: the sequential pattern matcher does not match BatchNormInternal's five outputs.
+
+    def __init__(self):
+        super().__init__()
+        self.name = "_FOLD_DEQUANT_INTO_FROZEN_BN_PASS"
+
+    def run_pass(self, graph: gs.Graph) -> gs.Graph:
+        for bn in [n for n in graph.nodes if n.op == "BatchNormInternal"]:
+            src = bn.inputs[0]
+            dq = src.inputs[0] if len(src.inputs) == 1 else None
+            if dq is not None and dq.op == "Dequant":
+                graph = _fold_dequant_bn_fun(graph, Match(None, {"dq": dq, "bn": bn}), self.name)
+        return graph

@@ -1,0 +1,2 @@
+train  : Tests/Models/Training/SpeechNet/speechnet_qzo19_train  (network.onnx 24 inputs / 25 inits)
+update : Tests/Models/Training/SpeechNet/speechnet_qzo19_update (network.onnx 22 inputs / 22 outputs)

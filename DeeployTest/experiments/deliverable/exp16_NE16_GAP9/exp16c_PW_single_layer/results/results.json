@@ -1,0 +1,181 @@
+{
+  "experiment": "exp16c_PW_single_layer",
+  "date": "2026-09-11",
+  "goal": "close blocker 1b (on-device weight encoding) and then STEP 3 (the other four SpeechNet convs)",
+  "status": "COMPLETE -- blocker 1b closed and STEP 3 done: ALL FIVE SpeechNet convs bit-exact on NE16 with the full on-device QZO weight path",
+  "phases": {
+    "1": {
+      "what": "NE16WeightEncode kernel + op; weight arrives unencoded as an int8 graph input and is bit-serial encoded on the cluster",
+      "status": "PASSED"
+    },
+    "2": {
+      "what": "RQSPerturbRademacher -> NE16WeightEncode -> Conv, L+ and L-",
+      "status": "PASSED"
+    },
+    "3": {
+      "what": "STEP 3a -- blocks 2, 3, 4 on NE16",
+      "status": "PASSED"
+    },
+    "4": {
+      "what": "STEP 3b -- block 0, needs the signed-activation fix",
+      "status": "PASSED"
+    }
+  },
+  "runs": [
+    {
+      "name": "b1_1x16_devenc_dev",
+      "engine": "NE16",
+      "mode": "pointwise, weight encoded ON DEVICE",
+      "dispatches": 16,
+      "encode_calls": 1,
+      "extent": "FULL 14x88",
+      "errors": "0/19712",
+      "cycles": 1593285,
+      "status": "PASSED"
+    },
+    {
+      "name": "b1_1x16_ne16_nhwc (exp16a)",
+      "engine": "NE16",
+      "mode": "pointwise, weight encoded on HOST",
+      "dispatches": 16,
+      "extent": "FULL 14x88",
+      "errors": "0/19712",
+      "cycles": 1567096,
+      "status": "PASSED"
+    },
+    {
+      "name": "b1_1x16_pertenc_lp",
+      "engine": "NE16",
+      "mode": "RQSPerturbRademacher -> NE16WeightEncode -> Conv (L+)",
+      "perturb_calls": 1,
+      "encode_calls": 1,
+      "dispatches": 16,
+      "extent": "FULL 14x88",
+      "errors": "0/19712",
+      "cycles": 1608939,
+      "status": "PASSED"
+    },
+    {
+      "name": "b1_1x16_pertenc_ln",
+      "engine": "NE16",
+      "mode": "same, L- (negated pmul)",
+      "perturb_calls": 1,
+      "encode_calls": 1,
+      "dispatches": 16,
+      "extent": "FULL 14x88",
+      "errors": "0/19712",
+      "cycles": 1608945,
+      "status": "PASSED"
+    }
+  ],
+  "encode_cost": {
+    "cycles": 26189,
+    "fraction_of_layer": 0.0164,
+    "covers": "L2->L1 DMA of the 2048 B raw int8 weight plus the bit-serial encode of 4096 B, 8 cores",
+    "conclusion": "negligible -- Option A (device encode) is confirmed over Option B (linearity decomposition)"
+  },
+  "kernel_validation": {
+    "method": "compiled TargetLibraries/GAP9/src/NE16WeightEncode.c natively and compared against Deeploy's own _weightEncode via ctypes",
+    "shapes_checked": [
+      "b1 1x16 cout16 cin8",
+      "b0 1x4 cout8 cin1",
+      "b2 1x8 cout16 cin16",
+      "b3 7x1 cout32 cin16",
+      "b4 7x1 cout32 cin32 (cinMajor=2)",
+      "odd cin=20"
+    ],
+    "chunked_8core_path": "checked, identical",
+    "result": "MATCH on every case -- so phases 3-4 need no new encoder"
+  },
+  "qzo_weight_path_cost": {
+    "host_encoded_baseline_cycles": 1567096,
+    "device_encode_cycles": 1593285,
+    "encode_delta": 26189,
+    "perturb_plus_encode_cycles": 1608939,
+    "perturb_delta": 15654,
+    "total_overhead_cycles": 41843,
+    "total_overhead_fraction": 0.0267,
+    "note": "full on-device QZO weight path (perturb + bit-serial encode) costs 2.7% of the layer"
+  },
+  "L_minus_method": "negating the per-channel multiplier is exactly equivalent to negating the Rademacher sign (RandomNoiseQuant.c:31), so L- is testable under the plain inference runner with the neutral perturbation_sign=+1 default. All 2048 weight elements differ between L+ and L-, and the output range moves [-85,60] -> [-82,57], so it is a real second test rather than a relabelling.",
+  "step3_blocks": [
+    {
+      "block": 1,
+      "kernel": "1x16",
+      "tap_axis": "W",
+      "cin": 8,
+      "cout": 16,
+      "out": "14x88",
+      "dispatches": 16,
+      "ne16_cycles": 1608939,
+      "cluster_cycles": 337999,
+      "errors": "0/19712",
+      "ratio_vs_cluster": 4.76
+    },
+    {
+      "block": 2,
+      "kernel": "1x8",
+      "tap_axis": "W",
+      "cin": 16,
+      "cout": 16,
+      "out": "14x23",
+      "dispatches": 8,
+      "ne16_cycles": 420743,
+      "cluster_cycles": 98723,
+      "errors": "0/5152",
+      "ratio_vs_cluster": 4.26
+    },
+    {
+      "block": 3,
+      "kernel": "7x1",
+      "tap_axis": "H",
+      "cin": 16,
+      "cout": 32,
+      "out": "8x5",
+      "dispatches": 7,
+      "ne16_cycles": 183651,
+      "cluster_cycles": 26835,
+      "errors": "0/1280",
+      "ratio_vs_cluster": 6.84
+    },
+    {
+      "block": 4,
+      "kernel": "7x1",
+      "tap_axis": "H",
+      "cin": 32,
+      "cout": 32,
+      "out": "2x5",
+      "dispatches": 7,
+      "ne16_cycles": 145990,
+      "cluster_cycles": 30329,
+      "errors": "0/320",
+      "ratio_vs_cluster": 4.81
+    },
+    {
+      "block": 0,
+      "kernel": "1x4",
+      "tap_axis": "W",
+      "cin": 1,
+      "cout": 8,
+      "out": "14x701",
+      "status": "PASSED via +128 input (uint8) + NE16SignedInputBias correction",
+      "dispatches": 4,
+      "ne16_cycles": 5517302,
+      "cluster_cycles": 732178,
+      "errors": "0/78512",
+      "ratio_vs_cluster": 7.54,
+      "note": "cin=1 uses 1/16 of TP_IN, hence the worst ratio of the five"
+    }
+  ],
+  "kx1_fix": "Conv1xKTemplate stepped infeat_addr by one PIXEL (ch_im_in bytes), which is only right for 1xK. For Kx1 a tap is one ROW, so the step is the input row stride -- a PER-TILE value (dim_im_in_x_stride), so the template references the substituted variable rather than a constant. Verified in the generated C: block 3 emits `+ 1 * *..._dim_im_in_x_stride_ref` where block 1 emits `+ 1 * 8`.",
+  "performance_note": "NE16 is 4.3x-6.8x SLOWER than pulp_nn_conv on every block. Correctness of the NE16 path is established; closing the performance gap is STEP 4. The NE16 figures include the on-device perturb+encode (2.7% on block 1) which the cluster reference does not perform.",
+  "blocker3_fix": {
+    "problem": "NE16 reads activations as UNSIGNED; CONFIG0 bit 26 (PR #183's input_signed) is undecoded by the hardware. Block 0's activation range is [-66,127].",
+    "fix": "feed x_u = x + 128 as uint8 (NE16PWConv2DBindings already accepts uint8 data_in) and remove the induced per-output-channel term 128*sum_w.",
+    "where_applied": "RequantShift computes (acc*mul + add) >> log2(div), so `add` lands AFTER the multiply -> the correction is add - 128*sum_w*mul, not add - 128*sum_w.",
+    "why_on_device": "sum_w is not a host constant: the weight is a per-step RQSPerturbRademacher output. New kernel NE16SignedInputBias_i32 recomputes it from the same perturbed weight the encoder sees.",
+    "range_check": "|128*sum_w*mul| <= 128*508*454 ~= 3.0e7 for block 0, well inside int32; verified against the real tensors before implementing."
+  },
+  "preexisting_bug_fixed": "UniformRequantShiftParser.parseNode called node.inputs[1:3].values unconditionally, raising AttributeError: 'Variable' object has no attribute 'values' when mul/add is produced at runtime -- aborting the whole deployment instead of declining the node. A parseNode must DECLINE, not raise. Guarded with isinstance(..., gs.Constant).",
+  "regression": "block 1 re-run after the parser change: 0/19712, 1,608,939 cycles -- unchanged."
+}

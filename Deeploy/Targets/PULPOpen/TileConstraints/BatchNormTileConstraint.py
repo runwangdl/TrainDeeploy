@@ -54,6 +54,19 @@ class BatchNormInternalTileConstraint(TileConstraint):
                 tilerModel.addTensorDimToModel(ctxt, name)
 
         input_shape = ctxt.lookup(data_in_name).shape
+        if parseDict.get('nhwc', 0):
+            # RW 2026-10-13: channels-last frozen-stat BN [N, H, W, C]: elementwise, so tile along H with whole
+            # rows and all channels (contiguous DMA); the per-channel vectors stay whole.
+            dim = lambda n, k: tilerModel.getTensorDimVar(tensorName = n, dimIdx = k)
+            for k in (0, 2, 3):
+                tilerModel.addConstraint(dim(data_in_name, k) == input_shape[k])
+            for k in range(4):
+                tilerModel.addConstraint(dim(data_in_name, k) == dim(data_out_name, k))
+            for vec_name in [scale_name, bias_name, running_mean_name, running_var_name, saved_mean_name,
+                             saved_inv_std_name, updated_running_mean_name, updated_running_var_name]:
+                if vec_name:
+                    tilerModel.addConstraint(dim(vec_name, 0) == input_shape[3])
+            return tilerModel
         N = input_shape[0]
         H_in = input_shape[2]
         W_in = input_shape[3]
@@ -126,8 +139,9 @@ class BatchNormInternalTileConstraint(TileConstraint):
                 for step in schedule.outputLoadSchedule:
                     data_out_rect = step['data_out']
                     # Per-channel slice corresponding to the C tile in data_out
-                    c_start = data_out_rect.offset[1]
-                    c_tile = data_out_rect.dims[1]
+                    cAxis = 3 if operatorRepresentation.get('nhwc', 0) else 1  # RW 2026-10-13
+                    c_start = data_out_rect.offset[cAxis]
+                    c_tile = data_out_rect.dims[cAxis]
                     step[secondary] = HyperRectangle((c_start,), (c_tile,))
 
         return varReplacement, tilingSchedules
@@ -161,18 +175,23 @@ class BatchNormInternalTileConstraint(TileConstraint):
         input_base_offsets, output_base_offsets = cls.extractBaseAddr(tilingSolution, targetMemLevel,
                                                                       operatorRepresentation, addr_names)
 
-        replacements = {"C": []}
-        replacement_types = {"C": PointerClass(uint16_t)}
+        nhwc = operatorRepresentation.get('nhwc', 0)  # RW 2026-10-13: tiles along H, all channels
+        replacements = {"H_in": []} if nhwc else {"C": []}
+        replacement_types = {"H_in": PointerClass(uint16_t)} if nhwc else {"C": PointerClass(uint16_t)}
 
         input_load_schedule = []
         output_load_schedule = []
 
         for cube in output_cubes:
             # cube is the tile of data_out: [N, C_tile, H_in, W_in]
-            C_tile = cube.dims[1]
-            c_start = cube.offset[1]
+            if nhwc:
+                c_start, C_tile = 0, cube.dims[3]
+                replacements["H_in"].append(cube.dims[1])
+            else:
+                C_tile = cube.dims[1]
+                c_start = cube.offset[1]
 
-            replacements["C"].append(C_tile)
+                replacements["C"].append(C_tile)
 
             # Per-channel vector tile: offset=(c_start,), dims=(C_tile,)
             vec_cube = HyperRectangle((c_start,), (C_tile,))

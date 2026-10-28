@@ -1,0 +1,17 @@
+05:38 L3 BHS_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6292263 opt_cycles_hi=0 opt_cycles_lo=558925 | [WSUM s=0] 0xfa1f7dd2
+05:38 L1 base_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6562634 opt_cycles_hi=0 opt_cycles_lo=550260 | [WSUM s=0] 0xfa1f7dd2
+05:45 L3 BHS_prof_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=21277750 opt_cycles_hi=0 opt_cycles_lo=2274510 | [WSUM s=0] 0xfa1f7dd2
+05:46 L1 base_multi_ne16_012: Errors: 14 out of 24 | BENCH train_cycles_hi=0 train_cycles_lo=19645846 opt_cycles_hi=0 opt_cycles_lo=1673414 | [WSUM s=2] 0xbd46a3d8
+05:52 L3 BHS_multi_ne16_012: Errors: 14 out of 24 | BENCH train_cycles_hi=0 train_cycles_lo=18881773 opt_cycles_hi=0 opt_cycles_lo=1673865 | [WSUM s=2] 0xbd46a3d8
+05:56 L1 base_multi2_ne16_012: Errors: 4 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6556494 opt_cycles_hi=0 opt_cycles_lo=1100767 | [WSUM s=1] 0xda32f6c6
+05:58 L4 BHS_plain_ne16_0123: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6234177 opt_cycles_hi=0 opt_cycles_lo=558528 | [WSUM s=0] 0xfa1f7dd2
+05:59 L2 B_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6483614 opt_cycles_hi=0 opt_cycles_lo=557631 | [WSUM s=0] 0xfa1f7dd2
+06:05 L4 BHS_prof_ne16_0123: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=21949325 opt_cycles_hi=0 opt_cycles_lo=2259902 | [WSUM s=0] 0xfa1f7dd2
+06:08 L1 BHS_multi2_ne16_012: Errors: 4 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6330176 opt_cycles_hi=0 opt_cycles_lo=1116201 | [WSUM s=1] 0xda32f6c6
+06:10 L2 BH_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6318369 opt_cycles_hi=0 opt_cycles_lo=550823 | [WSUM s=0] 0xfa1f7dd2
+06:12 L4 BHS_plain_ne16_01234: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6224111 opt_cycles_hi=0 opt_cycles_lo=550101 | [WSUM s=0] 0xfa1f7dd2
+06:13 L1 base_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6554297 opt_cycles_hi=0 opt_cycles_lo=550644 | [WSUM s=0] 0xfa1f7dd2
+06:17 L2 BH_prof_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=21360828 opt_cycles_hi=0 opt_cycles_lo=2269557 | [WSUM s=0] 0xfa1f7dd2
+06:20 L4 BHS_prof_ne16_01234: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=22729627 opt_cycles_hi=0 opt_cycles_lo=2262228 | [WSUM s=0] 0xfa1f7dd2
+06:25 L5 base_plain_ne16_0123: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6719509 opt_cycles_hi=0 opt_cycles_lo=550507 | [WSUM s=0] 0xfa1f7dd2
+06:26 L4 BHS_multi_ne16_0123: Errors: 14 out of 24 | BENCH train_cycles_hi=0 train_cycles_lo=18718022 opt_cycles_hi=0 opt_cycles_lo=1674712 | [WSUM s=2] 0xbd46a3d8

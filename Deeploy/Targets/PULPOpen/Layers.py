@@ -118,3 +118,18 @@ class PULPAddLayer(AddLayer):
                 len([d for d in inputShapes[small] if d != 1]) <= 1:
             return (inputShapes, [inputShapes[big]])
         return super().computeShapes(inputShapes, outputShapes, operatorRepresentation, channels_first)
+
+
+class PULPDualConvLayer(RQSConvLayer):  # -- QW (dual_pass_fusion exp5)
+    """Layer for `RequantizedDualConv`. Shapes are all explicit in the graph (the output has 2*ch_out
+    channels, which PULPRQSConvLayer.computeShapes would mis-propagate onto mul/add), so leave them."""
+
+    def __init__(self, maps: List[NodeMapper]):
+        super().__init__(maps)
+
+    def computeShapes(self, inputShapes: Shape, outputShapes: Shape, operatorRepresentation,
+                      channels_first) -> Tuple[Shape, Shape]:
+        return (inputShapes, outputShapes)
+
+    def computeOps(self):
+        return 2 * super().computeOps()   # both passes' MACs + requants

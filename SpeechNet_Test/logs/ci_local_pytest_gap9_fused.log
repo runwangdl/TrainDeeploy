@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-9.1.1, pluggy-1.6.0 -- /app/install/gap9-sdk/.gap9-venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /app/Deeploy
+configfile: pytest.ini
+plugins: xdist-3.8.0
+collecting ... collected 692 items / 691 deselected / 1 selected
+
+test_platforms.py::test_gap9_tiled_speechnet_fused[SpeechNet_QZO_ECO_fused_NE16_single_update_step] PASSED [100%]
+
+================ 1 passed, 691 deselected in 155.65s (0:02:35) =================

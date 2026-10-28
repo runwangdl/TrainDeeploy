@@ -1,0 +1,25 @@
+parsed [WDUMP] last step s=2699: 22 tensors (expected 22)
+  wi= 0 blocks_0_0_weight    shape=(8, 1, 1, 4)  max|dev-base|=9.289e-03
+  wi= 1 blocks_0_0_bias      shape=(8,)  max|dev-base|=1.091e-02
+  wi= 2 blocks_0_1_weight    shape=(8,)  max|dev-base|=9.650e-03
+  wi= 3 blocks_0_1_bias      shape=(8,)  max|dev-base|=1.207e-02
+  wi= 4 blocks_1_0_weight    shape=(16, 8, 1, 16)  max|dev-base|=1.186e-02
+  wi= 5 blocks_1_0_bias      shape=(16,)  max|dev-base|=6.063e-03
+  wi= 6 blocks_1_1_weight    shape=(16,)  max|dev-base|=1.081e-02
+  wi= 7 blocks_1_1_bias      shape=(16,)  max|dev-base|=7.694e-03
+  wi= 8 blocks_2_0_weight    shape=(16, 16, 1, 8)  max|dev-base|=1.006e-02
+  wi= 9 blocks_2_0_bias      shape=(16,)  max|dev-base|=1.214e-02
+  wi=10 blocks_2_1_weight    shape=(16,)  max|dev-base|=8.785e-03
+  wi=11 blocks_2_1_bias      shape=(16,)  max|dev-base|=1.162e-02
+  wi=12 blocks_3_0_weight    shape=(32, 16, 7, 1)  max|dev-base|=9.727e-03
+  wi=13 blocks_3_0_bias      shape=(32,)  max|dev-base|=6.399e-03
+  wi=14 blocks_3_1_weight    shape=(32,)  max|dev-base|=9.684e-03
+  wi=15 blocks_3_1_bias      shape=(32,)  max|dev-base|=8.763e-03
+  wi=16 blocks_4_0_weight    shape=(32, 32, 7, 1)  max|dev-base|=1.049e-02
+  wi=17 blocks_4_0_bias      shape=(32,)  max|dev-base|=1.090e-02
+  wi=18 blocks_4_1_weight    shape=(32,)  max|dev-base|=7.963e-03
+  wi=19 blocks_4_1_bias      shape=(32,)  max|dev-base|=7.516e-03
+  wi=20 fc_weight            shape=(9, 32)  max|dev-base|=9.816e-03
+  wi=21 fc_bias              shape=(9,)  max|dev-base|=7.878e-03
+max weight movement over all trainable tensors: 1.214e-02
+saved carry -> /app/ETH/TrainDeeploy/DeeployTest/experiments/deliverable/exp18_ZO_round1_correct_weights/results/carry_zo_b1_fold3_ref.pt

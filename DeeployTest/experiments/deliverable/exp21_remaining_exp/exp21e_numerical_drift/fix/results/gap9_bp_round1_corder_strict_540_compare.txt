@@ -1,0 +1,2 @@
+losses: 2160/2160 bit-equal device == emulator
+weights after step 539: 15489/15489 bit-equal

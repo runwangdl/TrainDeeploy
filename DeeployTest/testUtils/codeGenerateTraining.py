@@ -26,6 +26,24 @@ from Deeploy.Targets.PULPOpen.Platform import MemoryPULPPlatform, MemoryPULPPlat
 from .codeGenerate import generateL3HexDump
 
 
+
+# C type -> numpy dtype for the L3 hex files (must match the cl_ram_malloc size computed from typeWidth).
+_HEX_DTYPES = {
+    'float32_t': np.float32,
+    'int64_t': np.int64,
+    'uint64_t': np.uint64,
+    'int32_t': np.int32,
+    'uint32_t': np.uint32,
+    'int16_t': np.int16,
+    'uint16_t': np.uint16,
+    'int8_t': np.int8,
+    'uint8_t': np.uint8,
+}
+
+
+def _hexDtype(typeName: str):
+    return _HEX_DTYPES.get(typeName, np.float32)
+
 def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                                      all_mb_data: List[List[np.ndarray]],
                                      n_steps: int,
@@ -82,8 +100,12 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
     if num_grad_inputs > 0:
         retStr += f"#define TRAINING_GRAD_BUF_START_IDX {grad_buf_start_idx}\n"
         retStr += f"#define TRAINING_NUM_GRAD_INPUTS {num_grad_inputs}\n"
-        num_weight_inputs = grad_buf_start_idx - num_data
-        retStr += f"#define TRAINING_NUM_WEIGHT_INPUTS {num_weight_inputs}\n"
+    # QW: Emit the weight-input count whenever the graph exposes trainable weight inputs, even with
+    #     zero gradient-accumulation buffers — the ZO train graph is [data, weights] with no grads,
+    #     and the device harness gates its testInitWeights copy on TRAINING_NUM_WEIGHT_INPUTS. -- QW
+    if grad_buf_start_idx > num_data:  # -- QW
+        num_weight_inputs = grad_buf_start_idx - num_data  # -- QW
+        retStr += f"#define TRAINING_NUM_WEIGHT_INPUTS {num_weight_inputs}\n"  # -- QW
     retStr += f"#define TRAINING_LEARNING_RATE {learning_rate:.10g}f\n"
     retStr += "\n"
 
@@ -136,13 +158,8 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 _l3_loader_lines.append(f'  {buf_name} = cl_ram_malloc({nbytes}); '
                                         f'load_file_to_ram({buf_name}, "{buf_name}.hex");')
                 if hex_dir is not None:
-                    _npdt = {
-                        'float32_t': np.float32,
-                        'int64_t': np.int64,
-                        'uint8_t': np.uint8,
-                        'int32_t': np.int32
-                    }.get(typeName, np.float32)
-                    raw = values.astype(_npdt).tobytes()
+                    raw = values.astype(_hexDtype(typeName)).tobytes()
+                    assert len(raw) <= nbytes, f"{buf_name}: {len(raw)} B hex > {nbytes} B L3 allocation"
                     raw = raw + b'\x00' * (nbytes - len(raw))  # word-align pad, matches cl_ram_malloc size
                     os.makedirs(hex_dir, exist_ok = True)
                     with open(os.path.join(hex_dir, f'{buf_name}.hex'), 'wb') as _hf:
@@ -244,7 +261,11 @@ def generateTrainingTestInputsHeader(deployer: NetworkDeployer,
                 _l3_loader_lines.append(f'  {buf_name} = cl_ram_malloc({_nbytes}); '
                                         f'load_file_to_ram({buf_name}, "{buf_name}.hex");')
                 if hex_dir is not None:
-                    _raw = values.astype(np.float32).tobytes()
+                    # RW 2026-10-13: serialise in the buffer's C type. float32 for every weight wrote
+                    # an int8 QZO conv weight at 4x its cl_ram_malloc size; load_file_to_ram then ran
+                    # past the allocation and overwrote the neighbouring L3 buffer (the label).
+                    _raw = values.astype(_hexDtype(typeName)).tobytes()
+                    assert len(_raw) <= _nbytes, f"{buf_name}: {len(_raw)} B hex > {_nbytes} B L3 allocation"
                     _raw = _raw + b'\x00' * (_nbytes - len(_raw))
                     os.makedirs(hex_dir, exist_ok = True)
                     with open(os.path.join(hex_dir, f'{buf_name}.hex'), 'wb') as _hf:
@@ -325,6 +346,75 @@ def generateTrainingTestOutputsHeader(
         retStr += "#define N_LOSS_REFS 0\n\n"
 
     return retStr
+
+
+def generateZOTestOutputsHeader(  # -- QW
+    reference_loss_plus: List = None,  # -- QW
+    reference_loss_minus: List = None,  # -- QW
+    tolerance_abs: float = 1e-3,  # -- QW
+) -> str:  # -- QW
+    """Generate testoutputs.h for MeZO (ZO) tests — L+/L- loss verification. -- QW
+
+    Emits N_LOSS_REFS, testLossPlusRef[], testLossMinusRef[] and
+    ZO_TOLERANCE_ABS. Unlike the BP emitter (which greps the first 'loss' key),
+    the ZO reference loads the explicit ``loss_plus`` / ``loss_minus`` arrays.
+    When both are absent, comparison is suppressed (N_LOSS_REFS 0) and empty
+    reference arrays are still emitted so the C harness links. -- QW
+
+    Parameters
+    ----------
+    reference_loss_plus : list of float, optional
+        Reference L+ (+eps forward loss) for each mini-batch. -- QW
+    reference_loss_minus : list of float, optional
+        Reference L- (-eps forward loss) for each mini-batch. -- QW
+    tolerance_abs : float
+        Absolute comparison tolerance emitted as ZO_TOLERANCE_ABS. -- QW
+    """  # -- QW
+    has_plus = reference_loss_plus is not None and len(reference_loss_plus) > 0  # -- QW
+    has_minus = reference_loss_minus is not None and len(reference_loss_minus) > 0  # -- QW
+    has_loss = has_plus and has_minus  # -- QW
+
+    retStr = "// testoutputs.h — MeZO (ZO): L+/L- loss verification -- QW\n"  # -- QW
+    retStr += f"#define ZO_TOLERANCE_ABS {tolerance_abs:.10g}f\n\n"  # -- QW
+
+    if has_loss:  # -- QW
+        n = min(len(reference_loss_plus), len(reference_loss_minus))  # -- QW
+        plus_vals = ", ".join(f"{float(v):.10g}f" for v in reference_loss_plus[:n])  # -- QW
+        minus_vals = ", ".join(f"{float(v):.10g}f" for v in reference_loss_minus[:n])  # -- QW
+        retStr += "// Expected +eps / -eps forward loss per mini-batch\n"  # -- QW
+        retStr += f"#define N_LOSS_REFS {n}\n"  # -- QW
+        retStr += f"float32_t testLossPlusRef[{n}] = {{{plus_vals}}};\n"  # -- QW
+        retStr += f"float32_t testLossMinusRef[{n}] = {{{minus_vals}}};\n\n"  # -- QW
+    else:  # -- QW
+        retStr += "// No loss_plus/loss_minus reference available — comparison skipped.\n"  # -- QW
+        retStr += "#define N_LOSS_REFS 0\n"  # -- QW
+        retStr += "float32_t testLossPlusRef[1] = {0.0f};\n"  # -- QW
+        retStr += "float32_t testLossMinusRef[1] = {0.0f};\n\n"  # -- QW
+
+    return retStr  # -- QW
+
+
+def _load_reference_zo_losses(train_dir: str) -> Tuple[Optional[list], Optional[list]]:  # -- QW
+    """Load explicit loss_plus / loss_minus arrays from a ZO outputs.npz. -- QW
+
+    Returns (loss_plus, loss_minus) as float lists, or (None, None) if the file
+    or the keys are missing. -- QW
+    """  # -- QW
+    import numpy as _np  # -- QW
+    outputs_path = os.path.join(train_dir, "outputs.npz")  # -- QW
+    if not os.path.exists(outputs_path):  # -- QW
+        return None, None  # -- QW
+    try:  # -- QW
+        outputs = _np.load(outputs_path)  # -- QW
+    except Exception:  # -- QW
+        return None, None  # -- QW
+    lp = None  # -- QW
+    lm = None  # -- QW
+    if "loss_plus" in outputs.files:  # -- QW
+        lp = [float(v) for v in _np.array(outputs["loss_plus"]).flatten().tolist()]  # -- QW
+    if "loss_minus" in outputs.files:  # -- QW
+        lm = [float(v) for v in _np.array(outputs["loss_minus"]).flatten().tolist()]  # -- QW
+    return lp, lm  # -- QW
 
 
 def generateTrainingNetworkHeader(deployer: NetworkDeployer) -> str:
@@ -517,7 +607,11 @@ def generateTrainingTestNetwork(deployer: NetworkDeployer,
     os.makedirs(dumpdir, exist_ok = True)
 
     _platform_name = type(deployer.Platform).__name__
-    _is_gap9 = "GAP9" in _platform_name
+    # _is_gap9 = "GAP9" in _platform_name
+    # QW (fusion handover 2026-10-14): GAP9_w_NE16 deploys through MemoryNE16PlatformWrapper (an NE16Platform, itself a
+    # GAP9Platform subclass) whose name has no "GAP9", so GAP9 + NE16 builds took the Siracusa path: every test window
+    # baked into L2 .data. A 4-window fixture then no longer fit next to the fused NE16 arena (L2 alloc failed). -- QW
+    _is_gap9 = "GAP9" in _platform_name or "NE16" in _platform_name  # -- QW
 
     # GAP9 may skip baking the initial weights ONLY when every weight buffer is
     # genuinely L3-resident: Deeploy then emits a load_file_to_ram(buf, "N.hex")

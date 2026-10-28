@@ -1,0 +1,55 @@
+[Deeploy] Test path /app/Deeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_round1 is outside base directory. Using /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1
+[Deeploy] Memory allocator failed with return code 1 at memory level L2 with capacity of 1296656 bytes!
+[Deeploy]   arena needs at least 1325460 bytes (peak simultaneous footprint of 111 buffer(s)); shortfall is 28804 bytes.
+[Deeploy]   If running with --promoteToL2, increase --promoteToL2Headroom by at least 28804 bytes to free up arena space.
+[Deeploy] Error during binding! Exporting deeploy state!
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVPTraining.py", line 497, in <module>
+    generateTiledTrainingNetwork(args)
+  File "/app/Deeploy/DeeployTest/testMVPTraining.py", line 258, in generateTiledTrainingNetwork
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3564, in prepare
+    self.midEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3527, in midEnd
+    raise e
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3523, in midEnd
+    self.bind()
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 2372, in bind
+    self.tile()
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 2310, in tile
+    memoryMap = self.tiler.computeMemoryMap(self.ctxt, tilingSolution)
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 834, in computeMemoryMap
+    memoryMap[memoryLevel][-1] = self.minimalloc(
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 742, in minimalloc
+    raise subprocess.CalledProcessError(minimallocOutput.returncode, " ".join(minimallocOutput.args))
+subprocess.CalledProcessError: Command '/app/install/minimalloc/minimalloc --capacity=1296656 --input=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/input_minimalloc_55ac644a800710bb.csv --output=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1/output_minimalloc_55ac644a800710bb.csv' returned non-zero exit status 1.
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_train_QZOECO_full_fused_round1
+  Test Directory      : /app/Deeploy/SpeechNet_Test/speechnet_train_QZOECO_full_fused_round1
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/speechnet_train_QZOECO_full_fused_round1
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_bd_eco
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : board
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DSIMULATOR=board -DBN_FROZEN_STATS=ON -DGAP9_NETWORK_O3=ON -DZO_ECO=ON -DZO_ECO_SR=ON -DZO_QUIET=ON -DZO_FUSED_DUAL=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --zo-fused-dual --zo-fused-dual-ne16=0,1,2 --defaultMemLevel=L2 --l1=114000 --l2=1300000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_train_QZOECO_full_fused_round1 FAILED with exception: Tiled MeZO network generation failed for speechnet_train_QZOECO_full_fused_round1[0m

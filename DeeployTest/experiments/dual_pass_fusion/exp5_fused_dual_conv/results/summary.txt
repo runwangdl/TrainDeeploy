@@ -1,0 +1,18 @@
+exp5 derived numbers -- fused dual-pass kernel vs 2 x exp3 (the deployed two-execution flow)
+
+whole fixture, both passes : exp3 x2 =   1716370   exp5 =    910763   -> 1.88x  (saves 805607 cycles, 46.9%)
+  @370 MHz                 : 4.64 ms -> 2.46 ms
+conv node, both passes     : exp3 x2 =   1329292   exp5 =    614979   -> 2.16x
+  fused kernel vs ONE pulp-nn pass: 614979 vs 664646 -> the fused kernel doing BOTH passes is 7.5% faster than pulp-nn doing ONE
+I-cache refill (core 0)    : exp3 x2 =    302724   exp5 =      5076   -> 60x fewer ; share 22.8% -> 0.83%
+instructions (core 0)      : exp3 x2 =    822686   exp5 =    523987   -> -36.3%
+IPC (conv node, core 0)    : 0.619 -> 0.852
+load stalls (core 0)       : exp3 x2 =     70990   exp5 =     35676   (share 5.3% -> 5.8%: now the largest stall term)
+cluster MAC/cycle          : exp3 0.473 -> exp5 1.021  (314048 MACs per pass)
+core-0 instr per MAC       : exp3 9.18 -> exp5 6.67  (core 0: 1227 px x 8 ch x 4 taps x 2 passes = 78528 MACs)
+perturb+transpose nodes    : exp3 x2 = 26906  (2 perturb nodes + 2 transposes per pass)   exp5 = 8826 (weight+input transposes only; perturb nodes gone)
+output transpose           : exp3 x2 =    273174   exp5 =    210699   (-23%, but now 25.2% of the fixture: the next bottleneck)
+DMA/tiling outside blocks  : exp3 43499 (5.1%) per pass   exp5 76259 (8.4%)  -- conv now 2 tiles (output 157,024 B > L1 headroom), transpose 3
+code size (llvm-nm)        : pulp_nn_conv 2,340 + matmul 2,272 + im2col 82 = 4,694 B   ->   PULP_DualConv2d_i8_i8_i8_HWC = 0x724 = 1,828 B (-61%), no calls in the pixel loop
+load balance               : exp3 rows 4/4/4/2 -> 87.4%   exp5 flattened pixels: tile0 7504 = 8x938 exact, tile1 2310 -> 289x7+287 (99.3%)
+correctness                : Errors: 0 out of 157024 (exact integer compare, both passes)

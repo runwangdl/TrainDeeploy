@@ -116,6 +116,12 @@ static unsigned int g_opt_cycles_acc = 0;
 #define TOTAL_FWD_PASSES (N_TRAIN_STEPS * N_ACCUM_STEPS)
 static float stored_losses[TOTAL_FWD_PASSES];
 
+#ifdef DUMP_ARGMAX /* QW: MaxPoolGrad argmax-signature per step (drift evidence) -- QW */
+extern uint32_t g_maxpool_argmax_sig;
+extern uint32_t g_maxpool_argmax_sig2;
+extern uint32_t g_maxpool_argmax_en;
+#endif
+
 /* -------------------------------------------------------------------------
  * L3-aware memory transfer: handles all combinations of L2/L3 src and dst
  * ---------------------------------------------------------------------- */
@@ -203,6 +209,35 @@ static void run_optimizer_step(void) {
 #endif /* TRAINING_NUM_WEIGHT_INPUTS */
 }
 
+#ifdef DUMP_WEIGHTS
+/* QW: on-device weight extraction (whole function added by QW) ------------- QW
+ * Dump the on-device trainable weights as raw 32-bit hex words (FPU-free, bit-exact).
+ * Reads the persistent training-weight buffers (post-optimizer-update) and prints one
+ * line per weight tensor: "[WDUMP s=<step> wi=<i> n=<#floats>] <hex> <hex> ...".
+ * Parsed off the runner log to reconstruct the actual fine-tuned weights. */
+static void dump_weights(uint32_t step) {
+#if defined(TRAINING_NUM_WEIGHT_INPUTS) && (TRAINING_NUM_WEIGHT_INPUTS > 0)
+  for (uint32_t wi = 0; wi < (uint32_t)TRAINING_NUM_WEIGHT_INPUTS; wi++) {
+    uint32_t idx = (uint32_t)TRAINING_NUM_DATA_INPUTS + wi;
+    uint32_t bytes = DeeployNetwork_inputs_bytes[idx];
+    void *buf = DeeployNetwork_inputs[idx];
+    uint32_t n = bytes / 4u;
+    printf("[WDUMP s=%u wi=%u n=%u]", (unsigned)step, (unsigned)wi, (unsigned)n);
+    for (uint32_t k = 0; k < n; k++) {
+      uint32_t word;
+      if (IS_L2(buf)) {
+        word = ((const uint32_t *)buf)[k];
+      } else {
+        ram_read(&word, (uint8_t *)buf + 4u * k, 4u);
+      }
+      printf(" %08x", (unsigned)word);
+    }
+    printf("\r\n");
+  }
+#endif
+}
+#endif /* DUMP_WEIGHTS */ /* QW: end on-device weight extraction --------------- QW */
+
 /* -------------------------------------------------------------------------
  * Numerical comparison helpers — run on cluster (FC has no FPU)
  * ---------------------------------------------------------------------- */
@@ -229,6 +264,9 @@ static void CompareLossesOnCluster(void *args) {
     printf("  [loss %u] computed=%.6f  ref=%.6f  diff=%.6f  TOL=%.6f\r\n", i,
            (double)a->computed[i], (double)a->reference[i], (double)diff,
            (double)tol);
+#ifdef DUMP_LOSS_HEX /* -- QW exp21e: raw fp32 bits of device and reference loss (bit-exactness check) */
+    printf("  [losshex %u] %08x %08x\r\n", i, *(uint32_t *)&a->computed[i], *(uint32_t *)&a->reference[i]);
+#endif
     if (diff > tol) {
       errors++;
     }
@@ -323,6 +361,17 @@ int main(void) {
   printf("Starting training (%u optimizer steps x %u accum steps)...\r\n",
          (unsigned)N_TRAIN_STEPS, (unsigned)N_ACCUM_STEPS);
 
+#ifdef DUMP_ARGMAX /* QW: enable MaxPoolGrad argmax-signature instrumentation -- QW */
+  g_maxpool_argmax_en = 1u;
+#endif
+
+#ifdef BN_FROZEN_STATS /* QW: normalize training BN with frozen pretrained running stats -- QW */
+  extern uint32_t g_bn_frozen_stats;
+  g_bn_frozen_stats = 1u;
+  printf("[BN_FROZEN_STATS] training BN uses frozen running statistics "
+         "(train==inference)\n");
+#endif
+
   for (uint32_t update_step = 0; update_step < N_TRAIN_STEPS; update_step++) {
 
     for (uint32_t accum_step = 0; accum_step < N_ACCUM_STEPS; accum_step++) {
@@ -352,6 +401,11 @@ int main(void) {
                       DeeployNetwork_inputs_bytes[buf]);
       }
 
+#ifdef DUMP_ARGMAX /* QW: reset argmax signature before this step's fwd+bwd ----- QW */
+      g_maxpool_argmax_sig = 0u;
+      g_maxpool_argmax_sig2 = 0u;
+#endif
+
       /* ③ Forward + backward + InPlaceAccumulatorV2. */
       pi_cluster_task(&cluster_task, RunTrainingNetwork, NULL);
       cluster_task.stack_size = MAINSTACKSIZE;
@@ -361,6 +415,11 @@ int main(void) {
       pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
       StopTimer();
       g_train_cycles_acc += getCycles();
+
+#ifdef DUMP_ARGMAX /* QW: dump this step's MaxPoolGrad argmax signature --------- QW */
+      printf("[AMSIG %u] %08x %08x\r\n", (unsigned)mb, (unsigned)g_maxpool_argmax_sig,
+             (unsigned)g_maxpool_argmax_sig2);
+#endif
 
       /* ④ Store loss — use memcpy to avoid float registers on FC (no FPU). */
       {
@@ -376,6 +435,14 @@ int main(void) {
 
     /* ⑤ SGD weight update via Deeploy-compiled OptimizerNetwork. */
     run_optimizer_step();
+
+#ifdef DUMP_WEIGHTS /* QW: dump on-device weights after final optimizer step -- QW */
+    /* Dump the actual on-device weights at the final step (set DUMP_WEIGHTS_EVERY
+     * to also dump intermediate steps for a weight trajectory). */
+    if (update_step == (uint32_t)N_TRAIN_STEPS - 1u) {
+      dump_weights(update_step);
+    }
+#endif /* QW */
 
   } /* end update_step loop */
 

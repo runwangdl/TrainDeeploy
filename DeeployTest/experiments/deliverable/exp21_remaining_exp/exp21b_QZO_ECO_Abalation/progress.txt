@@ -1,0 +1,165 @@
+2026-10-26 00:39:51 launch: PARALLEL=6 ADAM_MATCHED_LR=7e-5
+2026-10-26 00:39:51 start A0_qzo_deployed S02
+2026-10-26 00:39:51 start A0_qzo_deployed S04
+2026-10-26 00:39:51 start A0_qzo_deployed S01
+2026-10-26 00:39:51 start A0_qzo_deployed S03
+2026-10-26 00:39:52 start A4_eco_sr S01
+2026-10-26 00:39:52 start A4_eco_sr S02
+2026-10-26 01:08:26 end   A0_qzo_deployed S04 : DONE A0_qzo_deployed S04: b1=75.00 b2=83.33 b3=80.00 b4=85.56 b5=81.11 mean(b2-b5)=82.50 [1700s]
+2026-10-26 01:08:27 start A4_eco_sr S03
+2026-10-26 01:08:31 end   A0_qzo_deployed S02 : DONE A0_qzo_deployed S02: b1=77.78 b2=78.33 b3=75.00 b4=61.67 b5=64.44 mean(b2-b5)=69.86 [1704s]
+2026-10-26 01:08:31 start A4_eco_sr S04
+2026-10-26 01:08:41 end   A4_eco_sr S01 : DONE A4_eco_sr S01: b1=72.22 b2=89.44 b3=81.67 b4=91.67 b5=86.67 mean(b2-b5)=87.36 [1713s]
+2026-10-26 01:08:42 start A1_sgd_rtn S01
+2026-10-26 01:08:45 end   A0_qzo_deployed S01 : DONE A0_qzo_deployed S01: b1=72.22 b2=87.22 b3=81.11 b4=88.89 b5=86.11 mean(b2-b5)=85.83 [1718s]
+2026-10-26 01:08:46 start A1_sgd_rtn S02
+2026-10-26 01:09:13 end   A4_eco_sr S02 : DONE A4_eco_sr S02: b1=77.78 b2=77.22 b3=77.22 b4=70.56 b5=69.44 mean(b2-b5)=73.61 [1746s]
+2026-10-26 01:09:13 start A1_sgd_rtn S03
+2026-10-26 01:09:17 end   A0_qzo_deployed S03 : DONE A0_qzo_deployed S03: b1=77.22 b2=70.56 b3=65.00 b4=64.44 b5=63.33 mean(b2-b5)=65.83 [1749s]
+2026-10-26 01:09:17 start A1_sgd_rtn S04
+2026-10-26 01:38:52 end   A4_eco_sr S04 : DONE A4_eco_sr S04: b1=75.00 b2=86.11 b3=82.22 b4=87.78 b5=82.78 mean(b2-b5)=84.72 [1803s]
+2026-10-26 01:38:52 start A2_sgdm_rtn S01
+2026-10-26 01:39:24 end   A1_sgd_rtn S01 : DONE A1_sgd_rtn S01: b1=72.22 b2=77.22 b3=76.67 b4=85.56 b5=76.67 mean(b2-b5)=79.03 [1826s]
+2026-10-26 01:39:24 start A2_sgdm_rtn S02
+2026-10-26 01:39:25 end   A1_sgd_rtn S02 : DONE A1_sgd_rtn S02: b1=77.78 b2=70.56 b3=66.11 b4=66.67 b5=52.78 mean(b2-b5)=64.03 [1825s]
+2026-10-26 01:39:25 start A2_sgdm_rtn S03
+2026-10-26 01:39:37 end   A4_eco_sr S03 : DONE A4_eco_sr S03: b1=77.22 b2=70.56 b3=66.11 b4=69.44 b5=65.56 mean(b2-b5)=67.92 [1847s]
+2026-10-26 01:39:37 start A2_sgdm_rtn S04
+2026-10-26 01:39:53 end   A1_sgd_rtn S03 : DONE A1_sgd_rtn S03: b1=77.22 b2=75.00 b3=70.00 b4=62.78 b5=62.22 mean(b2-b5)=67.50 [1824s]
+2026-10-26 01:39:54 start A3_adam_sr S01
+2026-10-26 01:40:45 end   A1_sgd_rtn S04 : DONE A1_sgd_rtn S04: b1=75.00 b2=75.00 b3=72.22 b4=75.00 b5=84.44 mean(b2-b5)=76.67 [1873s]
+2026-10-26 01:40:46 start A3_adam_sr S02
+2026-10-26 01:59:20 end   A2_sgdm_rtn S01 : DONE A2_sgdm_rtn S01: b1=72.22 b2=76.11 b3=74.44 b4=82.78 b5=73.89 mean(b2-b5)=76.81 [1216s]
+2026-10-26 01:59:20 start A3_adam_sr S03
+2026-10-26 02:00:28 end   A2_sgdm_rtn S04 : DONE A2_sgdm_rtn S04: b1=75.00 b2=75.00 b3=72.22 b4=75.00 b5=83.89 mean(b2-b5)=76.53 [1238s]
+2026-10-26 02:00:28 start A3_adam_sr S04
+2026-10-26 02:00:29 end   A2_sgdm_rtn S03 : DONE A2_sgdm_rtn S03: b1=77.22 b2=74.44 b3=70.56 b4=62.22 b5=62.78 mean(b2-b5)=67.50 [1251s]
+2026-10-26 02:00:29 start A5_sgd_sr S01
+2026-10-26 02:00:42 end   A2_sgdm_rtn S02 : DONE A2_sgdm_rtn S02: b1=77.78 b2=71.67 b3=66.67 b4=68.33 b5=53.89 mean(b2-b5)=65.14 [1266s]
+2026-10-26 02:00:43 start A5_sgd_sr S02
+2026-10-26 02:00:46 end   A3_adam_sr S01 : DONE A3_adam_sr S01: b1=72.22 b2=78.33 b3=73.89 b4=83.33 b5=73.89 mean(b2-b5)=77.36 [1240s]
+2026-10-26 02:00:46 start A5_sgd_sr S03
+2026-10-26 02:01:35 end   A3_adam_sr S02 : DONE A3_adam_sr S02: b1=77.78 b2=75.00 b3=67.78 b4=66.11 b5=46.11 mean(b2-b5)=63.75 [1235s]
+2026-10-26 02:01:35 start A5_sgd_sr S04
+2026-10-26 02:20:25 end   A3_adam_sr S03 : DONE A3_adam_sr S03: b1=77.22 b2=76.11 b3=70.56 b4=61.67 b5=61.67 mean(b2-b5)=67.50 [1255s]
+2026-10-26 02:20:26 start A6_sgdm_sr S01
+2026-10-26 02:20:48 end   A5_sgd_sr S01 : DONE A5_sgd_sr S01: b1=72.22 b2=85.56 b3=76.67 b4=85.56 b5=76.11 mean(b2-b5)=80.97 [1207s]
+2026-10-26 02:20:48 start A6_sgdm_sr S02
+2026-10-26 02:21:09 end   A5_sgd_sr S03 : DONE A5_sgd_sr S03: b1=77.22 b2=72.22 b3=61.67 b4=46.67 b5=40.56 mean(b2-b5)=55.28 [1211s]
+2026-10-26 02:21:09 start A6_sgdm_sr S03
+2026-10-26 02:21:19 end   A3_adam_sr S04 : DONE A3_adam_sr S04: b1=75.00 b2=76.67 b3=76.11 b4=81.11 b5=85.56 mean(b2-b5)=79.86 [1240s]
+2026-10-26 02:21:19 start A6_sgdm_sr S04
+2026-10-26 02:21:28 end   A5_sgd_sr S02 : DONE A5_sgd_sr S02: b1=77.78 b2=74.44 b3=68.33 b4=70.56 b5=44.44 mean(b2-b5)=64.44 [1234s]
+2026-10-26 02:21:28 start A7_eco_rtn S01
+2026-10-26 02:21:46 end   A5_sgd_sr S04 : DONE A5_sgd_sr S04: b1=75.00 b2=82.78 b3=83.33 b4=85.00 b5=80.00 mean(b2-b5)=82.78 [1199s]
+2026-10-26 02:21:46 start A7_eco_rtn S02
+2026-10-26 02:37:17 end   A6_sgdm_sr S01 : DONE A6_sgdm_sr S01: b1=72.22 b2=88.89 b3=81.67 b4=88.89 b5=83.89 mean(b2-b5)=85.83 [1000s]
+2026-10-26 02:37:17 start A7_eco_rtn S03
+2026-10-26 02:37:44 end   A6_sgdm_sr S02 : DONE A6_sgdm_sr S02: b1=77.78 b2=75.00 b3=74.44 b4=73.33 b5=60.56 mean(b2-b5)=70.83 [1005s]
+2026-10-26 02:37:44 end   A6_sgdm_sr S04 : DONE A6_sgdm_sr S04: b1=75.00 b2=84.44 b3=85.00 b4=89.44 b5=82.78 mean(b2-b5)=85.42 [973s]
+2026-10-26 02:37:45 start A8_adam_rtn S01
+2026-10-26 02:37:45 start A7_eco_rtn S04
+2026-10-26 02:37:58 end   A6_sgdm_sr S03 : DONE A6_sgdm_sr S03: b1=77.22 b2=71.11 b3=67.78 b4=68.33 b5=67.78 mean(b2-b5)=68.75 [999s]
+2026-10-26 02:37:58 start A8_adam_rtn S02
+2026-10-26 02:38:07 end   A7_eco_rtn S01 : DONE A7_eco_rtn S01: b1=72.22 b2=78.33 b3=76.11 b4=86.67 b5=80.00 mean(b2-b5)=80.28 [989s]
+2026-10-26 02:38:07 start A8_adam_rtn S03
+2026-10-26 02:38:49 end   A7_eco_rtn S02 : DONE A7_eco_rtn S02: b1=77.78 b2=75.56 b3=71.67 b4=72.22 b5=62.78 mean(b2-b5)=70.56 [1012s]
+2026-10-26 02:38:50 start A8_adam_rtn S04
+2026-10-26 02:51:48 end   A7_eco_rtn S03 : DONE A7_eco_rtn S03: b1=77.22 b2=76.67 b3=69.44 b4=64.44 b5=64.44 mean(b2-b5)=68.75 [862s]
+2026-10-26 02:51:49 start A10_sgd_carry_rtn S01
+2026-10-26 02:51:49 end   A7_eco_rtn S04 : DONE A7_eco_rtn S04: b1=75.00 b2=79.44 b3=76.11 b4=84.44 b5=86.11 mean(b2-b5)=81.53 [836s]
+2026-10-26 02:51:50 start A10_sgd_carry_rtn S02
+2026-10-26 02:52:02 end   A8_adam_rtn S01 : DONE A8_adam_rtn S01: b1=72.22 b2=77.22 b3=71.67 b4=78.89 b5=71.67 mean(b2-b5)=74.86 [848s]
+2026-10-26 02:52:03 start A10_sgd_carry_rtn S03
+2026-10-26 02:52:19 end   A8_adam_rtn S02 : DONE A8_adam_rtn S02: b1=77.78 b2=70.00 b3=65.00 b4=65.00 b5=50.00 mean(b2-b5)=62.50 [852s]
+2026-10-26 02:52:19 start A10_sgd_carry_rtn S04
+2026-10-26 02:52:27 end   A8_adam_rtn S03 : DONE A8_adam_rtn S03: b1=77.22 b2=75.56 b3=71.67 b4=61.67 b5=63.33 mean(b2-b5)=68.06 [850s]
+2026-10-26 02:52:27 start A11_sgd_carry_sr S01
+2026-10-26 02:53:03 end   A8_adam_rtn S04 : DONE A8_adam_rtn S04: b1=75.00 b2=75.00 b3=71.11 b4=74.44 b5=82.22 mean(b2-b5)=75.69 [845s]
+2026-10-26 02:53:04 start A11_sgd_carry_sr S02
+2026-10-26 03:04:03 end   A10_sgd_carry_rtn S01 : DONE A10_sgd_carry_rtn S01: b1=72.22 b2=90.00 b3=82.22 b4=90.56 b5=87.22 mean(b2-b5)=87.50 [727s]
+2026-10-26 03:04:03 start A11_sgd_carry_sr S03
+2026-10-26 03:04:04 end   A10_sgd_carry_rtn S03 : DONE A10_sgd_carry_rtn S03: b1=77.22 b2=71.11 b3=66.67 b4=70.00 b5=66.11 mean(b2-b5)=68.47 [714s]
+2026-10-26 03:04:04 start A11_sgd_carry_sr S04
+2026-10-26 03:04:20 end   A10_sgd_carry_rtn S02 : DONE A10_sgd_carry_rtn S02: b1=77.78 b2=76.67 b3=77.78 b4=71.11 b5=69.44 mean(b2-b5)=73.75 [744s]
+2026-10-26 03:04:20 start A12_adam_sr_matched S01
+2026-10-26 03:04:23 end   A10_sgd_carry_rtn S04 : DONE A10_sgd_carry_rtn S04: b1=75.00 b2=85.56 b3=82.78 b4=88.89 b5=83.33 mean(b2-b5)=85.14 [717s]
+2026-10-26 03:04:23 start A12_adam_sr_matched S02
+2026-10-26 03:04:26 end   A11_sgd_carry_sr S01 : DONE A11_sgd_carry_sr S01: b1=72.22 b2=90.00 b3=80.00 b4=90.56 b5=87.22 mean(b2-b5)=86.94 [710s]
+2026-10-26 03:04:26 start A12_adam_sr_matched S03
+2026-10-26 03:05:00 end   A11_sgd_carry_sr S02 : DONE A11_sgd_carry_sr S02: b1=77.78 b2=75.56 b3=79.44 b4=72.78 b5=71.67 mean(b2-b5)=74.86 [710s]
+2026-10-26 03:05:00 start A12_adam_sr_matched S04
+2026-10-26 03:14:14 end   A11_sgd_carry_sr S04 : DONE A11_sgd_carry_sr S04: b1=75.00 b2=85.56 b3=82.78 b4=87.78 b5=83.89 mean(b2-b5)=85.00 [605s]
+2026-10-26 03:14:15 start A13_sgd_sr_lr1e-5 S01
+2026-10-26 03:14:19 end   A11_sgd_carry_sr S03 : DONE A11_sgd_carry_sr S03: b1=77.22 b2=71.11 b3=66.67 b4=69.44 b5=64.44 mean(b2-b5)=67.92 [610s]
+2026-10-26 03:14:19 start A13_sgd_sr_lr1e-5 S02
+2026-10-26 03:14:43 end   A12_adam_sr_matched S01 : DONE A12_adam_sr_matched S01: b1=72.22 b2=91.67 b3=82.22 b4=90.56 b5=83.89 mean(b2-b5)=87.08 [617s]
+2026-10-26 03:14:43 start A13_sgd_sr_lr1e-5 S03
+2026-10-26 03:14:48 end   A12_adam_sr_matched S02 : DONE A12_adam_sr_matched S02: b1=77.78 b2=76.11 b3=72.78 b4=73.33 b5=59.44 mean(b2-b5)=70.42 [618s]
+2026-10-26 03:14:48 start A13_sgd_sr_lr1e-5 S04
+2026-10-26 03:14:50 end   A12_adam_sr_matched S03 : DONE A12_adam_sr_matched S03: b1=77.22 b2=71.11 b3=67.78 b4=67.78 b5=63.33 mean(b2-b5)=67.50 [618s]
+2026-10-26 03:14:50 start A14_adam_rtn_matched S01
+2026-10-26 03:15:11 end   A12_adam_sr_matched S04 : DONE A12_adam_sr_matched S04: b1=75.00 b2=84.44 b3=85.00 b4=89.44 b5=84.44 mean(b2-b5)=85.83 [604s]
+2026-10-26 03:15:11 start A14_adam_rtn_matched S02
+2026-10-26 03:24:29 end   A13_sgd_sr_lr1e-5 S01 : DONE A13_sgd_sr_lr1e-5 S01: b1=72.22 b2=83.89 b3=75.00 b4=79.44 b5=62.78 mean(b2-b5)=75.28 [608s]
+2026-10-26 03:24:29 start A14_adam_rtn_matched S03
+2026-10-26 03:24:39 end   A13_sgd_sr_lr1e-5 S02 : DONE A13_sgd_sr_lr1e-5 S02: b1=77.78 b2=65.00 b3=54.44 b4=40.00 b5=25.56 mean(b2-b5)=46.25 [613s]
+2026-10-26 03:24:39 start A14_adam_rtn_matched S04
+2026-10-26 03:25:05 end   A13_sgd_sr_lr1e-5 S04 : DONE A13_sgd_sr_lr1e-5 S04: b1=75.00 b2=86.67 b3=82.22 b4=82.22 b5=71.11 mean(b2-b5)=80.56 [611s]
+2026-10-26 03:25:07 end   A14_adam_rtn_matched S01 : DONE A14_adam_rtn_matched S01: b1=72.22 b2=77.22 b3=74.44 b4=82.78 b5=73.89 mean(b2-b5)=77.08 [611s]
+2026-10-26 03:25:09 end   A13_sgd_sr_lr1e-5 S03 : DONE A13_sgd_sr_lr1e-5 S03: b1=77.22 b2=67.22 b3=55.56 b4=36.67 b5=38.89 mean(b2-b5)=49.58 [620s]
+2026-10-26 03:25:27 end   A14_adam_rtn_matched S02 : DONE A14_adam_rtn_matched S02: b1=77.78 b2=71.67 b3=65.56 b4=67.78 b5=52.22 mean(b2-b5)=64.31 [609s]
+2026-10-26 03:33:15 end   A14_adam_rtn_matched S04 : DONE A14_adam_rtn_matched S04: b1=75.00 b2=75.56 b3=72.78 b4=75.00 b5=85.00 mean(b2-b5)=77.08 [511s]
+2026-10-26 03:33:24 end   A14_adam_rtn_matched S03 : DONE A14_adam_rtn_matched S03: b1=77.22 b2=76.11 b3=71.11 b4=62.78 b5=61.11 mean(b2-b5)=67.78 [530s]
+2026-10-26 03:33:24 ALL DONE
+2026-10-26 03:33:32 srseed launch
+2026-10-26 03:33:32 start A4_eco_sr sr1 S03
+2026-10-26 03:33:32 start A4_eco_sr sr1 S01
+2026-10-26 03:33:32 start A4_eco_sr sr1 S04
+2026-10-26 03:33:32 start A4_eco_sr sr1 S02
+2026-10-26 03:33:32 start A6_sgdm_sr sr1 S01
+2026-10-26 03:33:32 start A6_sgdm_sr sr1 S02
+2026-10-26 03:44:01 end   A6_sgdm_sr sr1 S01 : DONE A6_sgdm_sr S01: b1=72.22 b2=87.78 b3=78.89 b4=90.00 b5=85.00 mean(b2-b5)=85.42 [623s]
+2026-10-26 03:44:01 end   A4_eco_sr sr1 S04 : DONE A4_eco_sr S04: b1=75.00 b2=86.67 b3=82.78 b4=88.89 b5=83.33 mean(b2-b5)=85.42 [623s]
+2026-10-26 03:44:02 start A6_sgdm_sr sr1 S03
+2026-10-26 03:44:02 start A6_sgdm_sr sr1 S04
+2026-10-26 03:44:05 end   A4_eco_sr sr1 S01 : DONE A4_eco_sr S01: b1=72.22 b2=91.11 b3=81.11 b4=90.00 b5=86.11 mean(b2-b5)=87.08 [627s]
+2026-10-26 03:44:05 start A5_sgd_sr sr1 S01
+2026-10-26 03:44:08 end   A4_eco_sr sr1 S02 : DONE A4_eco_sr S02: b1=77.78 b2=75.56 b3=75.56 b4=71.11 b5=70.00 mean(b2-b5)=73.06 [630s]
+2026-10-26 03:44:08 start A5_sgd_sr sr1 S02
+2026-10-26 03:44:11 end   A4_eco_sr sr1 S03 : DONE A4_eco_sr S03: b1=77.22 b2=72.22 b3=64.44 b4=68.33 b5=67.78 mean(b2-b5)=68.19 [633s]
+2026-10-26 03:44:11 start A5_sgd_sr sr1 S03
+2026-10-26 03:44:15 end   A6_sgdm_sr sr1 S02 : DONE A6_sgdm_sr S02: b1=77.78 b2=76.67 b3=74.44 b4=72.22 b5=60.56 mean(b2-b5)=70.97 [637s]
+2026-10-26 03:44:15 start A5_sgd_sr sr1 S04
+2026-10-26 03:54:39 end   A6_sgdm_sr sr1 S04 : DONE A6_sgdm_sr S04: b1=75.00 b2=85.56 b3=81.11 b4=88.89 b5=82.22 mean(b2-b5)=84.44 [630s]
+2026-10-26 03:54:39 start A4_eco_sr sr2 S01
+2026-10-26 03:54:41 end   A6_sgdm_sr sr1 S03 : DONE A6_sgdm_sr S03: b1=77.22 b2=73.89 b3=68.33 b4=67.22 b5=65.00 mean(b2-b5)=68.61 [633s]
+2026-10-26 03:54:41 start A4_eco_sr sr2 S02
+2026-10-26 03:54:43 end   A5_sgd_sr sr1 S01 : DONE A5_sgd_sr S01: b1=72.22 b2=88.33 b3=79.44 b4=83.89 b5=75.56 mean(b2-b5)=81.81 [632s]
+2026-10-26 03:54:43 start A4_eco_sr sr2 S03
+2026-10-26 03:54:49 end   A5_sgd_sr sr1 S03 : DONE A5_sgd_sr S03: b1=77.22 b2=72.78 b3=61.67 b4=44.44 b5=42.78 mean(b2-b5)=55.42 [631s]
+2026-10-26 03:54:49 start A4_eco_sr sr2 S04
+2026-10-26 03:54:49 end   A5_sgd_sr sr1 S04 : DONE A5_sgd_sr S04: b1=75.00 b2=87.22 b3=86.11 b4=87.22 b5=79.44 mean(b2-b5)=85.00 [628s]
+2026-10-26 03:54:50 start A6_sgdm_sr sr2 S01
+2026-10-26 03:54:56 end   A5_sgd_sr sr1 S02 : DONE A5_sgd_sr S02: b1=77.78 b2=68.89 b3=67.22 b4=62.78 b5=44.44 mean(b2-b5)=60.83 [642s]
+2026-10-26 03:54:56 start A6_sgdm_sr sr2 S02
+2026-10-26 04:05:19 end   A4_eco_sr sr2 S01 : DONE A4_eco_sr S01: b1=72.22 b2=88.89 b3=80.56 b4=90.00 b5=86.11 mean(b2-b5)=86.39 [634s]
+2026-10-26 04:05:20 start A6_sgdm_sr sr2 S03
+2026-10-26 04:05:32 end   A4_eco_sr sr2 S04 : DONE A4_eco_sr S04: b1=75.00 b2=86.11 b3=82.22 b4=88.89 b5=82.78 mean(b2-b5)=85.00 [636s]
+2026-10-26 04:05:32 start A6_sgdm_sr sr2 S04
+2026-10-26 04:05:36 end   A4_eco_sr sr2 S02 : DONE A4_eco_sr S02: b1=77.78 b2=76.11 b3=78.89 b4=71.67 b5=71.11 mean(b2-b5)=74.44 [649s]
+2026-10-26 04:05:36 start A5_sgd_sr sr2 S01
+2026-10-26 04:05:38 end   A6_sgdm_sr sr2 S01 : DONE A6_sgdm_sr S01: b1=72.22 b2=90.56 b3=80.56 b4=85.00 b5=81.67 mean(b2-b5)=84.44 [642s]
+2026-10-26 04:05:38 start A5_sgd_sr sr2 S02
+2026-10-26 04:05:40 end   A6_sgdm_sr sr2 S02 : DONE A6_sgdm_sr S02: b1=77.78 b2=75.56 b3=76.67 b4=68.89 b5=67.78 mean(b2-b5)=72.22 [637s]
+2026-10-26 04:05:40 start A5_sgd_sr sr2 S03
+2026-10-26 04:05:42 end   A4_eco_sr sr2 S03 : DONE A4_eco_sr S03: b1=77.22 b2=71.67 b3=67.22 b4=68.33 b5=66.67 mean(b2-b5)=68.47 [652s]
+2026-10-26 04:05:42 start A5_sgd_sr sr2 S04
+2026-10-26 04:16:04 end   A6_sgdm_sr sr2 S03 : DONE A6_sgdm_sr S03: b1=77.22 b2=73.89 b3=68.89 b4=62.78 b5=60.00 mean(b2-b5)=66.39 [639s]
+2026-10-26 04:16:16 end   A6_sgdm_sr sr2 S04 : DONE A6_sgdm_sr S04: b1=75.00 b2=86.67 b3=82.22 b4=90.56 b5=79.44 mean(b2-b5)=84.72 [639s]
+2026-10-26 04:16:19 end   A5_sgd_sr sr2 S01 : DONE A5_sgd_sr S01: b1=72.22 b2=88.33 b3=82.78 b4=84.44 b5=74.44 mean(b2-b5)=82.50 [637s]
+2026-10-26 04:16:20 end   A5_sgd_sr sr2 S04 : DONE A5_sgd_sr S04: b1=75.00 b2=84.44 b3=81.67 b4=81.11 b5=79.44 mean(b2-b5)=81.67 [630s]
+2026-10-26 04:16:21 end   A5_sgd_sr sr2 S02 : DONE A5_sgd_sr S02: b1=77.78 b2=73.89 b3=58.89 b4=56.67 b5=46.11 mean(b2-b5)=58.89 [637s]
+2026-10-26 04:16:25 end   A5_sgd_sr sr2 S03 : DONE A5_sgd_sr S03: b1=77.22 b2=71.11 b3=66.67 b4=48.33 b5=41.67 mean(b2-b5)=56.94 [637s]
+2026-10-26 04:16:25 SRSEED DONE
+2026-10-26 05:18:04 README written; study complete

@@ -1,0 +1,3 @@
+/app/Deeploy/Deeploy/Targets/Generic/TypeCheckers.py:556: RuntimeWarning: overflow encountered in scalar multiply
+  np.prod(operatorRepresentation['kernel_shape']) * wnLevels * weight.shape[1] *
+  [testData->L3] 2117232 B of baked test inputs moved out of L2 to L3 (hex-loaded)

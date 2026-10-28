@@ -1,0 +1,14 @@
+{
+  "fc_int8": {
+    "tag": "fc-int8",
+    "acc_before": 85.55555555555556,
+    "acc_after": 89.99999999999999,
+    "conv_moved_pct": 65.9274193548387
+  },
+  "fc_float": {
+    "tag": "fc-float",
+    "acc_before": 85.0,
+    "acc_after": 88.88888888888889,
+    "conv_moved_pct": 59.48924731182796
+  }
+}

@@ -1,0 +1,6 @@
+batch,note,pytorch_fullfrozen
+1,zero-shot,80.56
+2,FT through b1,87.22
+3,FT through b2,81.11
+4,FT through b3,83.33
+5,FT through b4,83.33

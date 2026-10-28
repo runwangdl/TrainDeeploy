@@ -1,0 +1,95 @@
+% exp5 -- the two kernels as paper-style pseudocode (algorithmicx / algpseudocode).
+% Preamble:
+%   \usepackage{algorithm}        % the floating "Algorithm N" environment with caption
+%   \usepackage{algpseudocode}    % \State \For \If \Procedure \Call \Comment ...
+%   \usepackage{amsmath,amssymb}
+% Conventions used here: \Require/\Ensure for input/output, \Procedure for named routines,
+% \Call{Name}{args} for calls (so that *calls* are visually distinct -- that is the point of the
+% comparison), \Comment for the right-hand remarks, $\gg$ for arithmetic right shift,
+% $\mathrm{clip}(\cdot)$ for int8 saturation, $\triangleright$ comments carry the cost facts.
+
+% ------------------------------------------------------------------------------------------------
+\begin{algorithm}[t]
+\caption{Two-pass quantised ZO convolution with \texttt{pulp\_nn\_conv\_i8\_i8\_i8} (baseline)}
+\label{alg:pulpnn}
+\begin{algorithmic}[1]
+\Require activation $X$ (HWC), weight $W\in\mathbb{Z}_8^{C_o\times K}$, requant $\mathit{mul},\mathit{add}\in\mathbb{Z}_{32}^{C_o}$,
+         perturbation multipliers $m_W, m_b$, seeds $\sigma_W,\sigma_b$, shift $d$
+\Ensure $A^{+}, A^{-}$ (HWC, int8)
+\For{$s \in \{+1,-1\}$} \Comment{two executions of the whole graph}
+    \State $W_s \gets$ \Call{PerturbRademacher}{$W, m_W, \sigma_W, s$}      \Comment{graph node; writes a full copy of $W$}
+    \State $\mathit{add}_s \gets$ \Call{PerturbRademacher}{$\mathit{add}, m_b, \sigma_b, s$}
+    \State $W_s \gets$ \Call{Transpose}{$W_s$}                                  \Comment{NCHW $\to$ NHWC, another full copy}
+    \State $A^{s} \gets$ \Call{PulpNNConv}{$X, W_s, \mathit{mul}, \mathit{add}_s, d$}
+\EndFor
+\Statex
+\Procedure{PulpNNConv}{$X, W, \mathit{mul}, \mathit{add}, d$} \Comment{executed by every core $c$}
+    \State $(\mathcal{R}_c, \mathcal{C}_c) \gets$ \Call{RowColumnSplit}{$c$}   \Comment{rows 4/4/4/2 $\times$ cols 350/351: balance 87\,\%}
+    \State $\mathit{slot} \gets 0$
+    \For{$y \in \mathcal{R}_c$}
+        \For{$x \in \mathcal{C}_c$}
+            \State \Call{Im2Col}{$X, y, x, \mathit{buf}[\mathit{slot}]$}       \Comment{\texttt{noinline} helper; 3 code paths (pad-L / interior / pad-R)}
+            \State $\mathit{slot} \gets \mathit{slot}+1$
+            \If{$\mathit{slot} = 2$}                                            \Comment{the GEMM consumes pixel pairs}
+                \State \Call{MatMul}{$\mathit{buf}, W, \mathit{mul}, \mathit{add}, d, A[y, x{-}1{:}x]$}
+                \State $\mathit{slot} \gets 0$
+            \EndIf
+        \EndFor
+    \EndFor
+\EndProcedure
+\Statex
+\Procedure{MatMul}{$\mathit{buf}, W, \mathit{mul}, \mathit{add}, d, A$}   \Comment{save 12 registers on entry}
+    \For{$\mathit{blk} = 0$ \textbf{to} $C_o/4 - 1$}                            \Comment{4 output channels $\times$ 2 pixels = 8 accumulators}
+        \State $a_{0..7} \gets 0$
+        \For{$k = 0$ \textbf{to} $K/4 - 1$}                                     \Comment{SIMD loop: \emph{one} iteration when $K=4$}
+            \State $a_{i} \mathrel{+}= \mathrm{dot4}(\mathit{buf}[\cdot,k], W[\mathit{blk}\cdot 4 + i/2, k])$ \textbf{for} $i=0..7$
+        \EndFor
+        \For{$i = 0$ \textbf{to} $7$}
+            \State $A[\cdot] \gets$ \Call{BnQuant}{$a_i, \mathit{mul}, \mathit{add}, d$}   \Comment{\texttt{noinline}: 16 calls per pixel pair}
+        \EndFor
+    \EndFor
+    \State \Comment{leftover rows/columns handled by further generic paths; restore 12 registers on exit}
+\EndProcedure
+\Statex
+\State \Comment{Per pixel pair the core traverses 4 functions ($\approx$1.2\,KB of distinct code, 74 cache lines)}
+\State \Comment{against a 512\,B (32-line) L0 I-cache $\Rightarrow$ every line is re-fetched every pair (108 stall cycles/px).}
+\end{algorithmic}
+\end{algorithm}
+
+% ------------------------------------------------------------------------------------------------
+\begin{algorithm}[t]
+\caption{Fused dual-pass quantised ZO convolution (\texttt{PULP\_DualConv2d\_i8\_i8\_i8\_HWC}, ours)}
+\label{alg:dualconv}
+\begin{algorithmic}[1]
+\Require $X$ (HWC), \emph{unperturbed} $W\in\mathbb{Z}_8^{C_o\times K}$, $\mathit{mul},\mathit{add}$, $m_W, m_b$, $\sigma_W,\sigma_b$, shifts $S_W, S_b, d$
+\Ensure $A \in \mathbb{Z}_8^{H_o\times W_o\times 2C_o}$ with $A[\cdot,0{:}C_o]=A^{+}$, $A[\cdot,C_o{:}2C_o]=A^{-}$
+\State \textbf{scratch (L1, 160\,B):} $W^{+}, W^{-}\in\mathbb{Z}_8^{C_o\times K}$;\; $\mathit{add}^{+},\mathit{add}^{-}\in\mathbb{Z}_{32}^{C_o}$;\; one $K$-byte patch per core
+\Statex
+\State \textbf{Phase 1 -- perturb once, both signs, in place of four graph nodes} \Comment{every core $c$}
+\State $[i_0, i_0{+}n) \gets$ \Call{Chunk}{$|W|, c$}                            \Comment{the perturb node's per-core split, reproduced}
+\State $\rho \gets \mathrm{lcg}(\sigma_W + c)$                                    \Comment{same seed expression as the standalone node}
+\For{$i = i_0$ \textbf{to} $i_0{+}n{-}1$}
+    \State $r \gets$ next Rademacher sign from $\mathrm{xorshift32}(\rho)$        \Comment{one 32-bit draw per 32 elements, LSB first}
+    \State $\pi \gets r \cdot m_W[\lfloor i/K \rfloor]$                           \Comment{per-output-channel multiplier}
+    \State $W^{+}[i] \gets \mathrm{clip}\big(W[i] + (\pi + 2^{S_W-1}) \gg S_W\big)$
+    \State $W^{-}[i] \gets \mathrm{clip}\big(W[i] + (2^{S_W-1} - \pi) \gg S_W\big)$ \Comment{device rounding, not $-\,$(rounded $+$noise)}
+\EndFor
+\State same for $\mathit{add}^{\pm}$ from $(\mathit{add}, m_b, \sigma_b, S_b)$, without the clip
+\State \Call{Barrier}{}                                                            \Comment{the only synchronisation}
+\Statex
+\State \textbf{Phase 2 -- one traversal of the output pixels} \Comment{every core $c$}
+\State $[p_0, p_1) \gets$ \Call{FlatSplit}{$H_o W_o, c$}                          \Comment{$\lceil 9814/8\rceil = 1227$ px per core: balance 99.8\,\%}
+\For{$p = p_0$ \textbf{to} $p_1 - 1$}
+    \State $\mathit{patch} \gets$ receptive field of pixel $p$, zeros where a tap falls in the padding   \Comment{inline; built \emph{once} for both passes}
+    \For{$o = 0$ \textbf{to} $C_o - 1$}
+        \State $a^{+} \gets \mathrm{dot4}(\mathit{patch}, W^{+}[o])$;\quad $a^{-} \gets \mathrm{dot4}(\mathit{patch}, W^{-}[o])$   \Comment{one SIMD instruction each}
+        \State $A[p, o] \gets \mathrm{clip}\big((a^{+}\mathit{mul}[o] + \mathit{add}^{+}[o]) \gg d\big)$          \Comment{pulp-nn's 32-bit requant, inline}
+        \State $A[p, C_o + o] \gets \mathrm{clip}\big((a^{-}\mathit{mul}[o] + \mathit{add}^{-}[o]) \gg d\big)$
+    \EndFor
+\EndFor
+\State \Call{Barrier}{}
+\Statex
+\State \Comment{No calls inside the pixel loop: $\approx$350\,B of distinct code per pixel (22 lines) $<$ 512\,B L0 I-cache}
+\State \Comment{$\Rightarrow$ fetched once, reused for every pixel (4 stall cycles/px). Bit-exact vs.\ Alg.~\ref{alg:pulpnn} run twice.}
+\end{algorithmic}
+\end{algorithm}

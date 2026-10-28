@@ -1,0 +1,71 @@
+The target board you have sourced is : gap9_evk, GAP9_V2.
+Release version: 0.0.0
+[Deeploy] Error during binding! Exporting deeploy state!
+Traceback (most recent call last):
+  File "/app/Deeploy/DeeployTest/testMVP.py", line 343, in <module>
+    _ = deployer.prepare(verbosityCfg)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3514, in prepare
+    self.midEnd()
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3477, in midEnd
+    raise e
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 3473, in midEnd
+    self.bind()
+  File "/app/Deeploy/Deeploy/TilingExtension/TilerExtension.py", line 2211, in bind
+    if not super().bind():
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 54, in bind
+    return self._innerObject.bind()
+  File "/app/Deeploy/Deeploy/MemoryLevelExtension/NetworkDeployers/MemoryLevelDeployer.py", line 247, in bind
+    ret = super().bind()
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 54, in bind
+    return self._innerObject.bind()
+  File "/app/Deeploy/Deeploy/CommonExtensions/NetworkDeployers/NetworkDeployerWrapper.py", line 54, in bind
+    return self._innerObject.bind()
+  File "/app/Deeploy/Deeploy/Targets/PULPOpen/Deployer.py", line 90, in bind
+    if not super().bind():
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2769, in bind
+    newCtxt, LayerBindSuccess = layer.bind(newCtxt)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 2095, in bind
+    newCtxt, _, ret = self.mapper.bind(newCtxt, self.node)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1800, in bind
+    newCtxt, transientBuffers, ret = self.binder.bind(ctxt.copy(), node, self.parser.operatorRepresentation)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1635, in bind
+    newCtxt, buffers = self.executionBlock.hoisting(newCtxt, **self.typeChecker.typeDict)
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 1479, in hoisting
+    newCtxt, operatorRepresentation, _contextBuffers = template._alignToContext(
+  File "/app/Deeploy/Deeploy/DeeployTypes.py", line 194, in _alignToContext
+    ctxt, operatorRepresentation, nameList = self.alignToContext(ctxt, operatorRepresentation)
+  File "/app/Deeploy/Deeploy/Targets/NE16/Templates/Conv1xKTemplate.py", line 56, in alignToContext
+    assert len(weight.shape) == 3 and int(weight.shape[0]) % taps == 0, \
+AssertionError: 1xK weight must be (taps*cout, cinMajor, encBytes); got [1, 16, 32] for taps=2
+[Deeploy] Network generation failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : b1_1x2_ne16
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Models/NE16/b1_1x2_ne16
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Models/NE16/b1_1x2_ne16
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --enable-1xk --defaultMemLevel=L2 --l1=110000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test b1_1x2_ne16 FAILED with exception: Network generation failed for b1_1x2_ne16[0m
+RUNNER_EXIT=1  ELAPSED=2s

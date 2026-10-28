@@ -1,0 +1,13 @@
+exp8 step 10 -- GAP9 + NE16 fused (blocks 0-2 NE16, 3-4 cluster), one update step with n_accum 4.  2026-10-14
+log: logs/step10_gap9_ne16_accum4_1step.log  (Errors: 0 out of 2; the fixture's single window is reused per mini-batch)
+training (4 fused dual passes) 8,612,666 cycles  (~2,153,166 per mini-batch)
+update graph                   242,923 cycles
+one update step                8,855,589 cycles
+
+one fine-tuning round = 120 epochs x 54 windows (exp12 round: batch 1, n_accum 4 -> 13.5 updates/epoch)
+  = 6,480 mini-batches = 1,620 update steps = 14,346,054,180 cycles
+  @ 370 MHz: 38.8 s
+  @ 240 MHz: 59.8 s
+unfused GAP9 for comparison: 15,625,953 cycles/update step -> 68.4 s @ 370 MHz (1.76x)
+not included: loading windows from flash/L3 (data assumed in L2), FC-side/host overhead, eval; update-graph and
+data costs scale with the round, not with fusion.

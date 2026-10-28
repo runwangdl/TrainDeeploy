@@ -1,0 +1,34 @@
+A7_eco_rtn S03: QZO-ablation opt=sgdm beta=0.9 round=rtn ef=memoryfree lr=3e-06 eps=0.01 n_accum=4 (MEAN) epochs=120 per_class=6 seed=42 order=cyclic draw=device rng=device mode=direct
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+  b1 eval: acc=77.22 loss=0.7124
+    round1 step    0: train acc 77.78 loss 0.7458 | next(b2) acc 75.56
+    round1 step  810: train acc 77.78 loss 0.7385 | next(b2) acc 73.89
+    round1 step 1620: train acc 77.78 loss 0.6892 | next(b2) acc 76.67
+  round 1 done: moved_steps=28.2% differ(round)=5.42% ever=5.42% cum=5.42% flips=1152 [278s]
+  b2 eval: acc=76.67 loss=0.8143
+    round2 step    0: train acc 72.22 loss 0.8790 | next(b3) acc 69.44
+    round2 step  810: train acc 70.37 loss 0.8771 | next(b3) acc 70.00
+    round2 step 1620: train acc 70.37 loss 0.8492 | next(b3) acc 69.44
+  round 2 done: moved_steps=37.2% differ(round)=8.06% ever=8.06% cum=12.53% flips=1917 [475s]
+  b3 eval: acc=69.44 loss=0.8517
+    round3 step    0: train acc 64.81 loss 0.9981 | next(b4) acc 61.67
+    round3 step  810: train acc 64.81 loss 0.9610 | next(b4) acc 62.22
+    round3 step 1620: train acc 66.67 loss 0.8713 | next(b4) acc 64.44
+  round 3 done: moved_steps=57.5% differ(round)=18.64% ever=18.64% cum=27.08% flips=5463 [663s]
+  b4 eval: acc=64.44 loss=0.9971
+    round4 step    0: train acc 70.37 loss 0.7396 | next(b5) acc 62.78
+    round4 step  810: train acc 68.52 loss 0.7435 | next(b5) acc 64.44
+    round4 step 1620: train acc 70.37 loss 0.7147 | next(b5) acc 64.44
+  round 4 done: moved_steps=34.0% differ(round)=6.47% ever=6.47% cum=30.05% flips=1464 [860s]
+  b5 eval: acc=64.44 loss=1.0434
+DONE A7_eco_rtn S03: b1=77.22 b2=76.67 b3=69.44 b4=64.44 b5=64.44 mean(b2-b5)=68.75 [862s]

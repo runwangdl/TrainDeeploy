@@ -1,0 +1,20 @@
+exp7a block 1 step 2a -- single-pass control kernel PULP_Conv4x2_i8_i8_i8_HWC vs pulp-nn (and exp5a FlatConv), same fixture QZO_Conv_B1
+Siracusa GVSoC, L1 128000, L2 1500000, 8 cores; DEEPLOY_RQCONV_KERNEL=4x2; all three bit-identical (Errors: 0 out of 19712)
+
+                                 pulp-nn    FlatConv     Conv4x2
+whole fixture (plain)            469,934     722,325     326,664
+conv node cycles                 401,397     652,072     250,179
+conv instructions                336,172     618,202     204,265
+core-0 pixels                        176         154         154
+cycles / core-0 pixel               2281        4234        1625
+instr / core-0 pixel                1910        4014        1326
+instr / MAC                         0.93        1.96        0.65
+conv IPC                          0.8375      0.9481      0.8165
+loads                             90,115     183,211      75,058
+load stalls                       12,185       4,313       7,346
+I-cache stall cycles              28,670       1,792      21,062
+
+conv node   pulp-nn / Conv4x2 = 1.60x   (151,218 cycles saved per pass)
+whole fixture                  = 1.44x   (other nodes unchanged within +-1 k: perturb, transposes)
+code size (llvm-nm): PULP_Conv4x2_i8_i8_i8_HWC = 0x94c = 2,380 B (gather inlined twice + 4x2 + channel tail) vs 512 B L0
+ideal 4x2 dot loop: 14 instr per 32 MACs -> 896 instr/px for block 1; measured 1,326 -> ~430/px for border gather, requant, setup

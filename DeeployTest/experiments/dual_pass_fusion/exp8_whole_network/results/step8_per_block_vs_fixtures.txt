@@ -1,0 +1,39 @@
+exp8 step 8 -- does the whole-network conv speedup match the per-block fixtures (exp7 / exp6)?  2026-10-14
+Wall-clock per node (--profileTiling), both passes, training graph only. Per conv block: conv + its training-graph
+weight/bias perturbation + weight transpose (exp7 metric); conv input transposes and the update graph separate.
+
+Siracusa (cluster), unfused step0_siracusa_prof.log vs fused step8_siracusa_fused_prof_deint.log
+block |   unfused     fused  network |  exp7 fixture
+    0 | 1,356,479   640,523   2.12x  |  (exp5 metric differs)
+    1 |   883,811   475,276   1.86x  |  1.87x
+    2 |   306,079   141,489   2.16x  |  2.21x
+    3 |   191,716    51,757   3.70x  |  3.68x
+    4 |   325,995    40,812   7.99x  |  8.15x
+  1-4 | 1,707,601   709,334   2.41x  |  2.44x
+  0-4 | 3,064,080 1,349,857   2.27x
+  before the de-interleave fix: block 1 554,280 (1.59x), block 2 154,874 (1.95x), blocks 1-4 2.10x -- the stacked
+  [x+ | x-] input made 1xK rows non-contiguous and every receptive field was gathered. Fix: DualConv2In.c
+  de-interleaves the tile once into x+ / x- scratch (kernel fixture block 1: 607,791 -> 533,330, = two-input 534,483).
+non-conv (BN, Quant/Dequant, pool, ReLU, fp32 perturb, fc+loss, input transposes): 1,768,944 -> 1,725,314 (1.03x)
+node sum (training): 4,833,024 -> 3,075,171 (1.57x); BENCH (4 steps, plain): 20,680,174 -> 13,542,814 (1.53x)
+
+GAP9, unfused cluster step7_gap9_unfused_prof.log vs fused NE16 blocks 0-2 + cluster 3-4 step7_gap9_fused_ne16_prof.log
+block |   unfused     fused  network |  fixture (exp7 step 7: fixture totals; exp6 block 0)
+    0 | 1,209,647   255,321   4.74x  |  2.71x  (im2col 119,947 + NE16 1x1 129,198 + encode/bias 6,176)
+    1 |   656,162   229,387   2.86x  |  2.70x  (NE16DualConv2in 188,072 + encode 30,670 + bias 10,645)
+    2 |   209,870    91,254   2.30x  |  2.23x
+    3 |   100,765    48,172   2.09x  |  1.96x  (cluster)
+    4 |   152,443    40,459   3.77x  |  3.44x  (cluster)
+  1-4 | 1,119,240   409,272   2.73x  |  2.57x
+  0-4 | 2,328,887   664,593   3.50x
+non-conv: 1,144,986 -> 1,130,711 (1.01x): BN 403,893 -> 450,016, Quant/Dequant 356,364 -> 332,811, pool 248,224 -> 231,792
+node sum (training): 3,473,873 -> 1,795,304 (1.93x); BENCH (4 steps, plain): 15,383,030 -> 8,630,585 (1.78x)
+
+Why the step is ~1.5x / 1.8x while the convs are 2.3x / 3.5x:
+  * every non-conv node does the same work on 2*C channels once as on C channels twice (1.0x) -- after fusion it is
+    56 % (Siracusa) / 63 % (GAP9) of the node time; BN even grows (+6 % / +11 %);
+  * ~0.31-0.37 M cycles per step are outside the nodes (BENCH minus node sum: closures, offload, harness) and do not
+    shrink either.
+
+GAP9 fused cluster (all blocks on the cluster) after the fix: 4 steps bit-exact vs unfused, 11,268,718 -> 10,814,171
+training cycles (1.37x -> 1.42x over unfused 15,383,030). The NE16 variant does not use DualConv2In for blocks 1-2.

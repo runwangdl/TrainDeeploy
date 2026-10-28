@@ -1,0 +1,62 @@
+exp7 block 1 -- GAP9 GVSoC, both passes, exact; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes
+
+variant                                        fixture   vs A     nodes   vs A
+A    2 x pulp-nn, cluster                      741,872  1.00x   666,950  1.00x
+B    2 x NE16 im2col (exp6 route)              911,630  0.81x   862,394  0.77x
+C_cl fused, cluster (DualConv2In)              502,274  1.48x   425,211  1.57x
+C    fused NE16, exp6-style (2 chains)         903,653  0.82x   853,727  0.78x
+C_S  fused NE16 node, sequential               361,352  2.05x   287,349  2.32x
+C_P  fused NE16 node, pipelined                277,119  2.68x   203,327  3.28x
+
+C_cl per node: dualconv_blocks1_input_0_transpose 9,576, dualconv_blocks1_input_3_transpose 9,624, dualconv_blocks1 425,211, dualconv_blocks1_output_0_pre_transpose 60,445
+C_P per node: b1_xp_hwc 9,621, b1_xm_hwc 9,633, b1_dual_wenc 32,156, b1_dual_bias 12,371, b1_ne16_dualconv 158,800, b1_out_nchw 60,538
+
+exp7 block 2 -- GAP9 GVSoC, both passes, exact; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes
+
+variant                                        fixture   vs A     nodes   vs A
+A    2 x pulp-nn, cluster                      242,930  1.00x   221,722  1.00x
+B    2 x NE16 im2col (exp6 route)              325,614  0.75x   315,514  0.70x
+C_cl fused, cluster (DualConv2In)              144,827  1.68x   128,380  1.73x
+C    fused NE16, exp6-style (2 chains)         319,068  0.76x   308,773  0.72x
+C_S  fused NE16 node, sequential               130,434  1.86x   116,235  1.91x
+C_P  fused NE16 node, pipelined                108,908  2.23x    94,560  2.34x
+
+C_cl per node: dualconv_blocks2_input_0_transpose 5,550, dualconv_blocks2_input_3_transpose 5,547, dualconv_blocks2 128,380, dualconv_blocks2_output_0_pre_transpose 8,491
+C_P per node: b2_xp_hwc 5,525, b2_xm_hwc 5,519, b2_dual_wenc 32,724, b2_dual_bias 12,362, b2_ne16_dualconv 49,474, b2_out_nchw 8,533
+
+exp7 block 3 -- GAP9 GVSoC, both passes, exact; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes
+
+variant                                        fixture   vs A     nodes   vs A
+A    2 x pulp-nn, cluster                      114,526  1.00x   112,670  1.00x
+B    2 x NE16 im2col (exp6 route)              177,546  0.65x   183,948  0.61x
+C_cl fused, cluster (DualConv2In)               58,309  1.96x    50,362  2.24x
+C    fused NE16, exp6-style (2 chains)         166,679  0.69x   173,327  0.65x
+C_S  fused NE16 node, sequential               102,347  1.12x    96,291  1.17x
+C_P  fused NE16 node, pipelined                 97,700  1.17x    91,768  1.23x
+
+C_cl per node: dualconv_blocks3_input_0_transpose 3,865, dualconv_blocks3_input_3_transpose 3,758, dualconv_blocks3 50,362, dualconv_blocks3_output_0_pre_transpose 3,874
+C_P per node: b3_xp_hwc 3,817, b3_xm_hwc 3,784, b3_dual_wenc 55,069, b3_dual_bias 18,827, b3_ne16_dualconv 17,872, b3_out_nchw 3,910
+
+exp7 block 4 -- GAP9 GVSoC, both passes, exact; --l1 86000 --l2 1500000 --defaultMemLevel L2 --cores 8
+nodes = master-core wall time per node, without the fixture-boundary transposes
+
+variant                                        fixture   vs A     nodes   vs A
+A    2 x pulp-nn, cluster                      168,920  1.00x   169,462  1.00x
+B    2 x NE16 im2col (exp6 route)              252,242  0.67x   260,564  0.65x
+C_cl fused, cluster (DualConv2In)               49,057  3.44x    42,877  3.95x
+C    fused NE16, exp6-style (2 chains)         231,092  0.73x   239,747  0.71x
+C_S  fused NE16 node, sequential               161,657  1.04x   157,286  1.08x
+C_P  fused NE16 node, pipelined                158,922  1.06x   154,486  1.10x
+
+C_cl per node: dualconv_blocks4_input_0_transpose 3,818, dualconv_blocks4_input_3_transpose 3,742, dualconv_blocks4 42,877, dualconv_blocks4_output_0_pre_transpose 2,084
+C_P per node: b4_xp_hwc 3,873, b4_xm_hwc 3,828, b4_dual_wenc 105,903, b4_dual_bias 31,972, b4_ne16_dualconv 16,611, b4_out_nchw 2,183
+
+block |         A      C_cl       C_P |  C_cl/A   C_P/A | best (fixture)  | nodes: A, C_cl, C_P
+    1 |   741,872   502,274   277,119 |   1.48x   2.68x | C_P    2.68x | 666,950, 425,211, 203,327
+    2 |   242,930   144,827   108,908 |   1.68x   2.23x | C_P    2.23x | 221,722, 128,380, 94,560
+    3 |   114,526    58,309    97,700 |   1.96x   1.17x | C_cl   1.96x | 112,670, 50,362, 91,768
+    4 |   168,920    49,057   158,922 |   3.44x   1.06x | C_cl   3.44x | 169,462, 42,877, 154,486
+  sum | 1,268,248   754,467   642,649 |   1.68x   1.97x | best per block  2.57x (fixture 493,393; nodes 1,170,804 -> 391,126 = 2.99x)

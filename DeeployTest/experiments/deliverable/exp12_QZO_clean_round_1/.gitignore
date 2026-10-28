@@ -1,0 +1,4 @@
+qinfer/
+fixture/inputs.npz
+fixture/*.onnx
+logs/*.log

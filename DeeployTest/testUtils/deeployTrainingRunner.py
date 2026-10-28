@@ -84,6 +84,9 @@ def main(tiling_enabled: bool = False,
     if parser_setup_callback is not None:
         parser_setup_callback(parser)
 
+    parser.add_argument('--optimizer-l1', type = int, default = None, dest = 'optimizer_l1',
+                        help = 'L1 budget of the optimizer graph (default: --l1). Both L1 arenas are allocated\n'
+                        'at init, so on GAP9 train + optimizer must fit the usable cluster L1.\n')
     args = parser.parse_args()
 
     platform = default_platform
@@ -178,6 +181,7 @@ def main(tiling_enabled: bool = False,
         n_accum_steps = args.n_accum,
         training_num_data_inputs = args.num_data_inputs,
         optimizer_dir = args.optimizer_dir,
+        optimizer_l1 = args.optimizer_l1,
     )
 
     print_configuration(config)

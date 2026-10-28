@@ -1,0 +1,398 @@
+{
+ "bench": {
+  "ffast": {
+   "train": 8364474,
+   "opt": 330760
+  },
+  "strict": {
+   "train": 8697847,
+   "opt": 331516
+  }
+ },
+ "kernels": {
+  "pert_upd_fcbias_fp32": {
+   "ffast": 1523,
+   "strict": 1488
+  },
+  "pert_fcbias_fp32": {
+   "ffast": 2968,
+   "strict": 3032
+  },
+  "_MERGE_CONVRQ_PASS_3_blocks_3_conv_input_quant_1Clip_output_0_tensor_transpose": {
+   "ffast": 3298,
+   "strict": 3074
+  },
+  "_MERGE_CONVRQ_PASS_4_blocks_4_conv_input_quant_1Clip_output_0_tensor_transpose": {
+   "ffast": 2235,
+   "strict": 2361
+  },
+  "global_poolGlobalAveragePool": {
+   "ffast": 1746,
+   "strict": 1706
+  },
+  "pert_upd_blocks2bnbias": {
+   "ffast": 1309,
+   "strict": 1378
+  },
+  "rqsp_upd_blocks2convbias_rqsadd": {
+   "ffast": 1549,
+   "strict": 1646
+  },
+  "pert_upd_blocks0bnweight": {
+   "ffast": 1177,
+   "strict": 1304
+  },
+  "_MERGE_CONVRQ_PASS_1": {
+   "ffast": 800378,
+   "strict": 799895
+  },
+  "pert_upd_blocks3bnweight": {
+   "ffast": 1024,
+   "strict": 1106
+  },
+  "rqsp_blocks1convweight_int8": {
+   "ffast": 73877,
+   "strict": 73732
+  },
+  "pert_upd_blocks4bnweight": {
+   "ffast": 1027,
+   "strict": 1032
+  },
+  "rqsp_blocks0convbias_rqsadd": {
+   "ffast": 2914,
+   "strict": 2915
+  },
+  "_MERGE_CONVRQ_PASS_4_blocks4convweight_int8_pert_tensor_transpose": {
+   "ffast": 8116,
+   "strict": 8062
+  },
+  "rqsp_blocks4convbias_rqsadd": {
+   "ffast": 3565,
+   "strict": 3546
+  },
+  "relu_2Relu": {
+   "ffast": 13726,
+   "strict": 13736
+  },
+  "QCDQ_blocks_0_conv_input_quant_1Clip_Quant": {
+   "ffast": 73492,
+   "strict": 76487
+  },
+  "CrossEntropyLoss": {
+   "ffast": 8554,
+   "strict": 8823
+  },
+  "pert_upd_blocks4bnbias": {
+   "ffast": 1048,
+   "strict": 1089
+  },
+  "bn_2BatchNormalization": {
+   "ffast": 12732,
+   "strict": 17761
+  },
+  "rqsp_upd_blocks2convweight_int8": {
+   "ffast": 40011,
+   "strict": 40002
+  },
+  "_MERGE_CONVRQ_PASS_1_blocks_1_conv_output_quant_1Clip_output_0_tensor_pre_transpose": {
+   "ffast": 37846,
+   "strict": 37901
+  },
+  "pert_blocks4bnbias": {
+   "ffast": 2091,
+   "strict": 2135
+  },
+  "QCDQ_blocks_3_conv_output_dequantMul_Dequant": {
+   "ffast": 2774,
+   "strict": 2717
+  },
+  "rqsp_blocks2convbias_rqsadd": {
+   "ffast": 3097,
+   "strict": 3066
+  },
+  "pert_blocks2bnweight": {
+   "ffast": 3564,
+   "strict": 3474
+  },
+  "poolMaxPool": {
+   "ffast": 1543552,
+   "strict": 1523064
+  },
+  "_MERGE_CONVRQ_PASS_2": {
+   "ffast": 224728,
+   "strict": 225324
+  },
+  "rqsp_upd_blocks0convbias_rqsadd": {
+   "ffast": 1485,
+   "strict": 1493
+  },
+  "poolMaxPool_reluRelu_output_0_tensor_transpose": {
+   "ffast": 99511,
+   "strict": 99362
+  },
+  "pert_upd_blocks0bnbias": {
+   "ffast": 1168,
+   "strict": 1366
+  },
+  "pert_fcweight_fp32": {
+   "ffast": 6869,
+   "strict": 6839
+  },
+  "pert_upd_blocks1bnbias": {
+   "ffast": 1335,
+   "strict": 1359
+  },
+  "wrappedInnerForwardImpl_5Gemm": {
+   "ffast": 7407,
+   "strict": 8617
+  },
+  "pert_blocks3bnweight": {
+   "ffast": 2818,
+   "strict": 2819
+  },
+  "QCDQ_blocks_0_conv_output_dequantMul_Dequant": {
+   "ffast": 119481,
+   "strict": 119682
+  },
+  "pert_blocks0bnbias": {
+   "ffast": 2630,
+   "strict": 2589
+  },
+  "pert_upd_fcweight_fp32": {
+   "ffast": 3451,
+   "strict": 3403
+  },
+  "_MERGE_CONVRQ_PASS_1_blocks1convweight_int8_pert_tensor_transpose": {
+   "ffast": 3218,
+   "strict": 3304
+  },
+  "relu_4Relu": {
+   "ffast": 1594,
+   "strict": 1653
+  },
+  "pert_blocks2bnbias": {
+   "ffast": 2734,
+   "strict": 2655
+  },
+  "rqsp_upd_blocks0convweight_int8": {
+   "ffast": 2094,
+   "strict": 2111
+  },
+  "pool_2MaxPool_pool_2MaxPool_output_0_tensor_pre_transpose": {
+   "ffast": 2852,
+   "strict": 2738
+  },
+  "QCDQ_blocks_1_conv_output_dequantMul_Dequant": {
+   "ffast": 30449,
+   "strict": 30641
+  },
+  "QCDQ_blocks_2_conv_input_quant_1Clip_Quant": {
+   "ffast": 37859,
+   "strict": 39230
+  },
+  "_MERGE_CONVRQ_PASS_2_blocks_2_conv_input_quant_1Clip_output_0_tensor_transpose": {
+   "ffast": 6637,
+   "strict": 6634
+  },
+  "reluRelu": {
+   "ffast": 198203,
+   "strict": 198161
+  },
+  "pool_2MaxPool": {
+   "ffast": 28755,
+   "strict": 28716
+  },
+  "relu_1Relu": {
+   "ffast": 50604,
+   "strict": 50774
+  },
+  "poolMaxPool_poolMaxPool_output_0_tensor_pre_transpose": {
+   "ffast": 20760,
+   "strict": 20765
+  },
+  "rqsp_blocks3convbias_rqsadd": {
+   "ffast": 3631,
+   "strict": 3592
+  },
+  "rqsp_upd_blocks3convbias_rqsadd": {
+   "ffast": 1876,
+   "strict": 1810
+  },
+  "pool_1MaxPool_relu_1Relu_output_0_tensor_transpose": {
+   "ffast": 26093,
+   "strict": 25954
+  },
+  "QCDQ_blocks_1_conv_input_quant_1Clip_Quant": {
+   "ffast": 73931,
+   "strict": 76408
+  },
+  "rqsp_blocks3convweight_int8": {
+   "ffast": 127786,
+   "strict": 127876
+  },
+  "pert_blocks1bnweight": {
+   "ffast": 3596,
+   "strict": 3492
+  },
+  "rqsp_blocks1convbias_rqsadd": {
+   "ffast": 3200,
+   "strict": 3121
+  },
+  "rqsp_upd_blocks1convbias_rqsadd": {
+   "ffast": 1619,
+   "strict": 1652
+  },
+  "rqsp_upd_blocks1convweight_int8": {
+   "ffast": 40195,
+   "strict": 40265
+  },
+  "rqsp_upd_blocks4convbias_rqsadd": {
+   "ffast": 1811,
+   "strict": 1854
+  },
+  "QCDQ_blocks_2_conv_output_dequantMul_Dequant": {
+   "ffast": 8410,
+   "strict": 8497
+  },
+  "_MERGE_CONVRQ_PASS_0_blocks0convweight_int8_pert_tensor_transpose": {
+   "ffast": 601,
+   "strict": 698
+  },
+  "_MERGE_CONVRQ_PASS_0_blocks_0_conv_output_quant_1Clip_output_0_tensor_pre_transpose": {
+   "ffast": 271276,
+   "strict": 271166
+  },
+  "pool_1MaxPool_pool_1MaxPool_output_0_tensor_pre_transpose": {
+   "ffast": 5675,
+   "strict": 5545
+  },
+  "_MERGE_CONVRQ_PASS_2_blocks_2_conv_output_quant_1Clip_output_0_tensor_pre_transpose": {
+   "ffast": 5795,
+   "strict": 5865
+  },
+  "QCDQ_blocks_4_conv_output_dequantMul_Dequant": {
+   "ffast": 1214,
+   "strict": 1158
+  },
+  "_MERGE_CONVRQ_PASS_3_blocks3convweight_int8_pert_tensor_transpose": {
+   "ffast": 12937,
+   "strict": 12934
+  },
+  "pert_upd_blocks2bnweight": {
+   "ffast": 1254,
+   "strict": 1357
+  },
+  "pert_blocks0bnweight": {
+   "ffast": 3311,
+   "strict": 3340
+  },
+  "_MERGE_CONVRQ_PASS_2_blocks2convweight_int8_pert_tensor_transpose": {
+   "ffast": 7338,
+   "strict": 7725
+  },
+  "rqsp_upd_blocks3convweight_int8": {
+   "ffast": 69457,
+   "strict": 69624
+  },
+  "pert_blocks4bnweight": {
+   "ffast": 2724,
+   "strict": 2786
+  },
+  "bn_1BatchNormalization": {
+   "ffast": 56649,
+   "strict": 73967
+  },
+  "_MERGE_CONVRQ_PASS_0_blocks_0_conv_input_quant_1Clip_output_0_tensor_transpose": {
+   "ffast": 14763,
+   "strict": 14775
+  },
+  "bnBatchNormalization": {
+   "ffast": 1109754,
+   "strict": 1423434
+  },
+  "bn_4BatchNormalization": {
+   "ffast": 4986,
+   "strict": 5274
+  },
+  "_MERGE_CONVRQ_PASS_4_blocks_4_conv_output_quant_1Clip_output_0_tensor_pre_transpose": {
+   "ffast": 1642,
+   "strict": 1724
+  },
+  "pert_upd_blocks3bnbias": {
+   "ffast": 1022,
+   "strict": 1035
+  },
+  "_MERGE_CONVRQ_PASS_1_blocks_1_conv_input_quant_1Clip_output_0_tensor_transpose": {
+   "ffast": 13038,
+   "strict": 13069
+  },
+  "pool_1MaxPool": {
+   "ffast": 115392,
+   "strict": 115354
+  },
+  "rqsp_upd_blocks4convweight_int8": {
+   "ffast": 136771,
+   "strict": 136638
+  },
+  "pert_upd_blocks1bnweight": {
+   "ffast": 1300,
+   "strict": 1411
+  },
+  "rqsp_blocks2convweight_int8": {
+   "ffast": 73399,
+   "strict": 73515
+  },
+  "_MERGE_CONVRQ_PASS_3": {
+   "ffast": 53725,
+   "strict": 53468
+  },
+  "QCDQ_blocks_4_conv_input_quant_1Clip_Quant": {
+   "ffast": 10414,
+   "strict": 11060
+  },
+  "rqsp_blocks4convweight_int8": {
+   "ffast": 250629,
+   "strict": 250492
+  },
+  "pert_blocks1bnbias": {
+   "ffast": 2693,
+   "strict": 2854
+  },
+  "rqsp_blocks0convweight_int8": {
+   "ffast": 3990,
+   "strict": 3872
+  },
+  "pert_blocks3bnbias": {
+   "ffast": 2125,
+   "strict": 2326
+  },
+  "relu_3Relu": {
+   "ffast": 4072,
+   "strict": 4070
+  },
+  "QCDQ_blocks_3_conv_input_quant_1Clip_Quant": {
+   "ffast": 9346,
+   "strict": 9790
+  },
+  "_MERGE_CONVRQ_PASS_4": {
+   "ffast": 60528,
+   "strict": 61139
+  },
+  "_MERGE_CONVRQ_PASS_3_blocks_3_conv_output_quant_1Clip_output_0_tensor_pre_transpose": {
+   "ffast": 2601,
+   "strict": 2477
+  },
+  "pool_2MaxPool_relu_2Relu_output_0_tensor_transpose": {
+   "ffast": 7783,
+   "strict": 7795
+  },
+  "bn_3BatchNormalization": {
+   "ffast": 6660,
+   "strict": 7861
+  },
+  "_MERGE_CONVRQ_PASS_0": {
+   "ffast": 1337421,
+   "strict": 1337317
+  }
+ }
+}

@@ -234,6 +234,10 @@ def create_config_from_args(args: argparse.Namespace,
     # Prepare generation args
     gen_args_list = []
 
+    if getattr(args, 'enable_1xk', False):  # -- QW (exp16a): forward to generateNetwork/testMVP
+        gen_args_list.append('--enable-1xk')
+
+
     if args.input_type_map:
         gen_args_list.append("--input-type-map")
         gen_args_list.extend(args.input_type_map)
@@ -282,8 +286,22 @@ def create_config_from_args(args: argparse.Namespace,
             gen_args_list.append("--promoteToL2MaxBufferBytes=0")
             gen_args_list.append(f"--promoteToL2Headroom={args.promoteToL2Headroom}")
 
-    if not tiling and getattr(args, 'profileUntiled', False):
-        gen_args_list.append("--profileUntiled")
+    if not tiling:
+        if getattr(args, 'profileUntiled', False):
+            gen_args_list.append("--profileUntiled")
+
+    # Pass core count so the generator sizes the im2col buffer correctly. Both
+    # generateNetwork.py and testMVP.py default to n_cores=1, but the cluster launches
+    # NUM_CORES at runtime, so cores 1..N-1 write beyond the allocated im2col region and
+    # corrupt whatever the allocator placed after it.
+    # -- QW: this used to be inside `if not tiling`, so TILED runs silently kept n_cores=1
+    # (the training/ZO paths pass --cores through trainingUtils' opt_passthrough, which is
+    # why the ZO networks were unaffected). Found via Tests/Kernels/FP32/ZO_Conv, where the
+    # 16 B (= 4*1*C*Kx*Ky) buffer was overrun by 8 cores straight into the conv bias.
+    if hasattr(args, 'cores'):
+        gen_args_list.append(f"--cores={args.cores}")
+    elif hasattr(args, 'num_cores'):
+        gen_args_list.append(f"--cores={args.num_cores}")
 
     if getattr(args, 'profileMicrobenchmark', False):
         gen_args_list.append("--profileMicrobenchmark")
@@ -469,7 +487,10 @@ def main(default_platform: Optional[str] = None,
         if hasattr(args, 'freqPE'):
             platform_specific_cmake_args.append(f"-DFREQ_PE={args.freqPE}")
 
-    if platform == 'GAP9':
+    # if platform == 'GAP9':
+    # RW 2026-10-15: GAP9_w_NE16 too -- without SIMULATOR a '-s board' build used the gvsoc SDK config
+    # (semihosting printf) and hung on the EVK (dmstatus=0) before printing anything.
+    if platform.startswith('GAP9'):
         platform_specific_cmake_args.append("-DSIMULATOR=" + simulator)
 
     config = create_config_from_args(args, platform, simulator, tiling_enabled, platform_specific_cmake_args)

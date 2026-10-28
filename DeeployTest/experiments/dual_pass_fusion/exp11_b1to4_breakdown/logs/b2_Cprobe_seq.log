@@ -1,0 +1,1193 @@
+-- Building for platform 'GAP9_w_NE16'
+-- [GAP9] Using GVSoC SDK configuration
+-- Found Python: /app/install/gap9-sdk/.gap9-venv/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+-- [[1;37mSDK[m] Version: release-v5.21.1
+-- [[1;34mPlatform[m] GVSoC[m
+-- [[1;32mOS[m] FreeRTOS (Scheduler v2)
+-- [[1;32mPrintf[m] Semihost
+-- [[37mGCC Global Optimization[m] -Os
+-- [[1;34mBoard[m] GAP Family : [36m9[m
+-- [[1;34mBoard[m] GAP Version : [36m2[m
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9_w_NE16
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 7.1.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /app/install/gcc/gap9/bin/riscv32-unknown-elf-gcc
+-- [Deeploy GAP9] L2 mode: No hex files found, -DNOFLASH set
+-- [Deeploy GAP9] If you expect L3 mode, ensure Python codegen created hex files in /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/hex/
+-- [Deeploy GAP9] L2 mode: using gapy with mram boot (no readfs)
+-- [Deeploy GAP9] Board deployment target: QZO_DualConv2in_NE16P_B2
+-- [Log] none
+-- [QW] NE16DUAL_PROBE: NE16 prep / conv node phase cycles
+-- [Deeploy GAP9] Using prebuilt pulp-nn-mixed library
+-- [PULP-NNX] Using the NE16 accelerator.
+-- ============================= Simulation Configuration ============================
+-- [Simulator]   QuestaSim              = questa-2022.3
+-- [Simulator]   Verilator              = verilator-4.110
+-- [Simulator]   VCS                    = vcs-2020.12
+-- [Simulator]   banshee_simulation     = OFF
+-- [Simulator]   banshee_configuration  = 
+-- [Simulator]   gvsoc_simulation       = ON
+-- [Simulator]   banshee_stack_size     = 16777216
+-- [Simulator]   num_threads            = 1
+-- ================================================================================
+-- 
+-- Configuring done
+-- Generating done
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    GVSOC_INSTALL_DIR
+    TOOLCHAIN_INSTALL_DIR
+
+
+-- Build files have been written to: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_probe
+Consolidate compiler generated dependencies of target pmsis_printf
+[  1%] Built target pmsis_printf
+Consolidate compiler generated dependencies of target pulp_allocator
+[  3%] Built target pulp_allocator
+Consolidate compiler generated dependencies of target freertos_libs
+[  5%] Built target freertos_libs
+Consolidate compiler generated dependencies of target fll_pmu_lib
+[  6%] Built target fll_pmu_lib
+Scanning dependencies of target pmsis
+Consolidate compiler generated dependencies of target pmsis
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/implem/utils/gap_io.c.obj
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/bsp/bsp.c.obj
+[  6%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/fs/read_fs/read_fs.c.obj
+[  7%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/flash_partition_v2.c.obj
+[  7%] Building C object pmsis/CMakeFiles/pmsis.dir/bsp/partition/secret_storage.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/internal/devicetree_internal.c.obj
+[  8%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/src/dt.c.obj
+[  9%] Building C object pmsis/CMakeFiles/pmsis.dir/__/devicetree/fpv2/devicetree_fpv2.c.obj
+[  9%] Linking C static library ../lib/libpmsis.a
+[ 34%] Built target pmsis
+Scanning dependencies of target pmsis_backend
+Consolidate compiler generated dependencies of target pmsis_backend
+[ 38%] Built target pmsis_backend
+Scanning dependencies of target freertos
+Consolidate compiler generated dependencies of target freertos
+[ 50%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 51%] Building C object TargetLibraries/GAP9/pulp-nnx/CMakeFiles/pulp-nnx.dir/ne16/bsp/ne16_pulp_bsp.c.obj
+[ 52%] Linking C static library ../../../lib/libpulp-nnx.a
+[ 54%] Built target pulp-nnx
+Consolidate compiler generated dependencies of target deeploybasic
+[ 72%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 72%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualConv2in.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16DualPrep.c.obj
+[ 73%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/NE16WeightEncode.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/Util.c.obj
+[ 74%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_dma.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/src/dory_mem.c.obj
+[ 75%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/AvgPool.c.obj
+[ 76%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/BatchNorm.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Conv4x2.c.obj
+[ 77%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ConvGrad.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Convolution_fp32.c.obj
+[ 78%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvGrad.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DWConvolution_fp32.c.obj
+[ 79%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/DualConv2In.c.obj
+[ 80%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/FlatConv.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GELU.c.obj
+[ 81%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Gemm.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/GlobalAveragePool.c.obj
+[ 82%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Im2ColU8.c.obj
+[ 84%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Layernorm.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Matmul.c.obj
+[ 85%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/MaxPool.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PWConvGrad.c.obj
+[ 86%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/PerfRecords.c.obj
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RQiHardswish.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c: In function 'RQiHardswish_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/RQiHardswish.c:24:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 2
+ 
+[ 87%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoise.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoise.c:9:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RandomNoiseQuant.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/RandomNoiseQuant.c:12:0: warning: ignoring #pragma clang optimize [-Wunknown-pragmas]
+ #pragma clang optimize off
+ 
+[ 88%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Relu.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/RequantShift.c.obj
+[ 89%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Softmax.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/UniformRequantShift.c.obj
+[ 90%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/Util.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZOEco.c.obj
+[ 91%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/ZORuntime.c.obj
+[ 92%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/gemv.c.obj
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/src/iRMSnorm.c.obj
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c: In function 'iRMSnorm_s8_s8_plp':
+/app/Deeploy/TargetLibraries/PULPOpen/src/iRMSnorm.c:58:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+[ 93%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv2d_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_dw_fp32.c.obj
+[ 94%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_naive_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_conv_pw_fp32.c.obj
+[ 95%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_im2col_fp32.c.obj
+[ 96%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_matmul_fp32.c.obj
+[ 96%] Building C object TargetLibraries/GAP9/CMakeFiles/deeploygap9.dir/__/PULPOpen/third_party/pulp-trainlib/lib/sources/pulp_train_utils_fp32.c.obj
+[ 97%] Linking C static library ../../lib/libdeeploygap9.a
+[ 97%] Built target deeploygap9
+Consolidate compiler generated dependencies of target network
+[ 98%] Building C object DeeployTest/CMakeFiles/network.dir/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2/Network.c.obj
+[ 98%] Built target network
+Consolidate compiler generated dependencies of target QZO_DualConv2in_NE16P_B2
+[ 98%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/QZO_DualConv2in_NE16P_B2.dir/src/CycleCounter.c.obj
+[100%] Building C object DeeployTest/Platforms/GAP9/CMakeFiles/QZO_DualConv2in_NE16P_B2.dir/src/deeploytest.c.obj
+[100%] Linking C executable ../../../QZO_DualConv2in_NE16P_B2
+Memory region         Used Size  Region Size  %age Used
+        L2_priv0:        3516 B      65532 B      5.37%
+L2_priv0_aliased:        1356 B      65532 B      2.07%
+       L2_shared:       89008 B      1536 KB      5.66%
+    overlay_area:          0 GB      1536 KB      0.00%
+              L1:          92 B     131068 B      0.07%
+      L1_aliased:          76 B     131068 B      0.06%
+         XIP_mem:          0 GB       256 MB      0.00%
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  6%] Built target fll_pmu_lib
+Consolidate compiler generated dependencies of target pmsis
+[ 34%] Built target pmsis
+[ 38%] Built target pmsis_backend
+[ 50%] Built target freertos
+Consolidate compiler generated dependencies of target pulp-nnx
+[ 54%] Built target pulp-nnx
+[ 72%] Built target deeploybasic
+Consolidate compiler generated dependencies of target deeploygap9
+[ 97%] Built target deeploygap9
+Consolidate compiler generated dependencies of target network
+[ 98%] Built target network
+Consolidate compiler generated dependencies of target QZO_DualConv2in_NE16P_B2
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[100%] Built target image
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : QZO_DualConv2in_NE16P_B2
+  Test Directory      : /app/Deeploy/DeeployTest/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2
+  Generation Directory: /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/Tests/Kernels/Integer/QZO_DualConv2in_NE16P_B2
+  Build Directory     : /app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_probe
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9_w_NE16
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DGAP9_NETWORK_O3=ON -DNE16DUAL_PROBE=ON -DNUM_CORES=8 -DSIMULATOR=gvsoc
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --input-type-map blocks.2.conv.bias_rqsadd=int32_t /blocks_2_conv_input_quant_1/Clip_output_0=int8_t /blocks_2_conv_input_quant_1/Clip_output_0_minus=int8_t --input-offset-map blocks.2.conv.bias_rqsadd=0 /blocks_2_conv_input_quant_1/Clip_output_0=0 /blocks_2_conv_input_quant_1/Clip_output_0_minus=0 --defaultMemLevel=L2 --l1=86000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max --cores=8
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  5%] Built target freertos_libs
+[  6%] Built target fll_pmu_lib
+[ 34%] Built target pmsis
+[ 38%] Built target pmsis_backend
+[ 50%] Built target freertos
+[ 54%] Built target pulp-nnx
+[ 72%] Built target deeploybasic
+[ 97%] Built target deeploygap9
+[ 98%] Built target network
+[100%] Built target QZO_DualConv2in_NE16P_B2
+[100%] POST_BUILD
+==========================================
+[Deeploy GAP9] Executing gvsoc command - L2 mode:
+/app/install/gap9-sdk/utils/gapy_v2/bin/gapy --target=gap9.evk --target-dir=/app/install/gap9-sdk/install/workstation/generators --model-dir=/app/install/gap9-sdk/install/workstation/models --platform=gvsoc --work-dir=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_probe/gvsoc_workdir --target-property=boot.flash_device=mram --target-property=boot.mode=flash --multi-flash-content=/app/install/gap9-sdk/utils/layouts/default_layout_multi_readfs.json --flash-property=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_probe/QZO_DualConv2in_NE16P_B2@mram:app:binary --flash-property=/app/install/gap9-sdk/install/target/bin/fsbl@mram:fsbl:binary --flash-property=/app/install/gap9-sdk/install/target/bin/ssbl@mram:ssbl:binary --py-stack image flash run --binary=/app/Deeploy/DeeployTest/TEST_GAP9_W_NE16/build_x11a_ne_probe/QZO_DualConv2in_NE16P_B2
+==========================================
+[0 9] Hello World!
+Intializing
+Initialized
+Input copied
+[perf] records=37
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core0 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core1 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core2 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core3 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core4 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core5 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core6 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_perturb_core7 ===
+Cycles:                    7625
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core0 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core1 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core2 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core3 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core4 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core5 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core6 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_wenc_encode_core7 ===
+Cycles:                   22357
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core0 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core1 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core2 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core3 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core4 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core5 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core6 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_perturb_core7 ===
+Cycles:                    7605
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core0 ===
+Cycles:                    1959
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core1 ===
+Cycles:                    1958
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core2 ===
+Cycles:                    1943
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core3 ===
+Cycles:                    1937
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core4 ===
+Cycles:                    1937
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core5 ===
+Cycles:                    1937
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core6 ===
+Cycles:                    1961
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_bias_rowsum_core7 ===
+Cycles:                    1937
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_conv_jobs ===
+Cycles:                      12
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_conv_colbuild ===
+Cycles:                   29817
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_conv_ne16wait ===
+Cycles:                   33762
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_conv_rest ===
+Cycles:                   16091
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+
+=== Performance Statistics: N16PROBE_conv_total ===
+Cycles:                   79670
+Instructions:                 0
+IPC:                      0.000
+
+--- Instruction Mix ---
+Loads:                        0 (0.00%)
+Stores:                       0 (0.00%)
+Branches:                     0 (0.00%)
+Taken Branches:               0 (0.00%)
+Compressed (RVC):             0 (0.00%)
+
+--- Stalls & Hazards ---
+Load Stalls:                  0
+Jump Stalls:                  0
+I-cache Misses:               0
+TCDM Contentions:             0
+
+--- Memory Hierarchy ---
+External Loads:               0 (0.00%)
+External Stores:              0 (0.00%)
+Ext Load Cycles:              0 (avg: 0.00)
+Ext Store Cycles:             0 (avg: 0.00)
+========================================
+
+Output:
+Runtime: 90998 cycles
+Errors: 0 out of 10304
+[100%] Built target gvsoc_QZO_DualConv2in_NE16P_B2
+
+[92m✓ Test QZO_DualConv2in_NE16P_B2 PASSED - No errors found[0m
+[92m  Runtime: 90998 cycles[0m

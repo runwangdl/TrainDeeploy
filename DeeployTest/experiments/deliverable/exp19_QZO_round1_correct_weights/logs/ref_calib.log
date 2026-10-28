@@ -1,0 +1,15 @@
+[collect] 1800 windows, batch 64 -> 29 collector steps, 12 act sites, cap 40M/site
+   blocks.0.conv.input_quant                     N= 17,640,000  pooled=17,640,000 (100.0%)  max=59655.8242
+   blocks.0.conv.output_quant                    N=141,321,600  pooled=39,248,776 ( 27.8%)  max=80345.2734
+   blocks.1.conv.input_quant                     N= 17,539,200  pooled=17,539,200 (100.0%)  max=595.2981
+   blocks.1.conv.output_quant                    N= 35,481,600  pooled=35,481,600 (100.0%)  max=568.0861
+   blocks.2.conv.input_quant                     N=  8,870,400  pooled= 8,870,400 (100.0%)  max=192.1711
+   blocks.2.conv.output_quant                    N=  9,273,600  pooled= 9,273,600 (100.0%)  max=161.1730
+   blocks.3.conv.input_quant                     N=  2,016,000  pooled= 2,016,000 (100.0%)  max=81.4555
+   blocks.3.conv.output_quant                    N=  2,304,000  pooled= 2,304,000 (100.0%)  max=48.3917
+   blocks.4.conv.input_quant                     N=  2,304,000  pooled= 2,304,000 (100.0%)  max=40.3078
+   blocks.4.conv.output_quant                    N=    576,000  pooled=   576,000 (100.0%)  max=14.5570
+   fc_iq.act_quant                               N=     57,600  pooled=    57,600 (100.0%)  max=18.8648
+   fc.input_quant                                N=     57,600  pooled=    57,600 (100.0%)  max=18.8648
+[calib] fresh pooled@99.99 saved (12 sites); block0-in threshold=2854.0000 -> scale=22.296875
+[ref] fc-float round-1: zero-shot b2 75.00% -> after 87.78%  (THE reference accuracy)

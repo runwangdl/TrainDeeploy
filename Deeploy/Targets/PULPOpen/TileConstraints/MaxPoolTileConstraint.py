@@ -238,3 +238,67 @@ class MaxPoolCTileConstraint(TileConstraint):
         variableReplacementSchedule = VariableReplacementScheme(replacements, replacementTypes)
 
         return variableReplacementSchedule, tilingSchedule
+
+
+class MaxPoolHCTileConstraint(MaxPoolCTileConstraint):
+    """RW 2026-10-13: NHWC MaxPool tiled along H with whole rows (all W, all C), so every tile is one contiguous DMA.
+
+    MaxPoolCTileConstraint cuts the innermost C axis: SpeechNet's block-0 pool (C = 8) came out as 4 tiles of
+    C = 2, i.e. an 8-byte strided transfer per pixel, and the input DMA cost as much as the kernel. Applies when
+    the windows do not overlap or pad along H (pads all 0, kernel_h == stride_h); otherwise this is exactly
+    MaxPoolCTileConstraint.
+    """
+
+    @staticmethod
+    def _rowTiled(parseDict: Dict) -> bool:
+        return all(p == 0 for p in parseDict['pads']) and parseDict['kernel_shape'][0] == parseDict['strides'][0]
+
+    @staticmethod
+    def addGeometricalConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        if not MaxPoolHCTileConstraint._rowTiled(parseDict):
+            return MaxPoolCTileConstraint.addGeometricalConstraint(tilerModel, parseDict, ctxt)
+        inName, outName = parseDict['data_in'], parseDict['data_out']
+        for name in [inName, outName]:
+            tilerModel.addTensorDimToModel(ctxt, name)
+        sh = parseDict['strides'][0]
+        dim = lambda n, i: tilerModel.getTensorDimVar(tensorName = n, dimIdx = i)
+        tilerModel.addConstraint(dim(outName, 0) == dim(inName, 0))
+        tilerModel.addConstraint(dim(inName, 1) == dim(outName, 1) * sh)
+        tilerModel.addConstraint(dim(outName, 3) == dim(inName, 3))
+        return tilerModel
+
+    @staticmethod
+    def addPolicyConstraint(tilerModel: TilerModel, parseDict: Dict, ctxt: NetworkContext) -> TilerModel:
+        if not MaxPoolHCTileConstraint._rowTiled(parseDict):
+            return MaxPoolCTileConstraint.addPolicyConstraint(tilerModel, parseDict, ctxt)
+        for name in [parseDict['data_in'], parseDict['data_out']]:
+            shape = ctxt.lookup(name).shape
+            for idx in (0, 2, 3):  # batch, W and C whole; H free
+                tilerModel.addConstraint(tilerModel.getTensorDimVar(tensorName = name, dimIdx = idx) == shape[idx])
+        return tilerModel
+
+    @classmethod
+    def serializeTilingSolution(
+            cls, tilingSolution: NodeMemoryConstraint, absoluteOutputCubes: List[AbsoluteHyperRectangle],
+            targetMemLevel: str, ctxt: NetworkContext,
+            operatorRepresentation: OperatorRepresentation) -> Tuple[VariableReplacementScheme, TilingSchedule]:
+        if not cls._rowTiled(operatorRepresentation):
+            return super().serializeTilingSolution(tilingSolution, absoluteOutputCubes, targetMemLevel, ctxt,
+                                                   operatorRepresentation)
+        outputCubes = [cube.rectangle for cube in absoluteOutputCubes]
+        inputBaseOffsets, outputBaseOffsets = cls.extractBaseAddr(tilingSolution, targetMemLevel,
+                                                                  operatorRepresentation, ['data_in', 'data_out'])
+        inShape = ctxt.lookup(operatorRepresentation['data_in']).shape
+        sh = operatorRepresentation['strides'][0]
+        replacements = {"dim_im_in_x": [], "dim_im_out_x": []}
+        replacementTypes = {"dim_im_in_x": PointerClass(uint16_t), "dim_im_out_x": PointerClass(uint16_t)}
+        inputLoadSchedule, outputLoadSchedule = [], []
+        for cube in outputCubes:
+            (b0, h0, _, _), (bs, hs, _, _) = cube.offset, cube.dims
+            inCube = HyperRectangle((b0, h0 * sh, 0, 0), (bs, hs * sh, inShape[2], inShape[3]))
+            replacements["dim_im_in_x"].append(hs * sh)
+            replacements["dim_im_out_x"].append(hs)
+            inputLoadSchedule.append({"data_in": inCube})
+            outputLoadSchedule.append({"data_out": cube})
+        return VariableReplacementScheme(replacements, replacementTypes), \
+            TilingSchedule(inputBaseOffsets, outputBaseOffsets, inputLoadSchedule, outputLoadSchedule)

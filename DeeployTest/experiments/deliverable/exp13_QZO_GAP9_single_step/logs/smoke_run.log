@@ -1,0 +1,76 @@
+onnxruntime cpuid_info warning: Unknown CPU vendor. cpuinfo_vendor value: 0
+[0;93m2026-09-09 23:52:04.362699882 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze_1[m
+[0;93m2026-09-09 23:52:04.364169340 [W:onnxruntime:, unsqueeze_elimination.cc:23 Apply] UnsqueezeElimination cannot remove node Unsqueeze[m
+[TiledOptimizerNetwork] Generated OptimizerNetwork.c/h in /app/ETH/TrainDeeploy/DeeployTest/TEST_GAP9/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+-- Building for platform 'GAP9'
+-- [GAP9] Using GVSoC SDK configuration
+CMake Error at CMakeLists.txt:49 (include):
+  include could not find requested file:
+
+    /utils/cmake/setup.cmake
+
+
+-- ============================= Project Configuration ============================
+-- [Deeploy]     platform               = GAP9
+-- [Deeploy]     use_dma                = 
+-- ================================================================================
+-- 
+-- The C compiler identification is GNU 11.4.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /usr/bin/cc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+CMake Error at DeeployTest/CMakeLists.txt:90 (target_compile_options):
+  Cannot specify compile options for target "network" which is not built by
+  this project.
+
+
+-- [Deeploy GAP9] L2 mode: No hex files found, -DNOFLASH set
+-- [Deeploy GAP9] If you expect L3 mode, ensure Python codegen created hex files in /app/ETH/TrainDeeploy/DeeployTest/TEST_GAP9/Tests/Models/Training/SpeechNet/speechnet_qzo12_train/hex/
+CMake Error at DeeployTest/CMakeLists.txt:112 (target_compile_options):
+  Cannot specify compile options for target "network" which is not built by
+  this project.
+
+
+CMake Error at cmake/gap9/gap9_gvsoc.cmake:15 (message):
+  Environment variable GAP_SDK_HOME not set
+Call Stack (most recent call first):
+  DeeployTest/Platforms/GAP9/CMakeLists.txt:59 (add_gvsoc_emulation)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/app/ETH/TrainDeeploy/DeeployTest/TEST_GAP9/build_master/CMakeFiles/CMakeOutput.log".
+[Deeploy] CMake configuration failed with return code 1
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+[1m[96m                    Deeploy Test Configuration                 [0m
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+[1mTest Configuration:[0m
+  Test Name           : speechnet_qzo12_train
+  Test Directory      : /app/ETH/TrainDeeploy/DeeployTest/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+  Generation Directory: /app/ETH/TrainDeeploy/DeeployTest/TEST_GAP9/Tests/Models/Training/SpeechNet/speechnet_qzo12_train
+  Build Directory     : /app/ETH/TrainDeeploy/DeeployTest/TEST_GAP9/build_master
+
+[1mPlatform Configuration:[0m
+  Platform            : GAP9
+  Simulator           : gvsoc
+  Tiling Enabled      : Yes
+
+[1mBuild Configuration:[0m
+  Toolchain           : LLVM
+  Toolchain Directory : /app/install/llvm
+  CMake Arguments     : -DNUM_CORES=8 -DBN_FROZEN_STATS=ON
+
+[1mRuntime Configuration:[0m
+  Verbosity Level     : 0
+  Debug Mode          : Disabled
+  Generation Arguments: --cores=8 --defaultMemLevel=L2 --l1=128000 --l2=1500000 --memAllocStrategy=MiniMalloc --searchStrategy=random-max
+
+[1m[96m═══════════════════════════════════════════════════════════════[0m
+
+
+[91m✗ Test speechnet_qzo12_train FAILED with exception: CMake configuration failed for speechnet_qzo12_train[0m

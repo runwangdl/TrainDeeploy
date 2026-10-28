@@ -548,8 +548,12 @@ class ConvChecker(SignPropTypeChecker):
     def _inferNumLevels(self, inputs: List[VariableBuffer],
                         operatorRepresentation: OperatorRepresentation) -> List[int]:
         weight = inputs[1]
+        # QW (quantized ZO): the conv weight may be an RQSPerturbRademacher output whose buffer inherits
+        # nLevels from a promoted graph-input weight (nLevels=None). Fall back to the weight type's full
+        # range (256 for int8), which the clipped Rademacher perturbation stays within. -- QW
+        wnLevels = weight.nLevels if weight.nLevels is not None else 2**(weight._type.referencedType.typeWidth)
         return [
-            np.prod(operatorRepresentation['kernel_shape']) * weight.nLevels * weight.shape[1] *
+            np.prod(operatorRepresentation['kernel_shape']) * wnLevels * weight.shape[1] *
             2**(self.input_types[0].referencedType.typeWidth)
         ]
 
@@ -711,6 +715,21 @@ class InPlaceAccumulatorV2Checker(SignPropTypeChecker):
         return [True]
 
 
+# Ported from Deeploy zo-support (FP32 PerturbRademacher ZO op): nLevels passthrough, signed out. -- QW
+class PerturbZOChecker(SignPropTypeChecker):  # -- QW
+
+    def __init__(self, input_types: Sequence[Type[Pointer]], output_types: Sequence[Type[Pointer]]):  # -- QW
+        super().__init__(input_types, output_types)  # -- QW
+
+    def _inferNumLevels(self, inputs: List[VariableBuffer],  # -- QW
+                        operatorRepresentation: OperatorRepresentation) -> List[int]:  # -- QW
+        return [inputs[0].nLevels]  # -- QW
+
+    def _inferSignedness(self, inputs: List[VariableBuffer],  # -- QW
+                         operatorRepresentation: OperatorRepresentation) -> List[bool]:  # -- QW
+        return [True]  # -- QW
+
+
 class BatchNormChecker(SignPropTypeChecker):
 
     def __init__(self, input_types: Sequence[Type[Pointer]], output_types: Sequence[Type[Pointer]]):
@@ -780,3 +799,24 @@ class PULPConvGradBChecker(SignPropTypeChecker):
     def _inferSignedness(self, inputs: List[VariableBuffer],
                          operatorRepresentation: OperatorRepresentation) -> List[bool]:
         return [inputs[0]._signed]
+
+
+class RQSPerturbZOChecker(SignPropTypeChecker):  # -- QW: ported from shipped Deeploy for quantized-ZO RQSPerturb
+    def __init__(self, input_types, output_types):
+        super().__init__(input_types, output_types)
+
+    def _inferNumLevels(self, inputs, operatorRepresentation):
+        # -- QW: the perturbed int8 weight retains the input weight's levels when
+        # known; but in the bare zo_update graph the weight is an unconstrained
+        # graph-input (nLevels=None, no downstream Dequant/Conv to back-infer it).
+        # Propagating None crashes fitsNumLevels(None) for the int8 output ->
+        # binding silently rejected ("no adequate mapping"). Fall back to the
+        # int8 output type's full range (256 levels), which the clipped
+        # Rademacher perturbation stays within. zo_train (nLevels set) unchanged.
+        n = inputs[0].nLevels
+        if n is None:
+            n = self.output_types[0].referencedType.nLevels
+        return [n]
+
+    def _inferSignedness(self, inputs, operatorRepresentation):
+        return [True]

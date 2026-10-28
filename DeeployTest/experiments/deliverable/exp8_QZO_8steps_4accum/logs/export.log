@@ -1,0 +1,193 @@
+/usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_validation.py:113: UserWarning: WARNING: failed to get cudart_version from onnxruntime build info.
+  warnings.warn("WARNING: failed to get cudart_version from onnxruntime build info.")
+/usr/local/lib/python3.10/site-packages/brevitas/graph/equalize.py:68: UserWarning: fast_hadamard_transform package not found, using standard pytorch kernels
+  warnings.warn("fast_hadamard_transform package not found, using standard pytorch kernels")
+/usr/local/lib/python3.10/site-packages/torch/_tensor.py:1644: UserWarning: Named tensors and all their associated APIs are an experimental feature and subject to change. Please do not use them for anything important until they are released as stable. (Triggered internally at /pytorch/c10/core/TensorImpl.h:1935.)
+  return super().rename(names)
+[W828 00:52:22.202039174 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.229939674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.235619799 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.239095299 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.245448424 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.299166674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.303664216 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.306771716 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.309784466 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.311726716 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.317406591 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.323769049 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.328400799 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.332806216 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.335498424 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.340351799 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.345471382 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.350114632 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.354693716 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.357897091 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+/usr/local/lib/python3.10/site-packages/brevitas/backport/fx/_symbolic_trace.py:622: UserWarning: Was not able to add assertion to guarantee correct input x to specialized function. It is up to the user to make sure that your inputs match the inputs you specialized the function with.
+  warnings.warn(
+[W828 00:52:22.388780632 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.392398549 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.395665716 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.398451299 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.400856674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.417898632 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.419379132 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.421181924 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.421856674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.422289757 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.458802549 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.468395924 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.474916924 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.481058674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:22.486772757 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.805624216 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.807316216 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.809074383 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.810761549 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.811990049 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.838847674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.845964091 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.852729799 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.859066841 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[W828 00:52:23.864809674 NNPACK.cpp:57] Could not initialize NNPACK! Reason: Unsupported hardware.
+[0;93m2026-08-28 00:52:23.426830005 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427481380 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427520922 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427570172 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427614922 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427655255 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.0.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427742088 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427774630 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427805797 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427848672 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427912463 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427943338 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.1.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.427980255 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428013838 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428048130 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428105463 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428133172 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428159588 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.2.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428185505 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428211380 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428237213 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428263463 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428289088 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428315463 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.3.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428383130 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.conv.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428419380 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.conv.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428450338 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428480047 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428512713 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.running_mean appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428544672 [W:onnxruntime:, graph.cc:1312 Graph] Initializer blocks.4.bn.running_var appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428580630 [W:onnxruntime:, graph.cc:1312 Graph] Initializer fc.weight appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+[0;93m2026-08-28 00:52:23.428612922 [W:onnxruntime:, graph.cc:1312 Graph] Initializer fc.bias appears in graph inputs and will not be treated as constant value/weight. This may prevent some of the graph optimizations, like const folding. Move it out of graph inputs if there is no need to override it, by either re-generating the model with latest exporter/converter or with the tool onnxruntime/tools/python/remove_initializer_from_input.py.[m
+✅ Custom ONNX operator registered: ai.mamba::SelectiveSSM
+   Inputs: x, A_log, B, C, D, dt, res
+   Outputs: y (SSM + gating)
+   Internal ops: Exp, SSM, SiLU gating
+
+======================================================================
+🚀 Generating model: SpeechNet (Q-ZO-TRAIN mode)
+======================================================================
+
+
+============================================================
+🚀 Exporting SpeechNet to ONNX (Quantized Zeroth-Order Mode)
+============================================================
+
+📦 Creating Brevitas model (pretrained, BN UNFOLDED) + real-data PTQ calibration...
+  QuantSpeechNet: loaded pretrained (remapped); missing=12 unexpected=0
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+📤 exportBrevitas + 12-pass integer pipeline...
+Output Original:          tensor([[-4.4542, -2.8952, -5.0037, -5.0179, -2.5705, -3.1758, -5.6201,  1.6135,
+          5.0651]])
+Output Dequant Modified:  tensor([[-4.4542, -2.8952, -5.0037, -5.0179, -2.5705, -3.1758, -5.6201,  1.6135,
+          5.0651]])
+Input npz:  tensor([[[[ -1.2972, -12.5693, -14.0568,  ...,   9.3948,  -6.1050,   2.6795],
+          [  2.8676, -13.1845, -11.3981,  ...,   3.6455, -13.2076,   8.8379],
+          [  5.5937,  -2.5924,  -0.2730,  ..., -41.4968, -15.8699,  22.1477],
+          ...,
+          [  6.9938,  16.0574,  12.4069,  ...,  22.9908,  21.9971,   1.4750],
+          [ -3.9941, -20.8336, -18.7874,  ...,  -4.3580, -20.0447,  -4.6214],
+          [-16.2560, -18.4985, -19.4040,  ...,   4.1275, -19.2786,  -1.5142]]]])
+Input data saved to /app/Onnx4Deeploy/QZO_exp/exp8/inputs.npz ✓
+Output npz:  [[-4.454196  -2.895224  -5.0036707 -5.0178533 -2.5704808 -3.1758173
+  -5.6200547  1.613468   5.065075 ]]
+Output data saved to /app/Onnx4Deeploy/QZO_exp/exp8/outputs.npz ✓
+🔧 Running optimization pipeline: 'quant'
+   Total passes: 12
+   Enabled passes: 11
+  ➤ [1/12] remove_initializers_from_inputs
+      Drop weight initializers from graph.input (PyTorch keep_initializers_as_inputs cleanup)
+    remove_initializers_from_inputs: 32
+  ➤ [2/12] upgrade_reducemean_axes
+      Rename opset-13 'axes' attribute to 'axis' so Deeploy's _remove_only_singleton_reduce_mean reads it
+    upgrade_reducemean_axes: 0
+  ➤ [3/12] fold_qcdq_to_quant_dequant
+      Collapse Div/Add/Round/Clip → Quant and Sub/Mul → Dequant; chase Cast(Constant) for bounds
+    fold_qcdq_to_quant_dequant: 24
+  ➤ [4/12] constfold_quant_of_initializer
+      Statically apply Quant() to constant weights/biases; emit int initializers directly
+    constfold_quant_of_initializer: 0
+  ➤ [5/12] fold_dequant_quant_to_requantshift
+      Match Dequant → Quant and replace with RequantShift (the QCDQ → RequantShift bridge)
+    fold_dequant_quant_to_requantshift: 1
+  ➤ [6/12] skip_dequant_before_integer_op
+      Drop standalone Dequant whose output only flows into integer-friendly ops (Conv/Gemm/Add/ReduceMean)
+    skip_dequant_before_integer_op: 6
+  ➤ [7/12] fold_standalone_quant_to_requantshift
+      Replace `int_op → Quant` chains with `int_op → RequantShift`
+    fold_standalone_quant_to_requantshift: 5
+  ➤ [8/12] skip_leading_quant_dequant
+      Drop the trailing Dequant of a leading `input → Quant → Dequant → ...` pair
+    skip_leading_quant_dequant: 0
+  ➤ [9/12] absorb_conv_bias_into_following_requantshift
+      Fold Conv.bias × RequantShift.mul into RequantShift.add (4-input RequantizedConv)
+    absorb_conv_bias_into_following_requantshift: 0
+  ⊘ Skipping disabled pass: quantize_input_offline
+  ➤ [11/12] strip_trailing_dequant
+      Drop the trailing Dequant feeding the graph output; output stays int8
+    strip_trailing_dequant: 0
+  ➤ [12/12] cleanup_orphan_nodes
+      Remove unused Constants/Casts/Identity nodes and orphan initializers
+    cleanup_orphan_nodes: 0
+
+  ✅ Pipeline complete
+     Nodes: 320 → 193 (-127)
+🔧 build_qzo_train_graph + build_qzo_update_graph...
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /app/Onnx4Deeploy/QZO_exp/exp8/network_zo_train.onnx
+  [qzo] int8 zo_update graph (22 RQSPerturb, params in/updated out) -> /app/Onnx4Deeploy/QZO_exp/exp8/network_zo_update.onnx
+   Loading SilentWear data from /app/SilentWear/SilentWear_data/data_raw_and_filt/S01/vocalized/sess_3_batch_1.h5 ...
+   Extracted 320 windows (subject=S01, session=3, batch=1, condition=vocalized, window=700 samples)
+   Rest downsampled: 160 → 20 (matches min command class count)
+   QZO multi-step sim: data_size=8 n_accum=4 → n_steps=2 lr=1e-05 eps=0.01 seed=42
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/_qzo_p.onnx
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/_qzo_m.onnx
+     u0 a0 mb0: L+=1.245066 L-=1.277979
+     u0 a1 mb1: L+=0.724608 L-=1.022715
+     u0 a2 mb2: L+=2.413762 L-=2.119363
+     u0 a3 mb3: L+=1.222587 L-=0.432596
+     u0: acc=0.753371 g_proj=9.417134 coeff=-9.417e-05
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/_qzo_p.onnx
+  [qzo] int8 zo_train graph (offline weights-as-inputs, 22 RQSPerturb) -> /tmp/_qzo_m.onnx
+     u1 a0 mb4: L+=3.525155 L-=2.797047
+     u1 a1 mb5: L+=1.121575 L-=0.728430
+     u1 a2 mb6: L+=2.841024 L-=2.981507
+     u1 a3 mb7: L+=1.758177 L-=1.506321
+     u1: acc=1.232625 g_proj=15.407816 coeff=-1.541e-04
+✅ QZO multi-step export complete: 2 update steps × 4 accum (8 loss pairs); g_proj per step: [9.4171, 15.4078]
+
+======================================================================
+✅ Quantized zeroth-order (QZO) training mode model generation completed!
+======================================================================
+
+📁 Generated files:
+  ✓ network.onnx              (113.7 KB)
+  ✓ inputs.npz                (333.3 KB)
+  ✓ outputs.npz               (24.2 KB)
+
+💡 Output source: PyTorch model (for verifying ONNX correctness)

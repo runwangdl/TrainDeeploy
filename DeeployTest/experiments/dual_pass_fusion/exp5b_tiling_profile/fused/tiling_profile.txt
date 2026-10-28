@@ -1,0 +1,33 @@
+Input copied
+===== Profiling dualconv_blocks0_input_0_transpose_L2 =====
+[dualconv_blocks0_input_0_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  1349 cycles
+[dualconv_blocks0_input_0_transpose_L2][SB][0 ops][Tile 0] Kernel     :  7344 cycles
+[dualconv_blocks0_input_0_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  1387 cycles
+[dualconv_blocks0_input_0_transpose_L2][SB][0 ops][Tile 0] Total      : 10080 cycles (72.9% Kernel + 27.1% Overhead, 7344 + 2736)
+===== Profiling dualconv_blocks0_input_1_transpose_L2 =====
+[dualconv_blocks0_input_1_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :   200 cycles
+[dualconv_blocks0_input_1_transpose_L2][SB][0 ops][Tile 0] Kernel     :   309 cycles
+[dualconv_blocks0_input_1_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:   139 cycles
+[dualconv_blocks0_input_1_transpose_L2][SB][0 ops][Tile 0] Total      :   648 cycles (47.7% Kernel + 52.3% Overhead, 309 + 339)
+===== Profiling dualconv_blocks0_L2 =====
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 0] Pre-Kernel :  1176 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 0] Kernel     :472756 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 0] Post-Kernel: 15692 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 0] Total      :489624 cycles (96.6% Kernel + 3.4% Overhead, 472756 + 16868)
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 1] Pre-Kernel :   443 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 1] Kernel     :146619 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 1] Post-Kernel:  4844 cycles
+[dualconv_blocks0_L2][SB][2571268 ops][Tile 1] Total      :151906 cycles (96.5% Kernel + 3.5% Overhead, 146619 + 5287)
+===== Profiling dualconv_blocks0_output_0_pre_transpose_L2 =====
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Pre-Kernel :  9993 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Kernel     : 72361 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Post-Kernel:  7716 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 0] Total      : 90070 cycles (80.3% Kernel + 19.7% Overhead, 72361 + 17709)
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Pre-Kernel :  9989 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Kernel     : 67267 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Post-Kernel:  7691 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 1] Total      : 84947 cycles (79.2% Kernel + 20.8% Overhead, 67267 + 17680)
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 2] Pre-Kernel :  9965 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 2] Kernel     : 67290 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 2] Post-Kernel:  5160 cycles
+[dualconv_blocks0_output_0_pre_transpose_L2][SB][0 ops][Tile 2] Total      : 82415 cycles (81.6% Kernel + 18.4% Overhead, 67290 + 15125)

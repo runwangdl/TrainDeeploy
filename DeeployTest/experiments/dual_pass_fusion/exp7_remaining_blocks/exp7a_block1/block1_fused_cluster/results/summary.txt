@@ -1,0 +1,23 @@
+exp7a block 1 steps 3+4 -- fused two-input kernel PULP_DualConv2d_2in_i8_i8_i8_HWC (RequantizedDualConv, 7 inputs)
+fixture QZO_DualConv2in_B1 (x+ / x- = block-1 inputs of the full graph's + / - passes), Siracusa GVSoC, L1 128000, L2 1500000, 8 cores
+correctness: Errors: 0 out of 39424 (exact int8, A+ and A-); debug variant x+ = x- (QZO_DualConv2in_B1_same): Errors: 0 out of 39424
+
+both passes, whole fixture (plain runs):
+  A = 2 x unfused pulp-nn (step 0)         939,868
+  B = 2 x single-pass Conv4x2 (step 2a)    653,328   A/B = 1.44x  (kernel rewrite)
+  C = fused two-input (this step)          580,248   B/C = 1.13x  (fusion)   A/C = 1.62x  (1.62x end to end)
+  @370 MHz: 2.54 ms -> 1.57 ms
+
+core-0 node cycles, both passes:                 B (2 x Conv4x2)      C (fused)
+  perturb weight + bias nodes                      80,792            inside the kernel (phase 1)
+  weight transpose                                  4,684            gone (raw CHW weight)
+  input transposes                                 13,122          13,090
+  conv (+ phase 1 in C)                           500,358         494,019
+  output transpose                                 21,466          23,987
+  sum of nodes                                    620,422         531,096
+  outside the nodes (DMA / control)                32,906          49,152
+
+conv node: instr 416,203 (2 x Conv4x2 = 408,530), IPC 0.8425, I-cache stall 39,740 (8.0%), load stalls 16,060
+code size (llvm-nm): PULP_DualConv2d_2in_i8_i8_i8_HWC 0xd24 = 3,364 B + d2_gather 256 B
+=> the fusion gain is the removed nodes (two perturb nodes per pass, the weight transposes); phase 2 costs the same as two
+   single passes (no shared operand between x+.W+ and x-.W-), phase 1 is within the noise of that comparison.
