@@ -1,0 +1,40 @@
+{
+ "bp": {
+  "L2 arena": 1478772,
+  "L1 arena (tile buffer)": 121984,
+  "constants (static PI_L2)": 3217,
+  "activations & intermediates": 1315651,
+  "data window + label": 39208,
+  "weights": 61956,
+  "gradient accumulators": 61956,
+  "other inputs": 1,
+  "optimizer / ECO state": 0,
+  "L2 total": 1481989,
+  "peak (L2 total + L1 tile buffer)": 1603973,
+  "trainable parameters": 15489
+ },
+ "zo": {
+  "L2 arena": 791216,
+  "L1 arena (tile buffer)": 113844,
+  "constants (static PI_L2)": 1494,
+  "activations & intermediates": 690052,
+  "data window + label": 39208,
+  "weights": 61956,
+  "optimizer / ECO state": 0,
+  "L2 total": 792710,
+  "peak (L2 total + L1 tile buffer)": 906554,
+  "trainable parameters": 15489
+ },
+ "eco": {
+  "L2 arena": 265612,
+  "L1 arena (tile buffer)": 113728,
+  "constants (static PI_L2)": 13607,
+  "activations & intermediates": 209088,
+  "data window + label": 39208,
+  "weights": 17316,
+  "optimizer / ECO state": 61956,
+  "L2 total": 341175,
+  "peak (L2 total + L1 tile buffer)": 454903,
+  "trainable parameters": 15489
+ }
+}

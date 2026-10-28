@@ -1,0 +1,63 @@
+=== qzo_fused round 1  2026-10-28 03:55:54
+[qzo_fused_r1] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[qzo_fused_r1] 02:59:15 flash + run (speechnet_train_QZO_r1)
+[qzo_fused_r1] 03:01:57 done after 162 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xe1ca5c8d
+[WCHK] changed 20/22 trainable tensors after 1890 updates
+Errors: 0 out of 112
+BENCH train_cycles_hi=2 train_cycles_lo=3623386132 opt_cycles_hi=0 opt_cycles_lo=457289426
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== qzo_fused round 2  2026-10-28 04:02:20
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r1/uart.log into fixtures_arm/qzo_fused/speechnet_train_QZO_r2/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r1/uart.log into fixtures_arm/qzo_fused/speechnet_update_QZO_r2/inputs.npz
+[qzo_fused_r2] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[qzo_fused_r2] 03:05:39 flash + run (speechnet_train_QZO_r2)
+[qzo_fused_r2] 03:08:27 done after 168 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xe04adab9
+[WCHK] changed 20/22 trainable tensors after 1890 updates
+Errors: 112 out of 112
+BENCH train_cycles_hi=2 train_cycles_lo=3622965225 opt_cycles_hi=0 opt_cycles_lo=457102075
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== qzo_fused round 3  2026-10-28 04:08:47
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r2/uart.log into fixtures_arm/qzo_fused/speechnet_train_QZO_r3/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r2/uart.log into fixtures_arm/qzo_fused/speechnet_update_QZO_r3/inputs.npz
+[qzo_fused_r3] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[qzo_fused_r3] 03:12:09 flash + run (speechnet_train_QZO_r3)
+[qzo_fused_r3] 03:14:56 done after 167 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0x3ac4556b
+[WCHK] changed 20/22 trainable tensors after 1890 updates
+Errors: 110 out of 112
+BENCH train_cycles_hi=2 train_cycles_lo=3621766934 opt_cycles_hi=0 opt_cycles_lo=457176182
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== qzo_fused round 4  2026-10-28 04:15:17
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r3/uart.log into fixtures_arm/qzo_fused/speechnet_train_QZO_r4/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/qzo_fused_r3/uart.log into fixtures_arm/qzo_fused/speechnet_update_QZO_r4/inputs.npz
+[qzo_fused_r4] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[qzo_fused_r4] 03:18:39 flash + run (speechnet_train_QZO_r4)
+[qzo_fused_r4] 03:21:26 done after 167 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xa59670f7
+[WCHK] changed 20/22 trainable tensors after 1890 updates
+Errors: 111 out of 112
+BENCH train_cycles_hi=2 train_cycles_lo=3623822520 opt_cycles_hi=0 opt_cycles_lo=457237732
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== qzo_fused chain done 2026-10-28 04:21:47

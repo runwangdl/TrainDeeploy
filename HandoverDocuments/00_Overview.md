@@ -1,7 +1,7 @@
 # On-device fine-tuning of SpeechNet with Deeploy — handover overview
 
 Written 2026-10-12 for the handover to the supervisor and to any future collaborator or agent; guide 05
-added 2026-10-14. This is the entry point. It indexes the five implementation guides, records the facts that every
+added 2026-10-14, guide 06 added 2026-10-28. This is the entry point. It indexes the six implementation guides, records the facts that every
 guide depends on (repositories, containers, checkpoint, protocol), lists the standing working rules,
 and ends with an index of every experiment that was run, with its path and status.
 
@@ -12,7 +12,7 @@ surface-EMG silent-speech classification, 9 classes, 14 channels × 700 samples 
 microcontrollers (Siracusa on GVSoC, and GAP9 with its NE16 accelerator), compiled by our fork of the
 Deeploy compiler. Ready-to-run fixtures for every experiment (one naming scheme, each cross-checked
 against the fixture its experiment ran on and smoke-run on GVSoC) and their run commands are in
-`TrainDeeploy/SpeechNet_Test/README.md`. The work went through five stages, each with its own guide:
+`TrainDeeploy/SpeechNet_Test/README.md`. The work went through six stages, each with its own guide:
 
 | guide | stage | one-line result |
 |---|---|---|
@@ -21,6 +21,7 @@ against the fixture its experiment ran on and smoke-run on GVSoC) and their run 
 | [03_QZO_Guide.md](03_QZO_Guide.md) | quantized zeroth-order (int8 convs) | int8 conv weights and int32 requant biases perturbed on device, fp32 BN and classifier; step cost 8.4–8.7 M cycles, 4.3× cheaper than fp32 ZO; round 1 reaches 85.00 % on device (host executor 85.56 %); the LSB stall and its three answers (lr 1e-5, master weights, ECO error feedback) |
 | [04_FusedQZO_NE16_Guide.md](04_FusedQZO_NE16_Guide.md) | fused dual-pass QZO kernels and NE16 | one kernel computing both ε-passes of the block-0 conv: 1.88× on the fixture, 2.16× on the node, bit-exact; on GAP9 the same fusion on the NE16 accelerator via the SDK's im2col route gives 2.71× over 2× pulp-nn and 1.71× over the fused cluster kernel |
 | [05_Fusion_Full_Network_Guide.md](05_Fusion_Full_Network_Guide.md) | dual-pass fusion for blocks 1–4 and the whole QZO network | two-input fused cluster kernel and pipelined fused NE16 node for blocks 1–4 (Siracusa 2.44×, GAP9 best per block 2.57×; NE16 for blocks 0–2, cluster for 3–4); a Deeploy pass rewrites the QZO training graph into one channel-stacked dual-pass graph, bit-exact on Siracusa / GAP9 / GAP9 + NE16 (step 1.53× / 1.42× / 1.78×); QZO+ECO round on GAP9 + NE16 predicted at 40.0 s vs 69.6 s unfused; exp9 (memory): frozen-BN tail fused into one kernel, fused QZO+ECO L2 arena 854 → 266 KB, step −13 %, bit-exact |
+| [06_Further_Optimisation.md](06_Further_Optimisation.md) | further optimisation of the fused step, BP fixes, board rounds | exp11 separates fusion from kernel rewrite (single-pass `PerturbConv4x2` control); exp21c NE16 prep opts B/H/S (−0.27 M cycles per step, bit-exact); exp21e fixes two Siracusa BP bugs and makes complete BP rounds bit-exact; fused QZO+ECO step 6.85 M cycles (fusion alone 1.23×, NE16 1.33×); peak memory BP 1.60 MB vs QZO-ECO 0.45 MB; board: QZO-ECO round 35.7 s / 2.64 J / 87.50 % vs BP 120.6 s / 8.89 J / 84.86 % |
 
 The same experimental cell is used throughout: subject S01, condition vocalized, held-out session 3
 (fold 3). Fine-tuning data are 54 stratified windows (30 % of batch 1, seed 42, drawn by the
@@ -119,8 +120,8 @@ templates, tile constraints, kernels, harness, runner flags, and how to reproduc
 
 ## 5. Shared documentation
 
-The shared documentation consists of the six handover documents in `TrainDeeploy/HandoverDocuments/`
-(this overview and guides 01–05), `TrainDeeploy/SpeechNet_Test/README.md`, and the upstream
+The shared documentation consists of the seven handover documents in `TrainDeeploy/HandoverDocuments/`
+(this overview and guides 01–06), `TrainDeeploy/SpeechNet_Test/README.md`, and the upstream
 documentation: `TrainDeeploy/README_TRAINING.md` (training-infrastructure contracts: fixture
 layout, npz rules, runner flags), `TrainDeeploy/README_GAP9.md` (GAP9 container, SDK, board),
 `TrainDeeploy/docs/`, `Onnx4Deeploy/README.md` and `Onnx4Deeploy/docs/` (for example
@@ -313,5 +314,16 @@ logs of a single BP step (default and recompute MaxPool backward).
 |---|---|---|---|
 | `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp7_remaining_blocks/` (main files: results_step5.txt, results_step6.txt, results_step7_gap9.txt) | fused kernels for blocks 1–4 (cluster two-input kernel, Conv4x2 control kernel, pipelined NE16 node) and the per-block engine choice | Siracusa blocks 1–4 2.44× (wall clock, node level); GAP9 best per block 2.57× (NE16 blocks 1–2, cluster 3–4); all exact | CURRENT |
 | `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp8_whole_network/` (main files: results/step8_per_block_vs_fixtures.txt, results/step10_round_prediction.txt, results/step11_eco_round_prediction.txt, graphs/) | the whole QZO step as one dual-pass graph (`ZODualPassFusion`) | 4 steps identical to unfused; Siracusa 1.53×, GAP9 cluster 1.42×, GAP9 + NE16 1.78×; n_accum 4 step 8.86 M (QZO) / 9.13 M (QZO+ECO) cycles; 120-epoch round 38.8 s / 40.0 s @ 370 MHz vs 68.4 s / 69.6 s unfused | CURRENT |
-| `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/` (main files: memcompare/summary.txt, logs/, verify/*.log, graphs/; branch `feat/memory_opt`) | memory of the fused graph: frozen BN + MaxPool + ReLU + Quant as one HWC kernel (`FuseFrozenBNTailPass`), guide 05 §4.8 | fused QZO+ECO training L2 arena 854,452 → 265,612 B, training −13.0 % per step; bit-exact on GAP9, GAP9 + NE16 and Siracusa; CI 6/6 + 13/13; not yet on the board | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp9_memory_optim/` (main files: memcompare/summary.txt, logs/, verify/*.log, graphs/; branch `feat/memory_opt`) | memory of the fused graph: frozen BN + MaxPool + ReLU + Quant as one HWC kernel (`FuseFrozenBNTailPass`), guide 05 §4.8 | fused QZO+ECO training L2 arena 854,452 → 265,612 B, training −13.0 % per step; bit-exact on GAP9, GAP9 + NE16 and Siracusa; CI 6/6 + 13/13; on the board since 2026-10-28 (guide 06 §6.3) | CURRENT |
 
+### 8.6 Further optimisation, BP fixes and board rounds (guide 06)
+
+| path | goal | result | status |
+|---|---|---|---|
+| `TrainDeeploy/DeeployTest/experiments/dual_pass_fusion/exp11_b1to4_breakdown/` (main files: results/breakdown.md, results/ne16_vs_cluster_blocks34.txt) | per-block GAP9 breakdown of blocks 1–4; single-pass in-kernel-perturbation control `PerturbConv4x2` | fusion alone 1.04–1.27× per block; NE16 prep scales with the weight, so NE16 loses on blocks 3–4 | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/exp21c_Fusion_NE16_Encode_Opt/` (main files: impl/SUMMARY.txt, impl/results/) | NE16 dual-prep opts B (skip re-perturbation at offset 0), H (prep once per update step), S (word-wise encoder) | step 6.56 → 6.29 M cycles (NE16 0–2), bit-exact incl. multi-step; block 3 on NE16 −0.85 % after the opts | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/exp21e_numerical_drift/fix/` (main files: SUMMARY.txt) | Siracusa BP regression; bit-exact BP and ZO reference rounds | two bugs fixed (ConvGradW tile pad; core-strided frozen-BN loop); complete BP rounds 0/2160 on Siracusa and GAP9 (strict fp32, C-order reference); ZO round 0/12960 | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/merge_gates_2026-10-27/` (main files: logs/gap9_summary.txt, logs/siracusa_summary.txt) | gates of the merged tree `92027907` | GAP9 step 6,850,086 cycles, WSUM `0xfa1f7dd2`; CI GAP9 6/6, Siracusa 13/13 + 2/2 | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/exp21m_fusion_speedup_cluster/` (main files: results/summary.txt) | speed-up of the dual-pass fusion alone on the cluster | 13.76 M (pulp-nn) → 11.23 M (control) → 9.13 M (fused) cycles per step: fusion alone 1.230× | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/deliverable/exp21_remaining_exp/exp21n_peak_memory/` (main files: results/peak_memory.md, plots/peak_memory.png) | static peak memory (activations + static + tile buffer) of BP, ZO, QZO-ECO | 1,603,973 / 906,554 / 454,903 B; BP / QZO-ECO 3.5× | CURRENT |
+| `TrainDeeploy/DeeployTest/experiments/Board_exp/` (main files: runs/*/uart.log, BP/results/, ZOfam/results/) | 4 incremental rounds of every recipe on the GAP9 board with the selected settings | QZO-ECO fused NE16 35.7 s / 2.64 J / 87.50 %; BP 120.6 s / 8.89 J / 84.86 %; fused = unfused weights, 2.0× | CURRENT |

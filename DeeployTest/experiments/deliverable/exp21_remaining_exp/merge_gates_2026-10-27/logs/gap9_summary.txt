@@ -1,0 +1,4 @@
+net_BHS_plain_ne16_012: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6290864 opt_cycles_hi=0 opt_cycles_lo=559222 | [WSUM s=0] 0xfa1f7dd2
+net_BHS_plain_ne16_0123: Errors: 0 out of 8 | BENCH train_cycles_hi=0 train_cycles_lo=6234218 opt_cycles_hi=0 opt_cycles_lo=558528 | [WSUM s=0] 0xfa1f7dd2
+CI: ================ 6 passed, 687 deselected in 718.34s (0:11:58) =================
+DONE

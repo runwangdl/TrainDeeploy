@@ -1,0 +1,4 @@
+gates done
+siracusa_ci_speechnet: =============== 13 passed, 680 deselected in 3215.13s (0:53:35) ================
+siracusa_ci_zo_training: ================ 2 passed, 691 deselected in 171.75s (0:02:51) =================
+DONE

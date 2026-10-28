@@ -1,0 +1,43 @@
+=== round 2  2026-10-28 02:32:52
+round 2 exported from /app/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r1.pt -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_optimizer_BP_r2
+/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r2
+[bp_r2] flash.bin 2248704 B -> pad 65536 B -> 2314240 B
+[bp_r2] 01:36:57 flash + run (speechnet_train_BP_r2)
+[bp_r2] 01:42:00 done after 303 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Errors: 0 out of 2160
+BENCH train_cycles=2003759828 opt_cycles=143286309 trainable_bytes=61956
+BENCH64 train_cycles_hi=10 train_cycles_lo=2003759828 opt_cycles_hi=0 opt_cycles_lo=143286309
+round 2: [WDUMP] s=539, 22 tensors -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r2.pt; max |board - PyTorch ref| = 2.719e-07
+  val_next board  76.67   host chain  76.67
+  val_in   board  88.89   host chain  88.89
+  train    board  98.15   host chain  98.15
+=== round 3  2026-10-28 02:42:04
+round 3 exported from /app/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r2.pt -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_optimizer_BP_r3
+/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r3
+[bp_r3] flash.bin 2248704 B -> pad 65536 B -> 2314240 B
+[bp_r3] 01:46:37 flash + run (speechnet_train_BP_r3)
+[bp_r3] 01:51:51 done after 314 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Errors: 0 out of 2160
+BENCH train_cycles=1408912792 opt_cycles=146965426 trainable_bytes=61956
+BENCH64 train_cycles_hi=10 train_cycles_lo=1408912792 opt_cycles_hi=0 opt_cycles_lo=146965426
+round 3: [WDUMP] s=539, 22 tensors -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r3.pt; max |board - PyTorch ref| = 1.383e-05
+  val_next board  87.22   host chain  87.22
+  val_in   board  80.95   host chain  80.95
+  train    board  98.15   host chain  98.15
+=== round 4  2026-10-28 02:51:54
+round 4 exported from /app/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r3.pt -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_optimizer_BP_r4
+/Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/fixtures/speechnet_train_BP_r4
+[bp_r4] flash.bin 2248704 B -> pad 65536 B -> 2314240 B
+[bp_r4] 01:56:02 flash + run (speechnet_train_BP_r4)
+[bp_r4] 02:01:05 done after 303 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+Errors: 0 out of 2160
+BENCH train_cycles=1260350700 opt_cycles=143144309 trainable_bytes=61956
+BENCH64 train_cycles_hi=10 train_cycles_lo=1260350700 opt_cycles_hi=0 opt_cycles_lo=143144309
+round 4: [WDUMP] s=539, 22 tensors -> /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/BP/carry/carry_r4.pt; max |board - PyTorch ref| = 2.533e-07
+  val_next board  86.67   host chain  86.67
+  val_in   board  88.89   host chain  88.89
+  train    board 100.00   host chain 100.00
+=== chain done 2026-10-28 03:01:08

@@ -1,0 +1,56 @@
+{
+ "arm": "eco_fused",
+ "method": "eco",
+ "round": 2,
+ "wdump_step": 1889,
+ "board": {
+  "val_next": 82.22222222222223,
+  "val_in": 88.88888888888889,
+  "train": 90.74074074074076
+ },
+ "host_seed42_e140": {
+  "val_next": 79.44444444444446,
+  "val_in": 89.68253968253967,
+  "train": 92.59259259259261,
+  "curve": [
+   {
+    "epoch": 0,
+    "val_next": 82.22222222222223
+   },
+   {
+    "epoch": 20,
+    "val_next": 81.11111111111113
+   },
+   {
+    "epoch": 40,
+    "val_next": 82.22222222222223
+   },
+   {
+    "epoch": 60,
+    "val_next": 81.11111111111113
+   },
+   {
+    "epoch": 80,
+    "val_next": 79.44444444444446
+   },
+   {
+    "epoch": 100,
+    "val_next": 80.55555555555556
+   },
+   {
+    "epoch": 120,
+    "val_next": 80.55555555555557
+   },
+   {
+    "epoch": 140,
+    "val_next": 79.44444444444446
+   }
+  ],
+  "update_steps": 1890,
+  "eco_stats": {
+   "moved_step_fraction": 1.0,
+   "frac_conv_differ_from_round_start": 0.6988575268817204,
+   "total_flips": 940015
+  }
+ }
+}

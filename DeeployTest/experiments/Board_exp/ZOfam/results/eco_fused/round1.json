@@ -1,0 +1,52 @@
+{
+ "arm": "eco_fused",
+ "method": "eco",
+ "round": 1,
+ "wdump_step": 1889,
+ "board": {
+  "val_next": 91.1111111111111,
+  "val_in": 86.5079365079365,
+  "train": 90.74074074074076
+ },
+ "host_seed42_e140": {
+  "val_next": 89.99999999999999,
+  "val_in": 87.3015873015873,
+  "train": 88.88888888888889,
+  "curve": [
+   {
+    "epoch": 0,
+    "val_next": 78.33333333333334
+   },
+   {
+    "epoch": 20,
+    "val_next": 80.0
+   },
+   {
+    "epoch": 40,
+    "val_next": 85.55555555555556
+   },
+   {
+    "epoch": 60,
+    "val_next": 85.00000000000001
+   },
+   {
+    "epoch": 80,
+    "val_next": 87.77777777777777
+   },
+   {
+    "epoch": 100,
+    "val_next": 87.77777777777777
+   },
+   {
+    "epoch": 120,
+    "val_next": 89.44444444444444
+   },
+   {
+    "epoch": 140,
+    "val_next": 89.99999999999999
+   }
+  ],
+  "from_shared_round1": true,
+  "update_steps": 1890
+ }
+}

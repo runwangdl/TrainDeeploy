@@ -1,0 +1,63 @@
+=== eco_unfused round 1  2026-10-28 03:27:45
+[eco_unfused_r1] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[eco_unfused_r1] 02:30:59 flash + run (speechnet_train_QZO_r1)
+[eco_unfused_r1] 02:34:16 done after 197 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xe1ca5c8d
+[WCHK] changed 21/22 trainable tensors after 1890 updates
+Errors: 81 out of 112
+BENCH train_cycles_hi=5 train_cycles_lo=3506320458 opt_cycles_hi=0 opt_cycles_lo=1048705293
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== eco_unfused round 2  2026-10-28 03:34:37
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r1/uart.log into fixtures_arm/eco_unfused/speechnet_train_QZO_r2/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r1/uart.log into fixtures_arm/eco_unfused/speechnet_update_QZO_r2/inputs.npz
+[eco_unfused_r2] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[eco_unfused_r2] 02:37:56 flash + run (speechnet_train_QZO_r2)
+[eco_unfused_r2] 02:41:18 done after 202 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xbf77baf6
+[WCHK] changed 21/22 trainable tensors after 1890 updates
+Errors: 112 out of 112
+BENCH train_cycles_hi=5 train_cycles_lo=3927599249 opt_cycles_hi=0 opt_cycles_lo=1051933396
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== eco_unfused round 3  2026-10-28 03:41:42
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r2/uart.log into fixtures_arm/eco_unfused/speechnet_train_QZO_r3/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r2/uart.log into fixtures_arm/eco_unfused/speechnet_update_QZO_r3/inputs.npz
+[eco_unfused_r3] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[eco_unfused_r3] 02:45:19 flash + run (speechnet_train_QZO_r3)
+[eco_unfused_r3] 02:48:41 done after 202 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xa725f274
+[WCHK] changed 21/22 trainable tensors after 1890 updates
+Errors: 109 out of 112
+BENCH train_cycles_hi=5 train_cycles_lo=3929043367 opt_cycles_hi=0 opt_cycles_lo=1051956072
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== eco_unfused round 4  2026-10-28 03:49:03
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r3/uart.log into fixtures_arm/eco_unfused/speechnet_train_QZO_r4/inputs.npz
+carried 22 tensors from /Users/qiwenwu/ETH/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/../runs/eco_unfused_r3/uart.log into fixtures_arm/eco_unfused/speechnet_update_QZO_r4/inputs.npz
+[eco_unfused_r4] flash.bin 2142208 B -> pad 106496 B -> 2248704 B
+[eco_unfused_r4] 02:52:17 flash + run (speechnet_train_QZO_r4)
+[eco_unfused_r4] 02:55:34 done after 197 s
+[FREQ] FC=370000000 CL=370000000 PE=370000000 Hz
+[WSUM s=init] 0xb176897c
+[WCHK] changed 21/22 trainable tensors after 1890 updates
+Errors: 112 out of 112
+BENCH train_cycles_hi=5 train_cycles_lo=3929486565 opt_cycles_hi=0 opt_cycles_lo=1051944037
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 110, in <module>
+    main()
+  File "/app/TrainDeeploy/DeeployTest/experiments/Board_exp/ZOfam/scripts/eval_round.py", line 87, in main
+    assert np.all(off % mul == 0), f"{k}: rqsadd not a multiple of mul"
+AssertionError: blocks.1.conv.bias_rqsadd: rqsadd not a multiple of mul
+=== eco_unfused chain done 2026-10-28 03:55:54

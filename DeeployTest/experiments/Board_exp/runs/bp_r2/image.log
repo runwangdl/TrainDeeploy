@@ -1,0 +1,14 @@
+[  1%] Built target pmsis_printf
+[  3%] Built target pulp_allocator
+[  6%] Built target freertos_libs
+[  8%] Built target fll_pmu_lib
+[ 38%] Built target pmsis
+[ 43%] Built target pmsis_backend
+[ 53%] Built target freertos
+[ 80%] Built target deeploygap9
+[ 96%] Built target deeploybasic
+[ 97%] Built target training_network
+[ 98%] Built target optimizer_network
+[100%] Built target speechnet_train_BP_r2
+[100%] Generating flash images for speechnet_train_BP_r2 in /app/Deeploy/DeeployTest/TEST_GAP9/build_brd_bp_r2/board_workdir
+[100%] Built target image_speechnet_train_BP_r2
